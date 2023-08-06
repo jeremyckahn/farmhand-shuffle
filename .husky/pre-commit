@@ -3,6 +3,6 @@
 
 set -e
 
-npm run check:lint
 npx pretty-quick --staged
+npm run check
 CI=true npm test

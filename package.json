@@ -8,6 +8,7 @@
     "build": "parcel build src/index.html",
     "fix:lint": "eslint src --fix",
     "fix:style": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "check": "cross-env CI=true npm test && npm run check:lint && npm run check:types",
     "check:lint": "eslint src --max-warnings=0",
     "check:types": "tsc",
     "prepare": "husky install"
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
+    "cross-env": "^7.0.3",
     "eslint": "^8.46.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "^2.28.0",

@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - run: CI=true npm test
+      - run: npm run check
 
       - name: 'Build web app artifacts'
         run: npm run build
