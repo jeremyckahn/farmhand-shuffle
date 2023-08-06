@@ -1,4 +1,4 @@
-import { CardType, Crop, Field, Player } from '../index'
+import { CardType, Crop, Field, Player, Table } from '../index'
 
 export const isCrop = (obj: unknown): obj is Crop => {
   if (typeof obj !== 'object' || obj === null) return false
@@ -40,5 +40,18 @@ export const isPlayer = (obj: unknown): obj is Player => {
     obj.discardPile.every(card => typeof card === 'string') &&
     'field' in obj &&
     isField(obj.field)
+  )
+}
+
+export const isTable = (obj: unknown): obj is Table => {
+  if (typeof obj !== 'object' || obj === null) return false
+
+  return (
+    'communityFund' in obj &&
+    typeof obj.communityFund === 'number' &&
+    'players' in obj &&
+    typeof obj.players === 'object' &&
+    obj.players !== null &&
+    Object.values(obj.players).every(player => isPlayer(player))
   )
 }
