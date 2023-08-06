@@ -1,17 +1,29 @@
-import { isField, isPlayer } from '../../types/guards'
+import { isField, isPlayer, isTable } from '../../types/guards'
 
 import { Factory } from './'
 
 describe('Factory', () => {
-  test('buildField', () => {
-    const field = Factory.buildField()
+  describe('buildField', () => {
+    test('builds a field', () => {
+      const field = Factory.buildField()
 
-    expect(isField(field)).toBe(true)
+      expect(isField(field)).toBe(true)
+    })
   })
 
-  test('buildPlayer', () => {
-    const player = Factory.buildPlayer()
+  describe('buildPlayer', () => {
+    test('builds a player', () => {
+      const player = Factory.buildPlayer()
 
-    expect(isPlayer(player)).toBe(true)
+      expect(isPlayer(player)).toBe(true)
+    })
+  })
+
+  describe('buildTable', () => {
+    test('builds a table', () => {
+      const table = Factory.buildTable()
+
+      expect(isTable(table)).toBe(true)
+    })
   })
 })
