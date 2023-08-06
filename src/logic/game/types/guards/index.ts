@@ -1,4 +1,4 @@
-import { Field } from '../types'
+import { Field } from '../index'
 
 export const isField = (obj: unknown): obj is Field => {
   if (typeof obj !== 'object' || obj === null) return false
