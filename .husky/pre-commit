@@ -5,4 +5,4 @@ set -e
 
 npx pretty-quick --staged
 npm run check
-CI=true npm test
+npm test
