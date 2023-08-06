@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "description": "A card game for farmers",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel serve src/index.html",
+    "build": "parcel build",
+    "check": "tsc"
   },
   "repository": {
     "type": "git",
@@ -14,5 +17,16 @@
   "bugs": {
     "url": "https://github.com/jeremyckahn/farmhand-shuffle/issues"
   },
-  "homepage": "https://github.com/jeremyckahn/farmhand-shuffle#readme"
+  "homepage": "https://github.com/jeremyckahn/farmhand-shuffle#readme",
+  "devDependencies": {
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "^18.2.7",
+    "parcel": "^2.9.3",
+    "process": "^0.11.10",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
 }
