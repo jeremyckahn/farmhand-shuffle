@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"No tests to run\"",
     "start": "parcel serve src/index.html",
-    "build": "parcel build",
+    "build": "parcel build src/index.html",
     "fix:lint": "eslint src --fix",
     "fix:style": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "check:lint": "eslint src --max-warnings=0",
@@ -38,6 +38,7 @@
     "process": "^0.11.10",
     "typescript": "^5.1.6"
   },
+  "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {
     "node": "18.17.0"
   },
