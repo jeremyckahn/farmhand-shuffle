@@ -62,7 +62,7 @@ export interface Field {
   /**
    * Sparse array.
    */
-  readonly Crops: (Crop | undefined)[]
+  readonly crops: (Crop | undefined)[]
 }
 
 export interface Player {
