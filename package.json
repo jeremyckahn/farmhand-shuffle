@@ -7,6 +7,7 @@
     "start": "parcel serve src/index.html",
     "build": "parcel build",
     "fix:lint": "eslint src --fix",
+    "fix:style": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "check:lint": "eslint src --max-warnings=0",
     "check:types": "tsc"
   },
@@ -30,6 +31,7 @@
     "eslint-plugin-react": "^7.33.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "parcel": "^2.9.3",
+    "prettier": "^3.0.1",
     "process": "^0.11.10",
     "typescript": "^5.1.6"
   },
