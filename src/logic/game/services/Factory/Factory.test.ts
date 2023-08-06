@@ -1,4 +1,4 @@
-import { isField } from '../../type-guards'
+import { isField } from '../../types/guards'
 
 import { Factory } from './'
 
