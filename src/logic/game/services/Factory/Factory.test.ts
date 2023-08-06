@@ -1,4 +1,4 @@
-import { isField, isPlayer, isTable } from '../../types/guards'
+import { isField, isGame, isPlayer, isTable } from '../../types/guards'
 
 import { Factory } from './'
 
@@ -24,6 +24,14 @@ describe('Factory', () => {
       const table = Factory.buildTable()
 
       expect(isTable(table)).toBe(true)
+    })
+  })
+
+  describe('buildGame', () => {
+    test('builds a game', () => {
+      const game = Factory.buildGame()
+
+      expect(isGame(game)).toBe(true)
     })
   })
 })
