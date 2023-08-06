@@ -1,4 +1,4 @@
-import { CardType, Crop, Field, Player, Table } from '../index'
+import { CardType, Crop, Field, Game, Player, Table } from '../index'
 
 export const isCrop = (obj: unknown): obj is Crop => {
   if (typeof obj !== 'object' || obj === null) return false
@@ -54,4 +54,10 @@ export const isTable = (obj: unknown): obj is Table => {
     obj.players !== null &&
     Object.values(obj.players).every(player => isPlayer(player))
   )
+}
+
+export const isGame = (obj: unknown): obj is Game => {
+  if (typeof obj !== 'object' || obj === null) return false
+
+  return 'table' in obj && isTable(obj.table)
 }
