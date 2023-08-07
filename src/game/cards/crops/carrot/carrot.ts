@@ -1,5 +1,5 @@
 import { Crop } from '../../../types'
-import { baseToCrop } from '../helpers'
+import { baseToCrop } from '../baseToCrop'
 
 export const carrot: Crop = baseToCrop({
   id: 'carrot',

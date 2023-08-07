@@ -3,6 +3,8 @@ import { uuidString } from '../../lib/types/index'
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
 
+export type GameReducer = (game: Game) => Promise<Game>
+
 export enum CardType {
   CROP = 'CROP',
   EVENT = 'EVENT',
@@ -13,6 +15,19 @@ export enum CardType {
 export interface Card {
   readonly id: string
   readonly type: CardType
+  readonly onPlayFromHand: (
+    game: Game,
+
+    /**
+     * The ID of the player playing the card
+     */
+    playerId: Player['id'],
+
+    /**
+     * The index of the card within the player's hand
+     */
+    cardIdx: number
+  ) => Promise<Game>
 }
 
 export interface Crop extends Card {
