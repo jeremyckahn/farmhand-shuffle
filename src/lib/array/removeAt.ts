@@ -1,4 +1,3 @@
-// FIXME: Test this
 export const removeAt = <T = any>(array: T[], idx: number): T[] => {
   if (idx >= array.length) {
     throw new Error(`removeAt: Index ${idx} out of bounds`)

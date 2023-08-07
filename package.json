@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/jeremyckahn/farmhand-shuffle#readme",
   "devDependencies": {
-    "@babel/preset-typescript": "^7.22.5",
     "@types/jest": "^29.5.3",
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
@@ -43,6 +42,7 @@
     "prettier": "^2.8.8",
     "pretty-quick": "^3.1.3",
     "process": "^0.11.10",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",

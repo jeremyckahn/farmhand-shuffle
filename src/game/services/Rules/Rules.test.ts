@@ -1,4 +1,4 @@
-import { isGame } from '../../types/guards/index'
+import { isGame } from '../../types/guards'
 
 import { Rules } from './Rules'
 
