@@ -1,8 +1,8 @@
-import { Game, Player } from '../../types'
+import { IGame, IPlayer } from '../../types'
 
 export const handlePlayFromHand = async (
-  game: Game,
-  _playerId: Player['id'],
+  game: IGame,
+  _playerId: IPlayer['id'],
   _cardIdx: number
 ) => {
   // TODO: Implement this

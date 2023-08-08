@@ -1,7 +1,7 @@
-import { Crop } from '../../../types'
+import { ICrop } from '../../../types'
 import { baseToCrop } from '../baseToCrop'
 
-export const carrot: Crop = baseToCrop({
+export const carrot: ICrop = baseToCrop({
   id: 'carrot',
   waterCardsToMature: 3,
 })

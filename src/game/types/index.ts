@@ -3,7 +3,7 @@ import { uuidString } from '../../lib/types/index'
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
 
-export type GameReducer = (game: Game) => Promise<Game>
+export type GameReducer = (game: IGame) => Promise<IGame>
 
 export enum CardType {
   CROP = 'CROP',
@@ -12,25 +12,25 @@ export enum CardType {
   WATER = 'WATER',
 }
 
-export interface Card {
+export interface ICard {
   readonly id: string
   readonly type: CardType
   readonly onPlayFromHand: (
-    game: Game,
+    game: IGame,
 
     /**
      * The ID of the player playing the card
      */
-    playerId: Player['id'],
+    playerId: IPlayer['id'],
 
     /**
      * The index of the card within the player's hand
      */
     cardIdx: number
-  ) => Promise<Game>
+  ) => Promise<IGame>
 }
 
-export interface Crop extends Card {
+export interface ICrop extends ICard {
   readonly type: CardType.CROP
 
   /**
@@ -43,7 +43,7 @@ export interface Crop extends Card {
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
-export interface PlayedCrop extends Crop {
+export interface IPlayedCrop extends ICrop {
   /**
    * How many water cards are attached to this card.
    */
@@ -54,7 +54,7 @@ export interface PlayedCrop extends Crop {
  * Players can play up to one Event card per turn. Has some sort of effect on
  * one or both players simultaneously, defined per card.
  */
-export interface Event extends Card {
+export interface IEvent extends ICard {
   readonly type: CardType.EVENT
 }
 
@@ -63,25 +63,25 @@ export interface Event extends Card {
  * can be played from a player's hand during the opponent's turn (this would be
  * specified on the card). Has some sort of effect, defined per card.
  */
-export interface Tool extends Card {
+export interface ITool extends ICard {
   readonly type: CardType.TOOL
 }
 
 /**
  * Used to water Crop cards to mature them.
  */
-export interface Water extends Card {
+export interface IWater extends ICard {
   readonly type: CardType.WATER
 }
 
-export interface Field {
+export interface IField {
   /**
    * Sparse array.
    */
-  readonly crops: (Crop | undefined)[]
+  readonly crops: (ICrop | undefined)[]
 }
 
-export interface Player {
+export interface IPlayer {
   readonly id: uuidString
 
   /**
@@ -92,29 +92,29 @@ export interface Player {
   /**
    * Cards that the player can draw from.
    */
-  readonly deck: Card['id'][]
+  readonly deck: ICard['id'][]
 
   /**
    * Cards in the player's hand.
    */
-  readonly hand: Card['id'][]
+  readonly hand: ICard['id'][]
 
   /**
    * Cards that have been used.
    */
-  readonly discardPile: Card['id'][]
+  readonly discardPile: ICard['id'][]
 
   /**
    * Cards in the player's Field.
    */
-  readonly field: Field
+  readonly field: IField
 }
 
-export interface Table {
+export interface ITable {
   /**
    * Each players' card area at the table.
    */
-  readonly players: Record<Player['id'], Player>
+  readonly players: Record<IPlayer['id'], IPlayer>
 
   /**
    * The number of coins in the community fund.
@@ -122,6 +122,6 @@ export interface Table {
   readonly communityFund: number
 }
 
-export interface Game {
-  readonly table: Table
+export interface IGame {
+  readonly table: ITable
 }

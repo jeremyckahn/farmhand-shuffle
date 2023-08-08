@@ -1,11 +1,11 @@
 import { removeAt } from '../../../lib/array/removeAt'
 
-import { Game, Player } from '../../types'
+import { IGame, IPlayer } from '../../types'
 
 import { Factory } from '../Factory'
 
 export class Rules {
-  static processGameStart(): Game {
+  static processGameStart(): IGame {
     const game = Factory.buildGame()
 
     // TODO: Set up player hands
@@ -14,24 +14,24 @@ export class Rules {
     return game
   }
 
-  static processTurnStart(game: Game): Game {
+  static processTurnStart(game: IGame): IGame {
     // TODO: Pay tax to community fund
     // TODO: Draw a card from the deck
 
     return game
   }
 
-  static processTurnEnd(game: Game): Game {
+  static processTurnEnd(game: IGame): IGame {
     // TODO: Implement this
     return game
   }
 
   // FIXME: Test hand updating
   static playCardFromHand(
-    game: Game,
-    playerId: Player['id'],
+    game: IGame,
+    playerId: IPlayer['id'],
     cardIdx: number
-  ): Game {
+  ): IGame {
     const { hand } = game.table.players[playerId]
     const cardId = hand[cardIdx]
 

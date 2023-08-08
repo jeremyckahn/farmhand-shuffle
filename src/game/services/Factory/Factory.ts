@@ -1,16 +1,16 @@
 import { v4 as uuid } from 'uuid'
 
 import { initialPlayerFunds } from '../../config'
-import { Field, Game, Player, Table } from '../../types/index'
+import { IField, IGame, IPlayer, ITable } from '../../types/index'
 
 export class Factory {
-  static buildField(): Field {
+  static buildField(): IField {
     return {
       crops: [],
     }
   }
 
-  static buildPlayer(id = uuid()): Player {
+  static buildPlayer(id = uuid()): IPlayer {
     return {
       id,
       funds: initialPlayerFunds,
@@ -21,7 +21,7 @@ export class Factory {
     }
   }
 
-  static buildTable(): Table {
+  static buildTable(): ITable {
     const player1 = Factory.buildPlayer()
 
     return {
@@ -33,7 +33,7 @@ export class Factory {
     }
   }
 
-  static buildGame(): Game {
+  static buildGame(): IGame {
     return {
       table: Factory.buildTable(),
     }

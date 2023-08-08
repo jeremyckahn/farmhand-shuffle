@@ -1,6 +1,6 @@
-import { CardType, Crop, Field, Game, Player, Table } from '../index'
+import { CardType, ICrop, IField, IGame, IPlayer, ITable } from '../index'
 
-export const isCrop = (obj: unknown): obj is Crop => {
+export const isCrop = (obj: unknown): obj is ICrop => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
@@ -11,7 +11,7 @@ export const isCrop = (obj: unknown): obj is Crop => {
   )
 }
 
-export const isField = (obj: unknown): obj is Field => {
+export const isField = (obj: unknown): obj is IField => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
@@ -21,7 +21,7 @@ export const isField = (obj: unknown): obj is Field => {
   )
 }
 
-export const isPlayer = (obj: unknown): obj is Player => {
+export const isPlayer = (obj: unknown): obj is IPlayer => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
@@ -43,7 +43,7 @@ export const isPlayer = (obj: unknown): obj is Player => {
   )
 }
 
-export const isTable = (obj: unknown): obj is Table => {
+export const isTable = (obj: unknown): obj is ITable => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
@@ -56,7 +56,7 @@ export const isTable = (obj: unknown): obj is Table => {
   )
 }
 
-export const isGame = (obj: unknown): obj is Game => {
+export const isGame = (obj: unknown): obj is IGame => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return 'table' in obj && isTable(obj.table)
