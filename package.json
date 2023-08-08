@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "A card game for farmers",
   "scripts": {
+    "clean": "rm -rf ./.parcel-cache && rm -rf ./dist",
     "test": "echo \"No tests to run\"",
     "start": "parcel serve src/index.html",
     "build": "parcel build src/index.html",
