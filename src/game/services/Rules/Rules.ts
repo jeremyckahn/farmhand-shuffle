@@ -10,6 +10,7 @@ export class Rules {
 
     // TODO: Set up player hands
     // TODO: Set up player decks
+    // TODO: Shuffle player decks
 
     return game
   }
@@ -46,6 +47,7 @@ export class Rules {
     // TODO: Retrieve card by ID
     // TODO: Process card
 
+    // FIXME: Move this object construction to a helper reducer
     return {
       ...game,
       table: {
