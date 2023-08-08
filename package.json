@@ -6,7 +6,7 @@
     "clean": "rm -rf ./.parcel-cache && rm -rf ./dist",
     "test": "echo \"No tests to run\"",
     "start": "parcel serve src/index.html",
-    "build": "parcel build src/index.html",
+    "build": "parcel build src/index.html --public-url .",
     "fix:lint": "eslint src --fix",
     "fix:style": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "check": "cross-env CI=true npm test && npm run check:lint && npm run check:types",
