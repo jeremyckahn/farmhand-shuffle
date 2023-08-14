@@ -1,6 +1,5 @@
 import { IGame, IPlayer } from '../../types'
 
-// FIXME: Test this
 export const updateHand = (
   game: IGame,
   playerId: IPlayer['id'],
