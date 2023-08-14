@@ -1,7 +1,8 @@
 import { removeAt } from '../../../lib/array/removeAt'
 import { initialHandSize } from '../../config'
-import { drawCard } from '../../reducers/draw-card/index'
+import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
+import { updateHand } from '../../reducers/update-hand'
 
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 
@@ -56,16 +57,8 @@ export class Rules {
     // TODO: Retrieve card by ID
     // TODO: Process card
 
-    // FIXME: Move this object construction to a helper reducer
-    return {
-      ...game,
-      table: {
-        ...game.table,
-        players: {
-          ...game.table.players,
-          ...{ [playerId]: { ...game.table.players[playerId], hand: newHand } },
-        },
-      },
-    }
+    game = updateHand(game, playerId, newHand)
+
+    return game
   }
 }
