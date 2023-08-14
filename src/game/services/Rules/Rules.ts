@@ -1,4 +1,6 @@
 import { removeAt } from '../../../lib/array/removeAt'
+import { initialHandSize } from '../../config'
+import { drawCard } from '../../reducers/draw-card/index'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
@@ -13,9 +15,9 @@ export class Rules {
       const player = { ...Factory.buildPlayer(), ...playerSeed }
       game.table.players[player.id] = player
       game = shuffleDeck(game, player.id)
+      game = drawCard(game, player.id, initialHandSize)
     }
 
-    // TODO: Set up player hands
     // TODO: Set up player decks
     // TODO: Shuffle player decks
 

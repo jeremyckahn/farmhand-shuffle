@@ -1,10 +1,10 @@
 import { IGame, IPlayer } from '../../types'
 
 // FIXME: Test this
-export const updateDeck = (
+export const updateHand = (
   game: IGame,
   playerId: IPlayer['id'],
-  deck: IPlayer['deck']
+  hand: IPlayer['hand']
 ): IGame => {
   return {
     ...game,
@@ -12,7 +12,7 @@ export const updateDeck = (
       ...game.table,
       players: {
         ...game.table.players,
-        ...{ [playerId]: { ...game.table.players[playerId], deck } },
+        ...{ [playerId]: { ...game.table.players[playerId], hand } },
       },
     },
   }
