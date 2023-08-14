@@ -110,6 +110,12 @@ export interface IPlayer {
   readonly field: IField
 }
 
+/**
+ * This is meant to represent the minimal player data that is needed to boot an
+ * IGame instance. The remainder of the properties of IPlayer can be computed.
+ */
+export type IPlayerSeed = Pick<IPlayer, 'id' | 'deck'>
+
 export interface ITable {
   /**
    * Each players' card area at the table.

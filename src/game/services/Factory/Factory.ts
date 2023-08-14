@@ -22,13 +22,8 @@ export class Factory {
   }
 
   static buildTable(): ITable {
-    const player1 = Factory.buildPlayer()
-
     return {
-      // TODO: This is a WIP implementation. Design for supporting for multiple
-      // players is not yet determined.
-      players: { [player1.id]: player1 },
-
+      players: {},
       communityFund: 0,
     }
   }

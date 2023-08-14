@@ -1,12 +1,19 @@
 import { removeAt } from '../../../lib/array/removeAt'
+import { shuffleDeck } from '../../reducers/shuffle-deck'
 
-import { IGame, IPlayer } from '../../types'
+import { IGame, IPlayer, IPlayerSeed } from '../../types'
 
 import { Factory } from '../Factory'
 
 export class Rules {
-  static processGameStart(): IGame {
-    const game = Factory.buildGame()
+  static processGameStart(playerSeeds: IPlayerSeed[]): IGame {
+    let game = Factory.buildGame()
+
+    for (const playerSeed of playerSeeds) {
+      const player = { ...Factory.buildPlayer(), ...playerSeed }
+      game.table.players[player.id] = player
+      game = shuffleDeck(game, player.id)
+    }
 
     // TODO: Set up player hands
     // TODO: Set up player decks
