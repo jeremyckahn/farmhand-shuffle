@@ -37,7 +37,6 @@ export class Rules {
     return game
   }
 
-  // FIXME: Test hand updating
   static playCardFromHand(
     game: IGame,
     playerId: IPlayer['id'],

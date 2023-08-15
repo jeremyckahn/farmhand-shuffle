@@ -46,4 +46,30 @@ describe('Rules', () => {
       )
     })
   })
+
+  describe('playCardFromHand', () => {
+    test('removes played card from hand', () => {
+      const game = Rules.processGameStart([player1, player2])
+      const [player1Id] = Object.keys(game.table.players)
+
+      const newGame = Rules.playCardFromHand(game, player1Id, 0)
+
+      expect(newGame.table.players[player1Id].hand.length).toEqual(
+        game.table.players[player1Id].hand.length - 1
+      )
+    })
+
+    test('throws an error when specified card is not in hand', () => {
+      const game = Rules.processGameStart([player1, player2])
+      const [player1Id] = Object.keys(game.table.players)
+
+      expect(() => {
+        Rules.playCardFromHand(
+          game,
+          player1Id,
+          game.table.players[player1Id].hand.length
+        )
+      }).toThrow()
+    })
+  })
 })
