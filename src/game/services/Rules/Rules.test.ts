@@ -1,5 +1,6 @@
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { pumpkin } from '../../cards/crops/pumpkin'
+import { carrot } from '../../cards'
 import { deckSize, initialHandSize } from '../../config'
 import { isGame } from '../../types/guards'
 
@@ -57,6 +58,18 @@ describe('Rules', () => {
       expect(newGame.table.players[player1Id].hand.length).toEqual(
         game.table.players[player1Id].hand.length - 1
       )
+    })
+
+    test('performs card-specific behavior', async () => {
+      const game = Rules.processGameStart([player1, player2])
+      const [player1Id] = Object.keys(game.table.players)
+
+      game.table.players[player1Id].hand[0] = carrot.id
+      const onPlayFromHand = jest.spyOn(carrot, 'onPlayFromHand')
+
+      await Rules.playCardFromHand(game, player1Id, 0)
+
+      expect(onPlayFromHand).toHaveBeenCalledWith(game, player1Id, 0)
     })
 
     test('throws an error when specified card is not in hand', () => {

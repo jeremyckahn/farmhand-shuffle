@@ -22,9 +22,6 @@ export class Rules {
       game = drawCard(game, player.id, initialHandSize)
     }
 
-    // TODO: Set up player decks
-    // TODO: Shuffle player decks
-
     return game
   }
 
@@ -57,12 +54,9 @@ export class Rules {
     if (!isCardId(cardId)) throw new Error(`${cardId} is not a valid card ID`)
 
     const card = cards[cardId]
-
-    // FIXME: Test this
     game = await card.onPlayFromHand(game, playerId, cardIdx)
 
     const newHand = removeAt(hand, cardIdx)
-
     game = updateHand(game, playerId, newHand)
 
     return game
