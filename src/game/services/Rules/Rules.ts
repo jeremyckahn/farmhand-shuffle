@@ -1,14 +1,10 @@
-import { removeAt } from '../../../lib/array/removeAt'
 import { initialHandSize } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
-import { updateHand } from '../../reducers/update-hand'
+import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile/index'
 import * as cards from '../../cards'
-
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
-
 import { Factory } from '../Factory'
-import { addToDiscardPile } from '../../reducers/add-to-discard-pile/index'
 
 const isCardId = (id: string): id is keyof typeof cards => id in cards
 
@@ -52,14 +48,14 @@ export class Rules {
       )
     }
 
-    if (!isCardId(cardId)) throw new Error(`${cardId} is not a valid card ID`)
+    if (!isCardId(cardId)) {
+      throw new Error(`${cardId} is not a valid card ID`)
+    }
 
     const card = cards[cardId]
     game = await card.onPlayFromHand(game, playerId, cardIdx)
 
-    const newHand = removeAt(hand, cardIdx)
-    game = updateHand(game, playerId, newHand)
-    game = addToDiscardPile(game, playerId, cardId)
+    game = moveFromHandToDiscardPile(game, playerId, cardIdx)
 
     return game
   }
