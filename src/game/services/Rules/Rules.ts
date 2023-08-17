@@ -3,10 +3,13 @@ import { initialHandSize } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { updateHand } from '../../reducers/update-hand'
+import * as cards from '../../cards'
 
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 
 import { Factory } from '../Factory'
+
+const isCardId = (id: string): id is keyof typeof cards => id in cards
 
 export class Rules {
   static processGameStart(playerSeeds: IPlayerSeed[]): IGame {
@@ -37,11 +40,11 @@ export class Rules {
     return game
   }
 
-  static playCardFromHand(
+  static async playCardFromHand(
     game: IGame,
     playerId: IPlayer['id'],
     cardIdx: number
-  ): IGame {
+  ): Promise<IGame> {
     const { hand } = game.table.players[playerId]
     const cardId = hand[cardIdx]
 
@@ -51,10 +54,14 @@ export class Rules {
       )
     }
 
-    const newHand = removeAt(hand, cardIdx)
+    if (!isCardId(cardId)) throw new Error(`${cardId} is not a valid card ID`)
 
-    // FIXME: Retrieve card by ID
-    // FIXME: Process card
+    const card = cards[cardId]
+
+    // FIXME: Test this
+    game = await card.onPlayFromHand(game, playerId, cardIdx)
+
+    const newHand = removeAt(hand, cardIdx)
 
     game = updateHand(game, playerId, newHand)
 

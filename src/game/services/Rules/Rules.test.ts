@@ -48,11 +48,11 @@ describe('Rules', () => {
   })
 
   describe('playCardFromHand', () => {
-    test('removes played card from hand', () => {
+    test('removes played card from hand', async () => {
       const game = Rules.processGameStart([player1, player2])
       const [player1Id] = Object.keys(game.table.players)
 
-      const newGame = Rules.playCardFromHand(game, player1Id, 0)
+      const newGame = await Rules.playCardFromHand(game, player1Id, 0)
 
       expect(newGame.table.players[player1Id].hand.length).toEqual(
         game.table.players[player1Id].hand.length - 1
@@ -63,13 +63,13 @@ describe('Rules', () => {
       const game = Rules.processGameStart([player1, player2])
       const [player1Id] = Object.keys(game.table.players)
 
-      expect(() => {
-        Rules.playCardFromHand(
+      expect(async () => {
+        await Rules.playCardFromHand(
           game,
           player1Id,
           game.table.players[player1Id].hand.length
         )
-      }).toThrow()
+      }).rejects.toThrow()
     })
   })
 })
