@@ -5,7 +5,7 @@ import { IPlayer } from '../../game/types'
 import { stubDeck } from './deck'
 import { stubField } from './field'
 
-export const stubPlayer = (): IPlayer => {
+export const stubPlayer = (overrides: Partial<IPlayer> = {}): IPlayer => {
   return {
     id: uuid(),
     funds: 0,
@@ -13,5 +13,6 @@ export const stubPlayer = (): IPlayer => {
     discardPile: [],
     hand: [],
     field: stubField(),
+    ...overrides,
   }
 }
