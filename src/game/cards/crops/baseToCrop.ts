@@ -5,9 +5,9 @@ import { handlePlayFromHand } from './handlePlayFromHand'
 export const baseToCrop = (
   base: Pick<ICrop, 'id' | 'waterCardsToMature'>
 ): ICrop => {
-  return {
+  return Object.freeze({
     type: CardType.CROP,
     onPlayFromHand: handlePlayFromHand,
     ...base,
-  }
+  })
 }

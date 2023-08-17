@@ -57,6 +57,8 @@ export class Rules {
 
     game = moveFromHandToDiscardPile(game, playerId, cardIdx)
 
+    // FIXME: Move discarded card to the discard pile
+
     return game
   }
 }
