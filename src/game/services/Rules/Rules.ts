@@ -8,6 +8,7 @@ import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 
 import { Factory } from '../Factory'
+import { addToDiscardPile } from '../../reducers/add-to-discard-pile/index'
 
 const isCardId = (id: string): id is keyof typeof cards => id in cards
 
@@ -58,8 +59,7 @@ export class Rules {
 
     const newHand = removeAt(hand, cardIdx)
     game = updateHand(game, playerId, newHand)
-
-    // FIXME: Move discarded card to the discard pile
+    game = addToDiscardPile(game, playerId, cardId)
 
     return game
   }
