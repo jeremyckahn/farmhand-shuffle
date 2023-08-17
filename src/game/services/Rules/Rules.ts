@@ -53,8 +53,8 @@ export class Rules {
 
     const newHand = removeAt(hand, cardIdx)
 
-    // TODO: Retrieve card by ID
-    // TODO: Process card
+    // FIXME: Retrieve card by ID
+    // FIXME: Process card
 
     game = updateHand(game, playerId, newHand)
 

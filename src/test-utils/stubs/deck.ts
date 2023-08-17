@@ -1,6 +1,6 @@
-import { carrot } from '../../game/cards/crops/carrot/carrot'
-import { pumpkin } from '../../game/cards/crops/pumpkin/pumpkin'
-import { water } from '../../game/cards/water/water'
+import { carrot } from '../../game/cards/crops/carrot'
+import { pumpkin } from '../../game/cards/crops/pumpkin'
+import { water } from '../../game/cards/water'
 import { deckSize } from '../../game/config'
 import { ICrop } from '../../game/types'
 

@@ -1,5 +1,5 @@
 import { stubPlayer } from '../../../test-utils/stubs/players'
-import { carrot } from '../../cards/crops/carrot/carrot'
+import { pumpkin } from '../../cards/crops/pumpkin'
 import { deckSize, initialHandSize } from '../../config'
 import { isGame } from '../../types/guards'
 
@@ -10,7 +10,7 @@ const player2 = stubPlayer()
 
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
-player2.deck[deckSize - 1] = carrot.id
+player2.deck[deckSize - 1] = pumpkin.id
 
 describe('Rules', () => {
   describe('processGameStart', () => {
