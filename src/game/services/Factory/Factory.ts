@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 
 import { initialPlayerFunds } from '../../config'
-import { IField, IGame, IPlayer, ITable } from '../../types/index'
+import { IField, IGame, IPlayer, ITable } from '../../types'
 
 export class Factory {
   static buildField(): IField {

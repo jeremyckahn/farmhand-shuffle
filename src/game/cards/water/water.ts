@@ -1,4 +1,4 @@
-import { CardType, IGame, IWater } from '../../types/index'
+import { CardType, IGame, IWater } from '../../types'
 
 export const water: IWater = Object.freeze({
   type: CardType.WATER,

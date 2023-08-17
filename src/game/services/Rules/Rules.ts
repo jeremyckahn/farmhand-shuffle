@@ -1,7 +1,7 @@
 import { initialHandSize } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
-import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile/index'
+import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
 import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'

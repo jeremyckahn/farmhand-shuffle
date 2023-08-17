@@ -1,4 +1,4 @@
-import { CardType, ICrop, IField, IGame, IPlayer, ITable } from '../index'
+import { CardType, ICrop, IField, IGame, IPlayer, ITable } from '../'
 
 export const isCrop = (obj: unknown): obj is ICrop => {
   if (typeof obj !== 'object' || obj === null) return false

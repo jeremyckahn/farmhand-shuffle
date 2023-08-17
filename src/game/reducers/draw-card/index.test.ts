@@ -1,5 +1,5 @@
 import { stubGame } from '../../../test-utils/stubs/game'
-import { IGame, IPlayer } from '../../types/index'
+import { IGame, IPlayer } from '../../types'
 
 import { drawCard } from './'
 
