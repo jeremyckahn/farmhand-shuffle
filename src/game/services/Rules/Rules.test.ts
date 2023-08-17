@@ -3,11 +3,19 @@ import { pumpkin } from '../../cards/crops/pumpkin'
 import { carrot } from '../../cards'
 import { deckSize, initialHandSize } from '../../config'
 import { isGame } from '../../types/guards'
+import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
+import { IGame } from '../../types/index'
 
 import { Rules } from './Rules'
 
 const player1 = stubPlayer()
 const player2 = stubPlayer()
+
+jest.mock('../../cards/crops/handlePlayFromHand', () => {
+  return {
+    handlePlayFromHand: jest.fn(),
+  }
+})
 
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
@@ -49,6 +57,14 @@ describe('Rules', () => {
   })
 
   describe('playCardFromHand', () => {
+    beforeEach(() => {
+      ;(
+        mockCropHandlePlayFromHand as jest.Mock<Promise<IGame>>
+      ).mockImplementation(async (game: IGame) => {
+        return game
+      })
+    })
+
     test('removes played card from hand', async () => {
       const game = Rules.processGameStart([player1, player2])
       const [player1Id] = Object.keys(game.table.players)
@@ -65,11 +81,14 @@ describe('Rules', () => {
       const [player1Id] = Object.keys(game.table.players)
 
       game.table.players[player1Id].hand[0] = carrot.id
-      const onPlayFromHand = jest.spyOn(carrot, 'onPlayFromHand')
 
       await Rules.playCardFromHand(game, player1Id, 0)
 
-      expect(onPlayFromHand).toHaveBeenCalledWith(game, player1Id, 0)
+      expect(mockCropHandlePlayFromHand).toHaveBeenCalledWith(
+        game,
+        player1Id,
+        0
+      )
     })
 
     test('throws an error when specified card is not in hand', () => {

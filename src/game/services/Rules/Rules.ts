@@ -59,6 +59,8 @@ export class Rules {
     const newHand = removeAt(hand, cardIdx)
     game = updateHand(game, playerId, newHand)
 
+    // FIXME: Move discarded card to the discard pile
+
     return game
   }
 }
