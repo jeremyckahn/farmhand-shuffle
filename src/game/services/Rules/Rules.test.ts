@@ -4,7 +4,7 @@ import { carrot } from '../../cards'
 import { deckSize, initialHandSize } from '../../config'
 import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
-import { IGame } from '../../types/index'
+import { IGame, IPlayer } from '../../types'
 
 import { Rules } from './Rules'
 
@@ -57,18 +57,23 @@ describe('Rules', () => {
   })
 
   describe('playCardFromHand', () => {
+    let game: IGame
+    let player1Id: IPlayer['id']
+
     beforeEach(() => {
       ;(
         mockCropHandlePlayFromHand as jest.Mock<Promise<IGame>>
       ).mockImplementation(async (game: IGame) => {
         return game
       })
+
+      game = Rules.processGameStart([player1, player2])
+      player1Id = Object.keys(game.table.players)[0]
+
+      game.table.players[player1Id].hand[0] = carrot.id
     })
 
     test('removes played card from hand', async () => {
-      const game = Rules.processGameStart([player1, player2])
-      const [player1Id] = Object.keys(game.table.players)
-
       const newGame = await Rules.playCardFromHand(game, player1Id, 0)
 
       expect(newGame.table.players[player1Id].hand.length).toEqual(
@@ -77,22 +82,12 @@ describe('Rules', () => {
     })
 
     test('moves played card to discard pile', async () => {
-      const game = Rules.processGameStart([player1, player2])
-      const [player1Id] = Object.keys(game.table.players)
-
-      game.table.players[player1Id].hand[0] = carrot.id
-
       const newGame = await Rules.playCardFromHand(game, player1Id, 0)
 
       expect(newGame.table.players[player1Id].discardPile).toEqual([carrot.id])
     })
 
     test('performs card-specific behavior', async () => {
-      const game = Rules.processGameStart([player1, player2])
-      const [player1Id] = Object.keys(game.table.players)
-
-      game.table.players[player1Id].hand[0] = carrot.id
-
       await Rules.playCardFromHand(game, player1Id, 0)
 
       expect(mockCropHandlePlayFromHand).toHaveBeenCalledWith(
@@ -103,9 +98,6 @@ describe('Rules', () => {
     })
 
     test('throws an error when specified card is not in hand', () => {
-      const game = Rules.processGameStart([player1, player2])
-      const [player1Id] = Object.keys(game.table.players)
-
       expect(async () => {
         await Rules.playCardFromHand(
           game,
