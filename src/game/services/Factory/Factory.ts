@@ -4,33 +4,37 @@ import { initialPlayerFunds } from '../../config'
 import { IField, IGame, IPlayer, ITable } from '../../types'
 
 export class Factory {
-  static buildField(): IField {
+  static buildField(overrides: Partial<IField> = {}): IField {
     return {
       crops: [],
+      ...overrides,
     }
   }
 
-  static buildPlayer(id = uuid()): IPlayer {
+  static buildPlayer(overrides: Partial<IPlayer> = {}): IPlayer {
     return {
-      id,
+      id: uuid(),
       funds: initialPlayerFunds,
       deck: [],
       hand: [],
       discardPile: [],
-      field: Factory.buildField(),
+      field: Factory.buildField(overrides?.field),
+      ...overrides,
     }
   }
 
-  static buildTable(): ITable {
+  static buildTable(overrides: Partial<ITable> = {}): ITable {
     return {
       players: {},
       communityFund: 100,
+      ...overrides,
     }
   }
 
-  static buildGame(): IGame {
+  static buildGame(overrides: Partial<IGame> = {}): IGame {
     return {
-      table: Factory.buildTable(),
+      table: Factory.buildTable(overrides?.table),
+      ...overrides,
     }
   }
 }
