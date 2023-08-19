@@ -2,6 +2,7 @@ import { initialHandSize } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
+import { updateCommunityFund } from '../../reducers/update-community-fund'
 import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'
@@ -13,17 +14,28 @@ export class Rules {
     let game = Factory.buildGame()
 
     for (const playerSeed of playerSeeds) {
-      const player = { ...Factory.buildPlayer(), ...playerSeed }
+      const player = {
+        ...Factory.buildPlayer(),
+        ...playerSeed,
+        funds: Math.floor(game.table.communityFund / playerSeeds.length),
+      }
+
       game.table.players[player.id] = player
       game = shuffleDeck(game, player.id)
       game = drawCard(game, player.id, initialHandSize)
     }
+
+    game = updateCommunityFund(
+      game,
+      game.table.communityFund % playerSeeds.length
+    )
 
     return game
   }
 
   static processTurnStart(game: IGame): IGame {
     // TODO: Pay tax to community fund
+    // TODO: Determine game lose condition
     // TODO: Draw a card from the deck
 
     return game
