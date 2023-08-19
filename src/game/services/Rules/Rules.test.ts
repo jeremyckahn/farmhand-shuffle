@@ -1,7 +1,11 @@
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { pumpkin } from '../../cards/crops/pumpkin'
 import { carrot } from '../../cards'
-import { deckSize, initialHandSize } from '../../config'
+import {
+  deckSize,
+  initialHandSize,
+  initialPlayerFunds,
+} from '../../config'
 import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
 import { IGame, IPlayer } from '../../types'
@@ -53,6 +57,15 @@ describe('Rules', () => {
       expect(game.table.players[player2Id].hand).toEqual(
         player2.deck.slice().reverse().slice(0, initialHandSize)
       )
+    })
+
+    test('distributes community fund to players', () => {
+      const game = Rules.processGameStart([player1, player2])
+      const [player1Id, player2Id] = Object.keys(game.table.players)
+
+      expect(game.table.communityFund).toEqual(0)
+      expect(game.table.players[player1Id].funds).toEqual(initialPlayerFunds)
+      expect(game.table.players[player2Id].funds).toEqual(initialPlayerFunds)
     })
   })
 

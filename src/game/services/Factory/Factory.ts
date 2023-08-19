@@ -24,7 +24,7 @@ export class Factory {
   static buildTable(): ITable {
     return {
       players: {},
-      communityFund: 0,
+      communityFund: 100,
     }
   }
 
