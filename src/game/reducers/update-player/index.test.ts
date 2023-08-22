@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { updatePlayer } from './index'
+import { updatePlayer } from '.'
 
 describe('updatePlayer', () => {
   test('updates player properties', () => {

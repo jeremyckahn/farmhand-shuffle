@@ -1,7 +1,7 @@
 import { removeAt } from '../../../lib/array/removeAt'
 import { IGame, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
-import { updateHand } from '../update-hand'
+import { updatePlayer } from '../update-player'
 
 export const moveFromHandToDiscardPile = (
   game: IGame,
@@ -17,7 +17,7 @@ export const moveFromHandToDiscardPile = (
 
   const newHand = removeAt(hand, cardIdx)
 
-  game = updateHand(game, playerId, newHand)
+  game = updatePlayer(game, playerId, { hand: newHand })
   game = addToDiscardPile(game, playerId, cardId)
 
   return game

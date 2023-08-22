@@ -1,6 +1,5 @@
 import { IGame, IPlayer } from '../../types'
-import { updateDeck } from '../update-deck'
-import { updateHand } from '../update-hand'
+import { updatePlayer } from '../update-player'
 
 export const drawCard = (game: IGame, playerId: IPlayer['id'], howMany = 1) => {
   let newHand = [...game.table.players[playerId].hand]
@@ -9,8 +8,7 @@ export const drawCard = (game: IGame, playerId: IPlayer['id'], howMany = 1) => {
   const drawnCards = newDeck.splice(0, howMany)
   newHand = [...newHand, ...drawnCards]
 
-  game = updateDeck(game, playerId, newDeck)
-  game = updateHand(game, playerId, newHand)
+  game = updatePlayer(game, playerId, { deck: newDeck, hand: newHand })
 
   return game
 }
