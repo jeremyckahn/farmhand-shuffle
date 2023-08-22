@@ -1,7 +1,7 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { IGame, IPlayer } from '../../types'
 
-import { changePlayerFunds } from './index'
+import { changePlayerFunds } from '.'
 
 describe('changePlayerFunds', () => {
   let game: IGame
