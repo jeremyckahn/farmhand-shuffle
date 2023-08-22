@@ -1,18 +1,10 @@
 import { IGame, IPlayer } from '../../types'
+import { updatePlayer } from '../update-player/index'
 
 export const updateDeck = (
   game: IGame,
   playerId: IPlayer['id'],
   deck: IPlayer['deck']
 ): IGame => {
-  return {
-    ...game,
-    table: {
-      ...game.table,
-      players: {
-        ...game.table.players,
-        ...{ [playerId]: { ...game.table.players[playerId], deck } },
-      },
-    },
-  }
+  return updatePlayer(game, playerId, { deck })
 }
