@@ -1,9 +1,9 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { IGame, IPlayer } from '../../types'
 
-import { updatePlayerFunds } from '.'
+import { incrementPlayerFunds } from '.'
 
-describe('updatePlayerFunds', () => {
+describe('incrementPlayerFunds', () => {
   let game: IGame
   let player1Id: IPlayer['id']
 
@@ -13,21 +13,21 @@ describe('updatePlayerFunds', () => {
   })
 
   test('adds funds', () => {
-    const newGame = updatePlayerFunds(game, player1Id, 5)
+    const newGame = incrementPlayerFunds(game, player1Id, 5)
     expect(newGame.table.players[player1Id].funds).toEqual(
       game.table.players[player1Id].funds + 5
     )
   })
 
   test('removes funds', () => {
-    const newGame = updatePlayerFunds(game, player1Id, -5)
+    const newGame = incrementPlayerFunds(game, player1Id, -5)
     expect(newGame.table.players[player1Id].funds).toEqual(
       game.table.players[player1Id].funds - 5
     )
   })
 
   test('does not remove more funds than the player has', () => {
-    const newGame = updatePlayerFunds(
+    const newGame = incrementPlayerFunds(
       game,
       player1Id,
       -game.table.players[player1Id].funds - 1
