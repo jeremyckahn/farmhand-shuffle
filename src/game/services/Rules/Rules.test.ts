@@ -5,6 +5,7 @@ import {
   deckSize,
   initialHandSize,
   initialPlayerFunds,
+  standardTaxAmount,
 } from '../../config'
 import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
@@ -66,6 +67,48 @@ describe('Rules', () => {
       expect(game.table.communityFund).toEqual(0)
       expect(game.table.players[player1Id].funds).toEqual(initialPlayerFunds)
       expect(game.table.players[player2Id].funds).toEqual(initialPlayerFunds)
+    })
+  })
+
+  describe('processTurnStart', () => {
+    let game: IGame
+    let player1Id: IPlayer['id']
+    let player2Id: IPlayer['id']
+
+    beforeEach(() => {
+      game = Rules.processGameStart([player1, player2])
+      game = Rules.processGameStart([player1, player2])
+      player1Id = Object.keys(game.table.players)[0]
+      player2Id = Object.keys(game.table.players)[1]
+    })
+
+    test('pays tax to community fund', () => {
+      const newGame = Rules.processTurnStart(game, player1Id)
+
+      expect(newGame.table.players[player1Id].funds).toEqual(
+        game.table.players[player1Id].funds - standardTaxAmount
+      )
+
+      expect(newGame.table.players[player2Id].funds).toEqual(
+        game.table.players[player2Id].funds - standardTaxAmount
+      )
+
+      expect(newGame.table.communityFund).toEqual(
+        game.table.communityFund + standardTaxAmount * 2
+      )
+    })
+
+    test('draws a card from the deck', () => {
+      const newGame = Rules.processTurnStart(game, player1Id)
+
+      expect(newGame.table.players[player1Id].hand).toEqual([
+        ...game.table.players[player1Id].hand,
+        game.table.players[player1Id].deck[0],
+      ])
+
+      expect(newGame.table.players[player1Id].deck).toEqual(
+        game.table.players[player1Id].deck.slice(1)
+      )
     })
   })
 
