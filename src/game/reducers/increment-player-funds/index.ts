@@ -4,6 +4,9 @@ import { updatePlayer } from '../update-player'
 export const incrementPlayerFunds = (
   game: IGame,
   playerId: IPlayer['id'],
+  /**
+   * This number can be negative to perform a decrement of funds.
+   */
   amount: number
 ) => {
   const { funds } = game.table.players[playerId]
