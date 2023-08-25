@@ -1,4 +1,4 @@
-import { initialHandSize } from '../../config'
+import { initialHandSize, standardTaxAmount } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
@@ -6,6 +6,7 @@ import { updateCommunityFund } from '../../reducers/update-community-fund'
 import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'
+import { transferFunds } from '../../reducers/transfer-funds/index'
 
 const isCardId = (id: string): id is keyof typeof cards => id in cards
 
@@ -33,10 +34,15 @@ export class Rules {
     return game
   }
 
-  static processTurnStart(game: IGame): IGame {
-    // TODO: Pay tax to community fund
+  static processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
     // TODO: Determine game lose condition
-    // TODO: Draw a card from the deck
+
+    const playerIds = Object.keys(game.table.players)
+
+    for (const playerId of playerIds) {
+      game = transferFunds(game, standardTaxAmount, playerId)
+      game = drawCard(game, playerId)
+    }
 
     return game
   }
