@@ -11,7 +11,7 @@ export const stubTable = (overrides: Partial<ITable> = {}): ITable => {
   return Factory.buildTable({
     communityFund: overrides?.players
       ? Object.keys(overrides.players).length * initialPlayerFunds
-      : 2 * initialPlayerFunds,
+      : 0,
     players: { [player1.id]: player1, [player2.id]: player2 },
     ...overrides,
   })
