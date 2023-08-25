@@ -1,5 +1,5 @@
 import { IGame, IPlayer } from '../../types'
-import { updatePlayerFunds } from '../update-player-funds/index'
+import { incrementPlayerFunds } from '../increment-player-funds/index'
 import { updateCommunityFund } from '../update-community-fund/index'
 
 export const transferFunds = (
@@ -23,7 +23,7 @@ export const transferFunds = (
       ? Math.min(fromPlayerFunds, amount)
       : Math.max(-communityFund, amount)
 
-    game = updatePlayerFunds(game, fromPlayerId, -adjustedAmount)
+    game = incrementPlayerFunds(game, fromPlayerId, -adjustedAmount)
     game = updateCommunityFund(game, communityFund + adjustedAmount)
   } else {
     const { funds: toPlayerFunds } = game.table.players[toPlayerId]
@@ -31,8 +31,8 @@ export const transferFunds = (
       ? Math.min(fromPlayerFunds, amount)
       : Math.max(-toPlayerFunds, amount)
 
-    game = updatePlayerFunds(game, fromPlayerId, -adjustedAmount)
-    game = updatePlayerFunds(game, toPlayerId, adjustedAmount)
+    game = incrementPlayerFunds(game, fromPlayerId, -adjustedAmount)
+    game = incrementPlayerFunds(game, toPlayerId, adjustedAmount)
   }
 
   return game
