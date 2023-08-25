@@ -1,7 +1,7 @@
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
-export const changePlayerFunds = (
+export const updatePlayerFunds = (
   game: IGame,
   playerId: IPlayer['id'],
   amount: number

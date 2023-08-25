@@ -2,9 +2,9 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { IGame, IPlayer } from '../../types'
 import { updateCommunityFund } from '../update-community-fund'
 
-import { transferMoney } from '.'
+import { transferFunds } from '.'
 
-describe('transferMoney', () => {
+describe('transferFunds', () => {
   let game: IGame
   let player1Id: IPlayer['id']
   let player2Id: IPlayer['id']
@@ -17,7 +17,7 @@ describe('transferMoney', () => {
 
   describe('player to community fund transfers', () => {
     test('transfers money from player to community fund', () => {
-      const newGame = transferMoney(game, 5, player1Id)
+      const newGame = transferFunds(game, 5, player1Id)
 
       expect(newGame.table.communityFund).toEqual(game.table.communityFund + 5)
       expect(newGame.table.players[player1Id].funds).toEqual(
@@ -27,7 +27,7 @@ describe('transferMoney', () => {
 
     test('transfers money from community fund to player', () => {
       game = updateCommunityFund(game, 50)
-      const newGame = transferMoney(game, -5, player1Id)
+      const newGame = transferFunds(game, -5, player1Id)
 
       expect(newGame.table.communityFund).toEqual(game.table.communityFund - 5)
       expect(newGame.table.players[player1Id].funds).toEqual(
@@ -36,7 +36,7 @@ describe('transferMoney', () => {
     })
 
     test('does not transfer more money from player than they have', () => {
-      const newGame = transferMoney(
+      const newGame = transferFunds(
         game,
         game.table.players[player1Id].funds + 1,
         player1Id
@@ -49,7 +49,7 @@ describe('transferMoney', () => {
     })
 
     test('does not transfer more money from community fund than it has', () => {
-      const newGame = transferMoney(
+      const newGame = transferFunds(
         game,
         -(game.table.communityFund + 1),
         player1Id
@@ -65,7 +65,7 @@ describe('transferMoney', () => {
   describe('player to player transfers', () => {
     describe('positive transactions', () => {
       test('transfers money from player to player', () => {
-        const newGame = transferMoney(game, 5, player1Id, player2Id)
+        const newGame = transferFunds(game, 5, player1Id, player2Id)
 
         expect(newGame.table.players[player1Id].funds).toEqual(
           game.table.players[player1Id].funds - 5
@@ -76,7 +76,7 @@ describe('transferMoney', () => {
       })
 
       test('does not transfer more money from player than is available', () => {
-        const newGame = transferMoney(
+        const newGame = transferFunds(
           game,
           game.table.players[player1Id].funds + 1,
           player1Id,
@@ -93,7 +93,7 @@ describe('transferMoney', () => {
 
     describe('negative transfers', () => {
       test('transfers money to player from player', () => {
-        const newGame = transferMoney(game, -5, player1Id, player2Id)
+        const newGame = transferFunds(game, -5, player1Id, player2Id)
 
         expect(newGame.table.players[player1Id].funds).toEqual(
           game.table.players[player1Id].funds + 5
@@ -104,7 +104,7 @@ describe('transferMoney', () => {
       })
 
       test('does not transfer more money to player than is available', () => {
-        const newGame = transferMoney(
+        const newGame = transferFunds(
           game,
           -(game.table.players[player1Id].funds + 1),
           player1Id,
