@@ -4,7 +4,7 @@ import { updateCommunityFund } from '../update-community-fund'
 
 import { payFromPlayerToCommunity } from '.'
 
-describe('transferFunds', () => {
+describe('payFromPlayerToCommunity', () => {
   let game: IGame
   let player1Id: IPlayer['id']
 

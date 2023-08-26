@@ -3,7 +3,7 @@ import { IGame, IPlayer } from '../../types'
 
 import { payFromPlayerToPlayer } from '.'
 
-describe('transferFunds', () => {
+describe('payFromPlayerToPlayer', () => {
   let game: IGame
   let player1Id: IPlayer['id']
   let player2Id: IPlayer['id']
