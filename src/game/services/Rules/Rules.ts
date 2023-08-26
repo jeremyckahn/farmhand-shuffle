@@ -6,7 +6,7 @@ import { updateCommunityFund } from '../../reducers/update-community-fund'
 import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'
-import { transferFunds } from '../../reducers/transfer-funds/index'
+import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 
 const isCardId = (id: string): id is keyof typeof cards => id in cards
 
@@ -40,7 +40,7 @@ export class Rules {
     const playerIds = Object.keys(game.table.players)
 
     for (const playerId of playerIds) {
-      game = transferFunds(game, standardTaxAmount, playerId)
+      game = payFromPlayerToCommunity(game, standardTaxAmount, playerId)
       game = drawCard(game, playerId)
     }
 
