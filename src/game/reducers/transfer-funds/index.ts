@@ -5,34 +5,34 @@ import { incrementPlayerFunds } from '../increment-player-funds'
 export const transferFunds = (
   game: IGame,
   amount: number,
-  fromPlayerId: IPlayer['id'],
+  sourcePlayerId: IPlayer['id'],
   /**
    * If this is not provided, transfer target is the community fund.
    */
-  toPlayerId?: IPlayer['id']
+  targetPlayerId?: IPlayer['id']
 ) => {
   if (amount === 0) return game
 
-  const { funds: fromPlayerFunds } = game.table.players[fromPlayerId]
+  const { funds: sourcePlayerFunds } = game.table.players[sourcePlayerId]
   const { communityFund } = game.table
-  const isCommunityFundTransfer = typeof toPlayerId === 'undefined'
+  const isCommunityFundTransfer = typeof targetPlayerId === 'undefined'
   const isAmountPositive = amount > 0
 
   if (isCommunityFundTransfer) {
     const adjustedAmount = isAmountPositive
-      ? Math.min(fromPlayerFunds, amount)
+      ? Math.min(sourcePlayerFunds, amount)
       : Math.max(-communityFund, amount)
 
-    game = incrementPlayerFunds(game, fromPlayerId, -adjustedAmount)
+    game = incrementPlayerFunds(game, sourcePlayerId, -adjustedAmount)
     game = incrementCommunityFund(game, adjustedAmount)
   } else {
-    const { funds: toPlayerFunds } = game.table.players[toPlayerId]
+    const { funds: targetPlayerFunds } = game.table.players[targetPlayerId]
     const adjustedAmount = isAmountPositive
-      ? Math.min(fromPlayerFunds, amount)
-      : Math.max(-toPlayerFunds, amount)
+      ? Math.min(sourcePlayerFunds, amount)
+      : Math.max(-targetPlayerFunds, amount)
 
-    game = incrementPlayerFunds(game, fromPlayerId, -adjustedAmount)
-    game = incrementPlayerFunds(game, toPlayerId, adjustedAmount)
+    game = incrementPlayerFunds(game, sourcePlayerId, -adjustedAmount)
+    game = incrementPlayerFunds(game, targetPlayerId, adjustedAmount)
   }
 
   return game
