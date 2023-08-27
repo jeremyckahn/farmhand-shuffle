@@ -11,6 +11,8 @@ import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
 import { IGame, IPlayer } from '../../types'
 
+import { updatePlayer } from '../../reducers/update-player'
+
 import { Rules } from './Rules'
 
 const player1 = stubPlayer()
@@ -96,6 +98,14 @@ describe('Rules', () => {
       expect(newGame.table.communityFund).toEqual(
         game.table.communityFund + standardTaxAmount * 2
       )
+    })
+
+    test('aborts if player is out of money after paying tax', () => {
+      let newGame = updatePlayer(game, player1Id, { funds: standardTaxAmount })
+
+      expect(() => {
+        Rules.processTurnStart(newGame, player1Id)
+      }).toThrow(`[PlayerOutOfFundsError] Player ${player1Id} is out of funds.`)
     })
 
     test('draws a card from the deck', () => {

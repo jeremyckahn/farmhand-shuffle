@@ -8,6 +8,8 @@ import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 
+import { PlayerOutOfFundsError } from './errors'
+
 const isCardId = (id: string): id is keyof typeof cards => id in cards
 
 export class Rules {
@@ -35,13 +37,18 @@ export class Rules {
   }
 
   static processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
-    // TODO: Determine game lose condition
-
     const playerIds = Object.keys(game.table.players)
 
     for (const playerId of playerIds) {
       game = payFromPlayerToCommunity(game, standardTaxAmount, playerId)
+
+      if (game.table.players[playerId].funds === 0) {
+        throw new PlayerOutOfFundsError(playerId)
+      }
+
       game = drawCard(game, playerId)
+
+      // TODO: Shuffle discard pile into deck if deck is empty
     }
 
     return game
