@@ -37,17 +37,13 @@ export class Rules {
   }
 
   static processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
-    const playerIds = Object.keys(game.table.players)
+    game = payFromPlayerToCommunity(game, standardTaxAmount, playerId)
 
-    for (const playerId of playerIds) {
-      game = payFromPlayerToCommunity(game, standardTaxAmount, playerId)
-
-      if (game.table.players[playerId].funds === 0) {
-        throw new PlayerOutOfFundsError(playerId)
-      }
-
-      game = drawCard(game, playerId)
+    if (game.table.players[playerId].funds === 0) {
+      throw new PlayerOutOfFundsError(playerId)
     }
+
+    game = drawCard(game, playerId)
 
     return game
   }

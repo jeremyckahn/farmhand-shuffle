@@ -75,13 +75,10 @@ describe('Rules', () => {
   describe('processTurnStart', () => {
     let game: IGame
     let player1Id: IPlayer['id']
-    let player2Id: IPlayer['id']
 
     beforeEach(() => {
       game = Rules.processGameStart([player1, player2])
-      game = Rules.processGameStart([player1, player2])
       player1Id = Object.keys(game.table.players)[0]
-      player2Id = Object.keys(game.table.players)[1]
     })
 
     test('pays tax to community fund', () => {
@@ -91,12 +88,8 @@ describe('Rules', () => {
         game.table.players[player1Id].funds - standardTaxAmount
       )
 
-      expect(newGame.table.players[player2Id].funds).toEqual(
-        game.table.players[player2Id].funds - standardTaxAmount
-      )
-
       expect(newGame.table.communityFund).toEqual(
-        game.table.communityFund + standardTaxAmount * 2
+        game.table.communityFund + standardTaxAmount
       )
     })
 
