@@ -1,5 +1,7 @@
 import { stubGame } from '../../../test-utils/stubs/game'
+import { carrot, pumpkin, water } from '../../cards/index'
 import { IGame, IPlayer } from '../../types'
+import { updatePlayer } from '../update-player/index'
 
 import { drawCard } from './'
 
@@ -72,9 +74,30 @@ describe('drawCard', () => {
         game.table.players[player1Id].deck.slice(0)
       )
     })
+  })
 
-    test("removes the drawn cards from the player's deck", () => {
-      expect(newGame.table.players[player1Id].deck).toEqual([])
+  describe('drawing the last card in the deck', () => {
+    test('shuffles the discard pile into the deck', () => {
+      let game = stubGame()
+
+      const [player1Id] = Object.keys(game.table.players)
+
+      const deck = [pumpkin.id, water.id, pumpkin.id]
+      const discardPile = [water.id, carrot.id]
+      const hand = [pumpkin.id]
+      game = updatePlayer(game, player1Id, { deck, discardPile, hand })
+
+      const newGame = drawCard(
+        game,
+        player1Id,
+        game.table.players[player1Id].deck.length + 1
+      )
+
+      expect(newGame.table.players[player1Id]).toMatchObject({
+        hand: [...hand, ...deck],
+        discardPile: [],
+        deck: discardPile.slice().reverse(),
+      })
     })
   })
 })

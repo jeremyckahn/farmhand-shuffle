@@ -47,8 +47,6 @@ export class Rules {
       }
 
       game = drawCard(game, playerId)
-
-      // TODO: Shuffle discard pile into deck if deck is empty
     }
 
     return game
