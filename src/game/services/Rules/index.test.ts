@@ -13,7 +13,7 @@ import { IGame, IPlayer } from '../../types'
 
 import { updatePlayer } from '../../reducers/update-player'
 
-import { Rules } from './Rules'
+import { Rules } from '.'
 
 const player1 = stubPlayer()
 const player2 = stubPlayer()

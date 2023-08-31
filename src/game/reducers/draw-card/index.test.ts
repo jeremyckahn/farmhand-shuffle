@@ -1,9 +1,9 @@
 import { stubGame } from '../../../test-utils/stubs/game'
-import { carrot, pumpkin, water } from '../../cards/index'
+import { carrot, pumpkin, water } from '../../cards'
 import { IGame, IPlayer } from '../../types'
-import { updatePlayer } from '../update-player/index'
+import { updatePlayer } from '../update-player'
 
-import { drawCard } from './'
+import { drawCard } from '.'
 
 describe('drawCard', () => {
   describe('drawing one card from the deck', () => {

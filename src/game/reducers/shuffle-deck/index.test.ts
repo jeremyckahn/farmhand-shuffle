@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { shuffleDeck } from './'
+import { shuffleDeck } from '.'
 
 describe('shuffleDeck', () => {
   test('shuffles deck', () => {

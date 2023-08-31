@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { updateCommunityFund } from './'
+import { updateCommunityFund } from '.'
 
 describe('updateCommunityFund', () => {
   test('updates the community fund', () => {

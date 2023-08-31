@@ -1,4 +1,4 @@
-import { Factory } from '../../game/services/Factory/Factory'
+import { Factory } from '../../game/services/Factory'
 import { IPlayer } from '../../game/types'
 
 import { stubDeck } from './deck'

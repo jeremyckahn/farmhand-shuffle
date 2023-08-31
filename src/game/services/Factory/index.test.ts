@@ -1,6 +1,6 @@
 import { isField, isGame, isPlayer, isTable } from '../../types/guards'
 
-import { Factory } from './'
+import { Factory } from '.'
 
 describe('Factory', () => {
   describe('buildField', () => {

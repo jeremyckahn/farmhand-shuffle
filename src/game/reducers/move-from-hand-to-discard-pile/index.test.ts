@@ -1,7 +1,7 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot } from '../../cards/crops/carrot'
 
-import { moveFromHandToDiscardPile } from './'
+import { moveFromHandToDiscardPile } from '.'
 
 describe('moveFromHandToDiscardPile', () => {
   test("moves a card from a player's hand to their discard pile", () => {

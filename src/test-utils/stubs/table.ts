@@ -1,5 +1,5 @@
 import { initialPlayerFunds } from '../../game/config'
-import { Factory } from '../../game/services/Factory/Factory'
+import { Factory } from '../../game/services/Factory'
 import { ITable } from '../../game/types'
 
 import { stubPlayer } from './players'

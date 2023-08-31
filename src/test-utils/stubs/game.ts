@@ -1,4 +1,4 @@
-import { Factory } from '../../game/services/Factory/Factory'
+import { Factory } from '../../game/services/Factory'
 import { IGame } from '../../game/types'
 
 import { stubTable } from './table'
