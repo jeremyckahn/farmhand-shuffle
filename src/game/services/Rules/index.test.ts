@@ -10,8 +10,8 @@ import {
 import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
 import { IGame, IPlayer } from '../../types'
-
 import { updatePlayer } from '../../reducers/update-player'
+import { RandomNumber } from '../../../services/RandomNumber'
 
 import { Rules } from '.'
 
@@ -69,6 +69,14 @@ describe('Rules', () => {
       expect(game.table.communityFund).toEqual(0)
       expect(game.table.players[player1Id].funds).toEqual(initialPlayerFunds)
       expect(game.table.players[player2Id].funds).toEqual(initialPlayerFunds)
+    })
+
+    test('determines first player', () => {
+      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
+      const game = Rules.processGameStart([player1, player2])
+      const [, player2Id] = Object.keys(game.table.players)
+
+      expect(game.currentPlayerId).toEqual(player2Id)
     })
   })
 

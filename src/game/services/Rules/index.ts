@@ -8,6 +8,9 @@ import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 
+import { updateGame } from '../../reducers/update-game/index'
+import { RandomNumber } from '../../../services/RandomNumber/index'
+
 import { PlayerOutOfFundsError } from './errors'
 
 const isCardId = (id: string): id is keyof typeof cards => id in cards
@@ -32,6 +35,12 @@ export class Rules {
       game,
       game.table.communityFund % playerSeeds.length
     )
+
+    const firstPlayerId = RandomNumber.chooseElement(
+      Object.keys(game.table.players)
+    )
+
+    game = updateGame(game, { currentPlayerId: firstPlayerId })
 
     return game
   }
