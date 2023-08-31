@@ -59,5 +59,10 @@ export const isTable = (obj: unknown): obj is ITable => {
 export const isGame = (obj: unknown): obj is IGame => {
   if (typeof obj !== 'object' || obj === null) return false
 
-  return 'table' in obj && isTable(obj.table)
+  return (
+    'table' in obj &&
+    isTable(obj.table) &&
+    'currentPlayerId' in obj &&
+    (typeof obj.currentPlayerId === 'string' || obj.currentPlayerId === null)
+  )
 }

@@ -130,4 +130,6 @@ export interface ITable {
 
 export interface IGame {
   readonly table: ITable
+
+  readonly currentPlayerId: IPlayer['id'] | null
 }
