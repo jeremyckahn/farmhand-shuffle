@@ -1,7 +1,5 @@
 export class RandomNumber {
-  generate() {
+  static generate() {
     return Math.random()
   }
 }
-
-export const randomNumber = new RandomNumber()
