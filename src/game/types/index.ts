@@ -1,4 +1,4 @@
-import { uuidString } from '../../lib/types'
+import { uuidString } from '../../services/types'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.

@@ -1,4 +1,4 @@
-import { ArrayService } from '../../../services/Array/index'
+import { ArrayService } from '../../../services/Array'
 import { IGame, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
