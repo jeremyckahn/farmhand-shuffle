@@ -13,6 +13,8 @@ import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { RandomNumber } from '../../../services/RandomNumber'
 
+import { updateGame } from '../../reducers/update-game/index'
+
 import { Rules } from '.'
 
 const player1 = stubPlayer()
@@ -120,6 +122,29 @@ describe('Rules', () => {
       expect(newGame.table.players[player1Id].deck).toEqual(
         game.table.players[player1Id].deck.slice(1)
       )
+    })
+  })
+
+  describe('processTurnEnd', () => {
+    test('changes from player 1 to player 2', () => {
+      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
+      const game = Rules.processGameStart([player1, player2])
+      const [player1Id] = Object.keys(game.table.players)
+
+      const newGame = Rules.processTurnEnd(game)
+
+      expect(newGame.currentPlayerId).toEqual(player1Id)
+    })
+
+    test('changes from player 2 to player 1', () => {
+      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
+      const game = Rules.processGameStart([player1, player2])
+      const [player1Id, player2Id] = Object.keys(game.table.players)
+
+      let newGame = updateGame(game, { currentPlayerId: player2Id })
+      newGame = Rules.processTurnEnd(game)
+
+      expect(newGame.currentPlayerId).toEqual(player1Id)
     })
   })
 

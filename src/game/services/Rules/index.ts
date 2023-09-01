@@ -11,7 +11,7 @@ import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-comm
 import { updateGame } from '../../reducers/update-game/index'
 import { RandomNumber } from '../../../services/RandomNumber/index'
 
-import { PlayerOutOfFundsError } from './errors'
+import { GameStateCorruptError, PlayerOutOfFundsError } from './errors'
 
 const isCardId = (id: string): id is keyof typeof cards => id in cards
 
@@ -58,7 +58,18 @@ export class Rules {
   }
 
   static processTurnEnd(game: IGame): IGame {
-    // TODO: Implement this
+    const { currentPlayerId } = game
+    const playerIds = Object.keys(game.table.players)
+
+    const currentPlayerIdx = playerIds.indexOf(currentPlayerId ?? '')
+
+    if (currentPlayerIdx === undefined) {
+      throw new GameStateCorruptError()
+    }
+
+    const newPlayerIdx = (currentPlayerIdx + 1) % playerIds.length
+    game = updateGame(game, { currentPlayerId: playerIds[newPlayerIdx] })
+
     return game
   }
 
