@@ -7,11 +7,11 @@ import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
+import { updateGame } from '../../reducers/update-game'
+import { incrementPlayer } from '../../reducers/increment-player'
+import { RandomNumber } from '../../../services/RandomNumber'
 
-import { updateGame } from '../../reducers/update-game/index'
-import { RandomNumber } from '../../../services/RandomNumber/index'
-
-import { GameStateCorruptError, PlayerOutOfFundsError } from './errors'
+import { PlayerOutOfFundsError } from './errors'
 
 const isCardId = (id: string): id is keyof typeof cards => id in cards
 
@@ -58,17 +58,7 @@ export class Rules {
   }
 
   static processTurnEnd(game: IGame): IGame {
-    const { currentPlayerId } = game
-    const playerIds = Object.keys(game.table.players)
-
-    const currentPlayerIdx = playerIds.indexOf(currentPlayerId ?? '')
-
-    if (currentPlayerIdx === undefined) {
-      throw new GameStateCorruptError()
-    }
-
-    const newPlayerIdx = (currentPlayerIdx + 1) % playerIds.length
-    game = updateGame(game, { currentPlayerId: playerIds[newPlayerIdx] })
+    game = incrementPlayer(game)
 
     return game
   }
