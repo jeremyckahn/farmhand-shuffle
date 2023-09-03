@@ -1,3 +1,5 @@
+import shuffle from 'lodash.shuffle'
+
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { pumpkin } from '../../cards/crops/pumpkin'
 import { carrot } from '../../cards'
@@ -24,6 +26,15 @@ jest.mock('../../cards/crops/handlePlayFromHand', () => {
   }
 })
 
+jest.mock('lodash.shuffle', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}))
+
+beforeEach(() => {
+  ;(shuffle as jest.Mock).mockImplementation((arr: any[]) => arr)
+})
+
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
 player2.deck[deckSize - 1] = pumpkin.id
@@ -37,16 +48,11 @@ describe('Rules', () => {
     })
 
     test('shuffles decks', () => {
-      const game = Rules.processGameStart([player1, player2])
-      const [player1Id, player2Id] = Object.keys(game.table.players)
+      Rules.processGameStart([player1, player2])
 
-      expect(game.table.players[player1Id].deck).toEqual(
-        player1.deck.slice().reverse().slice(initialHandSize)
-      )
-
-      expect(game.table.players[player2Id].deck).toEqual(
-        player2.deck.slice().reverse().slice(initialHandSize)
-      )
+      expect(shuffle).toHaveBeenCalledWith(player1.deck)
+      expect(shuffle).toHaveBeenCalledWith(player2.deck)
+      expect(shuffle).toHaveBeenCalledTimes(2)
     })
 
     test('sets up player hands', () => {
@@ -54,11 +60,11 @@ describe('Rules', () => {
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.players[player1Id].hand).toEqual(
-        player1.deck.slice().reverse().slice(0, initialHandSize)
+        player1.deck.slice(0, initialHandSize)
       )
 
       expect(game.table.players[player2Id].hand).toEqual(
-        player2.deck.slice().reverse().slice(0, initialHandSize)
+        player2.deck.slice(0, initialHandSize)
       )
     })
 

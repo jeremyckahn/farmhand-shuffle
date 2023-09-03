@@ -1,9 +1,20 @@
+import shuffle from 'lodash.shuffle'
+
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot, pumpkin, water } from '../../cards'
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
 import { drawCard } from '.'
+
+jest.mock('lodash.shuffle', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}))
+
+beforeEach(() => {
+  ;(shuffle as jest.Mock).mockImplementation((arr: any[]) => arr)
+})
 
 describe('drawCard', () => {
   describe('drawing one card from the deck', () => {
@@ -93,10 +104,11 @@ describe('drawCard', () => {
         game.table.players[player1Id].deck.length + 1
       )
 
+      expect(shuffle).toHaveBeenCalledWith(discardPile)
       expect(newGame.table.players[player1Id]).toMatchObject({
         hand: [...hand, ...deck],
         discardPile: [],
-        deck: discardPile.slice().reverse(),
+        deck: discardPile,
       })
     })
   })
