@@ -17,4 +17,17 @@ describe('moveFromHandToDiscardPile', () => {
 
     expect(newGame.table.players[player1Id].discardPile).toEqual([carrot.id])
   })
+
+  test('throws an error if an invalid card is specified', () => {
+    const game = stubGame()
+    const [player1Id] = Object.keys(game.table.players)
+
+    expect(() => {
+      moveFromHandToDiscardPile(
+        game,
+        player1Id,
+        game.table.players[player1Id].hand.length
+      )
+    }).toThrow()
+  })
 })
