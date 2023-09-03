@@ -34,10 +34,10 @@ export interface ICrop extends ICard {
   readonly type: CardType.CROP
 
   /**
-   * How many water cards that need to be attached to this Crop card in order
-   * to mature from from a seed to a sellable crop.
+   * How much water that needs to be attached to this Crop card in order to
+   * mature from from a seed to a sellable crop.
    */
-  readonly waterCardsToMature: number
+  readonly waterToMature: number
 }
 
 /**

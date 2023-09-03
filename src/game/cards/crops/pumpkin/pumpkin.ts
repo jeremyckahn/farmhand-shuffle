@@ -3,5 +3,5 @@ import { baseToCrop } from '../baseToCrop'
 
 export const pumpkin: ICrop = baseToCrop({
   id: 'pumpkin',
-  waterCardsToMature: 4,
+  waterToMature: 4,
 })
