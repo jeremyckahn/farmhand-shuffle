@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import { initialPlayerFunds } from '../../config'
+import { INITIAL_PLAYER_FUNDS } from '../../config'
 import { IField, IGame, IPlayer, ITable } from '../../types'
 
 export class Factory {
@@ -14,7 +14,7 @@ export class Factory {
   static buildPlayer(overrides: Partial<IPlayer> = {}): IPlayer {
     return {
       id: uuid(),
-      funds: initialPlayerFunds,
+      funds: INITIAL_PLAYER_FUNDS,
       deck: [],
       hand: [],
       discardPile: [],

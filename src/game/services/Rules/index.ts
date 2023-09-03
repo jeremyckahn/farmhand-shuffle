@@ -1,4 +1,4 @@
-import { initialHandSize, standardTaxAmount } from '../../config'
+import { INITIAL_HAND_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
@@ -28,7 +28,7 @@ export class Rules {
 
       game.table.players[player.id] = player
       game = shuffleDeck(game, player.id)
-      game = drawCard(game, player.id, initialHandSize)
+      game = drawCard(game, player.id, INITIAL_HAND_SIZE)
     }
 
     game = updateCommunityFund(
@@ -46,7 +46,7 @@ export class Rules {
   }
 
   static processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
-    game = payFromPlayerToCommunity(game, standardTaxAmount, playerId)
+    game = payFromPlayerToCommunity(game, STANDARD_TAX_AMOUNT, playerId)
 
     if (game.table.players[playerId].funds === 0) {
       throw new PlayerOutOfFundsError(playerId)

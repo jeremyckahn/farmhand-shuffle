@@ -4,10 +4,10 @@ import { stubPlayer } from '../../../test-utils/stubs/players'
 import { pumpkin } from '../../cards/crops/pumpkin'
 import { carrot } from '../../cards'
 import {
-  deckSize,
-  initialHandSize,
-  initialPlayerFunds,
-  standardTaxAmount,
+  DECK_SIZE,
+  INITIAL_HAND_SIZE,
+  INITIAL_PLAYER_FUNDS,
+  STANDARD_TAX_AMOUNT,
 } from '../../config'
 import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
@@ -37,7 +37,7 @@ beforeEach(() => {
 
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
-player2.deck[deckSize - 1] = pumpkin.id
+player2.deck[DECK_SIZE - 1] = pumpkin.id
 
 describe('Rules', () => {
   describe('processGameStart', () => {
@@ -60,11 +60,11 @@ describe('Rules', () => {
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.players[player1Id].hand).toEqual(
-        player1.deck.slice(0, initialHandSize)
+        player1.deck.slice(0, INITIAL_HAND_SIZE)
       )
 
       expect(game.table.players[player2Id].hand).toEqual(
-        player2.deck.slice(0, initialHandSize)
+        player2.deck.slice(0, INITIAL_HAND_SIZE)
       )
     })
 
@@ -73,8 +73,8 @@ describe('Rules', () => {
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.communityFund).toEqual(0)
-      expect(game.table.players[player1Id].funds).toEqual(initialPlayerFunds)
-      expect(game.table.players[player2Id].funds).toEqual(initialPlayerFunds)
+      expect(game.table.players[player1Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
+      expect(game.table.players[player2Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
     })
 
     test('determines first player', () => {
@@ -99,16 +99,18 @@ describe('Rules', () => {
       const newGame = Rules.processTurnStart(game, player1Id)
 
       expect(newGame.table.players[player1Id].funds).toEqual(
-        game.table.players[player1Id].funds - standardTaxAmount
+        game.table.players[player1Id].funds - STANDARD_TAX_AMOUNT
       )
 
       expect(newGame.table.communityFund).toEqual(
-        game.table.communityFund + standardTaxAmount
+        game.table.communityFund + STANDARD_TAX_AMOUNT
       )
     })
 
     test('aborts if player is out of money after paying tax', () => {
-      let newGame = updatePlayer(game, player1Id, { funds: standardTaxAmount })
+      let newGame = updatePlayer(game, player1Id, {
+        funds: STANDARD_TAX_AMOUNT,
+      })
 
       expect(() => {
         Rules.processTurnStart(newGame, player1Id)

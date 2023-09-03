@@ -1,4 +1,4 @@
-import { initialPlayerFunds } from '../../game/config'
+import { INITIAL_PLAYER_FUNDS } from '../../game/config'
 import { Factory } from '../../game/services/Factory'
 import { ITable } from '../../game/types'
 
@@ -10,7 +10,7 @@ export const stubTable = (overrides: Partial<ITable> = {}): ITable => {
 
   return Factory.buildTable({
     communityFund: overrides?.players
-      ? Object.keys(overrides.players).length * initialPlayerFunds
+      ? Object.keys(overrides.players).length * INITIAL_PLAYER_FUNDS
       : 0,
     players: { [player1.id]: player1, [player2.id]: player2 },
     ...overrides,
