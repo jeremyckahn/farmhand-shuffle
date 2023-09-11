@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { updateGame } from '../update-game/index'
+import { updateGame } from '../update-game'
 
 import { incrementPlayer } from '.'
 

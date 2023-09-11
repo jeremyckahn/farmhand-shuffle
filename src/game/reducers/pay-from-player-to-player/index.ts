@@ -6,16 +6,14 @@ export const payFromPlayerToPlayer = (
   amount: number,
   sourcePlayerId: IPlayer['id'],
   targetPlayerId: IPlayer['id']
-) => {
+): IGame => {
   if (amount === 0) return game
 
-  const { funds: sourcePlayerFunds } = game.table.players[sourcePlayerId]
-  const isAmountPositive = amount > 0
+  if (amount < 0)
+    return payFromPlayerToPlayer(game, -amount, targetPlayerId, sourcePlayerId)
 
-  const { funds: targetPlayerFunds } = game.table.players[targetPlayerId]
-  const adjustedAmount = isAmountPositive
-    ? Math.min(sourcePlayerFunds, amount)
-    : Math.max(-targetPlayerFunds, amount)
+  const { funds: sourcePlayerFunds } = game.table.players[sourcePlayerId]
+  const adjustedAmount = Math.min(sourcePlayerFunds, amount)
 
   game = incrementPlayerFunds(game, sourcePlayerId, -adjustedAmount)
   game = incrementPlayerFunds(game, targetPlayerId, adjustedAmount)
