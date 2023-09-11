@@ -193,5 +193,15 @@ describe('Rules', () => {
         )
       }).rejects.toThrow()
     })
+
+    test('throws an error when specified card is not valid', () => {
+      game = updatePlayer(game, player1Id, {
+        hand: ['some-card-that-does-not-exist'],
+      })
+
+      expect(async () => {
+        await Rules.playCardFromHand(game, player1Id, 0)
+      }).rejects.toThrow()
+    })
   })
 })

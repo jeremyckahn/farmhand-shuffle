@@ -12,18 +12,17 @@ import { updateGame } from '../../reducers/update-game'
 import { incrementPlayer } from '../../reducers/increment-player'
 import { RandomNumber } from '../../../services/RandomNumber'
 
-import { PlayerOutOfFundsError } from './errors'
+import { GameStateCorruptError, PlayerOutOfFundsError } from './errors'
 
 export class Rules {
   static processGameStart(playerSeeds: IPlayerSeed[]): IGame {
     let game = Factory.buildGame()
 
     for (const playerSeed of playerSeeds) {
-      const player = {
-        ...Factory.buildPlayer(),
+      const player = Factory.buildPlayer({
         ...playerSeed,
         funds: Math.floor(game.table.communityFund / playerSeeds.length),
-      }
+      })
 
       game.table.players[player.id] = player
       game = shuffleDeck(game, player.id)
@@ -75,13 +74,14 @@ export class Rules {
       )
     }
 
+    // NOTE: This check is not logically necessary, but it is required to
+    // prevent cards[cardId] from being implicitly cast as an any type.
     if (!isCardId(cardId)) {
-      throw new Error(`${cardId} is not a valid card ID`)
+      throw new GameStateCorruptError(`${cardId} is not a valid card ID`)
     }
 
     const card = cards[cardId]
     game = await card.onPlayFromHand(game, playerId, cardIdx)
-
     game = moveFromHandToDiscardPile(game, playerId, cardIdx)
 
     return game
