@@ -2,7 +2,7 @@ import { INITIAL_HAND_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
-import { updateCommunityFund } from '../../reducers/update-community-fund'
+import { updateTable } from '../../reducers/update-table'
 import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
 import { Factory } from '../Factory'
@@ -31,10 +31,9 @@ export class Rules {
       game = drawCard(game, player.id, INITIAL_HAND_SIZE)
     }
 
-    game = updateCommunityFund(
-      game,
-      game.table.communityFund % playerSeeds.length
-    )
+    game = updateTable(game, {
+      communityFund: game.table.communityFund % playerSeeds.length,
+    })
 
     const firstPlayerId = RandomNumber.chooseElement(
       Object.keys(game.table.players)

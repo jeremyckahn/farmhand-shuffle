@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { IGame } from '../../types'
-import { updateCommunityFund } from '../update-community-fund'
+import { updateTable } from '../update-table'
 
 import { incrementCommunityFund } from '.'
 
@@ -17,7 +17,7 @@ describe('incrementCommunityFund', () => {
   })
 
   test('removes funds', () => {
-    game = updateCommunityFund(game, 50)
+    game = updateTable(game, { communityFund: 50 })
 
     const newGame = incrementCommunityFund(game, -5)
     expect(newGame.table.communityFund).toEqual(game.table.communityFund - 5)

@@ -1,11 +1,11 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { updateCommunityFund } from '.'
+import { updateTable } from '.'
 
-describe('updateCommunityFund', () => {
+describe('updateTable', () => {
   test('updates the community fund', () => {
     const game = stubGame()
-    const newGame = updateCommunityFund(game, 123)
+    const newGame = updateTable(game, { communityFund: 123 })
 
     expect(newGame.table.communityFund).toEqual(123)
   })

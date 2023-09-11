@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { IGame, IPlayer } from '../../types'
-import { updateCommunityFund } from '../update-community-fund'
+import { updateTable } from '../update-table'
 
 import { payFromPlayerToCommunity } from '.'
 
@@ -23,7 +23,7 @@ describe('payFromPlayerToCommunity', () => {
   })
 
   test('transfers money from community fund to player', () => {
-    game = updateCommunityFund(game, 50)
+    game = updateTable(game, { communityFund: 50 })
     const newGame = payFromPlayerToCommunity(game, -5, player1Id)
 
     expect(newGame.table.communityFund).toEqual(game.table.communityFund - 5)

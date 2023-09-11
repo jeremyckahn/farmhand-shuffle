@@ -1,5 +1,5 @@
 import { IGame } from '../../types'
-import { updateCommunityFund } from '../update-community-fund'
+import { updateTable } from '../update-table'
 
 export const incrementCommunityFund = (
   game: IGame,
@@ -11,7 +11,7 @@ export const incrementCommunityFund = (
   const { communityFund } = game.table
   const newCommunityFund = Math.max(0, communityFund + amount)
 
-  game = updateCommunityFund(game, newCommunityFund)
+  game = updateTable(game, { communityFund: newCommunityFund })
 
   return game
 }
