@@ -1,3 +1,4 @@
+import * as cards from '../../cards'
 import { CardType, ICrop, IField, IGame, IPlayer, ITable } from '../'
 
 export const isCrop = (obj: unknown): obj is ICrop => {
@@ -66,3 +67,5 @@ export const isGame = (obj: unknown): obj is IGame => {
     (typeof obj.currentPlayerId === 'string' || obj.currentPlayerId === null)
   )
 }
+
+export const isCardId = (id: string): id is keyof typeof cards => id in cards

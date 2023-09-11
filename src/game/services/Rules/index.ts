@@ -5,6 +5,7 @@ import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-disc
 import { updateTable } from '../../reducers/update-table'
 import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
+import { isCardId } from '../../types/guards'
 import { Factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 import { updateGame } from '../../reducers/update-game'
@@ -12,8 +13,6 @@ import { incrementPlayer } from '../../reducers/increment-player'
 import { RandomNumber } from '../../../services/RandomNumber'
 
 import { PlayerOutOfFundsError } from './errors'
-
-const isCardId = (id: string): id is keyof typeof cards => id in cards
 
 export class Rules {
   static processGameStart(playerSeeds: IPlayerSeed[]): IGame {
