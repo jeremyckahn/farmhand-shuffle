@@ -75,10 +75,7 @@ export interface IWater extends ICard {
 }
 
 export interface IField {
-  /**
-   * Sparse array.
-   */
-  readonly crops: (ICrop | undefined)[]
+  readonly crops: IPlayedCrop[]
 }
 
 export interface IPlayer {
