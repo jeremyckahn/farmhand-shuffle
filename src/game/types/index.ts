@@ -53,6 +53,7 @@ export interface ICrop extends ICard {
   readonly waterToMature: number
 }
 
+// FIXME: This must only contain serializable properties, but it includes a function
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
