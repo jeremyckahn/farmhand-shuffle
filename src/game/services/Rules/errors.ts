@@ -13,3 +13,10 @@ export class GameStateCorruptError extends Error {
     this.message = `[GameStateCorruptError] ${message}`
   }
 }
+
+export class FieldFullError extends Error {
+  constructor() {
+    super(...arguments)
+    this.message = `[FieldFullError] There is no room in the field.`
+  }
+}
