@@ -40,13 +40,17 @@ export interface ICrop extends ICard {
   readonly waterToMature: number
 }
 
-// FIXME: This must only contain serializable properties, but it includes a function
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
-export interface IPlayedCrop extends ICrop {
+export interface IPlayedCrop {
   /**
-   * How many water cards are attached to this card.
+   * The card ID of this crop.
+   */
+  readonly id: ICard['id']
+
+  /**
+   * How many water cards are attached to this crop.
    */
   waterCards: number
 }

@@ -1,4 +1,5 @@
 import { isField, isGame, isPlayer, isTable } from '../../types/guards'
+import { carrot } from '../../cards'
 
 import { Factory } from '.'
 
@@ -32,6 +33,17 @@ describe('Factory', () => {
       const game = Factory.buildGame()
 
       expect(isGame(game)).toBe(true)
+    })
+  })
+
+  describe('buildPlayedCrop', () => {
+    test('builds a played crop', () => {
+      const playedCard = Factory.buildPlayedCrop(carrot)
+
+      expect(playedCard).toEqual({
+        id: carrot.id,
+        waterCards: 0,
+      })
     })
   })
 })

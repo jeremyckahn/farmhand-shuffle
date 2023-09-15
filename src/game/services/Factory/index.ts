@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 
 import { INITIAL_PLAYER_FUNDS } from '../../config'
-import { IField, IGame, IPlayer, ITable } from '../../types'
+import { ICrop, IField, IGame, IPlayedCrop, IPlayer, ITable } from '../../types'
 
 export class Factory {
   static buildField(overrides: Partial<IField> = {}): IField {
@@ -39,6 +39,13 @@ export class Factory {
       table,
       currentPlayerId,
       ...overrides,
+    }
+  }
+
+  static buildPlayedCrop({ id }: ICrop): IPlayedCrop {
+    return {
+      id,
+      waterCards: 0,
     }
   }
 }
