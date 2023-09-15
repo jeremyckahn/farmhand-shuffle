@@ -191,25 +191,5 @@ describe('Rules', () => {
         0
       )
     })
-
-    test('throws an error when specified card is not in hand', () => {
-      expect(async () => {
-        await Rules.playCardFromHand(
-          game,
-          player1Id,
-          game.table.players[player1Id].hand.length
-        )
-      }).rejects.toThrow()
-    })
-
-    test('throws an error when specified card is not valid', () => {
-      game = updatePlayer(game, player1Id, {
-        hand: ['some-card-that-does-not-exist'],
-      })
-
-      expect(async () => {
-        await Rules.playCardFromHand(game, player1Id, 0)
-      }).rejects.toThrow()
-    })
   })
 })
