@@ -1,9 +1,4 @@
-// NOTE: Important! This import is necessary to prevent circular dependencies
-// when running the tests.
-import '../../game/cards'
-
-import { carrot } from '../../game/cards/crops/carrot'
-import { pumpkin } from '../../game/cards/crops/pumpkin'
+import { carrot, pumpkin } from '../../game/cards/index'
 import { water } from '../../game/cards/water'
 import { DECK_SIZE } from '../../game/config'
 import { ICrop } from '../../game/types'

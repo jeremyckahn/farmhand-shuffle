@@ -1,8 +1,6 @@
 import shuffle from 'lodash.shuffle'
 
 import { stubPlayer } from '../../../test-utils/stubs/players'
-import { pumpkin } from '../../cards/crops/pumpkin'
-import { carrot } from '../../cards'
 import {
   DECK_SIZE,
   INITIAL_HAND_SIZE,
@@ -14,6 +12,7 @@ import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/cr
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { RandomNumber } from '../../../services/RandomNumber'
+import { carrot, pumpkin } from '../../cards'
 
 import { Rules } from '.'
 
