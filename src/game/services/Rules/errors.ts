@@ -20,3 +20,10 @@ export class FieldFullError extends Error {
     this.message = `[FieldFullError] There is no room in the field.`
   }
 }
+
+export class InvalidCardError extends Error {
+  constructor(message: string) {
+    super(...arguments)
+    this.message = `[InvalidCardError] ${message}`
+  }
+}
