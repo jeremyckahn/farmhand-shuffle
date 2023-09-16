@@ -1,3 +1,7 @@
+// NOTE: Important! This import is necessary to prevent circular dependencies
+// when running the tests.
+import '../../game/cards'
+
 import { carrot } from '../../game/cards/crops/carrot'
 import { pumpkin } from '../../game/cards/crops/pumpkin'
 import { water } from '../../game/cards/water'

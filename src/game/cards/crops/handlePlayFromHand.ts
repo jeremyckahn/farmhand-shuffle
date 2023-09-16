@@ -1,11 +1,24 @@
+import { addCropToField } from '../../reducers/add-crop-to-field'
+import { Factory } from '../../services/Factory'
+import { Lookup } from '../../services/Lookup'
 import { IGame, IPlayer } from '../../types'
+import { isCrop } from '../../types/guards'
 
 export const handlePlayFromHand = async (
   game: IGame,
-  _playerId: IPlayer['id'],
-  _cardIdx: number
+  playerId: IPlayer['id'],
+  cardIdx: number
 ) => {
-  console.log('TODO: Implement this')
+  // FIXME: Test this.
+  const card = Lookup.getCardFromHand(game, playerId, cardIdx)
+
+  if (!isCrop(card)) {
+    // FIXME: Use a custom error here
+    throw new Error(`${card.id} is not a crop card`)
+  }
+
+  const playedCrop = Factory.buildPlayedCrop(card)
+  addCropToField(game, playerId, playedCrop)
 
   return game
 }
