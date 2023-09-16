@@ -41,3 +41,10 @@ export class PlayerAbortError extends Error {
     this.message = `[PlayerAbortError] The player cancelled the operation.`
   }
 }
+
+export class InvalidCardError extends Error {
+  constructor(message: string) {
+    super(...arguments)
+    this.message = `[InvalidCardError] ${message}`
+  }
+}
