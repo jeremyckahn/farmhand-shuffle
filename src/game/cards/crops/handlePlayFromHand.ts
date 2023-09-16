@@ -9,7 +9,6 @@ export const handlePlayFromHand = async (
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  // FIXME: Test this.
   const card = Lookup.getCardFromHand(game, playerId, cardIdx)
 
   if (!isCrop(card)) {
@@ -18,7 +17,7 @@ export const handlePlayFromHand = async (
   }
 
   const playedCrop = Factory.buildPlayedCrop(card)
-  addCropToField(game, playerId, playedCrop)
+  game = addCropToField(game, playerId, playedCrop)
 
   return game
 }
