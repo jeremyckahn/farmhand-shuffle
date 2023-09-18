@@ -12,11 +12,7 @@ import { RandomNumber } from '../../../services/RandomNumber'
 import { Lookup } from '../Lookup'
 
 import { PlayerOutOfFundsError } from './errors'
-
-export type InteractionHandlers = Record<
-  string,
-  (game: IGame, interactionHandlers: InteractionHandlers) => Promise<IGame>
->
+import { InteractionHandlers } from './InteractionHandlers'
 
 export class Rules {
   static processGameStart(playerSeeds: IPlayerSeed[]): IGame {

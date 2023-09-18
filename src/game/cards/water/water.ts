@@ -1,4 +1,4 @@
-import { InteractionHandlers } from '../../services/Rules'
+import { InteractionHandlers } from '../../services/Rules/InteractionHandlers'
 import { CardType, IGame, IWater } from '../../types'
 
 export const water: IWater = Object.freeze({
@@ -6,11 +6,17 @@ export const water: IWater = Object.freeze({
   id: 'water',
   async onPlayFromHand(
     game: IGame,
-    _interactionHandlers: InteractionHandlers,
-    _playerId: string,
+    interactionHandlers: InteractionHandlers,
+    playerId: string,
     _cardIdx: number
   ) {
+    const selectedCardIdx = await interactionHandlers.selectCropFromField(
+      game,
+      playerId
+    )
+
     console.log('TODO: Implement this')
+    console.log(`selectedCardIdx: ${selectedCardIdx}`)
 
     return game
   },

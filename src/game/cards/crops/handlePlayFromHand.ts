@@ -2,7 +2,7 @@ import { addCropToField } from '../../reducers/add-crop-to-field'
 import { Factory } from '../../services/Factory'
 import { Lookup } from '../../services/Lookup'
 import { InvalidCardError } from '../../services/Rules/errors'
-import { InteractionHandlers } from '../../services/Rules'
+import { InteractionHandlers } from '../../services/Rules/InteractionHandlers'
 import { IGame, IPlayer } from '../../types'
 import { isCrop } from '../../types/guards'
 

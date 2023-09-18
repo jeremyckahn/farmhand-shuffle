@@ -1,5 +1,7 @@
-import { InteractionHandlers } from '../../game/services/Rules'
+import { InteractionHandlers } from '../../game/services/Rules/InteractionHandlers'
 
 export const stubInteractionHandlers = (): InteractionHandlers => {
-  return {}
+  return {
+    selectCropFromField: async () => 0,
+  }
 }

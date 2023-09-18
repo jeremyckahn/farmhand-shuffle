@@ -1,5 +1,5 @@
 import { uuidString } from '../../services/types'
-import { InteractionHandlers } from '../services/Rules'
+import { InteractionHandlers } from '../services/Rules/InteractionHandlers'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
