@@ -1,4 +1,5 @@
 import { uuidString } from '../../services/types'
+import { InteractionHandlers } from '../services/Rules'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
@@ -17,6 +18,12 @@ export interface ICard {
   readonly type: CardType
   readonly onPlayFromHand: (
     game: IGame,
+
+    /**
+     * A map of asynchronous functions that solicit interactive feedback from
+     * the player.
+     */
+    interactionHandlers: InteractionHandlers,
 
     /**
      * The ID of the player playing the card

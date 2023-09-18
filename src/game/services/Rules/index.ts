@@ -13,6 +13,11 @@ import { Lookup } from '../Lookup'
 
 import { PlayerOutOfFundsError } from './errors'
 
+export type InteractionHandlers = Record<
+  string,
+  (game: IGame, interactionHandlers: InteractionHandlers) => Promise<IGame>
+>
+
 export class Rules {
   static processGameStart(playerSeeds: IPlayerSeed[]): IGame {
     let game = Factory.buildGame()
@@ -61,12 +66,18 @@ export class Rules {
 
   static async playCardFromHand(
     game: IGame,
+    interactionHandlers: InteractionHandlers,
     playerId: IPlayer['id'],
     cardIdx: number
   ): Promise<IGame> {
     const card = Lookup.getCardFromHand(game, playerId, cardIdx)
 
-    game = await card.onPlayFromHand(game, playerId, cardIdx)
+    game = await card.onPlayFromHand(
+      game,
+      interactionHandlers,
+      playerId,
+      cardIdx
+    )
     game = moveFromHandToDiscardPile(game, playerId, cardIdx)
 
     return game

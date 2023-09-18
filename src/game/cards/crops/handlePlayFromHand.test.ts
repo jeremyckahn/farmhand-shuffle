@@ -1,4 +1,5 @@
 import { stubGame } from '../../../test-utils/stubs/game'
+import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 import { updatePlayer } from '../../reducers/update-player/index'
 import { Factory } from '../../services/Factory/index'
 import { water } from '../index'
@@ -7,6 +8,8 @@ import { handlePlayFromHand } from './handlePlayFromHand'
 
 import { carrot } from '.'
 
+const interactionHandlers = stubInteractionHandlers()
+
 describe('handlePlayFromHand', () => {
   test('adds crop to field', async () => {
     const game = stubGame()
@@ -14,7 +17,12 @@ describe('handlePlayFromHand', () => {
     const playedCrop = Factory.buildPlayedCrop(carrot)
     let newGame = updatePlayer(game, player1Id, { hand: [carrot.id] })
 
-    newGame = await handlePlayFromHand(newGame, player1Id, 0)
+    newGame = await handlePlayFromHand(
+      newGame,
+      interactionHandlers,
+      player1Id,
+      0
+    )
 
     expect(newGame.table.players[player1Id].field.crops).toEqual([playedCrop])
   })
@@ -25,7 +33,7 @@ describe('handlePlayFromHand', () => {
     let newGame = updatePlayer(game, player1Id, { hand: [water.id] })
 
     expect(async () => {
-      await handlePlayFromHand(newGame, player1Id, 0)
+      await handlePlayFromHand(newGame, interactionHandlers, player1Id, 0)
     }).rejects.toThrow()
   })
 })

@@ -13,11 +13,13 @@ import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { RandomNumber } from '../../../services/RandomNumber'
 import { carrot, pumpkin } from '../../cards'
+import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 
 import { Rules } from '.'
 
 const player1 = stubPlayer()
 const player2 = stubPlayer()
+const interactionHandlers = stubInteractionHandlers()
 
 jest.mock('../../cards/crops/handlePlayFromHand', () => {
   return {
@@ -168,7 +170,12 @@ describe('Rules', () => {
     })
 
     test('removes played card from hand', async () => {
-      const newGame = await Rules.playCardFromHand(game, player1Id, 0)
+      const newGame = await Rules.playCardFromHand(
+        game,
+        interactionHandlers,
+        player1Id,
+        0
+      )
 
       expect(newGame.table.players[player1Id].hand.length).toEqual(
         game.table.players[player1Id].hand.length - 1
@@ -176,16 +183,22 @@ describe('Rules', () => {
     })
 
     test('moves played card to discard pile', async () => {
-      const newGame = await Rules.playCardFromHand(game, player1Id, 0)
+      const newGame = await Rules.playCardFromHand(
+        game,
+        interactionHandlers,
+        player1Id,
+        0
+      )
 
       expect(newGame.table.players[player1Id].discardPile).toEqual([carrot.id])
     })
 
     test('performs card-specific behavior', async () => {
-      await Rules.playCardFromHand(game, player1Id, 0)
+      await Rules.playCardFromHand(game, interactionHandlers, player1Id, 0)
 
       expect(mockCropHandlePlayFromHand).toHaveBeenCalledWith(
         game,
+        interactionHandlers,
         player1Id,
         0
       )

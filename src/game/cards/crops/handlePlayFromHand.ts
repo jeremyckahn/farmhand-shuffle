@@ -2,11 +2,13 @@ import { addCropToField } from '../../reducers/add-crop-to-field'
 import { Factory } from '../../services/Factory'
 import { Lookup } from '../../services/Lookup'
 import { InvalidCardError } from '../../services/Rules/errors'
+import { InteractionHandlers } from '../../services/Rules'
 import { IGame, IPlayer } from '../../types'
 import { isCrop } from '../../types/guards'
 
 export const handlePlayFromHand = async (
   game: IGame,
+  _interactionHandlers: InteractionHandlers,
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
