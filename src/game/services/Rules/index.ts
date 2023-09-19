@@ -60,6 +60,10 @@ export class Rules {
     return game
   }
 
+  /**
+   * @throws A custom error that describes why the card could not be played. If
+   * this occurs, the player should be instructed how to proceed.
+   */
   static async playCardFromHand(
     game: IGame,
     interactionHandlers: InteractionHandlers,
@@ -74,6 +78,7 @@ export class Rules {
       playerId,
       cardIdx
     )
+
     game = moveFromHandToDiscardPile(game, playerId, cardIdx)
 
     return game

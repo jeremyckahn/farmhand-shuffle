@@ -15,7 +15,13 @@ export enum CardType {
 
 export interface ICard {
   readonly id: string
+
   readonly type: CardType
+
+  /**
+   * @throws A custom error that describes why the card could not be played. If
+   * this happens, the card must not be discarded from the player's hand.
+   */
   readonly onPlayFromHand: (
     game: IGame,
 
