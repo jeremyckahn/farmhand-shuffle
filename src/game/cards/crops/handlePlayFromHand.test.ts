@@ -1,7 +1,7 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
-import { updatePlayer } from '../../reducers/update-player/index'
-import { Factory } from '../../services/Factory/index'
+import { updatePlayer } from '../../reducers/update-player'
+import { Factory } from '../../services/Factory'
 import { InvalidCardError } from '../../services/Rules/errors'
 import { water } from '..'
 

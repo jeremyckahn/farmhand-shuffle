@@ -1,4 +1,4 @@
-import { carrot, pumpkin } from '../../game/cards/index'
+import { carrot, pumpkin } from '../../game/cards'
 import { water } from '../../game/cards/water'
 import { DECK_SIZE } from '../../game/config'
 import { ICrop } from '../../game/types'

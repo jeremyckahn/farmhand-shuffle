@@ -1,7 +1,7 @@
 import { STANDARD_FIELD_SIZE } from '../../config'
 import { FieldFullError } from '../../services/Rules/errors'
-import { IGame, IPlayedCrop, IPlayer } from '../../types/index'
-import { updateField } from '../update-field/index'
+import { IGame, IPlayedCrop, IPlayer } from '../../types'
+import { updateField } from '../update-field'
 
 export const addCropToField = (
   game: IGame,
