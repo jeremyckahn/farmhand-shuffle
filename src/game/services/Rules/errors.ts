@@ -14,11 +14,10 @@ export class GameStateCorruptError extends Error {
   }
 }
 
-// FIXME: Print the player ID
 export class FieldFullError extends Error {
-  constructor() {
+  constructor(playerId: IPlayer['id']) {
     super(...arguments)
-    this.message = `[FieldFullError] There is no room in the field.`
+    this.message = `[FieldFullError] Player ${playerId} has no room in the field.`
   }
 }
 

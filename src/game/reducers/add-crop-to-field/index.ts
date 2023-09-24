@@ -12,7 +12,7 @@ export const addCropToField = (
   const { crops } = field
 
   if (crops.length >= STANDARD_FIELD_SIZE) {
-    throw new FieldFullError()
+    throw new FieldFullError(playerId)
   }
 
   const newCrops = [...crops, newCrop]

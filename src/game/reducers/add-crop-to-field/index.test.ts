@@ -4,6 +4,7 @@ import { carrot } from '../../cards'
 import { updateField } from '../update-field'
 import { STANDARD_FIELD_SIZE } from '../../config'
 import { Factory } from '../../services/Factory'
+import { FieldFullError } from '../../services/Rules/errors'
 
 import { addCropToField } from '.'
 
@@ -31,6 +32,6 @@ describe('addCropToField', () => {
 
     expect(() => {
       addCropToField(newGame, player1Id, playedCrop)
-    }).toThrow()
+    }).toThrow(FieldFullError)
   })
 })
