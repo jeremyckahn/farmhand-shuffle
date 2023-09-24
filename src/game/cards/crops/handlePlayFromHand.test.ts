@@ -2,7 +2,8 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 import { updatePlayer } from '../../reducers/update-player/index'
 import { Factory } from '../../services/Factory/index'
-import { water } from '../index'
+import { InvalidCardError } from '../../services/Rules/errors'
+import { water } from '..'
 
 import { handlePlayFromHand } from './handlePlayFromHand'
 
@@ -34,6 +35,6 @@ describe('handlePlayFromHand', () => {
 
     expect(async () => {
       await handlePlayFromHand(newGame, interactionHandlers, player1Id, 0)
-    }).rejects.toThrow()
+    }).rejects.toThrow(InvalidCardError)
   })
 })

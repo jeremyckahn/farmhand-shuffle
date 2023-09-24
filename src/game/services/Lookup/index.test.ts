@@ -1,7 +1,7 @@
 import { carrot } from '../../cards'
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
-
+import { GameStateCorruptError } from '../Rules/errors'
 import { stubGame } from '../../../test-utils/stubs/game'
 
 import { Lookup } from '.'
@@ -41,7 +41,7 @@ describe('Lookup', () => {
 
       expect(() => {
         Lookup.getCardFromHand(game, player1Id, 0)
-      }).toThrow()
+      }).toThrow(GameStateCorruptError)
     })
   })
 })
