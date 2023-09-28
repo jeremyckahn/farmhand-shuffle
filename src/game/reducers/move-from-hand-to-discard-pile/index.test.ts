@@ -1,7 +1,7 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot } from '../../cards/crops/carrot'
 
-import { moveFromHandToDiscardPile } from './'
+import { moveFromHandToDiscardPile } from '.'
 
 describe('moveFromHandToDiscardPile', () => {
   test("moves a card from a player's hand to their discard pile", () => {
@@ -16,5 +16,18 @@ describe('moveFromHandToDiscardPile', () => {
     )
 
     expect(newGame.table.players[player1Id].discardPile).toEqual([carrot.id])
+  })
+
+  test('throws an error if an invalid card is specified', () => {
+    const game = stubGame()
+    const [player1Id] = Object.keys(game.table.players)
+
+    expect(() => {
+      moveFromHandToDiscardPile(
+        game,
+        player1Id,
+        game.table.players[player1Id].hand.length
+      )
+    }).toThrow()
   })
 })

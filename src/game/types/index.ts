@@ -1,4 +1,4 @@
-import { uuidString } from '../../lib/types'
+import { uuidString } from '../../services/types'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
@@ -34,10 +34,10 @@ export interface ICrop extends ICard {
   readonly type: CardType.CROP
 
   /**
-   * How many water cards that need to be attached to this Crop card in order
-   * to mature from from a seed to a sellable crop.
+   * How much water that needs to be attached to this Crop card in order to
+   * mature from from a seed to a sellable crop.
    */
-  readonly waterCardsToMature: number
+  readonly waterToMature: number
 }
 
 /**
@@ -130,4 +130,6 @@ export interface ITable {
 
 export interface IGame {
   readonly table: ITable
+
+  readonly currentPlayerId: IPlayer['id'] | null
 }

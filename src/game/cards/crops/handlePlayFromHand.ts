@@ -5,6 +5,7 @@ export const handlePlayFromHand = async (
   _playerId: IPlayer['id'],
   _cardIdx: number
 ) => {
-  // TODO: Implement this
+  console.log('TODO: Implement this')
+
   return game
 }

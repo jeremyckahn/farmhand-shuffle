@@ -1,7 +1,7 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot } from '../../cards/crops/carrot'
 
-import { addToDiscardPile } from './'
+import { addToDiscardPile } from '.'
 
 describe('addToDiscardPile', () => {
   test("adds to a player's discard pile", () => {

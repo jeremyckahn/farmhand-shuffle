@@ -1,11 +1,11 @@
 import { carrot } from '../../game/cards/crops/carrot'
 import { pumpkin } from '../../game/cards/crops/pumpkin'
 import { water } from '../../game/cards/water'
-import { deckSize } from '../../game/config'
+import { DECK_SIZE } from '../../game/config'
 import { ICrop } from '../../game/types'
 
 export const stubDeck = (): ICrop['id'][] => {
-  const deck = new Array(deckSize)
+  const deck = new Array(DECK_SIZE)
 
   deck.fill(water)
 

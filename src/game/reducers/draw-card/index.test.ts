@@ -1,7 +1,20 @@
-import { stubGame } from '../../../test-utils/stubs/game'
-import { IGame, IPlayer } from '../../types'
+import shuffle from 'lodash.shuffle'
 
-import { drawCard } from './'
+import { stubGame } from '../../../test-utils/stubs/game'
+import { carrot, pumpkin, water } from '../../cards'
+import { IGame, IPlayer } from '../../types'
+import { updatePlayer } from '../update-player'
+
+import { drawCard } from '.'
+
+jest.mock('lodash.shuffle', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}))
+
+beforeEach(() => {
+  ;(shuffle as jest.Mock).mockImplementation((arr: any[]) => arr)
+})
 
 describe('drawCard', () => {
   describe('drawing one card from the deck', () => {
@@ -72,9 +85,31 @@ describe('drawCard', () => {
         game.table.players[player1Id].deck.slice(0)
       )
     })
+  })
 
-    test("removes the drawn cards from the player's deck", () => {
-      expect(newGame.table.players[player1Id].deck).toEqual([])
+  describe('drawing the last card in the deck', () => {
+    test('shuffles the discard pile into the deck', () => {
+      let game = stubGame()
+
+      const [player1Id] = Object.keys(game.table.players)
+
+      const deck = [pumpkin.id, water.id, pumpkin.id]
+      const discardPile = [water.id, carrot.id]
+      const hand = [pumpkin.id]
+      game = updatePlayer(game, player1Id, { deck, discardPile, hand })
+
+      const newGame = drawCard(
+        game,
+        player1Id,
+        game.table.players[player1Id].deck.length + 1
+      )
+
+      expect(shuffle).toHaveBeenCalledWith(discardPile)
+      expect(newGame.table.players[player1Id]).toMatchObject({
+        hand: [...hand, ...deck],
+        discardPile: [],
+        deck: discardPile,
+      })
     })
   })
 })
