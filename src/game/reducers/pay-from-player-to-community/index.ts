@@ -1,3 +1,5 @@
+import clamp from 'lodash.clamp'
+
 import { IGame, IPlayer } from '../../types'
 import { incrementCommunityFund } from '../increment-community-fund'
 import { incrementPlayerFunds } from '../increment-player-funds'
@@ -7,18 +9,12 @@ export const payFromPlayerToCommunity = (
   amount: number,
   sourcePlayerId: IPlayer['id']
 ) => {
-  if (amount === 0) return game
-
   const { funds: sourcePlayerFunds } = game.table.players[sourcePlayerId]
   const { communityFund } = game.table
-  const isAmountPositive = amount > 0
+  const clampedAmount = clamp(amount, -communityFund, sourcePlayerFunds)
 
-  const adjustedAmount = isAmountPositive
-    ? Math.min(sourcePlayerFunds, amount)
-    : Math.max(-communityFund, amount)
-
-  game = incrementPlayerFunds(game, sourcePlayerId, -adjustedAmount)
-  game = incrementCommunityFund(game, adjustedAmount)
+  game = incrementPlayerFunds(game, sourcePlayerId, -clampedAmount)
+  game = incrementCommunityFund(game, clampedAmount)
 
   return game
 }
