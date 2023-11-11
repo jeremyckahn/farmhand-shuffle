@@ -1,8 +1,6 @@
 import shuffle from 'lodash.shuffle'
 
 import { stubPlayer } from '../../../test-utils/stubs/players'
-import { pumpkin } from '../../cards/crops/pumpkin'
-import { carrot } from '../../cards'
 import {
   DECK_SIZE,
   INITIAL_HAND_SIZE,
@@ -14,11 +12,14 @@ import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/cr
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { RandomNumber } from '../../../services/RandomNumber'
+import { carrot, pumpkin } from '../../cards'
+import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 
 import { Rules } from '.'
 
 const player1 = stubPlayer()
 const player2 = stubPlayer()
+const interactionHandlers = stubInteractionHandlers()
 
 jest.mock('../../cards/crops/handlePlayFromHand', () => {
   return {
@@ -75,6 +76,14 @@ describe('Rules', () => {
       expect(game.table.communityFund).toEqual(0)
       expect(game.table.players[player1Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
       expect(game.table.players[player2Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
+    })
+
+    test('determines first player', () => {
+      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
+      const game = Rules.processGameStart([player1, player2])
+      const [, player2Id] = Object.keys(game.table.players)
+
+      expect(game.currentPlayerId).toEqual(player2Id)
     })
 
     test('determines first player', () => {
@@ -161,7 +170,12 @@ describe('Rules', () => {
     })
 
     test('removes played card from hand', async () => {
-      const newGame = await Rules.playCardFromHand(game, player1Id, 0)
+      const newGame = await Rules.playCardFromHand(
+        game,
+        interactionHandlers,
+        player1Id,
+        0
+      )
 
       expect(newGame.table.players[player1Id].hand.length).toEqual(
         game.table.players[player1Id].hand.length - 1
@@ -169,39 +183,25 @@ describe('Rules', () => {
     })
 
     test('moves played card to discard pile', async () => {
-      const newGame = await Rules.playCardFromHand(game, player1Id, 0)
+      const newGame = await Rules.playCardFromHand(
+        game,
+        interactionHandlers,
+        player1Id,
+        0
+      )
 
       expect(newGame.table.players[player1Id].discardPile).toEqual([carrot.id])
     })
 
     test('performs card-specific behavior', async () => {
-      await Rules.playCardFromHand(game, player1Id, 0)
+      await Rules.playCardFromHand(game, interactionHandlers, player1Id, 0)
 
       expect(mockCropHandlePlayFromHand).toHaveBeenCalledWith(
         game,
+        interactionHandlers,
         player1Id,
         0
       )
-    })
-
-    test('throws an error when specified card is not in hand', () => {
-      expect(async () => {
-        await Rules.playCardFromHand(
-          game,
-          player1Id,
-          game.table.players[player1Id].hand.length
-        )
-      }).rejects.toThrow()
-    })
-
-    test('throws an error when specified card is not valid', () => {
-      game = updatePlayer(game, player1Id, {
-        hand: ['some-card-that-does-not-exist'],
-      })
-
-      expect(async () => {
-        await Rules.playCardFromHand(game, player1Id, 0)
-      }).rejects.toThrow()
     })
   })
 })

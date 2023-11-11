@@ -3,16 +3,16 @@ import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
 import { updateTable } from '../../reducers/update-table'
-import * as cards from '../../cards'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
-import { isCardId } from '../../types/guards'
 import { Factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 import { updateGame } from '../../reducers/update-game'
 import { incrementPlayer } from '../../reducers/increment-player'
 import { RandomNumber } from '../../../services/RandomNumber'
+import { Lookup } from '../Lookup'
 
-import { GameStateCorruptError, PlayerOutOfFundsError } from './errors'
+import { PlayerOutOfFundsError } from './errors'
+import { InteractionHandlers } from './InteractionHandlers'
 
 export class Rules {
   static processGameStart(playerSeeds: IPlayerSeed[]): IGame {
@@ -60,28 +60,25 @@ export class Rules {
     return game
   }
 
+  /**
+   * @throws A custom error that describes why the card could not be played. If
+   * this occurs, the player should be instructed how to proceed.
+   */
   static async playCardFromHand(
     game: IGame,
+    interactionHandlers: InteractionHandlers,
     playerId: IPlayer['id'],
     cardIdx: number
   ): Promise<IGame> {
-    const { hand } = game.table.players[playerId]
-    const cardId = hand[cardIdx]
+    const card = Lookup.getCardFromHand(game, playerId, cardIdx)
 
-    if (!cardId) {
-      throw new Error(
-        `Card index ${cardIdx} is not in player ${playerId}'s hand`
-      )
-    }
+    game = await card.onPlayFromHand(
+      game,
+      interactionHandlers,
+      playerId,
+      cardIdx
+    )
 
-    // NOTE: This check is not logically necessary, but it is required to
-    // prevent cards[cardId] from being implicitly cast as an any type.
-    if (!isCardId(cardId)) {
-      throw new GameStateCorruptError(`${cardId} is not a valid card ID`)
-    }
-
-    const card = cards[cardId]
-    game = await card.onPlayFromHand(game, playerId, cardIdx)
     game = moveFromHandToDiscardPile(game, playerId, cardIdx)
 
     return game

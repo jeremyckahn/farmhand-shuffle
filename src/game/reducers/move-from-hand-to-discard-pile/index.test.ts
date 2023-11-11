@@ -1,5 +1,5 @@
 import { stubGame } from '../../../test-utils/stubs/game'
-import { carrot } from '../../cards/crops/carrot'
+import { carrot } from '../../cards'
 
 import { moveFromHandToDiscardPile } from '.'
 

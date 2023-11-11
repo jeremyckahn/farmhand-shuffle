@@ -1,4 +1,5 @@
 import { uuidString } from '../../services/types'
+import { InteractionHandlers } from '../services/Rules/InteractionHandlers'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
@@ -14,9 +15,21 @@ export enum CardType {
 
 export interface ICard {
   readonly id: string
+
   readonly type: CardType
+
+  /**
+   * @throws A custom error that describes why the card could not be played. If
+   * this happens, the card must not be discarded from the player's hand.
+   */
   readonly onPlayFromHand: (
     game: IGame,
+
+    /**
+     * A map of asynchronous functions that solicit interactive feedback from
+     * the player.
+     */
+    interactionHandlers: InteractionHandlers,
 
     /**
      * The ID of the player playing the card
@@ -43,9 +56,14 @@ export interface ICrop extends ICard {
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
-export interface IPlayedCrop extends ICrop {
+export interface IPlayedCrop {
   /**
-   * How many water cards are attached to this card.
+   * The card ID of this crop.
+   */
+  readonly id: ICard['id']
+
+  /**
+   * How many water cards are attached to this crop.
    */
   waterCards: number
 }
@@ -75,10 +93,7 @@ export interface IWater extends ICard {
 }
 
 export interface IField {
-  /**
-   * Sparse array.
-   */
-  readonly crops: (ICrop | undefined)[]
+  readonly crops: IPlayedCrop[]
 }
 
 export interface IPlayer {
