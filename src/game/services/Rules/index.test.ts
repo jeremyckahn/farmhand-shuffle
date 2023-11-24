@@ -85,14 +85,6 @@ describe('Rules', () => {
 
       expect(game.currentPlayerId).toEqual(player2Id)
     })
-
-    test('determines first player', () => {
-      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
-      const game = Rules.processGameStart([player1, player2])
-      const [, player2Id] = Object.keys(game.table.players)
-
-      expect(game.currentPlayerId).toEqual(player2Id)
-    })
   })
 
   describe('processTurnStart', () => {
