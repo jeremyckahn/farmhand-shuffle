@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { Card } from '../app/components/Card'
+import { carrot } from '../game/cards'
 
 // FIXME: Integrate MUI: https://storybook.js.org/recipes/@mui/material
 
@@ -23,5 +24,7 @@ type Story = StoryObj<typeof meta>
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Crop: Story = {
-  args: {},
+  args: {
+    card: carrot,
+  },
 }
