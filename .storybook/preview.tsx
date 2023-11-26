@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import type { Preview, ReactRenderer } from '@storybook/react'
 import { DecoratorFunction } from '@storybook/types'
+import { themes } from '@storybook/theming'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 
 import '@fontsource/roboto/300.css'
@@ -75,3 +76,13 @@ const preview: Preview = {
 }
 
 export default preview
+
+export const parameters = {
+  darkMode: {
+    stylePreview: true,
+    // Override the default dark theme
+    dark: { ...themes.dark, appBg: 'black' },
+    // Override the default light theme
+    light: { ...themes.normal, appBg: 'red' },
+  },
+}
