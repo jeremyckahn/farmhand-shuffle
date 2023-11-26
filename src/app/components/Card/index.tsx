@@ -1,17 +1,17 @@
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
+import Paper, { PaperProps } from '@mui/material/Paper'
 import useTheme from '@mui/material/styles/useTheme'
 
 import { ICard } from '../../../game/types'
 import { cards, isCardKey } from '../../img/index'
 
-interface CardProps {
+interface CardProps extends PaperProps {
   card: ICard
   size?: number
 }
 
-export const Card = ({ card, size = 0.75 }: CardProps) => {
+export const Card = ({ card, size = 0.75, sx = [], ...rest }: CardProps) => {
   const theme = useTheme()
 
   const { id: cardId } = card
@@ -27,13 +27,17 @@ export const Card = ({ card, size = 0.75 }: CardProps) => {
 
   return (
     <Paper
-      sx={{
-        width: 300,
-        height: 500,
-        background: theme.palette.grey[200],
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      sx={[
+        {
+          width: 300,
+          height: 500,
+          background: theme.palette.grey[200],
+          display: 'flex',
+          flexDirection: 'column',
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+      {...rest}
     >
       <Box
         sx={{

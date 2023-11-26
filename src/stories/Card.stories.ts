@@ -3,8 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Card } from '../app/components/Card'
 import { carrot } from '../game/cards'
 
-// FIXME: Integrate MUI: https://storybook.js.org/recipes/@mui/material
-
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta = {
   title: 'Farmhand Shuffle/Card',
