@@ -31,7 +31,7 @@ export const Card = ({ card, size = 0.75, sx = [], ...rest }: CardProps) => {
         {
           width: 300,
           height: 500,
-          background: theme.palette.grey[200],
+          background: theme.palette.primary.light,
           display: 'flex',
           flexDirection: 'column',
         },
@@ -45,7 +45,8 @@ export const Card = ({ card, size = 0.75, sx = [], ...rest }: CardProps) => {
           display: 'flex',
           p: theme.spacing(1),
           m: theme.spacing(1),
-          borderColor: theme.palette.divider,
+          borderColor: theme.palette.primary.dark,
+          borderRadius: `${theme.shape.borderRadius}px`,
           borderWidth: 1,
           borderStyle: 'solid',
         }}
