@@ -29,19 +29,11 @@ export const Card = ({
 }: CardProps) => {
   const theme = useTheme()
 
-  const { id: cardId } = card
-
-  let imageSrc = isCardImageKey(cardId) ? cards[cardId] : ui.pixel
+  const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
   if (imageSrc === ui.pixel) {
-    console.error(`Card ID ${cardId} does not have an image configured`)
+    console.error(`Card ID ${card.id} does not have an image configured`)
   }
-
-  // FIXME: Use name for alt text
-
-  // FIXME: Render played crop data (how many water cards are attached)
-
-  const cardPadding = theme.spacing(1)
 
   return (
     <Paper
@@ -55,7 +47,7 @@ export const Card = ({
               : lighten(theme.palette.background.paper, 0.15),
           display: 'flex',
           flexDirection: 'column',
-          p: cardPadding,
+          p: theme.spacing(1),
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
@@ -84,7 +76,7 @@ export const Card = ({
       >
         <Avatar
           src={imageSrc}
-          alt={card.id}
+          alt={card.name}
           variant="square"
           sx={{
             height: `${100 * size}%`,
@@ -96,7 +88,7 @@ export const Card = ({
           }}
         />
       </Box>
-      <Divider sx={{ my: cardPadding }} />
+      <Divider sx={{ my: theme.spacing(1) }} />
       <Box sx={{ height: '50%' }}>
         {isCrop(card) ? (
           <CardCropText crop={card} playedCrop={playedCrop} />
