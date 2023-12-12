@@ -61,6 +61,7 @@ export const Card = ({ card, size = 0.75, sx = [], ...rest }: CardProps) => {
             width: `${100 * size}%`,
             m: 'auto',
             imageRendering: 'pixelated',
+            filter: `drop-shadow(0 0 10px ${theme.palette.secondary.dark})`,
           }}
         />
       </Box>
