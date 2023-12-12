@@ -3,8 +3,8 @@ import Box from '@mui/material/Box'
 import Paper, { PaperProps } from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
 import useTheme from '@mui/material/styles/useTheme'
-
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import { darken, lighten } from '@mui/material/styles'
 
 import { ICard, ICrop, IPlayedCrop } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
@@ -50,7 +50,10 @@ export const Card = ({
         {
           width: 300,
           height: 500,
-          background: theme.palette.background.paper,
+          background:
+            theme.palette.mode === 'light'
+              ? darken(theme.palette.background.paper, 0.05)
+              : lighten(theme.palette.background.paper, 0.15),
           display: 'flex',
           flexDirection: 'column',
           p: cardPadding,
@@ -69,8 +72,8 @@ export const Card = ({
         sx={{
           height: '50%',
           display: 'flex',
-          background: theme.palette.primary.light,
-          borderColor: theme.palette.primary.dark,
+          background: theme.palette.common.white,
+          borderColor: theme.palette.divider,
           borderRadius: `${theme.shape.borderRadius}px`,
           borderWidth: 1,
           borderStyle: 'solid',
@@ -86,7 +89,7 @@ export const Card = ({
             p: 0,
             m: 'auto',
             imageRendering: 'pixelated',
-            filter: `drop-shadow(0 0 10px ${theme.palette.secondary.dark})`,
+            filter: `drop-shadow(0 0 10px ${theme.palette.primary.dark})`,
           }}
         />
       </Box>
