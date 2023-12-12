@@ -8,7 +8,7 @@ import { darken, lighten } from '@mui/material/styles'
 
 import { ICard, ICrop, IPlayedCrop } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
-import { cards, isCardKey, ui } from '../../img'
+import { cards, isCardImageKey, ui } from '../../img'
 
 import { CardCropText } from './CardCropText'
 
@@ -31,12 +31,11 @@ export const Card = ({
 
   const { id: cardId } = card
 
-  if (!isCardKey(cardId)) {
-    // FIXME: Render a fallback image instead
-    throw new Error(`Card ID ${cardId} does not have an image configured`)
-  }
+  let imageSrc = isCardImageKey(cardId) ? cards[cardId] : ui.pixel
 
-  const imageSrc = cards[cardId]
+  if (imageSrc === ui.pixel) {
+    console.error(`Card ID ${cardId} does not have an image configured`)
+  }
 
   // FIXME: Use name for alt text
 
