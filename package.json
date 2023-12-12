@@ -7,7 +7,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "start": "parcel serve src/index.html",
-    "start:storybook": "storybook dev -p 6006",
+    "start:storybook": "storybook dev -p 3000",
     "build": "parcel build src/index.html --public-url .",
     "build:storybook": "storybook build",
     "fix:lint": "eslint src --fix",
