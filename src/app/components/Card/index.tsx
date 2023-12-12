@@ -8,7 +8,7 @@ import { darken, lighten } from '@mui/material/styles'
 
 import { ICard, ICrop, IPlayedCrop } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
-import { cards, isCardKey } from '../../img'
+import { cards, isCardKey, ui } from '../../img'
 
 import { CardCropText } from './CardCropText'
 
@@ -73,10 +73,14 @@ export const Card = ({
           height: '50%',
           display: 'flex',
           background: theme.palette.common.white,
+          backgroundImage: `url(${ui.dirt})`,
+          backgroundSize: '100%',
+          backgroundRepeat: 'repeat',
           borderColor: theme.palette.divider,
           borderRadius: `${theme.shape.borderRadius}px`,
           borderWidth: 1,
           borderStyle: 'solid',
+          imageRendering: 'pixelated',
         }}
       >
         <Avatar
@@ -89,7 +93,7 @@ export const Card = ({
             p: 0,
             m: 'auto',
             imageRendering: 'pixelated',
-            filter: `drop-shadow(0 0 10px ${theme.palette.primary.dark})`,
+            filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
           }}
         />
       </Box>
