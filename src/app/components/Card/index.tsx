@@ -4,6 +4,8 @@ import Paper, { PaperProps } from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
 import useTheme from '@mui/material/styles/useTheme'
 
+import { Typography } from '@mui/material'
+
 import { ICard, ICrop, IPlayedCrop } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
 import { cards, isCardKey } from '../../img'
@@ -51,17 +53,22 @@ export const Card = ({
           background: theme.palette.background.paper,
           display: 'flex',
           flexDirection: 'column',
+          p: cardPadding,
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
       {...rest}
     >
+      <Typography
+        variant="overline"
+        sx={{ fontWeight: theme.typography.fontWeightBold }}
+      >
+        {card.name}
+      </Typography>
       <Box
         sx={{
           height: '50%',
           display: 'flex',
-          p: cardPadding,
-          m: theme.spacing(1),
           background: theme.palette.primary.light,
           borderColor: theme.palette.primary.dark,
           borderRadius: `${theme.shape.borderRadius}px`,
@@ -75,15 +82,16 @@ export const Card = ({
           variant="square"
           sx={{
             height: `${100 * size}%`,
-            width: `${100 * size}%`,
+            width: 'auto',
+            p: 0,
             m: 'auto',
             imageRendering: 'pixelated',
             filter: `drop-shadow(0 0 10px ${theme.palette.secondary.dark})`,
           }}
         />
       </Box>
-      <Divider sx={{ mx: cardPadding, mt: theme.spacing(0.75) }} />
-      <Box sx={{ height: '50%', p: cardPadding }}>
+      <Divider sx={{ my: cardPadding }} />
+      <Box sx={{ height: '50%' }}>
         {isCrop(card) ? (
           <CardCropText crop={card} playedCrop={playedCrop} />
         ) : null}

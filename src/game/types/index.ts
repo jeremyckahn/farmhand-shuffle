@@ -16,7 +16,7 @@ export enum CardType {
 export interface ICard {
   readonly id: string
 
-  // FIXME: Add name
+  readonly name: string
 
   readonly type: CardType
 
