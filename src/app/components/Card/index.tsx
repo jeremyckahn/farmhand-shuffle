@@ -1,20 +1,30 @@
-import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Paper, { PaperProps } from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
 import useTheme from '@mui/material/styles/useTheme'
 
-import { ICard } from '../../../game/types'
+import { ICard, ICrop, IPlayedCrop } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
 import { cards, isCardKey } from '../../img'
 
-interface CardProps extends PaperProps {
+import { CardCropText } from './CardCropText'
+
+type CardProps = PaperProps & {
   card: ICard
   size?: number
+} & {
+  card: ICrop
+  playedCrop?: IPlayedCrop
 }
 
-export const Card = ({ card, size = 0.75, sx = [], ...rest }: CardProps) => {
+export const Card = ({
+  card,
+  playedCrop,
+  size = 0.75,
+  sx = [],
+  ...rest
+}: CardProps) => {
   const theme = useTheme()
 
   const { id: cardId } = card
@@ -75,7 +85,7 @@ export const Card = ({ card, size = 0.75, sx = [], ...rest }: CardProps) => {
       <Divider sx={{ mx: cardPadding, mt: theme.spacing(0.75) }} />
       <Box sx={{ height: '50%', p: cardPadding }}>
         {isCrop(card) ? (
-          <Typography>Water needed to mature: {card.waterToMature}</Typography>
+          <CardCropText crop={card} playedCrop={playedCrop} />
         ) : null}
       </Box>
     </Paper>

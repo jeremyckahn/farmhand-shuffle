@@ -26,3 +26,13 @@ export const Crop: Story = {
     card: carrot,
   },
 }
+
+export const PlayedCrop: Story = {
+  args: {
+    card: carrot,
+    playedCrop: {
+      id: carrot.id,
+      waterCards: 1,
+    },
+  },
+}
