@@ -10,8 +10,6 @@ module.exports = {
   transformIgnorePatterns: [`node_modules/(?!(${modules})/)`],
   transform: {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
-  },
-  moduleNameMapper: {
     '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js',
   },
 }
