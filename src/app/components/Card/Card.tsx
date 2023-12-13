@@ -12,7 +12,7 @@ import { cards, isCardImageKey, ui } from '../../img'
 
 import { CardCropText } from './CardCropText'
 
-type CardProps = PaperProps & {
+export type CardProps = PaperProps & {
   card: ICard
   size?: number
 } & {
@@ -31,7 +31,7 @@ export const Card = ({
 
   const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
-  if (imageSrc === ui.pixel) {
+  if (imageSrc === ui.pixel && process.env.NODE_ENV !== 'test') {
     console.error(`Card ID ${card.id} does not have an image configured`)
   }
 
