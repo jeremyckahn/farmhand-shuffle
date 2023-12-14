@@ -39,8 +39,8 @@ export const Card = ({
     <Paper
       sx={[
         {
-          width: 300,
-          height: 500,
+          width: '16rem',
+          height: '28rem',
           background:
             theme.palette.mode === 'light'
               ? darken(theme.palette.background.paper, 0.05)
