@@ -1,9 +1,11 @@
 {
-  "extends": ["react-app"],
+  "extends": ["react-app", "plugin:storybook/recommended"],
   "rules": {
     "import/order": [
       "error",
-      { "newlines-between": "always-and-inside-groups" }
+      {
+        "newlines-between": "always-and-inside-groups"
+      }
     ]
   }
 }

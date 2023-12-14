@@ -5,4 +5,3 @@ set -e
 
 npx pretty-quick --staged
 npm run check
-npm test

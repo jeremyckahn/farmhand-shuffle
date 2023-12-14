@@ -6,6 +6,7 @@ import { CardType, IGame, IPlayedCrop, IWater } from '../../types'
 export const water: IWater = Object.freeze({
   type: CardType.WATER,
   id: 'water',
+  name: 'Water',
   async onPlayFromHand(
     game: IGame,
     interactionHandlers: InteractionHandlers,

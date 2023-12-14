@@ -16,6 +16,8 @@ export enum CardType {
 export interface ICard {
   readonly id: string
 
+  readonly name: string
+
   readonly type: CardType
 
   /**
