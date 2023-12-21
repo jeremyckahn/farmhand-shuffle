@@ -31,11 +31,21 @@ export class Factory {
     }
   }
 
-  static buildGame(overrides: Partial<IGame> = {}): IGame {
+  static buildGame(
+    overrides: Partial<IGame> = {},
+    userPlayerId = uuid()
+  ): IGame {
     const table = Factory.buildTable(overrides?.table)
-    const [currentPlayerId = null] = Object.keys(table.players)
+    const { players } = table
+
+    if (Object.keys(players).length === 0) {
+      players[userPlayerId] = this.buildPlayer({ id: userPlayerId })
+    }
+
+    const [currentPlayerId = null] = Object.keys(players)
 
     return {
+      userPlayerId,
       table,
       currentPlayerId,
       ...overrides,

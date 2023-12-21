@@ -15,8 +15,11 @@ import { PlayerOutOfFundsError } from './errors'
 import { InteractionHandlers } from './InteractionHandlers'
 
 export class Rules {
-  static processGameStart(playerSeeds: IPlayerSeed[]): IGame {
-    let game = Factory.buildGame()
+  static processGameStart(
+    playerSeeds: IPlayerSeed[],
+    userPlayerId: string | undefined = playerSeeds[0]?.id
+  ): IGame {
+    let game = Factory.buildGame({}, userPlayerId)
 
     for (const playerSeed of playerSeeds) {
       const player = Factory.buildPlayer({

@@ -146,6 +146,11 @@ export interface ITable {
 }
 
 export interface IGame {
+  /**
+   * The IPlayer['id'] of the user who owns the current session.
+   */
+  readonly userPlayerId: IPlayer['id']
+
   readonly table: ITable
 
   readonly currentPlayerId: IPlayer['id'] | null

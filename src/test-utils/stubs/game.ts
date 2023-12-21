@@ -4,5 +4,9 @@ import { IGame } from '../../game/types'
 import { stubTable } from './table'
 
 export const stubGame = (overrides: Partial<IGame> = {}): IGame => {
-  return Factory.buildGame({ table: stubTable(overrides?.table), ...overrides })
+  const table = stubTable(overrides?.table)
+  return Factory.buildGame(
+    { table: table, ...overrides },
+    Object.keys(table.players)[0]
+  )
 }
