@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { stubGame } from '../../../test-utils/stubs/game'
+
 import { Field } from './Field'
 
 const meta = {
@@ -15,6 +17,11 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const BaseTable: Story = {
-  args: {},
+const game = stubGame()
+
+export const SelfTable: Story = {
+  args: {
+    playerId: game.userPlayerId,
+    game,
+  },
 }

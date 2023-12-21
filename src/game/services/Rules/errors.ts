@@ -35,6 +35,13 @@ export class InvalidCardError extends Error {
   }
 }
 
+export class InvalidIdError extends Error {
+  constructor(message: string) {
+    super(...arguments)
+    this.message = `[InvalidIdError] ${message}`
+  }
+}
+
 export class PlayerAbortError extends Error {
   constructor() {
     super(...arguments)
