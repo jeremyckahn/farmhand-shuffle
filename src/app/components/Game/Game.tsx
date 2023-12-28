@@ -1,7 +1,11 @@
 import Box, { BoxProps } from '@mui/material/Box'
 
-export interface GameProps extends BoxProps {}
+import { IGame } from '../../../game/types'
 
-export const Game = ({ ...rest }: GameProps) => {
+export interface GameProps extends BoxProps {
+  game: IGame
+}
+
+export const Game = ({ game, ...rest }: GameProps) => {
   return <Box {...rest}></Box>
 }

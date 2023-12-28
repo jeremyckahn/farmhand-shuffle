@@ -153,5 +153,8 @@ export interface IGame {
 
   readonly table: ITable
 
+  /**
+   * The IPlayer['id'] of the player whose turn it is.
+   */
   readonly currentPlayerId: IPlayer['id'] | null
 }
