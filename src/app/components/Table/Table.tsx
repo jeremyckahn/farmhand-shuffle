@@ -11,15 +11,8 @@ export const Table = ({ game, ...rest }: TableProps) => {
   const { userPlayerId } = game
 
   // FIXME: Test this
-  const otherPlayers = Object.entries(game.table.players).reduce(
-    (acc: typeof game.table.players, [playerId, player]) => {
-      if (playerId !== userPlayerId) {
-        acc[playerId] = player
-      }
-
-      return acc
-    },
-    {}
+  const otherPlayers = Object.keys(game.table.players).filter(
+    playerId => playerId !== userPlayerId
   )
 
   // FIXME: Render player deck
@@ -29,7 +22,7 @@ export const Table = ({ game, ...rest }: TableProps) => {
   return (
     <Box {...rest}>
       <Field game={game} playerId={userPlayerId} />
-      {Object.keys(otherPlayers).map(playerId => {
+      {otherPlayers.map(playerId => {
         return <Field key={playerId} game={game} playerId={playerId} />
       })}
     </Box>
