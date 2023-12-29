@@ -10,7 +10,7 @@ export interface TableProps extends BoxProps {
 export const Table = ({ game, ...rest }: TableProps) => {
   const { userPlayerId } = game
 
-  // FIXME: Test this
+  // FIXME: Move this to a service
   const otherPlayers = Object.keys(game.table.players).filter(
     playerId => playerId !== userPlayerId
   )

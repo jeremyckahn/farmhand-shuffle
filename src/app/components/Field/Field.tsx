@@ -18,5 +18,9 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
     )
   }
 
-  return <Box {...rest}>{JSON.stringify(player, null, 2)}</Box>
+  return (
+    <Box {...rest} data-testid={`field_${playerId}`}>
+      {JSON.stringify(player, null, 2)}
+    </Box>
+  )
 }
