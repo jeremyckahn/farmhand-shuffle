@@ -4,11 +4,11 @@ import { ICard, IGame, IPlayer } from '../../types'
 import { GameStateCorruptError } from '../Rules/errors'
 
 export class Lookup {
-  static getCardFromHand(
+  getCardFromHand = (
     game: IGame,
     playerId: IPlayer['id'],
     cardIdx: number
-  ): ICard {
+  ): ICard => {
     const { hand } = game.table.players[playerId]
     const cardId = hand[cardIdx]
 
@@ -29,3 +29,5 @@ export class Lookup {
     return card
   }
 }
+
+export const lookup = new Lookup()

@@ -4,7 +4,7 @@ import { updatePlayer } from '../../reducers/update-player'
 import { GameStateCorruptError } from '../Rules/errors'
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { Lookup } from '.'
+import { lookup } from '.'
 
 describe('Lookup', () => {
   describe('getCardFromHand', () => {
@@ -19,14 +19,14 @@ describe('Lookup', () => {
     })
 
     test('returns card from hand', () => {
-      const card = Lookup.getCardFromHand(game, player1Id, 0)
+      const card = lookup.getCardFromHand(game, player1Id, 0)
 
       expect(card).toBe(carrot)
     })
 
     test('throws an error when specified card is not in hand', () => {
       expect(() => {
-        Lookup.getCardFromHand(
+        lookup.getCardFromHand(
           game,
           player1Id,
           game.table.players[player1Id].hand.length
@@ -40,7 +40,7 @@ describe('Lookup', () => {
       })
 
       expect(() => {
-        Lookup.getCardFromHand(game, player1Id, 0)
+        lookup.getCardFromHand(game, player1Id, 0)
       }).toThrow(GameStateCorruptError)
     })
   })

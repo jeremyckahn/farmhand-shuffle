@@ -9,7 +9,7 @@ import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-comm
 import { updateGame } from '../../reducers/update-game'
 import { incrementPlayer } from '../../reducers/increment-player'
 import { RandomNumber } from '../../../services/RandomNumber'
-import { Lookup } from '../Lookup'
+import { lookup } from '../Lookup'
 
 import { PlayerOutOfFundsError } from './errors'
 import { InteractionHandlers } from './InteractionHandlers'
@@ -73,7 +73,7 @@ export class Rules {
     playerId: IPlayer['id'],
     cardIdx: number
   ): Promise<IGame> {
-    const card = Lookup.getCardFromHand(game, playerId, cardIdx)
+    const card = lookup.getCardFromHand(game, playerId, cardIdx)
 
     game = await card.onPlayFromHand(
       game,
