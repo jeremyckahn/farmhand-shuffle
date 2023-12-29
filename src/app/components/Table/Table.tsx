@@ -1,5 +1,6 @@
 import Box, { BoxProps } from '@mui/material/Box'
 
+import { lookup } from '../../../game/services/Lookup'
 import { IGame } from '../../../game/types'
 import { Field } from '../Field/Field'
 
@@ -10,10 +11,7 @@ export interface TableProps extends BoxProps {
 export const Table = ({ game, ...rest }: TableProps) => {
   const { userPlayerId } = game
 
-  // FIXME: Move this to a service
-  const otherPlayers = Object.keys(game.table.players).filter(
-    playerId => playerId !== userPlayerId
-  )
+  const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
   // FIXME: Render player deck
   // FIXME: Render player hand
@@ -22,7 +20,7 @@ export const Table = ({ game, ...rest }: TableProps) => {
   return (
     <Box {...rest}>
       <Field game={game} playerId={userPlayerId} />
-      {otherPlayers.map(playerId => {
+      {opponentPlayerIds.map(playerId => {
         return <Field key={playerId} game={game} playerId={playerId} />
       })}
     </Box>

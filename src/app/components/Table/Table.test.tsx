@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react'
 
+import { lookup } from '../../../game/services/Lookup'
 import { stubGame } from '../../../test-utils/stubs/game'
 
 import { Table, TableProps } from './Table'
 
 const game = stubGame()
-const playerIds = Object.keys(game.table.players)
+const playerIds = lookup.getOpponentPlayerIds(game)
 
-const nonUserPlayers = playerIds.filter(
+const opponentPlayerIds = playerIds.filter(
   playerId => playerId !== game.userPlayerId
 )
 
@@ -23,7 +24,7 @@ describe('Table', () => {
     expect(field).toBeInTheDocument()
   })
 
-  test.each([nonUserPlayers])(
+  test.each([opponentPlayerIds])(
     'renders fields for non-user players',
     playerId => {
       render(<StubTable />)

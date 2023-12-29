@@ -28,6 +28,19 @@ export class Lookup {
 
     return card
   }
+
+  /**
+   * Returns all the IDs for players that are not the current user's.
+   */
+  getOpponentPlayerIds = (game: IGame) => {
+    const playerIds = Object.keys(game.table.players)
+
+    const nonUserPlayers = playerIds.filter(
+      playerId => playerId !== game.userPlayerId
+    )
+
+    return nonUserPlayers
+  }
 }
 
 export const lookup = new Lookup()
