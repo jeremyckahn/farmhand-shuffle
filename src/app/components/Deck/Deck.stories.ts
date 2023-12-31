@@ -2,17 +2,17 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { Field } from './Field'
+import { Deck } from './Deck'
 
 const meta = {
-  title: 'Farmhand Shuffle/Field',
-  component: Field,
+  title: 'Farmhand Shuffle/Deck',
+  component: Deck,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
-} satisfies Meta<typeof Field>
+} satisfies Meta<typeof Deck>
 
 export default meta
 type Story = StoryObj<typeof meta>
