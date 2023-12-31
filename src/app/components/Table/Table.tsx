@@ -4,6 +4,7 @@ import { lookup } from '../../../game/services/Lookup'
 import { IGame } from '../../../game/types'
 import { Deck } from '../Deck/Deck'
 import { Field } from '../Field/Field'
+import { Hand } from '../Hand/Hand'
 
 export interface TableProps extends BoxProps {
   game: IGame
@@ -14,7 +15,6 @@ export const Table = ({ game, ...rest }: TableProps) => {
 
   const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
-  // FIXME: Render player hand
   // FIXME: Render player discard pile
 
   return (
@@ -24,6 +24,7 @@ export const Table = ({ game, ...rest }: TableProps) => {
         return <Field key={playerId} game={game} playerId={playerId} />
       })}
       <Deck game={game} playerId={userPlayerId} />
+      <Hand game={game} playerId={userPlayerId} />
     </Box>
   )
 }
