@@ -18,7 +18,7 @@ export const Deck = ({ playerId, game, ...rest }: DeckProps) => {
   }
 
   return (
-    <Box {...rest} data-testid={`field_${playerId}`}>
+    <Box {...rest} data-testid={`deck_${playerId}`}>
       {JSON.stringify(player.deck, null, 2)}
     </Box>
   )

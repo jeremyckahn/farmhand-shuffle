@@ -33,4 +33,11 @@ describe('Table', () => {
       expect(field).toBeInTheDocument()
     }
   )
+
+  test('renders deck for user player', () => {
+    render(<StubTable />)
+    const deck = screen.getByTestId(`deck_${game.userPlayerId}`)
+
+    expect(deck).toBeInTheDocument()
+  })
 })

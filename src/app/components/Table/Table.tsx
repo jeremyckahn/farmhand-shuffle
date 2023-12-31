@@ -2,6 +2,7 @@ import Box, { BoxProps } from '@mui/material/Box'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IGame } from '../../../game/types'
+import { Deck } from '../Deck/Deck'
 import { Field } from '../Field/Field'
 
 export interface TableProps extends BoxProps {
@@ -13,7 +14,6 @@ export const Table = ({ game, ...rest }: TableProps) => {
 
   const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
-  // FIXME: Render player deck
   // FIXME: Render player hand
   // FIXME: Render player discard pile
 
@@ -23,6 +23,7 @@ export const Table = ({ game, ...rest }: TableProps) => {
       {opponentPlayerIds.map(playerId => {
         return <Field key={playerId} game={game} playerId={playerId} />
       })}
+      <Deck game={game} playerId={userPlayerId} />
     </Box>
   )
 }
