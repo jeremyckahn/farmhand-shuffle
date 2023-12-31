@@ -3,6 +3,7 @@ import Box, { BoxProps } from '@mui/material/Box'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame } from '../../../game/types'
 import { Deck } from '../Deck/Deck'
+import { DiscardPile } from '../DiscardPile/DiscardPile'
 import { Field } from '../Field/Field'
 import { Hand } from '../Hand/Hand'
 
@@ -15,8 +16,6 @@ export const Table = ({ game, ...rest }: TableProps) => {
 
   const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
-  // FIXME: Render player discard pile
-
   return (
     <Box {...rest}>
       <Field game={game} playerId={userPlayerId} />
@@ -25,6 +24,7 @@ export const Table = ({ game, ...rest }: TableProps) => {
       })}
       <Deck game={game} playerId={userPlayerId} />
       <Hand game={game} playerId={userPlayerId} />
+      <DiscardPile game={game} playerId={userPlayerId} />
     </Box>
   )
 }

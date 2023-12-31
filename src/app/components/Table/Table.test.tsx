@@ -47,4 +47,11 @@ describe('Table', () => {
 
     expect(hand).toBeInTheDocument()
   })
+
+  test('renders discard pile for user player', () => {
+    render(<StubTable />)
+    const discardPile = screen.getByTestId(`discard-pile_${game.userPlayerId}`)
+
+    expect(discardPile).toBeInTheDocument()
+  })
 })
