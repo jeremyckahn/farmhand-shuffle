@@ -50,8 +50,9 @@ describe('Lookup', () => {
   describe('getOpponentPlayerIds', () => {
     test('returns opponent player IDs', () => {
       const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
+      const playerIds = Object.keys(game.table.players)
 
-      expect(opponentPlayerIds).toHaveLength(1)
+      expect(opponentPlayerIds).toHaveLength(playerIds.length - 1)
       expect(opponentPlayerIds).not.toContain(game.currentPlayerId)
     })
   })
