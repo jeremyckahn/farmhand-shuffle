@@ -6,7 +6,7 @@ import { stubTable } from './table'
 export const stubGame = (overrides: Partial<IGame> = {}): IGame => {
   const table = stubTable(overrides?.table)
   return Factory.buildGame(
-    { table: table, ...overrides },
+    { table, ...overrides },
     Object.keys(table.players)[0]
   )
 }

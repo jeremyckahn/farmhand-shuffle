@@ -19,7 +19,7 @@ type Story = StoryObj<typeof meta>
 
 const game = stubGame()
 
-export const SelfDeck: Story = {
+export const SelfField: Story = {
   args: {
     playerId: game.userPlayerId,
     game,

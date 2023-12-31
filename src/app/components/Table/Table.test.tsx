@@ -6,11 +6,7 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { Table, TableProps } from './Table'
 
 const game = stubGame()
-const playerIds = lookup.getOpponentPlayerIds(game)
-
-const opponentPlayerIds = playerIds.filter(
-  playerId => playerId !== game.userPlayerId
-)
+const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
 const StubTable = (overrides: Partial<TableProps>) => {
   return <Table game={game} {...overrides} />
@@ -25,7 +21,7 @@ describe('Table', () => {
   })
 
   test.each([opponentPlayerIds])(
-    'renders fields for non-user players',
+    'renders fields for opponent players',
     playerId => {
       render(<StubTable />)
       const field = screen.getByTestId(`field_${playerId}`)
