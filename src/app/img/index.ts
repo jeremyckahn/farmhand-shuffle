@@ -1,4 +1,4 @@
-import { ICard } from '../../game/types/index'
+import { ICard } from '../../game/types'
 
 import carrot from './cards/carrot.png'
 import pumpkin from './cards/pumpkin.png'

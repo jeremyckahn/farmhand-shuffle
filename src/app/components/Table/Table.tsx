@@ -17,7 +17,7 @@ export const Table = ({ game, ...rest }: TableProps) => {
   const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
   return (
-    <Box {...rest}>
+    <Box {...rest} data-testid={`table_${game.userPlayerId}`}>
       <Field game={game} playerId={userPlayerId} />
       {opponentPlayerIds.map(playerId => {
         return <Field key={playerId} game={game} playerId={playerId} />
