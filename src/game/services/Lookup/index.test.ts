@@ -1,8 +1,9 @@
 import { carrot } from '../../cards'
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
-import { GameStateCorruptError } from '../Rules/errors'
+import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 import { stubGame } from '../../../test-utils/stubs/game'
+import { isPlayer } from '../../types/guards'
 
 import { lookup } from '.'
 
@@ -54,6 +55,20 @@ describe('Lookup', () => {
 
       expect(opponentPlayerIds).toHaveLength(playerIds.length - 1)
       expect(opponentPlayerIds).not.toContain(game.currentPlayerId)
+    })
+  })
+
+  describe('getPlayer', () => {
+    test('retrieves player', () => {
+      const player = lookup.getPlayer(game, game.userPlayerId)
+
+      expect(isPlayer(player)).toEqual(true)
+    })
+
+    test('throws an error when unavailable player is requested', () => {
+      expect(() => {
+        lookup.getPlayer(game, '')
+      }).toThrow(InvalidIdError)
     })
   })
 })

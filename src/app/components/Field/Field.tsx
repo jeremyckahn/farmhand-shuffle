@@ -1,6 +1,6 @@
 import Box, { BoxProps } from '@mui/material/Box'
 
-import { InvalidIdError } from '../../../game/services/Rules/errors'
+import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
 
 export interface FieldProps extends BoxProps {
@@ -9,13 +9,7 @@ export interface FieldProps extends BoxProps {
 }
 
 export const Field = ({ playerId, game, ...rest }: FieldProps) => {
-  const player = game.table.players[playerId]
-
-  if (!player) {
-    throw new InvalidIdError(
-      `playerId ${playerId} does not correspond to any players in the game.`
-    )
-  }
+  const player = lookup.getPlayer(game, playerId)
 
   return (
     <Box {...rest} data-testid={`field_${playerId}`}>

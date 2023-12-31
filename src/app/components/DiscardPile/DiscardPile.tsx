@@ -1,6 +1,6 @@
 import Box, { BoxProps } from '@mui/material/Box'
 
-import { InvalidIdError } from '../../../game/services/Rules/errors'
+import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
 
 export interface DiscardPileProps extends BoxProps {
@@ -9,13 +9,7 @@ export interface DiscardPileProps extends BoxProps {
 }
 
 export const DiscardPile = ({ playerId, game, ...rest }: DiscardPileProps) => {
-  const player = game.table.players[playerId]
-
-  if (!player) {
-    throw new InvalidIdError(
-      `playerId ${playerId} does not correspond to any players in the game.`
-    )
-  }
+  const player = lookup.getPlayer(game, playerId)
 
   return (
     <Box {...rest} data-testid={`discard-pile_${playerId}`}>

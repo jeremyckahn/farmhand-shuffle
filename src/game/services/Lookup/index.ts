@@ -1,7 +1,7 @@
 import * as cards from '../../cards'
 import { isCardId } from '../../types/guards'
 import { ICard, IGame, IPlayer } from '../../types'
-import { GameStateCorruptError } from '../Rules/errors'
+import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 
 export class Lookup {
   getCardFromHand = (
@@ -40,6 +40,18 @@ export class Lookup {
     )
 
     return nonUserPlayers
+  }
+
+  getPlayer = (game: IGame, playerId: IPlayer['id']) => {
+    const player = game.table.players[playerId]
+
+    if (!player) {
+      throw new InvalidIdError(
+        `playerId ${playerId} does not correspond to any players in the game.`
+      )
+    }
+
+    return player
   }
 }
 
