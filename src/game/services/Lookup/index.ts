@@ -35,11 +35,11 @@ export class Lookup {
   getOpponentPlayerIds = (game: IGame) => {
     const playerIds = Object.keys(game.table.players)
 
-    const nonUserPlayers = playerIds.filter(
-      playerId => playerId !== game.userPlayerId
+    const opponentPlayerIds = playerIds.filter(
+      playerId => playerId !== game.sessionOwnerPlayerId
     )
 
-    return nonUserPlayers
+    return opponentPlayerIds
   }
 
   getPlayer = (game: IGame, playerId: IPlayer['id']) => {

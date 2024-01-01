@@ -21,7 +21,7 @@ const game = stubGame()
 
 export const SelfDeck: Story = {
   args: {
-    playerId: game.userPlayerId,
+    playerId: game.sessionOwnerPlayerId,
     game,
   },
 }

@@ -60,7 +60,7 @@ describe('Lookup', () => {
 
   describe('getPlayer', () => {
     test('retrieves player', () => {
-      const player = lookup.getPlayer(game, game.userPlayerId)
+      const player = lookup.getPlayer(game, game.sessionOwnerPlayerId)
 
       expect(isPlayer(player)).toEqual(true)
     })

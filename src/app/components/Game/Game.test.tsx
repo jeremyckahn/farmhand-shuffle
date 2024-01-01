@@ -10,7 +10,7 @@ describe('Game', () => {
   test('renders table', () => {
     render(<Game game={game} />)
 
-    const table = screen.getByTestId(`table_${game.userPlayerId}`)
+    const table = screen.getByTestId(`table_${game.sessionOwnerPlayerId}`)
 
     expect(table).toBeInTheDocument()
   })

@@ -15,7 +15,7 @@ const StubTable = (overrides: Partial<TableProps>) => {
 describe('Table', () => {
   test('renders field for user player', () => {
     render(<StubTable />)
-    const field = screen.getByTestId(`field_${game.userPlayerId}`)
+    const field = screen.getByTestId(`field_${game.sessionOwnerPlayerId}`)
 
     expect(field).toBeInTheDocument()
   })
@@ -32,21 +32,23 @@ describe('Table', () => {
 
   test('renders deck for user player', () => {
     render(<StubTable />)
-    const deck = screen.getByTestId(`deck_${game.userPlayerId}`)
+    const deck = screen.getByTestId(`deck_${game.sessionOwnerPlayerId}`)
 
     expect(deck).toBeInTheDocument()
   })
 
   test('renders hand for user player', () => {
     render(<StubTable />)
-    const hand = screen.getByTestId(`hand_${game.userPlayerId}`)
+    const hand = screen.getByTestId(`hand_${game.sessionOwnerPlayerId}`)
 
     expect(hand).toBeInTheDocument()
   })
 
   test('renders discard pile for user player', () => {
     render(<StubTable />)
-    const discardPile = screen.getByTestId(`discard-pile_${game.userPlayerId}`)
+    const discardPile = screen.getByTestId(
+      `discard-pile_${game.sessionOwnerPlayerId}`
+    )
 
     expect(discardPile).toBeInTheDocument()
   })

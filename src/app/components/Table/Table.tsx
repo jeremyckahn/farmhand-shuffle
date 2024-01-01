@@ -12,12 +12,12 @@ export interface TableProps extends BoxProps {
 }
 
 export const Table = ({ game, ...rest }: TableProps) => {
-  const { userPlayerId } = game
+  const { sessionOwnerPlayerId: userPlayerId } = game
 
   const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
   return (
-    <Box {...rest} data-testid={`table_${game.userPlayerId}`}>
+    <Box {...rest} data-testid={`table_${game.sessionOwnerPlayerId}`}>
       <Field game={game} playerId={userPlayerId} />
       {opponentPlayerIds.map(playerId => {
         return <Field key={playerId} game={game} playerId={playerId} />
