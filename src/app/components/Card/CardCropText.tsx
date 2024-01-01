@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography'
 
-import { ICrop, IPlayedCrop } from '../../../game/types/index'
+import { ICrop, IPlayedCrop } from '../../../game/types'
 
 export const CardCropText = ({
   crop,

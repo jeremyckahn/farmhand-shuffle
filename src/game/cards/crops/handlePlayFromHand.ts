@@ -1,6 +1,6 @@
 import { addCropToField } from '../../reducers/add-crop-to-field'
 import { Factory } from '../../services/Factory'
-import { Lookup } from '../../services/Lookup'
+import { lookup } from '../../services/Lookup'
 import { InvalidCardError } from '../../services/Rules/errors'
 import { InteractionHandlers } from '../../services/Rules/InteractionHandlers'
 import { IGame, IPlayer } from '../../types'
@@ -12,7 +12,7 @@ export const handlePlayFromHand = async (
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  const card = Lookup.getCardFromHand(game, playerId, cardIdx)
+  const card = lookup.getCardFromHand(game, playerId, cardIdx)
 
   if (!isCrop(card)) {
     throw new InvalidCardError(`${card.id} is not a crop card.`)

@@ -1,14 +1,14 @@
 import * as cards from '../../cards'
 import { isCardId } from '../../types/guards'
 import { ICard, IGame, IPlayer } from '../../types'
-import { GameStateCorruptError } from '../Rules/errors'
+import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 
 export class Lookup {
-  static getCardFromHand(
+  getCardFromHand = (
     game: IGame,
     playerId: IPlayer['id'],
     cardIdx: number
-  ): ICard {
+  ): ICard => {
     const { hand } = game.table.players[playerId]
     const cardId = hand[cardIdx]
 
@@ -28,4 +28,31 @@ export class Lookup {
 
     return card
   }
+
+  /**
+   * Returns all the IDs for players that are not the current user's.
+   */
+  getOpponentPlayerIds = (game: IGame) => {
+    const playerIds = Object.keys(game.table.players)
+
+    const opponentPlayerIds = playerIds.filter(
+      playerId => playerId !== game.sessionOwnerPlayerId
+    )
+
+    return opponentPlayerIds
+  }
+
+  getPlayer = (game: IGame, playerId: IPlayer['id']) => {
+    const player = game.table.players[playerId]
+
+    if (!player) {
+      throw new InvalidIdError(
+        `playerId ${playerId} does not correspond to any players in the game.`
+      )
+    }
+
+    return player
+  }
 }
+
+export const lookup = new Lookup()

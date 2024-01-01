@@ -1,7 +1,8 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+/** @typedef {import('ts-jest').JestConfigWithTsJest} JestConfigWithTsJest */
 
 const modules = ['@mui', '@babel'].join('|')
 
+/** @type {JestConfigWithTsJest} */
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
@@ -15,4 +16,5 @@ module.exports = {
     ],
     '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js',
   },
+  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
 }

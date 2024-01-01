@@ -64,7 +64,9 @@ export const isGame = (obj: unknown): obj is IGame => {
     'table' in obj &&
     isTable(obj.table) &&
     'currentPlayerId' in obj &&
-    (typeof obj.currentPlayerId === 'string' || obj.currentPlayerId === null)
+    (typeof obj.currentPlayerId === 'string' || obj.currentPlayerId === null) &&
+    'sessionOwnerPlayerId' in obj &&
+    typeof obj.sessionOwnerPlayerId === 'string'
   )
 }
 
