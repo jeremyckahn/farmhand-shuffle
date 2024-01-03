@@ -1,37 +1,40 @@
 import { PaperProps } from '@mui/material/Paper'
 
 import { UnimplementedError } from '../../../game/services/Rules/errors'
-import { CardType, ICrop, IPlayedCrop, IWater } from '../../../game/types'
+import {
+  ICard,
+  IPlayedCrop,
+  isCropCard,
+  isWaterCard,
+} from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
 
 import { CardCropText } from './CardCropText'
 import { CardTemplate } from './CardTemplate'
 
 export interface BaseCardProps extends PaperProps {
+  card: ICard
   size?: number
 }
 
 export interface CropCardProps {
-  card: ICrop
   playedCrop?: IPlayedCrop
 }
 
-export interface WaterCardProps {
-  card: IWater
-}
+export interface WaterCardProps {}
 
 export type CardProps = BaseCardProps & (CropCardProps | WaterCardProps)
 
 const isCropCardProps = (
   props: CardProps
 ): props is BaseCardProps & CropCardProps => {
-  return props.card.type === CardType.CROP
+  return isCropCard(props.card)
 }
 
 const isWaterCardProps = (
   props: CardProps
 ): props is BaseCardProps & WaterCardProps => {
-  return props.card.type === CardType.WATER
+  return isWaterCard(props.card)
 }
 
 export const CropCard = ({
