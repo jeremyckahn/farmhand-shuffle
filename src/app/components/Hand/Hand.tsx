@@ -6,14 +6,23 @@ import { Card } from '../Card'
 import * as cards from '../../../game/cards'
 import { isCardId } from '../../../game/types/guards'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
-import { CARD_WIDTH } from '../../config/dimensions'
 
 export interface HandProps extends BoxProps {
   game: IGame
   playerId: IPlayer['id']
 }
 
-const cardGap = '2rem'
+// FIXME: Move this to a service
+/**
+ * Based on https://stackoverflow.com/a/14224813/470685
+ */
+const scaleNumber = (
+  value: number,
+  min: number,
+  max: number,
+  baseMin: number,
+  baseMax: number
+) => ((value - min) * (baseMax - baseMin)) / (max - min) + baseMin
 
 export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   const player = lookup.getPlayer(game, playerId)
@@ -24,7 +33,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
       data-testid={`hand_${playerId}`}
       sx={[
         {
-          display: 'flex',
+          position: 'relative',
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
@@ -35,22 +44,30 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
         }
 
         const card = cards[cardId]
-        const isLastCard = idx === player.hand.length - 1
+
+        const gapWidthPx = 50
+        const gapWidthTotal = gapWidthPx * player.hand.length
+        const xOffsetPx = scaleNumber(
+          idx / player.hand.length,
+          0,
+          1,
+          -gapWidthTotal,
+          gapWidthTotal
+        )
+
+        const rotationDeg = -5
+        const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
+        const translateY = '-50%'
 
         return (
-          <Box
+          <Card
+            key={`${cardId}_${idx}`}
+            card={card}
             sx={{
-              overflow: 'visible',
-              width: isLastCard ? CARD_WIDTH : cardGap,
-              flexGrow: isLastCard ? 0 : 1,
+              transform: `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg)`,
+              position: 'absolute',
             }}
-          >
-            <Card
-              key={`${cardId}_${idx}`}
-              card={card}
-              sx={{ transform: 'rotate(-3deg)' }}
-            />
-          </Box>
+          />
         )
       })}
     </Box>
