@@ -6,6 +6,7 @@ import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
 import { darken, lighten } from '@mui/material/styles'
 
+import { CARD_HEIGHT, CARD_WIDTH } from '../../config/dimensions'
 import { cards, isCardImageKey, ui } from '../../img'
 
 import { CardProps } from './Card'
@@ -29,8 +30,8 @@ export const CardTemplate = ({
     <Paper
       sx={[
         {
-          width: '16rem',
-          height: '28rem',
+          width: CARD_WIDTH,
+          height: CARD_HEIGHT,
           background:
             theme.palette.mode === 'light'
               ? darken(theme.palette.background.paper, 0.05)

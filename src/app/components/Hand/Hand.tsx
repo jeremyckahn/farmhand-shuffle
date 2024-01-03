@@ -6,27 +6,25 @@ import { Card } from '../Card'
 import * as cards from '../../../game/cards'
 import { isCardId } from '../../../game/types/guards'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
+import { CARD_WIDTH } from '../../config/dimensions'
 
 export interface HandProps extends BoxProps {
   game: IGame
   playerId: IPlayer['id']
 }
 
+const cardGap = '2rem'
+
 export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   const player = lookup.getPlayer(game, playerId)
 
-  // FIXME: Center the hand
   return (
     <Box
       {...rest}
       data-testid={`hand_${playerId}`}
       sx={[
         {
-          display: 'grid',
-          ml: 'auto',
-          mr: 'auto',
-          justifyContent: 'center',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(10px, max-content))',
+          display: 'flex',
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
@@ -37,13 +35,22 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
         }
 
         const card = cards[cardId]
+        const isLastCard = idx === player.hand.length - 1
 
         return (
-          <Card
-            key={`${cardId}_${idx}`}
-            card={card}
-            sx={{ transform: 'rotate(-3deg)' }}
-          />
+          <Box
+            sx={{
+              overflow: 'visible',
+              width: isLastCard ? CARD_WIDTH : cardGap,
+              flexGrow: isLastCard ? 0 : 1,
+            }}
+          >
+            <Card
+              key={`${cardId}_${idx}`}
+              card={card}
+              sx={{ transform: 'rotate(-3deg)' }}
+            />
+          </Box>
         )
       })}
     </Box>
