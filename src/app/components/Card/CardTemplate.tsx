@@ -38,6 +38,7 @@ export const CardTemplate = ({
           display: 'flex',
           flexDirection: 'column',
           p: theme.spacing(1),
+          position: 'relative',
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
