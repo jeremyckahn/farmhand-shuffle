@@ -48,3 +48,10 @@ export class PlayerAbortError extends Error {
     this.message = `[PlayerAbortError] The player cancelled the operation.`
   }
 }
+
+export class UnimplementedError extends Error {
+  constructor(message: string) {
+    super(...arguments)
+    this.message = `[UnimplementedError] ${message}`
+  }
+}

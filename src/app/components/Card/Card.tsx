@@ -6,7 +6,8 @@ import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
 import { darken, lighten } from '@mui/material/styles'
 
-import { ICrop, IPlayedCrop, IWater } from '../../../game/types'
+import { UnimplementedError } from '../../../game/services/Rules/errors'
+import { CardType, ICrop, IPlayedCrop, IWater } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
 import { cards, isCardImageKey, ui } from '../../img'
 
@@ -27,16 +28,25 @@ export interface WaterCardProps {
 
 export type CardProps = BaseCardProps & (CropCardProps | WaterCardProps)
 
-export const Card = ({ card, size = 0.75, sx = [], ...props }: CardProps) => {
-  let playedCrop: IPlayedCrop | undefined = undefined
+const isCropCardProps = (
+  props: CardProps
+): props is BaseCardProps & CropCardProps => {
+  return props.card.type === CardType.CROP
+}
 
-  if ('playedCrop' in props) {
-    playedCrop = props.playedCrop
-    const newProps = { ...props }
-    delete newProps.playedCrop
-    props = newProps
-  }
+const isWaterCardProps = (
+  props: CardProps
+): props is BaseCardProps & WaterCardProps => {
+  return props.card.type === CardType.WATER
+}
 
+const CardTemplate = ({
+  card,
+  size = 0.75,
+  sx = [],
+  children,
+  ...props
+}: CardProps) => {
   const theme = useTheme()
 
   const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
@@ -99,11 +109,36 @@ export const Card = ({ card, size = 0.75, sx = [], ...props }: CardProps) => {
         />
       </Box>
       <Divider sx={{ my: theme.spacing(1) }} />
-      <Box sx={{ height: '50%' }}>
-        {isCrop(card) ? (
-          <CardCropText crop={card} playedCrop={playedCrop} />
-        ) : null}
-      </Box>
+      <Box sx={{ height: '50%' }}>{children}</Box>
     </Paper>
   )
+}
+
+export const CropCard = ({
+  playedCrop,
+  ...props
+}: BaseCardProps & CropCardProps) => {
+  return (
+    <CardTemplate {...props}>
+      {isCrop(props.card) ? (
+        <CardCropText crop={props.card} playedCrop={playedCrop} />
+      ) : null}
+    </CardTemplate>
+  )
+}
+
+export const WaterCard = (props: BaseCardProps & WaterCardProps) => {
+  return <CardTemplate {...props} />
+}
+
+export const Card = (props: CardProps) => {
+  if (isCropCardProps(props)) {
+    return <CropCard {...props} />
+  }
+
+  if (isWaterCardProps(props)) {
+    return <WaterCard {...props} />
+  }
+
+  throw new UnimplementedError('Unexpected CardType')
 }
