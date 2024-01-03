@@ -3,24 +3,24 @@ import { screen } from '@testing-library/dom'
 
 import { carrot } from '../../../game/cards'
 
-import { Card, CardProps } from './Card'
+import { BaseCardProps, Card, CropCardProps } from './Card'
 
 const stubCard = carrot
 
-const StubCard = (overrides: Partial<CardProps> = {}) => (
-  <Card card={stubCard} {...overrides} />
-)
+const StubCropCard = (
+  overrides: Partial<BaseCardProps & CropCardProps> = {}
+) => <Card card={stubCard} {...overrides} />
 
 describe('Card', () => {
   test('renders card', () => {
-    render(<StubCard />)
+    render(<StubCropCard />)
 
     expect(screen.findByText(stubCard.name))
     expect(screen.findByAltText(stubCard.name))
   })
 
   test('renders crop water requirements', () => {
-    render(<StubCard />)
+    render(<StubCropCard />)
 
     expect(
       screen.findByText(`Water needed to mature: ${stubCard.waterToMature}`)
@@ -29,7 +29,7 @@ describe('Card', () => {
 
   test('renders played crop card', () => {
     const waterCards = 1
-    render(<StubCard playedCrop={{ id: stubCard.id, waterCards }} />)
+    render(<StubCropCard playedCrop={{ id: stubCard.id, waterCards }} />)
 
     expect(
       screen.findByText(

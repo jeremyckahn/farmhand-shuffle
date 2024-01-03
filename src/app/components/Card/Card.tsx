@@ -6,27 +6,37 @@ import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
 import { darken, lighten } from '@mui/material/styles'
 
-import { ICard, ICrop, IPlayedCrop } from '../../../game/types'
+import { ICrop, IPlayedCrop, IWater } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
 import { cards, isCardImageKey, ui } from '../../img'
 
 import { CardCropText } from './CardCropText'
 
-export type CardProps = PaperProps & {
-  card: ICard
+export interface BaseCardProps extends PaperProps {
   size?: number
-} & {
+}
+
+export interface CropCardProps {
   card: ICrop
   playedCrop?: IPlayedCrop
 }
 
-export const Card = ({
-  card,
-  playedCrop,
-  size = 0.75,
-  sx = [],
-  ...rest
-}: CardProps) => {
+export interface WaterCardProps {
+  card: IWater
+}
+
+export type CardProps = BaseCardProps & (CropCardProps | WaterCardProps)
+
+export const Card = ({ card, size = 0.75, sx = [], ...props }: CardProps) => {
+  let playedCrop: IPlayedCrop | undefined = undefined
+
+  if ('playedCrop' in props) {
+    playedCrop = props.playedCrop
+    const newProps = { ...props }
+    delete newProps.playedCrop
+    props = newProps
+  }
+
   const theme = useTheme()
 
   const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
@@ -51,7 +61,7 @@ export const Card = ({
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
-      {...rest}
+      {...props}
     >
       <Typography
         variant="overline"
