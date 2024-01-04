@@ -2,30 +2,19 @@ import { useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
-import { lookup } from '../../../game/services/Lookup'
-import { IGame, IPlayer } from '../../../game/types'
 import { Card } from '../Card'
-import * as cards from '../../../game/cards'
-import { isCardId } from '../../../game/types/guards'
+import { mathService } from '../../../services/Math/index'
+import { lookup } from '../../../game/services/Lookup'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
+import * as cards from '../../../game/cards'
+import { IGame, IPlayer } from '../../../game/types'
+import { isCardId } from '../../../game/types/guards'
 import { CARD_HEIGHT } from '../../config/dimensions'
 
 export interface HandProps extends BoxProps {
   game: IGame
   playerId: IPlayer['id']
 }
-
-// FIXME: Move this to a service
-/**
- * Based on https://stackoverflow.com/a/14224813/470685
- */
-const scaleNumber = (
-  value: number,
-  min: number,
-  max: number,
-  baseMin: number,
-  baseMax: number
-) => ((value - min) * (baseMax - baseMin)) / (max - min) + baseMin
 
 const selectedCardTransform = `translateX(-50%) translateY(-${CARD_HEIGHT}) rotate(0deg) scale(1)`
 
@@ -65,7 +54,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
 
         const gapWidthPx = 50
         const gapWidthTotal = gapWidthPx * player.hand.length
-        const xOffsetPx = scaleNumber(
+        const xOffsetPx = mathService.scaleNumber(
           idx / player.hand.length,
           0,
           1,
