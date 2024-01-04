@@ -27,17 +27,19 @@ const scaleNumber = (
   baseMax: number
 ) => ((value - min) * (baseMax - baseMin)) / (max - min) + baseMin
 
-const selectedCardTransform = `translateX(-50%) translateY(calc(-${CARD_HEIGHT} * 1.75)) rotate(0deg) scale(1.25)`
+const selectedCardTransform = `translateX(-50%) translateY(-${CARD_HEIGHT}) rotate(0deg) scale(1)`
+
+const deselectedIdx = -1
 
 export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   const player = lookup.getPlayer(game, playerId)
 
   const theme = useTheme()
-  const [selectedCardIdx, setSelectedCardIdx] = useState(-1)
+  const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
 
   const handleCardClick = (cardIdx: number) => {
     if (cardIdx === selectedCardIdx) {
-      setSelectedCardIdx(-1)
+      setSelectedCardIdx(deselectedIdx)
     } else {
       setSelectedCardIdx(cardIdx)
     }
@@ -71,14 +73,19 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
           gapWidthTotal
         )
 
-        const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
-        const translateY = '-50%'
-        const rotationDeg = -5
-
         const isSelected = selectedCardIdx === idx
+
+        const translateYOffset =
+          selectedCardIdx === deselectedIdx ? '0rem' : `(${CARD_HEIGHT} / 2)`
+
+        const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
+        const translateY = `calc(-50% + ${translateYOffset})`
+        const rotationDeg = -5
+        const scale = selectedCardIdx === deselectedIdx ? 1 : 0.75
+
         const transform = isSelected
           ? selectedCardTransform
-          : `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(1)`
+          : `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale})`
 
         return (
           <Card
