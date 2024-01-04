@@ -85,6 +85,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
               transform,
               position: 'absolute',
               transition: theme.transitions.create(['transition', 'transform']),
+              cursor: 'pointer',
             }}
             onClick={() => handleCardClick(idx)}
           />
