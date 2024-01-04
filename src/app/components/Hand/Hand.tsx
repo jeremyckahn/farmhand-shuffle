@@ -16,7 +16,7 @@ export interface HandProps extends BoxProps {
   playerId: IPlayer['id']
 }
 
-const selectedCardTransform = `translateX(-50%) translateY(-${CARD_HEIGHT}) rotate(0deg) scale(1)`
+const selectedCardTransform = `translateX(-50%) translateY(calc(-${CARD_HEIGHT} / 2)) rotate(0deg) scale(1)`
 
 const deselectedIdx = -1
 
@@ -41,6 +41,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
       sx={[
         {
           position: 'relative',
+          minHeight: CARD_HEIGHT,
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
@@ -68,7 +69,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
           selectedCardIdx === deselectedIdx ? '0rem' : `(${CARD_HEIGHT} / 2)`
 
         const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
-        const translateY = `calc(-50% + ${translateYOffset})`
+        const translateY = `calc(${translateYOffset})`
         const rotationDeg = -5
         const scale = selectedCardIdx === deselectedIdx ? 1 : 0.75
 
