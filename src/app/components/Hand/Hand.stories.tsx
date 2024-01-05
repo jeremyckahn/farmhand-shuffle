@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
+import Tooltip from '@mui/material/Tooltip'
 import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
@@ -34,15 +35,26 @@ const HandWithVariableCards = ({ game, ...rest }: HandProps) => {
 
   return (
     <>
-      <Box sx={{ position: 'absolute', top: '1rem', right: '1rem' }}>
-        <Fab color="primary" onClick={handleClickAdd}>
-          <AddIcon />
-        </Fab>
-        <Fab color="secondary" sx={{ ml: 2 }} onClick={handleClickRemove}>
-          <RemoveIcon />
-        </Fab>
-      </Box>
       <Hand game={game} {...rest} />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '1rem',
+          display: 'flex',
+          transform: 'translateX(-50%)',
+        }}
+      >
+        <Tooltip title="Add a random card">
+          <Fab color="primary" onClick={handleClickAdd}>
+            <AddIcon />
+          </Fab>
+        </Tooltip>
+        <Tooltip title="Remove the last card">
+          <Fab color="secondary" sx={{ ml: 2 }} onClick={handleClickRemove}>
+            <RemoveIcon />
+          </Fab>
+        </Tooltip>
+      </Box>
     </>
   )
 }
