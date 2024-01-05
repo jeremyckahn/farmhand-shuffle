@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
+import { ClickAwayListener } from '@mui/base/ClickAwayListener'
 
 import { Card } from '../Card'
 import { mathService } from '../../../services/Math/index'
@@ -26,12 +27,26 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
 
-  const handleCardClick = (cardIdx: number) => {
+  const toggleCardIdx = (cardIdx: number) => {
     if (cardIdx === selectedCardIdx) {
       setSelectedCardIdx(deselectedIdx)
     } else {
       setSelectedCardIdx(cardIdx)
     }
+  }
+
+  const handleCardFocus = (cardIdx: number) => {
+    toggleCardIdx(cardIdx)
+  }
+
+  const handleKeyDown = (evt: React.KeyboardEvent<HTMLDivElement>) => {
+    if (evt.key === 'Escape') {
+      setSelectedCardIdx(deselectedIdx)
+    }
+  }
+
+  const handleClickAway = () => {
+    setSelectedCardIdx(deselectedIdx)
   }
 
   let gapWidthPx = 50
@@ -49,61 +64,68 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   }
 
   return (
-    <Box
-      {...rest}
-      data-testid={`hand_${playerId}`}
-      sx={[
-        {
-          position: 'relative',
-          minHeight: CARD_HEIGHT,
-        },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
-    >
-      {player.hand.map((cardId, idx) => {
-        if (!isCardId(cardId)) {
-          throw new UnimplementedError(`${cardId} is not a card`)
-        }
+    <ClickAwayListener onClickAway={handleClickAway}>
+      <Box
+        {...rest}
+        data-testid={`hand_${playerId}`}
+        sx={[
+          {
+            position: 'relative',
+            minHeight: CARD_HEIGHT,
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
+        onKeyDown={handleKeyDown}
+      >
+        {player.hand.map((cardId, idx) => {
+          if (!isCardId(cardId)) {
+            throw new UnimplementedError(`${cardId} is not a card`)
+          }
 
-        const card = cards[cardId]
+          const card = cards[cardId]
 
-        const gapWidthTotal = gapWidthPx * player.hand.length
-        const xOffsetPx = mathService.scaleNumber(
-          idx / player.hand.length,
-          0,
-          1,
-          -gapWidthTotal,
-          gapWidthTotal
-        )
+          const gapWidthTotal = gapWidthPx * player.hand.length
+          const xOffsetPx = mathService.scaleNumber(
+            idx / player.hand.length,
+            0,
+            1,
+            -gapWidthTotal,
+            gapWidthTotal
+          )
 
-        const isSelected = selectedCardIdx === idx
+          const isSelected = selectedCardIdx === idx
 
-        const translateYOffset =
-          selectedCardIdx === deselectedIdx ? '0rem' : `(${CARD_HEIGHT} / 2)`
+          const translateYOffset =
+            selectedCardIdx === deselectedIdx ? '0rem' : `(${CARD_HEIGHT} / 2)`
 
-        const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
-        const translateY = `calc(${translateYOffset})`
-        const rotationDeg = -5
-        const scale = selectedCardIdx === deselectedIdx ? 1 : 0.75
+          const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
+          const translateY = `calc(${translateYOffset})`
+          const rotationDeg = -5
+          const scale = selectedCardIdx === deselectedIdx ? 1 : 0.75
 
-        const transform = isSelected
-          ? selectedCardTransform
-          : `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale})`
+          const transform = isSelected
+            ? selectedCardTransform
+            : `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale})`
 
-        return (
-          <Card
-            key={`${cardId}_${idx}`}
-            card={card}
-            sx={{
-              transform,
-              position: 'absolute',
-              transition: theme.transitions.create(['transition', 'transform']),
-              cursor: 'pointer',
-            }}
-            onClick={() => handleCardClick(idx)}
-          />
-        )
-      })}
-    </Box>
+          return (
+            <Card
+              key={`${cardId}_${idx}`}
+              card={card}
+              sx={{
+                transform,
+                position: 'absolute',
+                transition: theme.transitions.create([
+                  'transition',
+                  'transform',
+                ]),
+                cursor: 'pointer',
+              }}
+              onFocus={() => handleCardFocus(idx)}
+              tabIndex={0}
+            />
+          )
+        })}
+      </Box>
+    </ClickAwayListener>
   )
 }
