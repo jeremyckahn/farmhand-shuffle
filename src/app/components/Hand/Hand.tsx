@@ -34,6 +34,14 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
     }
   }
 
+  let gapWidthPx = 50
+
+  if (player.hand.length > 12) {
+    gapWidthPx = 15
+  } else if (player.hand.length > 6) {
+    gapWidthPx = 30
+  }
+
   return (
     <Box
       {...rest}
@@ -53,7 +61,6 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
 
         const card = cards[cardId]
 
-        const gapWidthPx = 50
         const gapWidthTotal = gapWidthPx * player.hand.length
         const xOffsetPx = mathService.scaleNumber(
           idx / player.hand.length,

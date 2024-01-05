@@ -1,15 +1,55 @@
+import { useState } from 'react'
+import Box from '@mui/material/Box'
+import Fab from '@mui/material/Fab'
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { RandomNumber } from '../../../services/RandomNumber'
 import { carrot, pumpkin, water } from '../../../game/cards/index'
 import { updatePlayer } from '../../../game/reducers/update-player/index'
+import { lookup } from '../../../game/services/Lookup/index'
 
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { Hand } from './Hand'
+import { Hand, HandProps } from './Hand'
+
+const HandWithVariableCards = ({ game, ...rest }: HandProps) => {
+  const [hand, setHand] = useState(
+    lookup.getPlayer(game, game.sessionOwnerPlayerId).hand
+  )
+
+  const handleClickAdd = () => {
+    setHand([
+      ...hand,
+      RandomNumber.chooseElement([carrot.id, water.id, pumpkin.id]),
+    ])
+  }
+
+  const handleClickRemove = () => {
+    setHand(hand.slice(0, hand.length - 1))
+  }
+
+  game = updatePlayer(game, game.sessionOwnerPlayerId, { hand })
+
+  return (
+    <>
+      <Box sx={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+        <Fab color="primary" onClick={handleClickAdd}>
+          <AddIcon />
+        </Fab>
+        <Fab color="secondary" sx={{ ml: 2 }} onClick={handleClickRemove}>
+          <RemoveIcon />
+        </Fab>
+      </Box>
+      <Hand game={game} {...rest} />
+    </>
+  )
+}
 
 const meta = {
   title: 'Farmhand Shuffle/Hand',
-  component: Hand,
+  component: HandWithVariableCards,
   parameters: {
     layout: 'centered',
   },
