@@ -36,9 +36,15 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
 
   let gapWidthPx = 50
 
-  if (player.hand.length > 12) {
+  if (player.hand.length > 60) {
+    gapWidthPx = 3
+  } else if (player.hand.length > 30) {
+    gapWidthPx = 5
+  } else if (player.hand.length > 20) {
+    gapWidthPx = 10
+  } else if (player.hand.length > 10) {
     gapWidthPx = 15
-  } else if (player.hand.length > 6) {
+  } else if (player.hand.length > 5) {
     gapWidthPx = 30
   }
 
