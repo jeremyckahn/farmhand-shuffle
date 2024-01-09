@@ -5,7 +5,12 @@ import { carrot, pumpkin, water } from '../../../game/cards/index'
 import { updatePlayer } from '../../../game/reducers/update-player/index'
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { Hand, HandProps, selectedCardTransform } from './Hand'
+import {
+  getGapPixelWidth,
+  Hand,
+  HandProps,
+  selectedCardTransform,
+} from './Hand'
 
 const baseGame = stubGame()
 
@@ -47,5 +52,22 @@ describe('Hand', () => {
       const { transform } = getComputedStyle(card!)
       expect(transform).toMatchSnapshot()
     }
+  })
+
+  describe('getGapPixelWidth', () => {
+    test.each([
+      { numberOfCards: 0, gapSize: 50 },
+      { numberOfCards: 6, gapSize: 30 },
+      { numberOfCards: 11, gapSize: 15 },
+      { numberOfCards: 21, gapSize: 10 },
+      { numberOfCards: 31, gapSize: 5 },
+      { numberOfCards: 61, gapSize: 3 },
+      { numberOfCards: 1000, gapSize: 3 },
+    ])(
+      'calculates gap size for $numberOfCards cards',
+      ({ gapSize, numberOfCards }) => {
+        expect(getGapPixelWidth(numberOfCards)).toEqual(gapSize)
+      }
+    )
   })
 })

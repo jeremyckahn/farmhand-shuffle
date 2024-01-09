@@ -21,6 +21,22 @@ export const selectedCardTransform = `translateX(-50%) translateY(calc(-${CARD_H
 
 const deselectedIdx = -1
 
+export const getGapPixelWidth = (numberOfCards: number) => {
+  if (numberOfCards > 60) {
+    return 3
+  } else if (numberOfCards > 30) {
+    return 5
+  } else if (numberOfCards > 20) {
+    return 10
+  } else if (numberOfCards > 10) {
+    return 15
+  } else if (numberOfCards > 5) {
+    return 30
+  }
+
+  return 50
+}
+
 export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   const player = lookup.getPlayer(game, playerId)
 
@@ -49,19 +65,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
     setSelectedCardIdx(deselectedIdx)
   }
 
-  let gapWidthPx = 50
-
-  if (player.hand.length > 60) {
-    gapWidthPx = 3
-  } else if (player.hand.length > 30) {
-    gapWidthPx = 5
-  } else if (player.hand.length > 20) {
-    gapWidthPx = 10
-  } else if (player.hand.length > 10) {
-    gapWidthPx = 15
-  } else if (player.hand.length > 5) {
-    gapWidthPx = 30
-  }
+  const gapWidthPx = getGapPixelWidth(player.hand.length)
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
