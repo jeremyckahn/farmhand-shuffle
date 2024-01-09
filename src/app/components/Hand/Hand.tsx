@@ -109,9 +109,11 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
 
           const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
           const translateY =
-            selectedCardIdx === deselectedIdx ? '0rem' : `${CARD_HEIGHT}`
+            selectedCardIdx === deselectedIdx
+              ? '0rem'
+              : `calc(${CARD_HEIGHT} / 2)`
           const rotationDeg = -5
-          const scale = selectedCardIdx === deselectedIdx ? 1 : 0.75
+          const scale = selectedCardIdx === deselectedIdx ? 1 : 0.65
 
           const transform = isSelected
             ? selectedCardTransform
@@ -122,6 +124,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
               key={`${cardId}_${idx}`}
               card={card}
               sx={{
+                zIndex: isSelected ? 20 : 0,
                 transform,
                 position: 'absolute',
                 transition: theme.transitions.create([
