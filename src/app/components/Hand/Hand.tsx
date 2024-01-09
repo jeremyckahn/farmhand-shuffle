@@ -43,9 +43,17 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
 
+  const resetSelectedCard = () => {
+    setSelectedCardIdx(deselectedIdx)
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+  }
+
   const toggleCardIdx = (cardIdx: number) => {
     if (cardIdx === selectedCardIdx) {
-      setSelectedCardIdx(deselectedIdx)
+      resetSelectedCard()
     } else {
       setSelectedCardIdx(cardIdx)
     }
@@ -57,7 +65,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
 
   const handleKeyDown = (evt: React.KeyboardEvent<HTMLDivElement>) => {
     if (evt.key === 'Escape') {
-      setSelectedCardIdx(deselectedIdx)
+      resetSelectedCard()
     }
   }
 
