@@ -70,13 +70,13 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   }
 
   const handleClickAway = () => {
-    setSelectedCardIdx(deselectedIdx)
+    resetSelectedCard()
   }
 
   const gapWidthPx = getGapPixelWidth(player.hand.length)
 
   return (
-    <ClickAwayListener onClickAway={handleClickAway}>
+    <ClickAwayListener onClickAway={handleClickAway} mouseEvent="onMouseDown">
       <Box
         {...rest}
         data-testid={`hand_${playerId}`}
