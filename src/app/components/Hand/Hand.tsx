@@ -51,16 +51,8 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
     }
   }
 
-  const toggleCardIdx = (cardIdx: number) => {
-    if (cardIdx === selectedCardIdx) {
-      resetSelectedCard()
-    } else {
-      setSelectedCardIdx(cardIdx)
-    }
-  }
-
   const handleCardFocus = (cardIdx: number) => {
-    toggleCardIdx(cardIdx)
+    setSelectedCardIdx(cardIdx)
   }
 
   const handleKeyDown = (evt: React.KeyboardEvent<HTMLDivElement>) => {
