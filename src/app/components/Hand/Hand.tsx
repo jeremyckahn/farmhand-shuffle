@@ -69,8 +69,8 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
     }
   }
 
-  const handleBlur: React.FocusEventHandler<HTMLDivElement> = e => {
-    if (!containerRef.current?.contains(e.relatedTarget)) {
+  const handleBlur = (evt: React.FocusEvent<HTMLDivElement, Element>) => {
+    if (!containerRef.current?.contains(evt.relatedTarget)) {
       resetSelectedCard()
     }
   }

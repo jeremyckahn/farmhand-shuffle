@@ -69,7 +69,24 @@ describe('Hand', () => {
     expect(card1Tranform).not.toEqual(selectedCardTransform)
   })
 
-  // FIXME: Add tests for tab navigation
+  test('can tab navigate through cards', async () => {
+    render(<StubHand />)
+
+    const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
+    const card2 = screen.getByText(handCards[1].name).closest('.MuiPaper-root')
+
+    await userEvent.click(card1!)
+
+    await waitFor(() => {
+      userEvent.keyboard('{Tab}')
+    })
+
+    const { transform: card1Tranform } = getComputedStyle(card1!)
+    expect(card1Tranform).not.toEqual(selectedCardTransform)
+
+    const { transform: card2Tranform } = getComputedStyle(card2!)
+    expect(card2Tranform).toEqual(selectedCardTransform)
+  })
 
   describe('getGapPixelWidth', () => {
     test.each([
