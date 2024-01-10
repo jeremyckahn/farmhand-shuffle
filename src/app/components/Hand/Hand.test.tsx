@@ -43,8 +43,8 @@ describe('Hand', () => {
     const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
     await userEvent.click(card1!)
 
-    const { transform: card1Tranform } = getComputedStyle(card1!)
-    expect(card1Tranform).toEqual(selectedCardTransform)
+    const { transform: card1Transform } = getComputedStyle(card1!)
+    expect(card1Transform).toEqual(selectedCardTransform)
 
     for (const { name } of handCards.slice(1)) {
       const card = screen.getByText(name).closest('.MuiPaper-root')
@@ -65,8 +65,8 @@ describe('Hand', () => {
       ;(document.activeElement as HTMLElement).blur()
     })
 
-    const { transform: card1Tranform } = getComputedStyle(card1!)
-    expect(card1Tranform).not.toEqual(selectedCardTransform)
+    const { transform: card1Transform } = getComputedStyle(card1!)
+    expect(card1Transform).not.toEqual(selectedCardTransform)
   })
 
   test('can tab navigate through cards', async () => {
@@ -81,11 +81,11 @@ describe('Hand', () => {
       userEvent.keyboard('{Tab}')
     })
 
-    const { transform: card1Tranform } = getComputedStyle(card1!)
-    expect(card1Tranform).not.toEqual(selectedCardTransform)
+    const { transform: card1Transform } = getComputedStyle(card1!)
+    expect(card1Transform).not.toEqual(selectedCardTransform)
 
-    const { transform: card2Tranform } = getComputedStyle(card2!)
-    expect(card2Tranform).toEqual(selectedCardTransform)
+    const { transform: card2Transform } = getComputedStyle(card2!)
+    expect(card2Transform).toEqual(selectedCardTransform)
   })
 
   describe('getGapPixelWidth', () => {
