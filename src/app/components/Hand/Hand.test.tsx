@@ -88,6 +88,22 @@ describe('Hand', () => {
     expect(card2Transform).toEqual(selectedCardTransform)
   })
 
+  test('user can escape from hand focus', async () => {
+    render(<StubHand />)
+
+    const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
+
+    await userEvent.click(card1!)
+
+    await waitFor(() => {
+      userEvent.keyboard('{Escape}')
+    })
+
+    const { transform: card1Transform } = getComputedStyle(card1!)
+    expect(card1Transform).not.toEqual(selectedCardTransform)
+    expect(document.activeElement).toBe(document.body)
+  })
+
   describe('getGapPixelWidth', () => {
     test.each([
       { numberOfCards: 0, gapSize: 50 },
