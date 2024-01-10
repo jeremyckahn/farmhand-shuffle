@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { carrot, pumpkin, water } from '../../../game/cards/index'
@@ -53,6 +53,23 @@ describe('Hand', () => {
       expect(transform).toMatchSnapshot()
     }
   })
+
+  test('losing focus resets the hand', async () => {
+    render(<StubHand />)
+
+    const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
+
+    await userEvent.click(card1!)
+
+    await waitFor(() => {
+      ;(document.activeElement as HTMLElement).blur()
+    })
+
+    const { transform: card1Tranform } = getComputedStyle(card1!)
+    expect(card1Tranform).not.toEqual(selectedCardTransform)
+  })
+
+  // FIXME: Add tests for tab navigation
 
   describe('getGapPixelWidth', () => {
     test.each([
