@@ -11,73 +11,82 @@ import { RandomNumber } from '../../../services/RandomNumber'
 import { carrot, pumpkin, water } from '../../../game/cards/index'
 import { updatePlayer } from '../../../game/reducers/update-player/index'
 import { lookup } from '../../../game/services/Lookup/index'
-
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { Hand, HandProps } from './Hand'
-
-const HandWithVariableCards = ({ game, ...rest }: HandProps) => {
-  const [hand, setHand] = useState(
-    lookup.getPlayer(game, game.sessionOwnerPlayerId).hand
-  )
-
-  const handleClickAdd = () => {
-    setHand([
-      ...hand,
-      RandomNumber.chooseElement([carrot.id, water.id, pumpkin.id]),
-    ])
-  }
-
-  const handleClickRemove = () => {
-    setHand(hand.slice(0, hand.length - 1))
-  }
-
-  game = updatePlayer(game, game.sessionOwnerPlayerId, { hand })
-
-  return (
-    <>
-      <Hand game={game} {...rest} />
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: '0.5rem',
-          display: 'flex',
-          transform: 'translateX(-50%)',
-          flexDirection: 'column',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-          }}
-        >
-          <Tooltip title="Add a random card">
-            <Fab color="primary" onClick={handleClickAdd}>
-              <AddIcon />
-            </Fab>
-          </Tooltip>
-          <Tooltip title="Remove the last card">
-            <Fab color="secondary" sx={{ ml: 2 }} onClick={handleClickRemove}>
-              <RemoveIcon />
-            </Fab>
-          </Tooltip>
-        </Box>
-        <Typography align="center" variant="subtitle2" sx={{ mt: '0.5rem' }}>
-          Cards: {game.table.players[game.sessionOwnerPlayerId].hand.length}
-        </Typography>
-      </Box>
-    </>
-  )
-}
+import { Hand } from './Hand'
 
 const meta = {
   title: 'Farmhand Shuffle/Hand',
-  component: HandWithVariableCards,
+  component: Hand,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {},
+  decorators: [
+    (Story, { args }) => {
+      let { game } = args
+      const [hand, setHand] = useState(
+        lookup.getPlayer(game, game.sessionOwnerPlayerId).hand
+      )
+
+      const handleClickAdd = () => {
+        setHand([
+          ...hand,
+          RandomNumber.chooseElement([carrot.id, water.id, pumpkin.id]),
+        ])
+      }
+
+      const handleClickRemove = () => {
+        setHand(hand.slice(0, hand.length - 1))
+      }
+
+      game = updatePlayer(game, game.sessionOwnerPlayerId, { hand })
+
+      return (
+        <>
+          <Story args={{ ...args, game }} />
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: '0.5rem',
+              display: 'flex',
+              transform: 'translateX(-50%)',
+              flexDirection: 'column',
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+              }}
+            >
+              <Tooltip title="Add a random card">
+                <Fab color="primary" onClick={handleClickAdd}>
+                  <AddIcon />
+                </Fab>
+              </Tooltip>
+              <Tooltip title="Remove the last card">
+                <Fab
+                  color="secondary"
+                  sx={{ ml: 2 }}
+                  onClick={handleClickRemove}
+                >
+                  <RemoveIcon />
+                </Fab>
+              </Tooltip>
+            </Box>
+            <Typography
+              align="center"
+              variant="subtitle2"
+              sx={{ mt: '0.5rem' }}
+            >
+              Cards: {game.table.players[game.sessionOwnerPlayerId].hand.length}
+            </Typography>
+          </Box>
+        </>
+      )
+    },
+  ],
 } satisfies Meta<typeof Hand>
 
 export default meta
