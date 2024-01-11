@@ -1,4 +1,3 @@
-import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
@@ -8,6 +7,8 @@ import { darken, lighten } from '@mui/material/styles'
 
 import { CARD_HEIGHT, CARD_WIDTH } from '../../config/dimensions'
 import { cards, isCardImageKey, ui } from '../../img'
+
+import { Image } from '../Image'
 
 import { CardProps } from './Card'
 
@@ -66,13 +67,11 @@ export const CardTemplate = ({
           imageRendering: 'pixelated',
         }}
       >
-        <Avatar
+        <Image
           src={imageSrc}
           alt={card.name}
-          variant="square"
           sx={{
             height: `${100 * size}%`,
-            width: 'auto',
             p: 0,
             m: 'auto',
             imageRendering: 'pixelated',
