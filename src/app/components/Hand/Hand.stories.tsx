@@ -13,6 +13,8 @@ import { updatePlayer } from '../../../game/reducers/update-player/index'
 import { lookup } from '../../../game/services/Lookup/index'
 import { stubGame } from '../../../test-utils/stubs/game'
 
+import { CARD_HEIGHT, CARD_WIDTH } from '../../config/dimensions'
+
 import { Hand } from './Hand'
 
 const meta = {
@@ -44,20 +46,28 @@ const meta = {
       game = updatePlayer(game, game.sessionOwnerPlayerId, { hand })
 
       return (
-        <>
-          <Story args={{ ...args, game }} />
+        <Box
+          sx={{
+            minHeight: `calc(${CARD_HEIGHT} * 1.35)`,
+            minWidth: `calc(${CARD_WIDTH} * 3)`,
+            display: 'flex',
+            position: 'relative',
+          }}
+        >
+          <Story args={{ ...args, game, sx: { m: 'auto', mt: 0 } }} />
           <Box
             sx={{
               position: 'absolute',
-              bottom: '0.5rem',
+              top: 0,
+              right: 0,
               display: 'flex',
-              transform: 'translateX(-50%)',
               flexDirection: 'column',
             }}
           >
             <Box
               sx={{
                 display: 'flex',
+                flexDirection: 'column',
               }}
             >
               <Tooltip title="Add a random card">
@@ -68,22 +78,18 @@ const meta = {
               <Tooltip title="Remove the last card">
                 <Fab
                   color="secondary"
-                  sx={{ ml: 2 }}
+                  sx={{ mt: 1 }}
                   onClick={handleClickRemove}
                 >
                   <RemoveIcon />
                 </Fab>
               </Tooltip>
             </Box>
-            <Typography
-              align="center"
-              variant="subtitle2"
-              sx={{ mt: '0.5rem' }}
-            >
+            <Typography align="center" variant="subtitle2" sx={{ mt: 2 }}>
               Cards: {game.table.players[game.sessionOwnerPlayerId].hand.length}
             </Typography>
           </Box>
-        </>
+        </Box>
       )
     },
   ],
