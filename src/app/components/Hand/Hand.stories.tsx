@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
 import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
@@ -55,40 +54,44 @@ const meta = {
           }}
         >
           <Story args={{ ...args, game, sx: { m: 'auto', mt: 0 } }} />
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              display: 'flex',
-              flexDirection: 'column',
-            }}
+          <Tooltip
+            title={`Cards: ${
+              game.table.players[game.sessionOwnerPlayerId].hand.length
+            }`}
+            open
           >
             <Box
               sx={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
                 display: 'flex',
                 flexDirection: 'column',
               }}
             >
-              <Tooltip title="Add a random card">
-                <Fab color="primary" onClick={handleClickAdd}>
-                  <AddIcon />
-                </Fab>
-              </Tooltip>
-              <Tooltip title="Remove the last card">
-                <Fab
-                  color="secondary"
-                  sx={{ mt: 1 }}
-                  onClick={handleClickRemove}
-                >
-                  <RemoveIcon />
-                </Fab>
-              </Tooltip>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Tooltip title="Add a random card" placement="left">
+                  <Fab color="primary" onClick={handleClickAdd}>
+                    <AddIcon />
+                  </Fab>
+                </Tooltip>
+                <Tooltip title="Remove the last card" placement="left">
+                  <Fab
+                    color="secondary"
+                    sx={{ mt: 1.5 }}
+                    onClick={handleClickRemove}
+                  >
+                    <RemoveIcon />
+                  </Fab>
+                </Tooltip>
+              </Box>
             </Box>
-            <Typography align="center" variant="subtitle2" sx={{ mt: 2 }}>
-              Cards: {game.table.players[game.sessionOwnerPlayerId].hand.length}
-            </Typography>
-          </Box>
+          </Tooltip>
         </Box>
       )
     },
