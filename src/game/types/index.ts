@@ -55,6 +55,10 @@ export interface ICrop extends ICard {
   readonly waterToMature: number
 }
 
+export const isCropCard = (card: ICard): card is ICrop => {
+  return card.type === CardType.CROP
+}
+
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
@@ -92,6 +96,10 @@ export interface ITool extends ICard {
  */
 export interface IWater extends ICard {
   readonly type: CardType.WATER
+}
+
+export const isWaterCard = (card: ICard): card is IWater => {
+  return card.type === CardType.WATER
 }
 
 export interface IField {

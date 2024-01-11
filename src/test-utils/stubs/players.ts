@@ -11,3 +11,6 @@ export const stubPlayer = (overrides: Partial<IPlayer> = {}): IPlayer => {
     ...overrides,
   })
 }
+
+export const stubPlayer1 = stubPlayer({ id: 'stub-player-1-id' })
+export const stubPlayer2 = stubPlayer({ id: 'stub-player-2-id' })
