@@ -3,13 +3,13 @@ import { screen } from '@testing-library/dom'
 
 import { carrot } from '../../../game/cards'
 
-import { BaseCardProps, Card, CropCardProps } from './Card'
+import { Card, CropCardProps } from './Card'
 
 const stubCard = carrot
 
-const StubCropCard = (
-  overrides: Partial<BaseCardProps & CropCardProps> = {}
-) => <Card card={stubCard} {...overrides} />
+const StubCropCard = (overrides: Partial<CropCardProps> = {}) => (
+  <Card card={stubCard} {...overrides} />
+)
 
 describe('Card', () => {
   test('renders card', () => {

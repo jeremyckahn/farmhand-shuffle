@@ -17,30 +17,23 @@ export interface BaseCardProps extends PaperProps {
   size?: number
 }
 
-export interface CropCardProps {
+export interface CropCardProps extends BaseCardProps {
   playedCrop?: IPlayedCrop
 }
 
-export interface WaterCardProps {}
+export interface WaterCardProps extends BaseCardProps {}
 
-export type CardProps = BaseCardProps & (CropCardProps | WaterCardProps)
+export type CardProps = CropCardProps | WaterCardProps
 
-const isCropCardProps = (
-  props: CardProps
-): props is BaseCardProps & CropCardProps => {
+const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {
   return isCropCard(props.card)
 }
 
-const isWaterCardProps = (
-  props: CardProps
-): props is BaseCardProps & WaterCardProps => {
+const isPropsWaterCardProps = (props: CardProps): props is WaterCardProps => {
   return isWaterCard(props.card)
 }
 
-export const CropCard = ({
-  playedCrop,
-  ...props
-}: BaseCardProps & CropCardProps) => {
+export const CropCard = ({ playedCrop, ...props }: CropCardProps) => {
   return (
     <CardTemplate {...props}>
       {isCrop(props.card) ? (
@@ -50,16 +43,16 @@ export const CropCard = ({
   )
 }
 
-export const WaterCard = (props: BaseCardProps & WaterCardProps) => {
+export const WaterCard = (props: WaterCardProps) => {
   return <CardTemplate {...props} />
 }
 
 export const Card = (props: CardProps) => {
-  if (isCropCardProps(props)) {
+  if (isPropsCropCardProps(props)) {
     return <CropCard {...props} />
   }
 
-  if (isWaterCardProps(props)) {
+  if (isPropsWaterCardProps(props)) {
     return <WaterCard {...props} />
   }
 
