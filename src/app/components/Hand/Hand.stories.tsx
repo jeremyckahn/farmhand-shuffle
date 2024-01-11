@@ -7,11 +7,10 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { RandomNumber } from '../../../services/RandomNumber'
-import { carrot, pumpkin, water } from '../../../game/cards/index'
-import { updatePlayer } from '../../../game/reducers/update-player/index'
-import { lookup } from '../../../game/services/Lookup/index'
+import { carrot, pumpkin, water } from '../../../game/cards'
+import { updatePlayer } from '../../../game/reducers/update-player'
+import { lookup } from '../../../game/services/Lookup'
 import { stubGame } from '../../../test-utils/stubs/game'
-
 import { CARD_HEIGHT, CARD_WIDTH } from '../../config/dimensions'
 
 import { Hand } from './Hand'

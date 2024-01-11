@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { carrot, pumpkin, water } from '../../../game/cards/index'
-import { updatePlayer } from '../../../game/reducers/update-player/index'
+import { carrot, pumpkin, water } from '../../../game/cards'
+import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
 
 import {
@@ -37,7 +37,7 @@ describe('Hand', () => {
     }
   })
 
-  test('renders hand with a card selected', async () => {
+  test('clicking a card selects it', async () => {
     render(<StubHand />)
 
     const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
@@ -54,7 +54,7 @@ describe('Hand', () => {
     }
   })
 
-  test('losing focus resets the hand', async () => {
+  test('losing focus resets the card selection', async () => {
     render(<StubHand />)
 
     const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
@@ -69,7 +69,7 @@ describe('Hand', () => {
     expect(card1Transform).not.toEqual(selectedCardTransform)
   })
 
-  test('can tab navigate through cards', async () => {
+  test('supports tab navigation', async () => {
     render(<StubHand />)
 
     const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
@@ -88,7 +88,7 @@ describe('Hand', () => {
     expect(card2Transform).toEqual(selectedCardTransform)
   })
 
-  test('user can escape from hand focus', async () => {
+  test('focus can be escaped', async () => {
     render(<StubHand />)
 
     const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')

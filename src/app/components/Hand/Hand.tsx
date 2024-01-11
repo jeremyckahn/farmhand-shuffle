@@ -3,7 +3,7 @@ import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
 import { Card } from '../Card'
-import { mathService } from '../../../services/Math/index'
+import { mathService } from '../../../services/Math'
 import { lookup } from '../../../game/services/Lookup'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import * as cards from '../../../game/cards'
@@ -11,14 +11,12 @@ import { IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
 import { CARD_HEIGHT } from '../../config/dimensions'
 
-export interface HandProps extends BoxProps {
-  game: IGame
-  playerId: IPlayer['id']
-}
-
 export const selectedCardTransform = `translateX(-50%) translateY(0) rotate(0deg) scale(1) rotateY(0deg)`
 
 const deselectedIdx = -1
+const foregroundCardScale = 1
+const backgroundCardScale = 0.65
+const foregroundCardZIndex = 20
 
 export const getGapPixelWidth = (numberOfCards: number) => {
   if (numberOfCards > 60) {
@@ -34,6 +32,11 @@ export const getGapPixelWidth = (numberOfCards: number) => {
   }
 
   return 50
+}
+
+export interface HandProps extends BoxProps {
+  game: IGame
+  playerId: IPlayer['id']
 }
 
 export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
@@ -56,13 +59,18 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
   }
 
   const handleKeyDown = (evt: React.KeyboardEvent<HTMLDivElement>) => {
-    if (evt.key === 'Escape') {
-      resetSelectedCard()
+    switch (evt.key) {
+      case 'Escape':
+        resetSelectedCard()
+        break
     }
   }
 
   const handleBlur = (evt: React.FocusEvent<HTMLDivElement, Element>) => {
-    if (!containerRef.current?.contains(evt.relatedTarget)) {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(evt.relatedTarget)
+    ) {
       resetSelectedCard()
     }
   }
@@ -108,7 +116,10 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
             ? '0rem'
             : `calc(${CARD_HEIGHT} / 2)`
         const rotationDeg = -5
-        const scale = selectedCardIdx === deselectedIdx ? 1 : 0.65
+        const scale =
+          selectedCardIdx === deselectedIdx
+            ? foregroundCardScale
+            : backgroundCardScale
 
         const transform = isSelected
           ? selectedCardTransform
@@ -119,11 +130,13 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
             key={`${cardId}_${idx}`}
             card={card}
             sx={{
-              zIndex: isSelected ? 20 : 0,
               transform,
               position: 'absolute',
               transition: theme.transitions.create(['transition', 'transform']),
               cursor: 'pointer',
+              ...(isSelected && {
+                zIndex: foregroundCardZIndex,
+              }),
             }}
             onFocus={() => handleCardFocus(idx)}
             tabIndex={0}
