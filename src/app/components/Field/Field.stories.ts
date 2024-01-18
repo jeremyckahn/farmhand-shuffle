@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { stubGame } from '../../../test-utils/stubs/game'
+import { updateField } from '../../../game/reducers/update-field'
+import { carrot, pumpkin } from '../../../game/cards'
+import { Factory } from '../../../game/services/Factory'
 
 import { Field } from './Field'
 
@@ -17,11 +20,23 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const game = stubGame()
+const baseGame = stubGame()
+
+const gameWithFieldWithThreePlayedCrops = updateField(
+  baseGame,
+  baseGame.sessionOwnerPlayerId,
+  {
+    crops: [
+      Factory.buildPlayedCrop(carrot),
+      Factory.buildPlayedCrop(pumpkin),
+      Factory.buildPlayedCrop(pumpkin),
+    ],
+  }
+)
 
 export const SelfField: Story = {
   args: {
-    playerId: game.sessionOwnerPlayerId,
-    game,
+    playerId: gameWithFieldWithThreePlayedCrops.sessionOwnerPlayerId,
+    game: gameWithFieldWithThreePlayedCrops,
   },
 }
