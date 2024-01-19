@@ -10,6 +10,7 @@ import * as cards from '../../../game/cards'
 import { IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
 import { CARD_HEIGHT } from '../../config/dimensions'
+import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 
 export const selectedCardTransform = `translateX(-50%) translateY(0) rotate(0deg) scale(1) rotateY(0deg)`
 
@@ -129,6 +130,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
           <Card
             key={`${cardId}_${idx}`}
             card={card}
+            elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
             sx={{
               transform,
               position: 'absolute',
