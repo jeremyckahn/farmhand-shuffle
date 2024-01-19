@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useWindowSize } from '@react-hook/window-size'
 import Box, { BoxProps } from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
@@ -9,8 +10,10 @@ import { IGame, IPlayer } from '../../../game/types'
 import { Card } from '../Card'
 import { isCardId } from '../../../game/types/guards'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
+import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 
 const deselectedIdx = -1
+const selectedCardYOffset = -50
 
 export interface FieldProps extends BoxProps {
   game: IGame
@@ -23,6 +26,11 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
   const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
+  const [selectedCardTransform, setSelectedCardTransform] = useState('')
+  const [windowWidth, windowHeight] = useWindowSize()
+
+  const centerX = windowWidth / 2
+  const centerY = windowHeight / 2
 
   const resetSelectedCard = () => {
     setSelectedCardIdx(deselectedIdx)
@@ -32,7 +40,22 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
     }
   }
 
-  const handleCardFocus = (cardIdx: number) => {
+  const handleCardFocus = (
+    evt: React.FocusEvent<HTMLDivElement, Element>,
+    cardIdx: number
+  ) => {
+    const { target } = evt
+
+    const boundingClientRect = target.getBoundingClientRect()
+    const xDelta =
+      centerX - (boundingClientRect.left + boundingClientRect.width / 2)
+    const yDelta =
+      centerY -
+      (boundingClientRect.top + boundingClientRect.height / 2) +
+      selectedCardYOffset
+
+    // FIXME: Update transform when window size changes
+    setSelectedCardTransform(`translateX(${xDelta}px) translateY(${yDelta}px)`)
     setSelectedCardIdx(cardIdx)
   }
 
@@ -74,16 +97,17 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
             <Grid key={`${idx}_${id}_${waterCards}`} item xs>
               <Card
                 card={card}
-                onFocus={() => handleCardFocus(idx)}
+                onFocus={evt => handleCardFocus(evt, idx)}
                 tabIndex={0}
+                elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
                 sx={{
                   transition: theme.transitions.create([
                     'transition',
                     'transform',
                   ]),
                   ...(isSelected && {
-                    // FIXME: Use a dynamically centered transform here
-                    transform: `translateX(200px) translateY(200px)`,
+                    transform: selectedCardTransform,
+                    zIndex: 20,
                   }),
                 }}
               />
