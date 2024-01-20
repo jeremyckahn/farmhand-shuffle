@@ -5,16 +5,17 @@ import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
 import { darken, lighten } from '@mui/material/styles'
 
-import { CARD_HEIGHT, CARD_WIDTH } from '../../config/dimensions'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { cards, isCardImageKey, ui } from '../../img'
-
 import { Image } from '../Image'
+import { CardSize } from '../../types'
 
 import { CardProps } from './Card'
 
 export const CardTemplate = ({
   card,
-  size = 0.75,
+  imageScale = 0.75,
+  size = CardSize.MEDIUM,
   sx = [],
   children,
   ...props
@@ -31,8 +32,8 @@ export const CardTemplate = ({
     <Paper
       sx={[
         {
-          width: CARD_WIDTH,
-          height: CARD_HEIGHT,
+          width: CARD_DIMENSIONS[size].width,
+          height: CARD_DIMENSIONS[size].height,
           background:
             theme.palette.mode === 'light'
               ? darken(theme.palette.background.paper, 0.05)
@@ -71,7 +72,7 @@ export const CardTemplate = ({
           src={imageSrc}
           alt={card.name}
           sx={{
-            height: `${100 * size}%`,
+            height: `${100 * imageScale}%`,
             p: 0,
             m: 'auto',
             imageRendering: 'pixelated',

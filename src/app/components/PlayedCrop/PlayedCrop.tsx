@@ -1,4 +1,5 @@
 import { IPlayedCrop } from '../../../game/types'
+import { CardSize } from '../../types'
 import { Card, CropCardProps } from '../Card'
 
 interface PlayedCropProps extends CropCardProps {
@@ -6,5 +7,5 @@ interface PlayedCropProps extends CropCardProps {
 }
 
 export const PlayedCrop = ({ ...rest }: PlayedCropProps) => {
-  return <Card {...rest} />
+  return <Card size={CardSize.MEDIUM} {...rest} />
 }

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { carrot, water } from '../../../game/cards'
+import { carrot, pumpkin, water } from '../../../game/cards'
+import { CardSize } from '../../types'
 
 import { Card } from './Card'
 
@@ -26,5 +27,25 @@ export const CropCard: Story = {
 export const WaterCard: Story = {
   args: {
     card: water,
+  },
+}
+
+export const SmallCard: Story = {
+  args: {
+    card: pumpkin,
+    size: CardSize.SMALL,
+  },
+}
+
+export const MediumCard: Story = {
+  args: {
+    card: pumpkin,
+    size: CardSize.MEDIUM,
+  },
+}
+export const LargeCard: Story = {
+  args: {
+    card: pumpkin,
+    size: CardSize.LARGE,
   },
 }

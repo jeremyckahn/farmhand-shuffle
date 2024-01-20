@@ -11,7 +11,8 @@ import { carrot, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
 import { stubGame } from '../../../test-utils/stubs/game'
-import { CARD_HEIGHT, CARD_WIDTH } from '../../config/dimensions'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { CardSize } from '../../types'
 
 import { Hand } from './Hand'
 
@@ -46,8 +47,8 @@ const meta = {
       return (
         <Box
           sx={{
-            minHeight: `calc(${CARD_HEIGHT} * 1.35)`,
-            minWidth: `calc(${CARD_WIDTH} * 3)`,
+            minHeight: `calc(${CARD_DIMENSIONS[CardSize.LARGE].height} * 1.35)`,
+            minWidth: `calc(${CARD_DIMENSIONS[CardSize.LARGE].width} * 3)`,
             display: 'flex',
             position: 'relative',
           }}
@@ -114,6 +115,7 @@ export const HandOf3: Story = {
   args: {
     playerId: gameWithHandOf3.sessionOwnerPlayerId,
     game: gameWithHandOf3,
+    cardSize: CardSize.LARGE,
   },
 }
 
@@ -121,5 +123,6 @@ export const HandOf5: Story = {
   args: {
     playerId: gameWithHandOf5.sessionOwnerPlayerId,
     game: gameWithHandOf5,
+    cardSize: CardSize.LARGE,
   },
 }
