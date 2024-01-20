@@ -13,10 +13,16 @@ import { cards } from '../../img'
 interface PlayedCropProps extends CropCardProps {
   playedCrop: IPlayedCrop
   cardSx?: CropCardProps['sx']
+  isInBackground: boolean
   sx?: BoxProps['sx']
 }
 
-export const PlayedCrop = ({ sx, cardSx, ...props }: PlayedCropProps) => {
+export const PlayedCrop = ({
+  sx,
+  cardSx,
+  isInBackground,
+  ...props
+}: PlayedCropProps) => {
   const { playedCrop, size = CardSize.MEDIUM } = props
   const theme = useTheme()
 
@@ -33,7 +39,14 @@ export const PlayedCrop = ({ sx, cardSx, ...props }: PlayedCropProps) => {
         {new Array(playedCrop.waterCards).fill(null).map((_, idx) => {
           return (
             <Grid key={idx} item sx={{ pt: `${theme.spacing(0)} !important` }}>
-              <Image src={cards.water} sx={{ imageRendering: 'pixelated' }} />
+              <Image
+                src={cards.water}
+                sx={{
+                  imageRendering: 'pixelated',
+                  opacity: isInBackground ? 0 : 1,
+                  transition: theme.transitions.create(['opacity']),
+                }}
+              />
             </Grid>
           )
         })}

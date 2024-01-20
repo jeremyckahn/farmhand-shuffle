@@ -107,12 +107,15 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
 
           const card = cards[id]
           const isSelected = selectedCardIdx === idx
+          const isInBackground =
+            selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
             <Grid key={`${idx}_${id}_${waterCards}`} item xs>
               <PlayedCrop
                 card={card}
                 playedCrop={playedCrop}
+                isInBackground={isInBackground}
                 onFocus={evt => handleCardFocus(evt, idx)}
                 tabIndex={0}
                 elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
