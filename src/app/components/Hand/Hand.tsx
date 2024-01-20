@@ -143,7 +143,7 @@ export const Hand = ({
             sx={{
               transform,
               position: 'absolute',
-              transition: theme.transitions.create(['transition', 'transform']),
+              transition: theme.transitions.create(['transform']),
               cursor: 'pointer',
               ...(isSelected && {
                 zIndex: foregroundCardZIndex,

@@ -117,10 +117,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                 tabIndex={0}
                 elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
                 sx={{
-                  transition: theme.transitions.create([
-                    'transition',
-                    'transform',
-                  ]),
+                  transition: theme.transitions.create(['transform']),
                   ...(isSelected && {
                     transform: selectedCardTransform,
                     zIndex: 20,
