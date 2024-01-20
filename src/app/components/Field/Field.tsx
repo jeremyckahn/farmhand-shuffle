@@ -13,7 +13,7 @@ import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 
 const deselectedIdx = -1
-const selectedCardYOffset = -50
+const selectedCardYOffset = -75
 
 export interface FieldProps extends BoxProps {
   game: IGame
@@ -66,7 +66,9 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
       (boundingClientRect.top + boundingClientRect.height / 2) +
       selectedCardYOffset
 
-    setSelectedCardTransform(`translateX(${xDelta}px) translateY(${yDelta}px)`)
+    setSelectedCardTransform(
+      `translateX(${xDelta}px) translateY(${yDelta}px) scale(1.25)`
+    )
     setSelectedCardIdx(cardIdx)
   }
 
