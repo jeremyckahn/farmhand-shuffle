@@ -23,16 +23,6 @@ export const CropCard: Story = {
   },
 }
 
-export const PlayedCropCard: Story = {
-  args: {
-    card: carrot,
-    playedCrop: {
-      id: carrot.id,
-      waterCards: 1,
-    },
-  },
-}
-
 export const WaterCard: Story = {
   args: {
     card: water,
