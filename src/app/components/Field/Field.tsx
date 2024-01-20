@@ -13,7 +13,7 @@ import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 
 const deselectedIdx = -1
-const selectedCardYOffset = -75
+const selectedCardYOffset = -25
 
 export interface FieldProps extends BoxProps {
   game: IGame
@@ -117,6 +117,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                 tabIndex={0}
                 elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
                 sx={{
+                  position: 'relative',
                   transition: theme.transitions.create(['transform']),
                   ...(isSelected && {
                     transform: selectedCardTransform,

@@ -27,9 +27,9 @@ const gameWithFieldWithThreePlayedCrops = updateField(
   baseGame.sessionOwnerPlayerId,
   {
     crops: [
-      Factory.buildPlayedCrop(carrot),
-      Factory.buildPlayedCrop(pumpkin),
-      Factory.buildPlayedCrop(pumpkin),
+      { ...Factory.buildPlayedCrop(carrot), waterCards: 1 },
+      { ...Factory.buildPlayedCrop(pumpkin), waterCards: 3 },
+      { ...Factory.buildPlayedCrop(pumpkin), waterCards: 12 },
     ],
   }
 )
