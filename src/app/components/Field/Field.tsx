@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useWindowSize } from '@react-hook/window-size'
 import Box, { BoxProps } from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -40,6 +40,18 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
     }
   }
 
+  useEffect(() => {
+    const handleWindowResize = () => {
+      resetSelectedCard()
+    }
+
+    window.addEventListener('resize', handleWindowResize)
+
+    return () => {
+      window.removeEventListener('resize', handleWindowResize)
+    }
+  }, [])
+
   const handleCardFocus = (
     evt: React.FocusEvent<HTMLDivElement, Element>,
     cardIdx: number
@@ -54,7 +66,6 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
       (boundingClientRect.top + boundingClientRect.height / 2) +
       selectedCardYOffset
 
-    // FIXME: Update transform when window size changes
     setSelectedCardTransform(`translateX(${xDelta}px) translateY(${yDelta}px)`)
     setSelectedCardIdx(cardIdx)
   }
