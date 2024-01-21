@@ -22,6 +22,7 @@ export interface FieldProps extends BoxProps {
 
 export const Field = ({ playerId, game, ...rest }: FieldProps) => {
   const player = lookup.getPlayer(game, playerId)
+  const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
 
   const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -64,7 +65,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
     const yDelta =
       centerY -
       (boundingClientRect.top + boundingClientRect.height / 2) +
-      selectedCardYOffset
+      (isSessionOwnerPlayer ? selectedCardYOffset : -selectedCardYOffset)
 
     setSelectedCardTransform(
       `translateX(${xDelta}px) translateY(${yDelta}px) scale(1.25)`
@@ -89,6 +90,10 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
     }
   }
 
+  const crops = isSessionOwnerPlayer
+    ? player.field.crops
+    : [...player.field.crops].reverse()
+
   return (
     <Box
       {...rest}
@@ -97,8 +102,12 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
-      <Grid container spacing={2}>
-        {player.field.crops.map((playedCrop, idx) => {
+      <Grid
+        container
+        spacing={2}
+        alignItems={isSessionOwnerPlayer ? 'flex-start' : 'flex-end'}
+      >
+        {crops.map((playedCrop, idx) => {
           const { id, waterCards } = playedCrop
 
           if (!isCardId(id)) {
@@ -122,6 +131,9 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                 sx={{
                   position: 'relative',
                   transition: theme.transitions.create(['transform']),
+                  ...(!isSessionOwnerPlayer && {
+                    transform: 'rotate(180deg)',
+                  }),
                   ...(isSelected && {
                     transform: selectedCardTransform,
                     zIndex: 20,
