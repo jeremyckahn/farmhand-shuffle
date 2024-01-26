@@ -122,12 +122,16 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
           return (
             <Grid key={`${idx}_${id}_${waterCards}`} item xs>
               <PlayedCrop
-                card={card}
-                playedCrop={playedCrop}
+                cropCardProps={{
+                  card,
+                  playedCrop,
+                  tabIndex: 0,
+                  ...(isSelected && {
+                    elevation: SELECTED_CARD_ELEVATION,
+                  }),
+                }}
                 isInBackground={isInBackground}
                 onFocus={evt => handleCardFocus(evt, idx)}
-                tabIndex={0}
-                elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
                 sx={{
                   position: 'relative',
                   transition: theme.transitions.create(['transform']),

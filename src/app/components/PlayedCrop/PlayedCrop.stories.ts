@@ -19,11 +19,13 @@ type Story = StoryObj<typeof meta>
 
 export const PlayedCropCard: Story = {
   args: {
-    card: carrot,
-    isInBackground: false,
-    playedCrop: {
-      id: carrot.id,
-      waterCards: 1,
+    cropCardProps: {
+      card: carrot,
+      playedCrop: {
+        id: carrot.id,
+        waterCards: 1,
+      },
     },
+    isInBackground: false,
   },
 }

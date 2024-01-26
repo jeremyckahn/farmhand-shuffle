@@ -10,25 +10,22 @@ import { Card, CropCardProps } from '../Card'
 import { Image } from '../Image'
 import { cards } from '../../img'
 
-export interface PlayedCropProps extends CropCardProps {
-  playedCrop: IPlayedCrop
-  cardSx?: CropCardProps['sx']
+export interface PlayedCropProps extends BoxProps {
   isInBackground: boolean
-  sx?: BoxProps['sx']
+  cropCardProps: CropCardProps & { playedCrop: IPlayedCrop }
 }
 
 export const PlayedCrop = ({
-  sx,
-  cardSx,
   isInBackground,
+  cropCardProps,
   ...props
 }: PlayedCropProps) => {
-  const { playedCrop, size = CardSize.MEDIUM } = props
+  const { playedCrop, size = CardSize.MEDIUM } = cropCardProps
   const theme = useTheme()
 
   return (
-    <Box maxWidth={CARD_DIMENSIONS[size].width} sx={sx}>
-      <Card size={size} sx={cardSx} {...props} />
+    <Box maxWidth={CARD_DIMENSIONS[size].width} {...props}>
+      <Card size={size} {...cropCardProps} />
       <Grid
         container
         spacing={1}

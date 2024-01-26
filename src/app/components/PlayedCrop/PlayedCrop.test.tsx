@@ -12,11 +12,11 @@ const stubPlayedCrop: IPlayedCrop = {
   id: stubCard.id,
   waterCards: stubWaterCards,
 }
+const stubCropCardProps = { card: stubCard, playedCrop: stubPlayedCrop }
 
 const StubCropCard = (overrides: Partial<PlayedCropProps> = {}) => (
   <PlayedCrop
-    card={stubCard}
-    playedCrop={stubPlayedCrop}
+    cropCardProps={stubCropCardProps}
     isInBackground={false}
     {...overrides}
   />
