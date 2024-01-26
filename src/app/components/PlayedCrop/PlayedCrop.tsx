@@ -10,7 +10,7 @@ import { Card, CropCardProps } from '../Card'
 import { Image } from '../Image'
 import { cards } from '../../img'
 
-interface PlayedCropProps extends CropCardProps {
+export interface PlayedCropProps extends CropCardProps {
   playedCrop: IPlayedCrop
   cardSx?: CropCardProps['sx']
   isInBackground: boolean
@@ -41,6 +41,7 @@ export const PlayedCrop = ({
             <Grid key={idx} item sx={{ pt: `${theme.spacing(0)} !important` }}>
               <Image
                 src={cards.water}
+                alt="Water card indicator"
                 sx={{
                   imageRendering: 'pixelated',
                   opacity: isInBackground ? 0 : 1,
