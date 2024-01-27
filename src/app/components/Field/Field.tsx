@@ -20,6 +20,8 @@ export interface FieldProps extends BoxProps {
   playerId: IPlayer['id']
 }
 
+export const rotationTransform = 'rotate(180deg)'
+
 export const Field = ({ playerId, game, ...rest }: FieldProps) => {
   const player = lookup.getPlayer(game, playerId)
   const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
@@ -136,7 +138,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                   position: 'relative',
                   transition: theme.transitions.create(['transform']),
                   ...(!isSessionOwnerPlayer && {
-                    transform: 'rotate(180deg)',
+                    transform: rotationTransform,
                   }),
                   ...(isSelected && {
                     transform: selectedCardTransform,
