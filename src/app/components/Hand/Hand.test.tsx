@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { carrot, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
+import { cardClassName } from '../Card/CardTemplate'
 
 import {
   getGapPixelWidth,
@@ -30,7 +31,7 @@ describe('Hand', () => {
     render(<StubHand />)
 
     for (const { name } of handCards) {
-      const card = screen.getByText(name).closest('.MuiPaper-root')
+      const card = screen.getByText(name).closest(`.${cardClassName}`)
 
       const { transform } = getComputedStyle(card!)
       expect(transform).toMatchSnapshot()
@@ -40,14 +41,16 @@ describe('Hand', () => {
   test('clicking a card selects it', async () => {
     render(<StubHand />)
 
-    const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
+    const card1 = screen
+      .getByText(handCards[0].name)
+      .closest(`.${cardClassName}`)
     await userEvent.click(card1!)
 
     const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toEqual(selectedCardTransform)
 
     for (const { name } of handCards.slice(1)) {
-      const card = screen.getByText(name).closest('.MuiPaper-root')
+      const card = screen.getByText(name).closest(`.${cardClassName}`)
 
       const { transform } = getComputedStyle(card!)
       expect(transform).toMatchSnapshot()
@@ -57,7 +60,9 @@ describe('Hand', () => {
   test('losing focus resets the card selection', async () => {
     render(<StubHand />)
 
-    const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
+    const card1 = screen
+      .getByText(handCards[0].name)
+      .closest(`.${cardClassName}`)
 
     await userEvent.click(card1!)
 
@@ -72,8 +77,12 @@ describe('Hand', () => {
   test('supports tab navigation', async () => {
     render(<StubHand />)
 
-    const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
-    const card2 = screen.getByText(handCards[1].name).closest('.MuiPaper-root')
+    const card1 = screen
+      .getByText(handCards[0].name)
+      .closest(`.${cardClassName}`)
+    const card2 = screen
+      .getByText(handCards[1].name)
+      .closest(`.${cardClassName}`)
 
     await userEvent.click(card1!)
 
@@ -91,7 +100,9 @@ describe('Hand', () => {
   test('focus can be escaped', async () => {
     render(<StubHand />)
 
-    const card1 = screen.getByText(handCards[0].name).closest('.MuiPaper-root')
+    const card1 = screen
+      .getByText(handCards[0].name)
+      .closest(`.${cardClassName}`)
 
     await userEvent.click(card1!)
 

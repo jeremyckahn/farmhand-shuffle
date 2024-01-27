@@ -15,6 +15,8 @@ export interface PlayedCropProps extends BoxProps {
   cropCardProps: CropCardProps & { playedCrop: IPlayedCrop }
 }
 
+export const playedCropWrapperClassName = 'PlayedCrop'
+
 export const PlayedCrop = ({
   isInBackground,
   cropCardProps,
@@ -24,7 +26,11 @@ export const PlayedCrop = ({
   const theme = useTheme()
 
   return (
-    <Box maxWidth={CARD_DIMENSIONS[size].width} {...props}>
+    <Box
+      className={playedCropWrapperClassName}
+      maxWidth={CARD_DIMENSIONS[size].width}
+      {...props}
+    >
       <Card size={size} {...cropCardProps} />
       <Grid
         container

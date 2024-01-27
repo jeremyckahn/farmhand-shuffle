@@ -12,6 +12,8 @@ import { CardSize } from '../../types'
 
 import { CardProps } from './Card'
 
+export const cardClassName = 'Card'
+
 export const CardTemplate = ({
   card,
   imageScale = 0.75,
@@ -30,6 +32,7 @@ export const CardTemplate = ({
 
   return (
     <Paper
+      className={cardClassName}
       sx={[
         {
           width: CARD_DIMENSIONS[size].width,
