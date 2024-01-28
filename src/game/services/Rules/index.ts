@@ -14,8 +14,8 @@ import { lookup } from '../Lookup'
 import { PlayerOutOfFundsError } from './errors'
 import { InteractionHandlers } from './InteractionHandlers'
 
-export class Rules {
-  static processGameStart(
+export class RulesService {
+  processGameStart(
     playerSeeds: IPlayerSeed[],
     userPlayerId: string | undefined = playerSeeds[0]?.id
   ): IGame {
@@ -45,7 +45,7 @@ export class Rules {
     return game
   }
 
-  static processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
+  processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
     game = payFromPlayerToCommunity(game, STANDARD_TAX_AMOUNT, playerId)
 
     if (game.table.players[playerId].funds === 0) {
@@ -57,7 +57,7 @@ export class Rules {
     return game
   }
 
-  static processTurnEnd(game: IGame): IGame {
+  processTurnEnd(game: IGame): IGame {
     game = incrementPlayer(game)
 
     return game
@@ -67,7 +67,7 @@ export class Rules {
    * @throws A custom error that describes why the card could not be played. If
    * this occurs, the player should be instructed how to proceed.
    */
-  static async playCardFromHand(
+  async playCardFromHand(
     game: IGame,
     interactionHandlers: InteractionHandlers,
     playerId: IPlayer['id'],
@@ -87,3 +87,5 @@ export class Rules {
     return game
   }
 }
+
+export const rules = new RulesService()
