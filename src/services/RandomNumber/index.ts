@@ -1,13 +1,15 @@
-export class RandomNumber {
-  static generate() {
+export class RandomNumberService {
+  generate() {
     return Math.random()
   }
 
-  static randomIndex(list: any[]) {
-    return Math.round(RandomNumber.generate() * (list.length - 1))
+  randomIndex(list: any[]) {
+    return Math.round(this.generate() * (list.length - 1))
   }
 
-  static chooseElement<T = any>(list: T[]) {
-    return list[RandomNumber.randomIndex(list)]
+  chooseElement<T = any>(list: T[]) {
+    return list[this.randomIndex(list)]
   }
 }
+
+export const randomNumber = new RandomNumberService()

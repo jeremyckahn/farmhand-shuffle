@@ -8,7 +8,7 @@ import { Factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 import { updateGame } from '../../reducers/update-game'
 import { incrementPlayer } from '../../reducers/increment-player'
-import { RandomNumber } from '../../../services/RandomNumber'
+import { randomNumber } from '../../../services/RandomNumber'
 import { lookup } from '../Lookup'
 
 import { PlayerOutOfFundsError } from './errors'
@@ -36,7 +36,7 @@ export class Rules {
       communityFund: game.table.communityFund % playerSeeds.length,
     })
 
-    const firstPlayerId = RandomNumber.chooseElement(
+    const firstPlayerId = randomNumber.chooseElement(
       Object.keys(game.table.players)
     )
 

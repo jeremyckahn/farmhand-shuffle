@@ -11,7 +11,7 @@ import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
-import { RandomNumber } from '../../../services/RandomNumber'
+import { randomNumber } from '../../../services/RandomNumber'
 import { carrot, pumpkin } from '../../cards'
 import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 
@@ -79,7 +79,7 @@ describe('Rules', () => {
     })
 
     test('determines first player', () => {
-      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
+      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
       const game = Rules.processGameStart([player1, player2])
       const [, player2Id] = Object.keys(game.table.players)
 
@@ -134,7 +134,7 @@ describe('Rules', () => {
 
   describe('processTurnEnd', () => {
     test('increments player', () => {
-      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
+      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
       const game = Rules.processGameStart([player1, player2])
       const [player1Id] = Object.keys(game.table.players)
 

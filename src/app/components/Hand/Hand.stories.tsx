@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { RandomNumber } from '../../../services/RandomNumber'
+import { randomNumber } from '../../../services/RandomNumber'
 import { carrot, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
@@ -34,7 +34,7 @@ const meta = {
       const handleClickAdd = () => {
         setHand([
           ...hand,
-          RandomNumber.chooseElement([carrot.id, water.id, pumpkin.id]),
+          randomNumber.chooseElement([carrot.id, water.id, pumpkin.id]),
         ])
       }
 
