@@ -36,4 +36,28 @@ describe('PlayedCrop', () => {
       stubWaterCards
     )
   })
+
+  test('foreground water indicators are visible', () => {
+    render(<StubCropCard />)
+
+    const waterIndicators = screen.getAllByAltText('Water card indicator')
+
+    for (const waterIndicator of waterIndicators) {
+      const { opacity } = getComputedStyle(waterIndicator)
+
+      expect(opacity).toEqual('1')
+    }
+  })
+
+  test('background water indicators are not visible', () => {
+    render(<StubCropCard isInBackground={true} />)
+
+    const waterIndicators = screen.getAllByAltText('Water card indicator')
+
+    for (const waterIndicator of waterIndicators) {
+      const { opacity } = getComputedStyle(waterIndicator)
+
+      expect(opacity).toEqual('0')
+    }
+  })
 })
