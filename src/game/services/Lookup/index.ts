@@ -3,7 +3,7 @@ import { isCardId } from '../../types/guards'
 import { ICard, IGame, IPlayer } from '../../types'
 import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 
-export class Lookup {
+export class LookupService {
   getCardFromHand = (
     game: IGame,
     playerId: IPlayer['id'],
@@ -55,4 +55,4 @@ export class Lookup {
   }
 }
 
-export const lookup = new Lookup()
+export const lookup = new LookupService()
