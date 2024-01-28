@@ -14,4 +14,4 @@ export class MathService {
   }
 }
 
-export const mathService = new MathService()
+export const math = new MathService()

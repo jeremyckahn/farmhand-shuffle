@@ -1,4 +1,4 @@
-import { arrayService } from '../../../services/Array'
+import { array } from '../../../services/Array'
 import { IGame, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
@@ -15,7 +15,7 @@ export const moveFromHandToDiscardPile = (
     throw new Error(`Card index ${cardIdx} is not in player ${playerId}'s hand`)
   }
 
-  const newHand = arrayService.removeAt(hand, cardIdx)
+  const newHand = array.removeAt(hand, cardIdx)
 
   game = updatePlayer(game, playerId, { hand: newHand })
   game = addToDiscardPile(game, playerId, cardId)

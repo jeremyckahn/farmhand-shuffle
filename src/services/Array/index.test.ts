@@ -1,16 +1,16 @@
-import { arrayService } from '.'
+import { array } from '.'
 
 describe('ArrayService', () => {
   describe('removeAt', () => {
     test('removes an element from an array', () => {
-      const array = arrayService.removeAt([1, 2, 3], 1)
+      const arr = array.removeAt([1, 2, 3], 1)
 
-      expect(array).toEqual([1, 3])
+      expect(arr).toEqual([1, 3])
     })
 
     test('throws an out of bounds error', () => {
       expect(() => {
-        arrayService.removeAt([1, 2, 3], 3)
+        array.removeAt([1, 2, 3], 3)
       }).toThrow()
     })
   })

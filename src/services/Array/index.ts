@@ -8,4 +8,4 @@ export class ArrayService {
   }
 }
 
-export const arrayService = new ArrayService()
+export const array = new ArrayService()
