@@ -4,7 +4,7 @@ import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
 import { updateTable } from '../../reducers/update-table'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
-import { Factory } from '../Factory'
+import { factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 import { updateGame } from '../../reducers/update-game'
 import { incrementPlayer } from '../../reducers/increment-player'
@@ -19,10 +19,10 @@ export class RulesService {
     playerSeeds: IPlayerSeed[],
     userPlayerId: string | undefined = playerSeeds[0]?.id
   ): IGame {
-    let game = Factory.buildGame({}, userPlayerId)
+    let game = factory.buildGame({}, userPlayerId)
 
     for (const playerSeed of playerSeeds) {
-      const player = Factory.buildPlayer({
+      const player = factory.buildPlayer({
         ...playerSeed,
         funds: Math.floor(game.table.communityFund / playerSeeds.length),
       })

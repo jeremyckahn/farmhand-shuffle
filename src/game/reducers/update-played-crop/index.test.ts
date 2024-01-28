@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot } from '../../cards'
-import { Factory } from '../../services/Factory'
+import { factory } from '../../services/Factory'
 import { updateField } from '../update-field'
 
 import { updatePlayedCrop } from '.'
@@ -10,7 +10,7 @@ const [player1Id] = Object.keys(game.table.players)
 
 describe('updatePlayedCrop', () => {
   test('updates crop in field', () => {
-    const playedCrop = Factory.buildPlayedCrop(carrot)
+    const playedCrop = factory.buildPlayedCrop(carrot)
     const field = {
       crops: [playedCrop],
     }
@@ -24,7 +24,7 @@ describe('updatePlayedCrop', () => {
   })
 
   test('throws an error if invalid cropIdx is provided', () => {
-    const playedCrop = Factory.buildPlayedCrop(carrot)
+    const playedCrop = factory.buildPlayedCrop(carrot)
     const field = {
       crops: [playedCrop],
     }

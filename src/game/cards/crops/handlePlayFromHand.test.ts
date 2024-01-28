@@ -1,7 +1,7 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 import { updatePlayer } from '../../reducers/update-player'
-import { Factory } from '../../services/Factory'
+import { factory } from '../../services/Factory'
 import { InvalidCardError } from '../../services/Rules/errors'
 import { water } from '..'
 
@@ -15,7 +15,7 @@ describe('handlePlayFromHand', () => {
   test('adds crop to field', async () => {
     const game = stubGame()
     const [player1Id] = Object.keys(game.table.players)
-    const playedCrop = Factory.buildPlayedCrop(carrot)
+    const playedCrop = factory.buildPlayedCrop(carrot)
     let newGame = updatePlayer(game, player1Id, { hand: [carrot.id] })
 
     newGame = await handlePlayFromHand(

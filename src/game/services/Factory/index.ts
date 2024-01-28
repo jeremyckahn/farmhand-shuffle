@@ -3,27 +3,27 @@ import { v4 as uuid } from 'uuid'
 import { INITIAL_PLAYER_FUNDS } from '../../config'
 import { ICrop, IField, IGame, IPlayedCrop, IPlayer, ITable } from '../../types'
 
-export class Factory {
-  static buildField(overrides: Partial<IField> = {}): IField {
+export class FactoryService {
+  buildField(overrides: Partial<IField> = {}): IField {
     return {
       crops: [],
       ...overrides,
     }
   }
 
-  static buildPlayer(overrides: Partial<IPlayer> = {}): IPlayer {
+  buildPlayer(overrides: Partial<IPlayer> = {}): IPlayer {
     return {
       id: uuid(),
       funds: INITIAL_PLAYER_FUNDS,
       deck: [],
       hand: [],
       discardPile: [],
-      field: Factory.buildField(overrides?.field),
+      field: this.buildField(overrides?.field),
       ...overrides,
     }
   }
 
-  static buildTable(overrides: Partial<ITable> = {}): ITable {
+  buildTable(overrides: Partial<ITable> = {}): ITable {
     return {
       players: {},
       communityFund: 100,
@@ -31,11 +31,11 @@ export class Factory {
     }
   }
 
-  static buildGame(
+  buildGame(
     overrides: Partial<IGame> = {},
     sessionOwnerPlayerId = uuid()
   ): IGame {
-    const table = Factory.buildTable(overrides?.table)
+    const table = this.buildTable(overrides?.table)
     const { players } = table
 
     if (Object.keys(players).length === 0) {
@@ -54,10 +54,12 @@ export class Factory {
     }
   }
 
-  static buildPlayedCrop({ id }: ICrop): IPlayedCrop {
+  buildPlayedCrop({ id }: ICrop): IPlayedCrop {
     return {
       id,
       waterCards: 0,
     }
   }
 }
+
+export const factory = new FactoryService()
