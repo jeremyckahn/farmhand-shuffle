@@ -56,10 +56,10 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
   }, [])
 
   const handleCardFocus = (
-    evt: React.FocusEvent<HTMLDivElement, Element>,
+    event: React.FocusEvent<HTMLDivElement, Element>,
     cardIdx: number
   ) => {
-    const { target } = evt
+    const { target } = event
 
     const boundingClientRect = target.getBoundingClientRect()
     const xDelta =
@@ -75,18 +75,18 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
     setSelectedCardIdx(cardIdx)
   }
 
-  const handleKeyDown = (evt: React.KeyboardEvent<HTMLDivElement>) => {
-    switch (evt.key) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (event.key) {
       case 'Escape':
         resetSelectedCard()
         break
     }
   }
 
-  const handleBlur = (evt: React.FocusEvent<HTMLDivElement, Element>) => {
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement, Element>) => {
     if (
       containerRef.current &&
-      !containerRef.current.contains(evt.relatedTarget)
+      !containerRef.current.contains(event.relatedTarget)
     ) {
       resetSelectedCard()
     }
@@ -133,7 +133,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                   }),
                 }}
                 isInBackground={isInBackground}
-                onFocus={evt => handleCardFocus(evt, idx)}
+                onFocus={event => handleCardFocus(event, idx)}
                 sx={{
                   position: 'relative',
                   transition: theme.transitions.create(['transform']),

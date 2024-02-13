@@ -67,18 +67,18 @@ export const Hand = ({
     setSelectedCardIdx(cardIdx)
   }
 
-  const handleKeyDown = (evt: React.KeyboardEvent<HTMLDivElement>) => {
-    switch (evt.key) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (event.key) {
       case 'Escape':
         resetSelectedCard()
         break
     }
   }
 
-  const handleBlur = (evt: React.FocusEvent<HTMLDivElement, Element>) => {
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement, Element>) => {
     if (
       containerRef.current &&
-      !containerRef.current.contains(evt.relatedTarget)
+      !containerRef.current.contains(event.relatedTarget)
     ) {
       resetSelectedCard()
     }
