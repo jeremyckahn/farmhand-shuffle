@@ -4,10 +4,14 @@ import { screen } from '@testing-library/dom'
 import { carrot } from '../../../game/cards'
 import { IPlayedCrop } from '../../../game/types'
 
-import { PlayedCrop, PlayedCropProps } from './PlayedCrop'
+import {
+  PlayedCrop,
+  PlayedCropProps,
+  unfilledWaterIndicatorOpacity,
+} from './PlayedCrop'
 
 const stubCard = carrot
-const stubWaterCards = 3
+const stubWaterCards = 1
 const stubPlayedCrop: IPlayedCrop = {
   id: stubCard.id,
   waterCards: stubWaterCards,
@@ -33,20 +37,29 @@ describe('PlayedCrop', () => {
     render(<StubCropCard />)
 
     expect(screen.getAllByAltText('Water card indicator')).toHaveLength(
-      stubWaterCards
+      stubCard.waterToMature
     )
   })
 
-  test('foreground water indicators are visible', () => {
+  test('filled foreground water indicators are fully opaque', () => {
     render(<StubCropCard />)
 
     const waterIndicators = screen.getAllByAltText('Water card indicator')
 
-    for (const waterIndicator of waterIndicators) {
-      const { opacity } = getComputedStyle(waterIndicator)
+    expect(getComputedStyle(waterIndicators[0]).opacity).toEqual('1')
+  })
 
-      expect(opacity).toEqual('1')
-    }
+  test('unfilled foreground water card icons are partially opaque', () => {
+    render(<StubCropCard />)
+
+    const waterIndicators = screen.getAllByAltText('Water card indicator')
+
+    expect(getComputedStyle(waterIndicators[1]).opacity).toEqual(
+      String(unfilledWaterIndicatorOpacity)
+    )
+    expect(getComputedStyle(waterIndicators[2]).opacity).toEqual(
+      String(unfilledWaterIndicatorOpacity)
+    )
   })
 
   test('background water indicators are not visible', () => {
@@ -59,5 +72,22 @@ describe('PlayedCrop', () => {
 
       expect(opacity).toEqual('0')
     }
+  })
+
+  test('extra water indicators are rendered', () => {
+    const waterCards = 6
+
+    render(
+      <StubCropCard
+        cropCardProps={{
+          ...stubCropCardProps,
+          playedCrop: { ...stubPlayedCrop, waterCards },
+        }}
+      />
+    )
+
+    expect(screen.getAllByAltText('Water card indicator')).toHaveLength(
+      waterCards
+    )
   })
 })

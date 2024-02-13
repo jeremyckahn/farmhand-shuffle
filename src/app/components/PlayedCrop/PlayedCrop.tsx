@@ -3,12 +3,13 @@ import Grid from '@mui/material/Grid'
 
 import { useTheme } from '@mui/material'
 
-import { IPlayedCrop } from '../../../game/types'
+import { IPlayedCrop, isCropCard } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card, CropCardProps } from '../Card'
 import { Image } from '../Image'
-import { cards } from '../../img'
+import { cards as cardImages } from '../../img'
+import { InvalidCardError } from '../../../game/services/Rules/errors'
 
 export interface PlayedCropProps extends BoxProps {
   isInBackground: boolean
@@ -17,13 +18,21 @@ export interface PlayedCropProps extends BoxProps {
 
 export const playedCropWrapperClassName = 'PlayedCrop'
 
+export const unfilledWaterIndicatorOpacity = 0.25
+
 export const PlayedCrop = ({
   isInBackground,
   cropCardProps,
   ...props
 }: PlayedCropProps) => {
-  const { playedCrop, size = CardSize.MEDIUM } = cropCardProps
+  const { card, playedCrop, size = CardSize.MEDIUM } = cropCardProps
   const theme = useTheme()
+
+  if (!isCropCard(card)) {
+    throw new InvalidCardError(`${card.id} is not a crop card.`)
+  }
+
+  const waterIconsToRender = Math.max(playedCrop.waterCards, card.waterToMature)
 
   return (
     <Box
@@ -39,15 +48,23 @@ export const PlayedCrop = ({
         ml={theme.spacing(-0.5)}
         justifyContent="flex-start"
       >
-        {new Array(playedCrop.waterCards).fill(null).map((_, idx) => {
+        {new Array(waterIconsToRender).fill(null).map((_, idx) => {
+          let opacity = 1
+
+          if (isInBackground) {
+            opacity = 0
+          } else if (idx >= playedCrop.waterCards) {
+            opacity = unfilledWaterIndicatorOpacity
+          }
+
           return (
             <Grid key={idx} item sx={{ pt: `${theme.spacing(0)} !important` }}>
               <Image
-                src={cards.water}
+                src={cardImages.water}
                 alt="Water card indicator"
                 sx={{
                   imageRendering: 'pixelated',
-                  opacity: isInBackground ? 0 : 1,
+                  opacity,
                   transition: theme.transitions.create(['opacity']),
                 }}
               />

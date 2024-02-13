@@ -29,3 +29,16 @@ export const PlayedCropCard: Story = {
     isInBackground: false,
   },
 }
+
+export const PlayedCropCardWithExtraWater: Story = {
+  args: {
+    cropCardProps: {
+      card: carrot,
+      playedCrop: {
+        id: carrot.id,
+        waterCards: 5,
+      },
+    },
+    isInBackground: false,
+  },
+}
