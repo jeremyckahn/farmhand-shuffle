@@ -5,12 +5,14 @@ import { Factory } from '../../../game/services/Factory'
 import { updateField } from '../../../game/reducers/update-field'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot, pumpkin } from '../../../game/cards'
-import * as cards from '../../../game/cards'
-import { isCardId } from '../../../game/types/guards'
-import { playedCropWrapperClassName } from '../PlayedCrop'
-import { cardClassName } from '../Card/CardTemplate'
 
-import { Field, FieldProps, rotationTransform } from '.'
+import {
+  Field,
+  FieldProps,
+  rotationTransform,
+  selectedCardLabel,
+  unselectedCardLabel,
+} from '.'
 
 let gameStub = stubGame()
 const opponentPlayerId = Object.keys(gameStub.table.players)[1]
@@ -45,16 +47,10 @@ describe('Field', () => {
   test('renders crop cards for self', () => {
     render(<StubField />)
 
-    for (const crop of cropsStub) {
-      if (!isCardId(crop.id)) {
-        throw new Error()
-      }
+    const playedCrops = screen.getAllByLabelText(unselectedCardLabel)
 
-      const card = screen
-        .getByText(cards[crop.id].name)
-        .closest(`.${cardClassName}`)
-
-      const { transform } = getComputedStyle(card!)
+    for (const playedCrop of playedCrops) {
+      const { transform } = getComputedStyle(playedCrop)
       expect(transform).toMatchSnapshot()
     }
   })
@@ -62,16 +58,10 @@ describe('Field', () => {
   test('renders crop cards for opponent upside-down', async () => {
     render(<StubField playerId={opponentPlayerId} />)
 
-    for (const crop of cropsStub) {
-      if (!isCardId(crop.id)) {
-        throw new Error()
-      }
+    const playedCrops = screen.getAllByLabelText(unselectedCardLabel)
 
-      const card = screen
-        .getByText(cards[crop.id].name)
-        .closest(`.${playedCropWrapperClassName}`)
-
-      const { transform } = getComputedStyle(card!)
+    for (const playedCrop of playedCrops) {
+      const { transform } = getComputedStyle(playedCrop)
       expect(transform).toMatchSnapshot()
       expect(transform).toContain(rotationTransform)
     }
@@ -80,50 +70,31 @@ describe('Field', () => {
   test('clicking a card selects it', async () => {
     render(<StubField />)
 
-    const playedCrop1 = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${cardClassName}`)
+    const [playedCrop1, ...restPlayedCrops] =
+      screen.getAllByLabelText(unselectedCardLabel)
 
-    const playedCrop1Wrapper = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${playedCropWrapperClassName}`)
+    await userEvent.click(playedCrop1)
 
-    await userEvent.click(playedCrop1!)
-
-    const { transform: playedCrop1Transform } = getComputedStyle(
-      playedCrop1Wrapper!
-    )
+    const { transform: playedCrop1Transform } = getComputedStyle(playedCrop1)
 
     expect(playedCrop1Transform).toMatchSnapshot()
+    expect(playedCrop1).toHaveAttribute('aria-label', selectedCardLabel)
 
-    for (const crop of cropsStub.slice(1)) {
-      if (!isCardId(crop.id)) {
-        throw new Error()
-      }
-
-      const cardWrapper = screen
-        .getByText(cards[crop.id].name)
-        .closest(`.${playedCropWrapperClassName}`)
-
-      const { transform } = getComputedStyle(cardWrapper!)
+    for (const playedCrop of restPlayedCrops) {
+      const { transform } = getComputedStyle(playedCrop)
       expect(transform).toMatchSnapshot()
+      expect(playedCrop).toHaveAttribute('aria-label', unselectedCardLabel)
     }
   })
 
   test("clicking an opponent's card selects it", async () => {
     render(<StubField playerId={opponentPlayerId} />)
 
-    const playedCrop1 = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${cardClassName}`)
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    const playedCrop1Wrapper = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${playedCropWrapperClassName}`)
+    await userEvent.click(playedCrop1)
 
-    await userEvent.click(playedCrop1!)
-
-    const { transform } = getComputedStyle(playedCrop1Wrapper!)
+    const { transform } = getComputedStyle(playedCrop1)
 
     expect(transform).toMatchSnapshot()
     expect(transform).not.toContain(rotationTransform)
@@ -132,64 +103,51 @@ describe('Field', () => {
   test('losing focus resets the card selection', async () => {
     render(<StubField />)
 
-    const playedCrop1 = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${cardClassName}`)
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    const playedCrop1Wrapper = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${playedCropWrapperClassName}`)
-
-    await userEvent.click(playedCrop1!)
+    await userEvent.click(playedCrop1)
 
     await waitFor(() => {
       ;(document.activeElement as HTMLElement).blur()
     })
 
-    const { transform } = getComputedStyle(playedCrop1Wrapper!)
+    const { transform } = getComputedStyle(playedCrop1)
     expect(transform).toMatchSnapshot()
+    expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
   })
 
   test('supports tab navigation', async () => {
     render(<StubField />)
 
-    const card1 = screen.getByText(fieldCrop1.name).closest(`.${cardClassName}`)
-    const cardWrapper1 = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${playedCropWrapperClassName}`)
-
-    const cardWrapper2 = screen
-      .getByText(fieldCrop2.name)
-      .closest(`.${playedCropWrapperClassName}`)
-
-    await userEvent.click(card1!)
+    const [playedCrop1, playedCrop2] =
+      screen.getAllByLabelText(unselectedCardLabel)
+    await userEvent.click(playedCrop1)
 
     await waitFor(() => {
       userEvent.keyboard('{Tab}')
     })
 
-    const { transform: card1Transform } = getComputedStyle(cardWrapper1!)
-    const { transform: card2Transform } = getComputedStyle(cardWrapper2!)
+    const { transform: card1Transform } = getComputedStyle(playedCrop1)
+    const { transform: card2Transform } = getComputedStyle(playedCrop2)
 
     expect(card1Transform).toMatchSnapshot()
     expect(card2Transform).toMatchSnapshot()
+    expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
+    expect(playedCrop2).toHaveAttribute('aria-label', selectedCardLabel)
   })
 
   test('focus can be escaped', async () => {
     render(<StubField />)
 
-    const card1 = screen.getByText(fieldCrop1.name).closest(`.${cardClassName}`)
-    const cardWrapper1 = screen
-      .getByText(fieldCrop1.name)
-      .closest(`.${playedCropWrapperClassName}`)
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    await userEvent.click(card1!)
+    await userEvent.click(playedCrop1)
 
     await waitFor(() => {
       userEvent.keyboard('{Escape}')
     })
 
-    const { transform: card1Transform } = getComputedStyle(cardWrapper1!)
+    const { transform: card1Transform } = getComputedStyle(playedCrop1)
     expect(card1Transform).toMatchSnapshot()
     expect(document.activeElement).toBe(document.body)
   })

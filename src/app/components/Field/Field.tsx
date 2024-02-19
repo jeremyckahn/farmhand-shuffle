@@ -21,6 +21,8 @@ export interface FieldProps extends BoxProps {
 }
 
 export const rotationTransform = 'rotate(180deg)'
+export const selectedCardLabel = 'Selected field card'
+export const unselectedCardLabel = 'Unselected field card'
 
 export const Field = ({ playerId, game, ...rest }: FieldProps) => {
   const player = lookup.getPlayer(game, playerId)
@@ -124,10 +126,13 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
           return (
             <Grid key={`${idx}_${id}_${waterCards}`} item xs>
               <PlayedCrop
+                aria-label={
+                  isSelected ? selectedCardLabel : unselectedCardLabel
+                }
+                tabIndex={0}
                 cropCardProps={{
                   card,
                   playedCrop,
-                  tabIndex: 0,
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
                   }),
@@ -137,6 +142,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                 sx={{
                   position: 'relative',
                   transition: theme.transitions.create(['transform']),
+                  outline: 'none',
                   ...(!isSessionOwnerPlayer && {
                     transform: rotationTransform,
                   }),

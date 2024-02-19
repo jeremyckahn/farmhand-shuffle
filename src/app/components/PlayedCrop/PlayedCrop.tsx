@@ -16,8 +16,6 @@ export interface PlayedCropProps extends BoxProps {
   cropCardProps: CropCardProps & { playedCrop: IPlayedCrop }
 }
 
-export const playedCropWrapperClassName = 'PlayedCrop'
-
 export const unfilledWaterIndicatorOpacity = 0.25
 
 export const PlayedCrop = ({
@@ -35,11 +33,7 @@ export const PlayedCrop = ({
   const waterIconsToRender = Math.max(playedCrop.waterCards, card.waterToMature)
 
   return (
-    <Box
-      className={playedCropWrapperClassName}
-      maxWidth={CARD_DIMENSIONS[size].width}
-      {...props}
-    >
+    <Box maxWidth={CARD_DIMENSIONS[size].width} {...props}>
       <Card size={size} {...cropCardProps} />
       <Grid
         container
