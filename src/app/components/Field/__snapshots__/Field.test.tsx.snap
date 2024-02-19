@@ -1,14 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Field clicking a card selects it 1`] = `"translateX(0px) translateY(-25px) scale(1.25)"`;
-
 exports[`Field clicking a card selects it 2`] = `""`;
-
-exports[`Field clicking an opponent's card selects it 1`] = `"translateX(0px) translateY(25px) scale(1.25)"`;
-
-exports[`Field focus can be escaped 1`] = `""`;
-
-exports[`Field losing focus resets the card selection 1`] = `""`;
 
 exports[`Field renders crop cards for opponent upside-down 1`] = `"rotate(180deg)"`;
 
@@ -17,7 +9,3 @@ exports[`Field renders crop cards for opponent upside-down 2`] = `"rotate(180deg
 exports[`Field renders crop cards for self 1`] = `""`;
 
 exports[`Field renders crop cards for self 2`] = `""`;
-
-exports[`Field supports tab navigation 1`] = `""`;
-
-exports[`Field supports tab navigation 2`] = `"translateX(0px) translateY(-25px) scale(1.25)"`;

@@ -77,7 +77,9 @@ describe('Field', () => {
 
     const { transform: playedCrop1Transform } = getComputedStyle(playedCrop1)
 
-    expect(playedCrop1Transform).toMatchSnapshot()
+    expect(playedCrop1Transform).toMatchInlineSnapshot(
+      `"translateX(0px) translateY(-25px) scale(1.25)"`
+    )
     expect(playedCrop1).toHaveAttribute('aria-label', selectedCardLabel)
 
     for (const playedCrop of restPlayedCrops) {
@@ -96,7 +98,9 @@ describe('Field', () => {
 
     const { transform } = getComputedStyle(playedCrop1)
 
-    expect(transform).toMatchSnapshot()
+    expect(transform).toMatchInlineSnapshot(
+      `"translateX(0px) translateY(25px) scale(1.25)"`
+    )
     expect(transform).not.toContain(rotationTransform)
   })
 
@@ -112,7 +116,7 @@ describe('Field', () => {
     })
 
     const { transform } = getComputedStyle(playedCrop1)
-    expect(transform).toMatchSnapshot()
+    expect(transform).toMatchInlineSnapshot(`""`)
     expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
   })
 
@@ -130,8 +134,10 @@ describe('Field', () => {
     const { transform: card1Transform } = getComputedStyle(playedCrop1)
     const { transform: card2Transform } = getComputedStyle(playedCrop2)
 
-    expect(card1Transform).toMatchSnapshot()
-    expect(card2Transform).toMatchSnapshot()
+    expect(card1Transform).toMatchInlineSnapshot(`""`)
+    expect(card2Transform).toMatchInlineSnapshot(
+      `"translateX(0px) translateY(-25px) scale(1.25)"`
+    )
     expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
     expect(playedCrop2).toHaveAttribute('aria-label', selectedCardLabel)
   })
@@ -148,7 +154,7 @@ describe('Field', () => {
     })
 
     const { transform: card1Transform } = getComputedStyle(playedCrop1)
-    expect(card1Transform).toMatchSnapshot()
+    expect(card1Transform).toMatchInlineSnapshot(`""`)
     expect(document.activeElement).toBe(document.body)
   })
 })
