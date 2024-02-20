@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useWindowSize } from '@react-hook/window-size'
+import { useDebounceCallback, useWindowSize } from 'usehooks-ts'
 import Box, { BoxProps } from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
@@ -32,7 +32,11 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
   const [selectedCardTransform, setSelectedCardTransform] = useState('')
-  const [windowWidth, windowHeight] = useWindowSize()
+  const { width: windowWidth, height: windowHeight } = useWindowSize({
+    // NOTE: debounceDelay value needs to be set to some number greater than 0
+    // to avoid resetSelectedCard from being unbound before it is called.
+    debounceDelay: 1,
+  })
 
   const centerX = windowWidth / 2
   const centerY = windowHeight / 2
@@ -45,17 +49,21 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
     }
   }
 
-  useEffect(() => {
-    const handleWindowResize = () => {
+  const handleWindowResize = useDebounceCallback(
+    () => {
       resetSelectedCard()
-    }
+    },
+    undefined,
+    { leading: true }
+  )
 
+  useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
 
     return () => {
       window.removeEventListener('resize', handleWindowResize)
     }
-  }, [])
+  }, [handleWindowResize])
 
   const handleCardFocus = (
     event: React.FocusEvent<HTMLDivElement, Element>,
