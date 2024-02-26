@@ -8,13 +8,15 @@ import {
   isWaterCard,
 } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
+import { CardSize } from '../../types'
 
 import { CardCropText } from './CardCropText'
 import { CardTemplate } from './CardTemplate'
 
 export interface BaseCardProps extends PaperProps {
   card: ICard
-  size?: number
+  size?: CardSize
+  imageScale?: number
 }
 
 export interface CropCardProps extends BaseCardProps {

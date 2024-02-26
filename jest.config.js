@@ -1,6 +1,6 @@
 /** @typedef {import('ts-jest').JestConfigWithTsJest} JestConfigWithTsJest */
 
-const modules = ['@mui', '@babel'].join('|')
+const modules = ['@mui', '@babel', '@react-hook'].join('|')
 
 /** @type {JestConfigWithTsJest} */
 module.exports = {

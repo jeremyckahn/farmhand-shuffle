@@ -7,3 +7,5 @@ export const DECK_SIZE = 60
 export const STANDARD_TAX_AMOUNT = 5
 
 export const STANDARD_FIELD_SIZE = 6
+
+export const SELECTED_CARD_ELEVATION = 10

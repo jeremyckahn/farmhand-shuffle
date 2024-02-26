@@ -2,14 +2,16 @@ import { useRef, useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
-import { Card } from '../Card'
 import { mathService } from '../../../services/Math'
 import { lookup } from '../../../game/services/Lookup'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import * as cards from '../../../game/cards'
 import { IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
-import { CARD_HEIGHT } from '../../config/dimensions'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { SELECTED_CARD_ELEVATION } from '../../../game/config'
+import { CardSize } from '../../types'
+import { Card } from '../Card'
 
 export const selectedCardTransform = `translateX(-50%) translateY(0) rotate(0deg) scale(1) rotateY(0deg)`
 
@@ -37,9 +39,16 @@ export const getGapPixelWidth = (numberOfCards: number) => {
 export interface HandProps extends BoxProps {
   game: IGame
   playerId: IPlayer['id']
+  cardSize?: CardSize
 }
 
-export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
+export const Hand = ({
+  playerId,
+  game,
+  cardSize = CardSize.LARGE,
+  sx = [],
+  ...rest
+}: HandProps) => {
   const player = lookup.getPlayer(game, playerId)
 
   const containerRef = useRef<HTMLDivElement>()
@@ -58,18 +67,18 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
     setSelectedCardIdx(cardIdx)
   }
 
-  const handleKeyDown = (evt: React.KeyboardEvent<HTMLDivElement>) => {
-    switch (evt.key) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (event.key) {
       case 'Escape':
         resetSelectedCard()
         break
     }
   }
 
-  const handleBlur = (evt: React.FocusEvent<HTMLDivElement, Element>) => {
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement, Element>) => {
     if (
       containerRef.current &&
-      !containerRef.current.contains(evt.relatedTarget)
+      !containerRef.current.contains(event.relatedTarget)
     ) {
       resetSelectedCard()
     }
@@ -85,7 +94,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
       sx={[
         {
           position: 'relative',
-          minHeight: CARD_HEIGHT,
+          minHeight: CARD_DIMENSIONS[cardSize].height,
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
@@ -114,7 +123,7 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
         const translateY =
           selectedCardIdx === deselectedIdx
             ? '0rem'
-            : `calc(${CARD_HEIGHT} / 2)`
+            : `calc(${CARD_DIMENSIONS[cardSize].height} / 2)`
         const rotationDeg = -5
         const scale =
           selectedCardIdx === deselectedIdx
@@ -129,10 +138,12 @@ export const Hand = ({ playerId, game, sx = [], ...rest }: HandProps) => {
           <Card
             key={`${cardId}_${idx}`}
             card={card}
+            size={cardSize}
+            elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
             sx={{
               transform,
               position: 'absolute',
-              transition: theme.transitions.create(['transition', 'transform']),
+              transition: theme.transitions.create(['transform']),
               cursor: 'pointer',
               ...(isSelected && {
                 zIndex: foregroundCardZIndex,
