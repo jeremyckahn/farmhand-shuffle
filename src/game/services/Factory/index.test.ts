@@ -1,12 +1,12 @@
 import { isField, isGame, isPlayer, isTable } from '../../types/guards'
 import { carrot } from '../../cards'
 
-import { Factory } from '.'
+import { factory } from '.'
 
 describe('Factory', () => {
   describe('buildField', () => {
     test('builds a field', () => {
-      const field = Factory.buildField()
+      const field = factory.buildField()
 
       expect(isField(field)).toBe(true)
     })
@@ -14,7 +14,7 @@ describe('Factory', () => {
 
   describe('buildPlayer', () => {
     test('builds a player', () => {
-      const player = Factory.buildPlayer()
+      const player = factory.buildPlayer()
 
       expect(isPlayer(player)).toBe(true)
     })
@@ -22,7 +22,7 @@ describe('Factory', () => {
 
   describe('buildTable', () => {
     test('builds a table', () => {
-      const table = Factory.buildTable()
+      const table = factory.buildTable()
 
       expect(isTable(table)).toBe(true)
     })
@@ -30,7 +30,7 @@ describe('Factory', () => {
 
   describe('buildGame', () => {
     test('builds a game', () => {
-      const game = Factory.buildGame()
+      const game = factory.buildGame()
 
       expect(isGame(game)).toBe(true)
     })
@@ -38,7 +38,7 @@ describe('Factory', () => {
 
   describe('buildPlayedCrop', () => {
     test('builds a played crop', () => {
-      const playedCard = Factory.buildPlayedCrop(carrot)
+      const playedCard = factory.buildPlayedCrop(carrot)
 
       expect(playedCard).toEqual({
         id: carrot.id,

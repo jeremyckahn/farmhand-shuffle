@@ -1,6 +1,6 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { updateField } from '../../reducers/update-field'
-import { Factory } from '../../services/Factory'
+import { factory } from '../../services/Factory'
 import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 import { FieldEmptyError, PlayerAbortError } from '../../services/Rules/errors'
 import { carrot, water } from '..'
@@ -16,7 +16,7 @@ describe('water', () => {
         .spyOn(interactionHandlers, 'selectCropFromField')
         .mockReturnValue(Promise.resolve(0))
 
-      const playedCrop = Factory.buildPlayedCrop(carrot)
+      const playedCrop = factory.buildPlayedCrop(carrot)
       let newGame = updateField(game, player1Id, { crops: [playedCrop] })
       newGame = await water.onPlayFromHand(
         newGame,
@@ -37,7 +37,7 @@ describe('water', () => {
           throw new PlayerAbortError()
         })
 
-      const playedCrop = Factory.buildPlayedCrop(carrot)
+      const playedCrop = factory.buildPlayedCrop(carrot)
       let newGame = updateField(game, player1Id, { crops: [playedCrop] })
 
       expect(async () => {

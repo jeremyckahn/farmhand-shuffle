@@ -1,4 +1,4 @@
-import { Factory } from '../../game/services/Factory'
+import { factory } from '../../game/services/Factory'
 import { IGame } from '../../game/types'
 
 import { stubPlayer1, stubPlayer2 } from './players'
@@ -10,7 +10,7 @@ export const stubGame = (overrides: Partial<IGame> = {}): IGame => {
     ...overrides?.table,
   })
 
-  return Factory.buildGame(
+  return factory.buildGame(
     { table, ...overrides },
     Object.keys(table.players)[0]
   )

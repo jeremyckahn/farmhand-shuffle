@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { updateField } from '../../../game/reducers/update-field'
 import { carrot, pumpkin } from '../../../game/cards'
-import { Factory } from '../../../game/services/Factory'
+import { factory } from '../../../game/services/Factory'
 
 import { Field } from './Field'
 
@@ -27,17 +27,17 @@ const opponentPlayerId = Object.keys(game.table.players)[1]
 
 game = updateField(game, selfPlayerId, {
   crops: [
-    { ...Factory.buildPlayedCrop(carrot), waterCards: 1 },
-    { ...Factory.buildPlayedCrop(pumpkin), waterCards: 3 },
-    { ...Factory.buildPlayedCrop(pumpkin), waterCards: 12 },
+    { ...factory.buildPlayedCrop(carrot), waterCards: 1 },
+    { ...factory.buildPlayedCrop(pumpkin), waterCards: 3 },
+    { ...factory.buildPlayedCrop(pumpkin), waterCards: 12 },
   ],
 })
 
 game = updateField(game, opponentPlayerId, {
   crops: [
-    { ...Factory.buildPlayedCrop(carrot), waterCards: 1 },
-    { ...Factory.buildPlayedCrop(pumpkin), waterCards: 3 },
-    { ...Factory.buildPlayedCrop(pumpkin), waterCards: 12 },
+    { ...factory.buildPlayedCrop(carrot), waterCards: 1 },
+    { ...factory.buildPlayedCrop(pumpkin), waterCards: 3 },
+    { ...factory.buildPlayedCrop(pumpkin), waterCards: 12 },
   ],
 })
 

@@ -11,11 +11,11 @@ import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
-import { RandomNumber } from '../../../services/RandomNumber'
+import { randomNumber } from '../../../services/RandomNumber'
 import { carrot, pumpkin } from '../../cards'
 import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 
-import { Rules } from '.'
+import { rules } from '.'
 
 const player1 = stubPlayer()
 const player2 = stubPlayer()
@@ -43,13 +43,13 @@ player2.deck[DECK_SIZE - 1] = pumpkin.id
 describe('Rules', () => {
   describe('processGameStart', () => {
     test('creates a new game', () => {
-      const game = Rules.processGameStart([player1, player2])
+      const game = rules.processGameStart([player1, player2])
 
       expect(isGame(game)).toBe(true)
     })
 
     test('shuffles decks', () => {
-      Rules.processGameStart([player1, player2])
+      rules.processGameStart([player1, player2])
 
       expect(shuffle).toHaveBeenCalledWith(player1.deck)
       expect(shuffle).toHaveBeenCalledWith(player2.deck)
@@ -57,7 +57,7 @@ describe('Rules', () => {
     })
 
     test('sets up player hands', () => {
-      const game = Rules.processGameStart([player1, player2])
+      const game = rules.processGameStart([player1, player2])
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.players[player1Id].hand).toEqual(
@@ -70,7 +70,7 @@ describe('Rules', () => {
     })
 
     test('distributes community fund to players', () => {
-      const game = Rules.processGameStart([player1, player2])
+      const game = rules.processGameStart([player1, player2])
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.communityFund).toEqual(0)
@@ -79,8 +79,8 @@ describe('Rules', () => {
     })
 
     test('determines first player', () => {
-      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
-      const game = Rules.processGameStart([player1, player2])
+      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
+      const game = rules.processGameStart([player1, player2])
       const [, player2Id] = Object.keys(game.table.players)
 
       expect(game.currentPlayerId).toEqual(player2Id)
@@ -92,12 +92,12 @@ describe('Rules', () => {
     let player1Id: IPlayer['id']
 
     beforeEach(() => {
-      game = Rules.processGameStart([player1, player2])
+      game = rules.processGameStart([player1, player2])
       player1Id = Object.keys(game.table.players)[0]
     })
 
     test('pays tax to community fund', () => {
-      const newGame = Rules.processTurnStart(game, player1Id)
+      const newGame = rules.processTurnStart(game, player1Id)
 
       expect(newGame.table.players[player1Id].funds).toEqual(
         game.table.players[player1Id].funds - STANDARD_TAX_AMOUNT
@@ -114,12 +114,12 @@ describe('Rules', () => {
       })
 
       expect(() => {
-        Rules.processTurnStart(newGame, player1Id)
+        rules.processTurnStart(newGame, player1Id)
       }).toThrow(`[PlayerOutOfFundsError] Player ${player1Id} is out of funds.`)
     })
 
     test('draws a card from the deck', () => {
-      const newGame = Rules.processTurnStart(game, player1Id)
+      const newGame = rules.processTurnStart(game, player1Id)
 
       expect(newGame.table.players[player1Id].hand).toEqual([
         ...game.table.players[player1Id].hand,
@@ -134,11 +134,11 @@ describe('Rules', () => {
 
   describe('processTurnEnd', () => {
     test('increments player', () => {
-      jest.spyOn(RandomNumber, 'generate').mockReturnValueOnce(1)
-      const game = Rules.processGameStart([player1, player2])
+      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
+      const game = rules.processGameStart([player1, player2])
       const [player1Id] = Object.keys(game.table.players)
 
-      const newGame = Rules.processTurnEnd(game)
+      const newGame = rules.processTurnEnd(game)
 
       expect(newGame.currentPlayerId).toEqual(player1Id)
     })
@@ -155,14 +155,14 @@ describe('Rules', () => {
         return game
       })
 
-      game = Rules.processGameStart([player1, player2])
+      game = rules.processGameStart([player1, player2])
       player1Id = Object.keys(game.table.players)[0]
 
       game.table.players[player1Id].hand[0] = carrot.id
     })
 
     test('removes played card from hand', async () => {
-      const newGame = await Rules.playCardFromHand(
+      const newGame = await rules.playCardFromHand(
         game,
         interactionHandlers,
         player1Id,
@@ -175,7 +175,7 @@ describe('Rules', () => {
     })
 
     test('moves played card to discard pile', async () => {
-      const newGame = await Rules.playCardFromHand(
+      const newGame = await rules.playCardFromHand(
         game,
         interactionHandlers,
         player1Id,
@@ -186,7 +186,7 @@ describe('Rules', () => {
     })
 
     test('performs card-specific behavior', async () => {
-      await Rules.playCardFromHand(game, interactionHandlers, player1Id, 0)
+      await rules.playCardFromHand(game, interactionHandlers, player1Id, 0)
 
       expect(mockCropHandlePlayFromHand).toHaveBeenCalledWith(
         game,

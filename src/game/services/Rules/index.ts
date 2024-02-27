@@ -4,25 +4,25 @@ import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
 import { updateTable } from '../../reducers/update-table'
 import { IGame, IPlayer, IPlayerSeed } from '../../types'
-import { Factory } from '../Factory'
+import { factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 import { updateGame } from '../../reducers/update-game'
 import { incrementPlayer } from '../../reducers/increment-player'
-import { RandomNumber } from '../../../services/RandomNumber'
+import { randomNumber } from '../../../services/RandomNumber'
 import { lookup } from '../Lookup'
 
 import { PlayerOutOfFundsError } from './errors'
 import { InteractionHandlers } from './InteractionHandlers'
 
-export class Rules {
-  static processGameStart(
+export class RulesService {
+  processGameStart(
     playerSeeds: IPlayerSeed[],
     userPlayerId: string | undefined = playerSeeds[0]?.id
   ): IGame {
-    let game = Factory.buildGame({}, userPlayerId)
+    let game = factory.buildGame({}, userPlayerId)
 
     for (const playerSeed of playerSeeds) {
-      const player = Factory.buildPlayer({
+      const player = factory.buildPlayer({
         ...playerSeed,
         funds: Math.floor(game.table.communityFund / playerSeeds.length),
       })
@@ -36,7 +36,7 @@ export class Rules {
       communityFund: game.table.communityFund % playerSeeds.length,
     })
 
-    const firstPlayerId = RandomNumber.chooseElement(
+    const firstPlayerId = randomNumber.chooseElement(
       Object.keys(game.table.players)
     )
 
@@ -45,7 +45,7 @@ export class Rules {
     return game
   }
 
-  static processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
+  processTurnStart(game: IGame, playerId: IPlayer['id']): IGame {
     game = payFromPlayerToCommunity(game, STANDARD_TAX_AMOUNT, playerId)
 
     if (game.table.players[playerId].funds === 0) {
@@ -57,7 +57,7 @@ export class Rules {
     return game
   }
 
-  static processTurnEnd(game: IGame): IGame {
+  processTurnEnd(game: IGame): IGame {
     game = incrementPlayer(game)
 
     return game
@@ -67,7 +67,7 @@ export class Rules {
    * @throws A custom error that describes why the card could not be played. If
    * this occurs, the player should be instructed how to proceed.
    */
-  static async playCardFromHand(
+  async playCardFromHand(
     game: IGame,
     interactionHandlers: InteractionHandlers,
     playerId: IPlayer['id'],
@@ -87,3 +87,5 @@ export class Rules {
     return game
   }
 }
+
+export const rules = new RulesService()

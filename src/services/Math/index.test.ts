@@ -1,4 +1,4 @@
-import { mathService } from './index'
+import { math } from './index'
 
 describe('MathService', () => {
   describe('scaleNumber', () => {
@@ -54,7 +54,7 @@ describe('MathService', () => {
         expected,
       }) => {
         expect(
-          mathService.scaleNumber(
+          math.scaleNumber(
             value,
             localRangeMin,
             localRangeMax,

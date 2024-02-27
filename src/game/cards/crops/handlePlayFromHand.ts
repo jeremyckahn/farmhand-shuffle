@@ -1,5 +1,5 @@
 import { addCropToField } from '../../reducers/add-crop-to-field'
-import { Factory } from '../../services/Factory'
+import { factory } from '../../services/Factory'
 import { lookup } from '../../services/Lookup'
 import { InvalidCardError } from '../../services/Rules/errors'
 import { InteractionHandlers } from '../../services/Rules/InteractionHandlers'
@@ -18,7 +18,7 @@ export const handlePlayFromHand = async (
     throw new InvalidCardError(`${card.id} is not a crop card.`)
   }
 
-  const playedCrop = Factory.buildPlayedCrop(card)
+  const playedCrop = factory.buildPlayedCrop(card)
   game = addCropToField(game, playerId, playedCrop)
 
   return game

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
-import { mathService } from '../../../services/Math'
+import { math } from '../../../services/Math'
 import { lookup } from '../../../game/services/Lookup'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import * as cards from '../../../game/cards'
@@ -109,7 +109,7 @@ export const Hand = ({
         const card = cards[cardId]
 
         const gapWidthTotal = gapWidthPx * player.hand.length
-        const xOffsetPx = mathService.scaleNumber(
+        const xOffsetPx = math.scaleNumber(
           idx / player.hand.length,
           0,
           1,
