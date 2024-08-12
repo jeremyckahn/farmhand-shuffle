@@ -11,7 +11,7 @@
     "build:storybook": "storybook build",
     "fix:lint": "eslint src --fix",
     "fix:style": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "check": "npm test && npm run check:lint && npm run check:types",
+    "check": "npm test -- --coverage && npm run check:lint && npm run check:types",
     "check:lint": "eslint src --max-warnings=0",
     "check:types": "tsc",
     "prepare": "husky install"
@@ -51,6 +51,7 @@
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
     "@types/uuid": "^9.0.2",
+    "@vitest/coverage-v8": "^2.0.5",
     "eslint": "^8.46.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "^2.28.0",
