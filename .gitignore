@@ -3,7 +3,6 @@
 .cache/
 .idea/
 .nyc_output/
-.parcel-cache/
 .vercel
 .vscode/
 /target/
