@@ -1,3 +1,4 @@
+import { MockInstance } from 'vitest'
 import shuffle from 'lodash.shuffle'
 
 import { stubPlayer } from '../../../test-utils/stubs/players'
@@ -21,19 +22,19 @@ const player1 = stubPlayer()
 const player2 = stubPlayer()
 const interactionHandlers = stubInteractionHandlers()
 
-jest.mock('../../cards/crops/handlePlayFromHand', () => {
+vitest.mock('../../cards/crops/handlePlayFromHand', () => {
   return {
-    handlePlayFromHand: jest.fn(),
+    handlePlayFromHand: vitest.fn(),
   }
 })
 
-jest.mock('lodash.shuffle', () => ({
+vitest.mock('lodash.shuffle', () => ({
   __esModule: true,
-  default: jest.fn(),
+  default: vitest.fn(),
 }))
 
 beforeEach(() => {
-  ;(shuffle as jest.Mock).mockImplementation((arr: any[]) => arr)
+  ;(shuffle as unknown as MockInstance).mockImplementation((arr: any[]) => arr)
 })
 
 // Make player2's deck slightly different from player1's to prevent false
@@ -79,7 +80,7 @@ describe('Rules', () => {
     })
 
     test('determines first player', () => {
-      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
+      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
       const game = rules.processGameStart([player1, player2])
       const [, player2Id] = Object.keys(game.table.players)
 
@@ -134,7 +135,7 @@ describe('Rules', () => {
 
   describe('processTurnEnd', () => {
     test('increments player', () => {
-      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
+      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
       const game = rules.processGameStart([player1, player2])
       const [player1Id] = Object.keys(game.table.players)
 
@@ -150,7 +151,9 @@ describe('Rules', () => {
 
     beforeEach(() => {
       ;(
-        mockCropHandlePlayFromHand as jest.Mock<Promise<IGame>>
+        mockCropHandlePlayFromHand as unknown as MockInstance<
+          typeof mockCropHandlePlayFromHand
+        >
       ).mockImplementation(async (game: IGame) => {
         return game
       })

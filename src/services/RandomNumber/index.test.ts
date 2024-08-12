@@ -3,7 +3,7 @@ import { randomNumber } from '.'
 describe('RandomNumber', () => {
   describe('generate', () => {
     test('generates random number', () => {
-      jest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
+      vitest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
 
       const generatedNumber = randomNumber.generate()
 
@@ -13,7 +13,7 @@ describe('RandomNumber', () => {
 
   describe('randomIndex', () => {
     test('choses a random index from an array', () => {
-      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(0.5)
+      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(0.5)
 
       const selectedIndex = randomNumber.randomIndex([1, 2, 3])
 
@@ -23,7 +23,7 @@ describe('RandomNumber', () => {
 
   describe('chooseElement', () => {
     test('choses a random element from an array', () => {
-      jest.spyOn(randomNumber, 'generate').mockReturnValueOnce(0.5)
+      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(0.5)
 
       const selectedIndex = randomNumber.chooseElement([1, 2, 3])
 

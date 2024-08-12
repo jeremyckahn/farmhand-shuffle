@@ -12,7 +12,7 @@ const interactionHandlers = stubInteractionHandlers()
 describe('water', () => {
   describe('onPlayFromHand', () => {
     test('waters a selected crop when played', async () => {
-      jest
+      vitest
         .spyOn(interactionHandlers, 'selectCropFromField')
         .mockReturnValue(Promise.resolve(0))
 
@@ -31,7 +31,7 @@ describe('water', () => {
     })
 
     test('throws an error when the player cancels selection', async () => {
-      jest
+      vitest
         .spyOn(interactionHandlers, 'selectCropFromField')
         .mockImplementation(async () => {
           throw new PlayerAbortError()
@@ -46,7 +46,7 @@ describe('water', () => {
     })
 
     test('throws an error when there are no crops to water', async () => {
-      jest
+      vitest
         .spyOn(interactionHandlers, 'selectCropFromField')
         .mockReturnValue(Promise.resolve(0))
 

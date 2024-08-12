@@ -1,0 +1,3 @@
+{
+  "ignoreCommand": "stat dist/index.html"
+}
