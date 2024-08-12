@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "A card game for farmers",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "vitest --run",
+    "test:watch": "vitest --watch",
     "start": "vite serve",
     "start:storybook": "storybook dev -p 3000 --no-open",
     "build": "vite build",
@@ -69,8 +69,9 @@
     "storybook": "^7.6.4",
     "storybook-dark-mode": "^3.0.3",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.1.6",
-    "vite": "^4.5.3"
+    "typescript": "^5.5.4",
+    "vite": "^4.5.3",
+    "vitest": "^2.0.5"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {

@@ -1,16 +1,17 @@
+import { MockInstance } from 'vitest'
 import shuffle from 'lodash.shuffle'
 
 import { stubGame } from '../../../test-utils/stubs/game'
 
 import { shuffleDeck } from '.'
 
-jest.mock('lodash.shuffle', () => ({
+vitest.mock('lodash.shuffle', () => ({
   __esModule: true,
-  default: jest.fn(),
+  default: vitest.fn(),
 }))
 
 beforeEach(() => {
-  ;(shuffle as jest.Mock).mockImplementation((arr: any[]) => arr)
+  ;(shuffle as unknown as MockInstance).mockImplementation((arr: any[]) => arr)
 })
 
 describe('shuffleDeck', () => {
