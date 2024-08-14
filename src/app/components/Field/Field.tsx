@@ -20,7 +20,7 @@ export interface FieldProps extends BoxProps {
   playerId: IPlayer['id']
 }
 
-export const rotationTransform = 'rotate(180deg)'
+export const rotationTransform = 'rotateX(180deg) scaleX(-1)'
 export const selectedCardLabel = 'Selected field card'
 export const unselectedCardLabel = 'Unselected field card'
 

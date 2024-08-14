@@ -2,9 +2,9 @@
 
 exports[`Field > clicking a card selects it 2`] = `""`;
 
-exports[`Field > renders crop cards for opponent upside-down 1`] = `"rotate(180deg)"`;
+exports[`Field > renders crop cards for opponent upside-down 1`] = `"rotateX(180deg) scaleX(-1)"`;
 
-exports[`Field > renders crop cards for opponent upside-down 2`] = `"rotate(180deg)"`;
+exports[`Field > renders crop cards for opponent upside-down 2`] = `"rotateX(180deg) scaleX(-1)"`;
 
 exports[`Field > renders crop cards for self 1`] = `""`;
 
