@@ -27,6 +27,7 @@ export interface CropCardProps extends BaseCardProps {
 export interface WaterCardProps extends BaseCardProps {}
 
 export type CardProps = (CropCardProps | WaterCardProps) & {
+  isFlipped?: boolean
   paperProps?: Partial<Omit<PaperProps, 'sx'>>
 }
 

@@ -16,11 +16,12 @@ export const cardClassName = 'Card'
 
 export const CardTemplate = ({
   card,
+  children,
   imageScale = 0.75,
+  isFlipped = false,
+  paperProps,
   size = CardSize.MEDIUM,
   sx = [],
-  children,
-  paperProps,
   ...props
 }: CardProps) => {
   const theme = useTheme()
@@ -33,23 +34,36 @@ export const CardTemplate = ({
   return (
     <Box
       className={cardClassName}
-      sx={[...(Array.isArray(sx) ? sx : [sx])]}
+      sx={[
+        {
+          height: CARD_DIMENSIONS[size].height,
+          position: 'relative',
+          transformStyle: 'preserve-3d',
+          transition: theme.transitions.create(['transform']),
+          width: CARD_DIMENSIONS[size].width,
+          ...(isFlipped && {
+            transform: 'rotateY(180deg)',
+          }),
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
       {...props}
     >
       <Paper
         {...paperProps}
         sx={[
           {
-            width: CARD_DIMENSIONS[size].width,
-            height: CARD_DIMENSIONS[size].height,
+            backfaceVisibility: 'hidden',
             background:
               theme.palette.mode === 'light'
                 ? darken(theme.palette.background.paper, 0.05)
                 : lighten(theme.palette.background.paper, 0.15),
             display: 'flex',
             flexDirection: 'column',
+            height: 1,
             p: theme.spacing(1),
-            position: 'relative',
+            position: 'absolute',
+            width: 1,
           },
         ]}
       >
@@ -88,6 +102,30 @@ export const CardTemplate = ({
         </Box>
         <Divider sx={{ my: theme.spacing(1) }} />
         <Box sx={{ height: '50%' }}>{children}</Box>
+      </Paper>
+      <Paper
+        {...paperProps}
+        sx={{
+          alignItems: 'center',
+          backfaceVisibility: 'hidden',
+          display: 'flex',
+          height: 1,
+          position: 'absolute',
+          textAlign: 'center',
+          transform: 'rotateY(180deg)',
+          width: 1,
+        }}
+      >
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: theme.typography.h4.fontSize,
+            fontWeight: theme.typography.h4.fontWeight,
+            lineHeight: theme.typography.h4.lineHeight,
+          }}
+        >
+          Farmhand Shuffle
+        </Typography>
       </Paper>
     </Box>
   )
