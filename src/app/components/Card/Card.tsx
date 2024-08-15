@@ -1,3 +1,4 @@
+import { BoxProps } from '@mui/material/Box'
 import { PaperProps } from '@mui/material/Paper'
 
 import { UnimplementedError } from '../../../game/services/Rules/errors'
@@ -13,7 +14,7 @@ import { CardSize } from '../../types'
 import { CardCropText } from './CardCropText'
 import { CardTemplate } from './CardTemplate'
 
-export interface BaseCardProps extends PaperProps {
+export interface BaseCardProps extends BoxProps {
   card: ICard
   size?: CardSize
   imageScale?: number
@@ -25,7 +26,9 @@ export interface CropCardProps extends BaseCardProps {
 
 export interface WaterCardProps extends BaseCardProps {}
 
-export type CardProps = CropCardProps | WaterCardProps
+export type CardProps = (CropCardProps | WaterCardProps) & {
+  paperProps?: Partial<Omit<PaperProps, 'sx'>>
+}
 
 const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {
   return isCropCard(props.card)

@@ -20,10 +20,10 @@ export const CardTemplate = ({
   size = CardSize.MEDIUM,
   sx = [],
   children,
+  paperProps,
   ...props
 }: CardProps) => {
   const theme = useTheme()
-
   const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
   if (imageSrc === ui.pixel) {
@@ -31,60 +31,64 @@ export const CardTemplate = ({
   }
 
   return (
-    <Paper
+    <Box
       className={cardClassName}
-      sx={[
-        {
-          width: CARD_DIMENSIONS[size].width,
-          height: CARD_DIMENSIONS[size].height,
-          background:
-            theme.palette.mode === 'light'
-              ? darken(theme.palette.background.paper, 0.05)
-              : lighten(theme.palette.background.paper, 0.15),
-          display: 'flex',
-          flexDirection: 'column',
-          p: theme.spacing(1),
-          position: 'relative',
-        },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
+      sx={[...(Array.isArray(sx) ? sx : [sx])]}
       {...props}
     >
-      <Typography
-        variant="overline"
-        sx={{ fontWeight: theme.typography.fontWeightBold }}
+      <Paper
+        {...paperProps}
+        sx={[
+          {
+            width: CARD_DIMENSIONS[size].width,
+            height: CARD_DIMENSIONS[size].height,
+            background:
+              theme.palette.mode === 'light'
+                ? darken(theme.palette.background.paper, 0.05)
+                : lighten(theme.palette.background.paper, 0.15),
+            display: 'flex',
+            flexDirection: 'column',
+            p: theme.spacing(1),
+            position: 'relative',
+          },
+        ]}
       >
-        {card.name}
-      </Typography>
-      <Box
-        sx={{
-          height: '50%',
-          display: 'flex',
-          background: theme.palette.common.white,
-          backgroundImage: `url(${ui.dirt})`,
-          backgroundSize: '100%',
-          backgroundRepeat: 'repeat',
-          borderColor: theme.palette.divider,
-          borderRadius: `${theme.shape.borderRadius}px`,
-          borderWidth: 1,
-          borderStyle: 'solid',
-          imageRendering: 'pixelated',
-        }}
-      >
-        <Image
-          src={imageSrc}
-          alt={card.name}
+        <Typography
+          variant="overline"
+          sx={{ fontWeight: theme.typography.fontWeightBold }}
+        >
+          {card.name}
+        </Typography>
+        <Box
           sx={{
-            height: `${100 * imageScale}%`,
-            p: 0,
-            m: 'auto',
+            height: '50%',
+            display: 'flex',
+            background: theme.palette.common.white,
+            backgroundImage: `url(${ui.dirt})`,
+            backgroundSize: '100%',
+            backgroundRepeat: 'repeat',
+            borderColor: theme.palette.divider,
+            borderRadius: `${theme.shape.borderRadius}px`,
+            borderWidth: 1,
+            borderStyle: 'solid',
             imageRendering: 'pixelated',
-            filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
           }}
-        />
-      </Box>
-      <Divider sx={{ my: theme.spacing(1) }} />
-      <Box sx={{ height: '50%' }}>{children}</Box>
-    </Paper>
+        >
+          <Image
+            src={imageSrc}
+            alt={card.name}
+            sx={{
+              height: `${100 * imageScale}%`,
+              p: 0,
+              m: 'auto',
+              imageRendering: 'pixelated',
+              filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
+            }}
+          />
+        </Box>
+        <Divider sx={{ my: theme.spacing(1) }} />
+        <Box sx={{ height: '50%' }}>{children}</Box>
+      </Paper>
+    </Box>
   )
 }
