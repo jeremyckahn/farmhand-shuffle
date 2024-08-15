@@ -12,6 +12,7 @@ import { CardSize } from '../../types'
 
 import { CardProps } from './Card'
 
+export const card3DWrapperClassName = 'Card3DWrapper'
 export const cardClassName = 'Card'
 
 export const CardTemplate = ({
@@ -33,6 +34,7 @@ export const CardTemplate = ({
 
   return (
     <Box
+      className={card3DWrapperClassName}
       sx={{
         perspective: '1000px',
         height: CARD_DIMENSIONS[size].height,

@@ -3,11 +3,12 @@ import { screen } from '@testing-library/dom'
 
 import { carrot } from '../../../game/cards'
 
-import { Card, CropCardProps } from './Card'
+import { Card, CardProps } from './Card'
+import { cardClassName } from './CardTemplate'
 
 const stubCard = carrot
 
-const StubCropCard = (overrides: Partial<CropCardProps> = {}) => (
+const StubCropCard = (overrides: Partial<CardProps> = {}) => (
   <Card card={stubCard} {...overrides} />
 )
 
@@ -36,5 +37,21 @@ describe('Card', () => {
         `Water cards attached: ${waterCards}/${stubCard.waterToMature}`
       )
     )
+  })
+
+  test('is face up by default', () => {
+    render(<StubCropCard />)
+    const card = screen.getByText(stubCard.name).closest(`.${cardClassName}`)
+
+    const { transform } = getComputedStyle(card!)
+    expect(transform).toEqual('')
+  })
+
+  test('can be flipped face down', () => {
+    render(<StubCropCard isFlipped={true} />)
+    const card = screen.getByText(stubCard.name).closest(`.${cardClassName}`)
+
+    const { transform } = getComputedStyle(card!)
+    expect(transform).toEqual('rotateY(180deg)')
   })
 })
