@@ -4,7 +4,10 @@ import { screen } from '@testing-library/dom'
 import { carrot } from '../../../game/cards'
 
 import { Card, CardProps } from './Card'
-import { card3DWrapperClassName, cardClassName } from './CardTemplate'
+import {
+  card3DPerspectiveWrapperClassName,
+  cardClassName,
+} from './CardTemplate'
 
 const stubCard = carrot
 
@@ -63,7 +66,7 @@ describe('Card', () => {
 
     const cardWrapper = screen
       .getByText(stubCard.name)
-      .closest(`.${card3DWrapperClassName}`)
+      .closest(`.${card3DPerspectiveWrapperClassName}`)
 
     expect(cardWrapper).toBeInTheDocument()
   })
@@ -73,7 +76,7 @@ describe('Card', () => {
 
     const cardWrapper = screen
       .getByText(stubCard.name)
-      .closest(`.${card3DWrapperClassName}`)
+      .closest(`.${card3DPerspectiveWrapperClassName}`)
 
     expect(cardWrapper).not.toBeInTheDocument()
   })

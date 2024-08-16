@@ -3,7 +3,7 @@ import Paper from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
 import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
-import { darken, lighten } from '@mui/material/styles'
+import { SxProps, darken, lighten } from '@mui/material/styles'
 
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { cards, isCardImageKey, ui } from '../../img'
@@ -12,7 +12,7 @@ import { CardSize } from '../../types'
 
 import { CardProps } from './Card'
 
-export const card3DWrapperClassName = 'Card3DWrapper'
+export const card3DPerspectiveWrapperClassName = 'Card3DWrapper'
 export const cardClassName = 'Card'
 
 export const CardTemplate = ({
@@ -32,8 +32,10 @@ export const CardTemplate = ({
     console.error(`Card ID ${card.id} does not have an image configured`)
   }
 
-  const sxArray = Array.isArray(sx) ? sx : [sx]
-  const isBeingTransformed = sxArray.some(({ transform }) => Boolean(transform))
+  const sxArray: SxProps = Array.isArray(sx) ? sx : [sx]
+  const isBeingTransformed = sxArray.some(
+    sx => typeof sx === 'object' && sx !== null && 'transform' in sx
+  )
 
   const baseCard = (
     <Box
@@ -121,11 +123,9 @@ export const CardTemplate = ({
         }}
       >
         <Typography
-          variant="h1"
+          variant="h2"
           sx={{
-            fontSize: theme.typography.h4.fontSize,
-            fontWeight: theme.typography.h4.fontWeight,
-            lineHeight: theme.typography.h4.lineHeight,
+            ...theme.typography.h4,
           }}
         >
           Farmhand Shuffle
@@ -135,8 +135,8 @@ export const CardTemplate = ({
   )
 
   // NOTE: If the card is being transformed by the parent component, the
-  // perspective wrapper below will visually distort it. To avoid that, the
-  // base card is rendered directly.
+  // perspective wrapper will visually distort it. To avoid that, return the
+  // base card to be rendered directly.
   if (isBeingTransformed) {
     return baseCard
   }
@@ -146,7 +146,7 @@ export const CardTemplate = ({
   // card flip animation.
   return (
     <Box
-      className={card3DWrapperClassName}
+      className={card3DPerspectiveWrapperClassName}
       sx={{
         perspective: '1000px',
         height: CARD_DIMENSIONS[size].height,
