@@ -139,7 +139,11 @@ export const Hand = ({
             key={`${cardId}_${idx}`}
             card={card}
             size={cardSize}
-            elevation={isSelected ? SELECTED_CARD_ELEVATION : undefined}
+            paperProps={{
+              ...(isSelected && {
+                elevation: SELECTED_CARD_ELEVATION,
+              }),
+            }}
             sx={{
               transform,
               position: 'absolute',

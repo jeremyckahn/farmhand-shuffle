@@ -21,12 +21,14 @@ type Story = StoryObj<typeof meta>
 export const CropCard: Story = {
   args: {
     card: carrot,
+    isFlipped: false,
   },
 }
 
 export const WaterCard: Story = {
   args: {
     card: water,
+    isFlipped: false,
   },
 }
 
@@ -34,18 +36,21 @@ export const SmallCard: Story = {
   args: {
     card: pumpkin,
     size: CardSize.SMALL,
+    isFlipped: false,
   },
 }
 
 export const MediumCard: Story = {
   args: {
     card: pumpkin,
+    isFlipped: false,
     size: CardSize.MEDIUM,
   },
 }
 export const LargeCard: Story = {
   args: {
     card: pumpkin,
+    isFlipped: false,
     size: CardSize.LARGE,
   },
 }
