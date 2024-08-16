@@ -4,24 +4,24 @@ import { screen } from '@testing-library/dom'
 import { carrot } from '../../../game/cards'
 
 import { Card, CardProps } from './Card'
-import { cardClassName } from './CardTemplate'
+import { card3DWrapperClassName, cardClassName } from './CardTemplate'
 
 const stubCard = carrot
 
-const StubCropCard = (overrides: Partial<CardProps> = {}) => (
+const StubCard = (overrides: Partial<CardProps> = {}) => (
   <Card card={stubCard} {...overrides} />
 )
 
 describe('Card', () => {
   test('renders card', () => {
-    render(<StubCropCard />)
+    render(<StubCard />)
 
     expect(screen.findByText(stubCard.name))
     expect(screen.findByAltText(stubCard.name))
   })
 
   test('renders crop water requirements', () => {
-    render(<StubCropCard />)
+    render(<StubCard />)
 
     expect(
       screen.findByText(`Water needed to mature: ${stubCard.waterToMature}`)
@@ -30,7 +30,8 @@ describe('Card', () => {
 
   test('renders played crop card', () => {
     const waterCards = 1
-    render(<StubCropCard playedCrop={{ id: stubCard.id, waterCards }} />)
+
+    render(<StubCard playedCrop={{ id: stubCard.id, waterCards }} />)
 
     expect(
       screen.findByText(
@@ -40,7 +41,8 @@ describe('Card', () => {
   })
 
   test('is face up by default', () => {
-    render(<StubCropCard />)
+    render(<StubCard />)
+
     const card = screen.getByText(stubCard.name).closest(`.${cardClassName}`)
 
     const { transform } = getComputedStyle(card!)
@@ -48,10 +50,31 @@ describe('Card', () => {
   })
 
   test('can be flipped face down', () => {
-    render(<StubCropCard isFlipped={true} />)
+    render(<StubCard isFlipped={true} />)
+
     const card = screen.getByText(stubCard.name).closest(`.${cardClassName}`)
 
     const { transform } = getComputedStyle(card!)
     expect(transform).toEqual('rotateY(180deg)')
+  })
+
+  test('uses 3D perspective when not being transformed by parent component', () => {
+    render(<StubCard />)
+
+    const cardWrapper = screen
+      .getByText(stubCard.name)
+      .closest(`.${card3DWrapperClassName}`)
+
+    expect(cardWrapper).toBeInTheDocument()
+  })
+
+  test('can be transformed without distortion by parent component', () => {
+    render(<StubCard sx={{ transform: 'translateX(100px)' }} />)
+
+    const cardWrapper = screen
+      .getByText(stubCard.name)
+      .closest(`.${card3DWrapperClassName}`)
+
+    expect(cardWrapper).not.toBeInTheDocument()
   })
 })
