@@ -4,10 +4,7 @@ import { screen } from '@testing-library/dom'
 import { carrot } from '../../../game/cards'
 
 import { Card, CardProps } from './Card'
-import {
-  card3DPerspectiveWrapperClassName,
-  cardClassName,
-} from './CardTemplate'
+import { cardFlipWrapperClassName } from './CardTemplate'
 
 const stubCard = carrot
 
@@ -46,7 +43,9 @@ describe('Card', () => {
   test('is face up by default', () => {
     render(<StubCard />)
 
-    const card = screen.getByText(stubCard.name).closest(`.${cardClassName}`)
+    const card = screen
+      .getByText(stubCard.name)
+      .closest(`.${cardFlipWrapperClassName}`)
 
     const { transform } = getComputedStyle(card!)
     expect(transform).toEqual('')
@@ -55,29 +54,11 @@ describe('Card', () => {
   test('can be flipped face down', () => {
     render(<StubCard isFlipped={true} />)
 
-    const card = screen.getByText(stubCard.name).closest(`.${cardClassName}`)
+    const card = screen
+      .getByText(stubCard.name)
+      .closest(`.${cardFlipWrapperClassName}`)
 
     const { transform } = getComputedStyle(card!)
     expect(transform).toEqual('rotateY(180deg)')
-  })
-
-  test('uses 3D perspective when not being transformed by parent component', () => {
-    render(<StubCard />)
-
-    const cardWrapper = screen
-      .getByText(stubCard.name)
-      .closest(`.${card3DPerspectiveWrapperClassName}`)
-
-    expect(cardWrapper).toBeInTheDocument()
-  })
-
-  test('can be transformed without distortion by parent component', () => {
-    render(<StubCard sx={{ transform: 'translateX(100px)' }} />)
-
-    const cardWrapper = screen
-      .getByText(stubCard.name)
-      .closest(`.${card3DPerspectiveWrapperClassName}`)
-
-    expect(cardWrapper).not.toBeInTheDocument()
   })
 })
