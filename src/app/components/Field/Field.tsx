@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useWindowSize } from 'usehooks-ts'
 import Box, { BoxProps } from '@mui/material/Box'
 import Grid from '@mui/material/Grid'

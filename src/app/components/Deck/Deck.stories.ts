@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { stubGame } from '../../../test-utils/stubs/game'
 
-import { Deck } from './Deck'
+import { Deck, defaultDeckCardSize, defaultDeckThicknessPx } from './Deck'
 
 const meta = {
   title: 'Farmhand Shuffle/Deck',
@@ -11,7 +11,16 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {},
+  argTypes: {
+    size: {
+      control: { type: 'number' },
+      description: 'The card size of the deck',
+    },
+    deckThicknessPx: {
+      control: { type: 'number' },
+      description: 'The thickness of the deck in pixels',
+    },
+  },
 } satisfies Meta<typeof Deck>
 
 export default meta
@@ -23,5 +32,7 @@ export const SelfDeck: Story = {
   args: {
     playerId: game.sessionOwnerPlayerId,
     game,
+    size: defaultDeckCardSize,
+    deckThicknessPx: defaultDeckThicknessPx,
   },
 }
