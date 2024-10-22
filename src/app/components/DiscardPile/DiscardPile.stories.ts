@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { stubGame } from '../../../test-utils/stubs/game'
+import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'
+import { IGame } from '../../../game/types'
 
 import { DiscardPile } from './DiscardPile'
 
@@ -22,6 +24,13 @@ const game = stubGame()
 export const SelfDiscardPile: Story = {
   args: {
     playerId: game.sessionOwnerPlayerId,
-    game,
+    game: (() => {
+      const [player1Id] = Object.keys(game.table.players)
+
+      return ['carrot', 'pumpkin', 'pumpkin', 'water'].reduce(
+        (acc: IGame, cardId) => addToDiscardPile(acc, player1Id, cardId),
+        game
+      )
+    })(),
   },
 }
