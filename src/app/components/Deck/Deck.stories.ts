@@ -27,10 +27,20 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 const game = stubGame()
+const opponentPlayerId = Object.keys(game.table.players)[1]
 
 export const SelfDeck: Story = {
   args: {
     playerId: game.sessionOwnerPlayerId,
+    game,
+    size: defaultDeckCardSize,
+    deckThicknessPx: defaultDeckThicknessPx,
+  },
+}
+
+export const OpponentDeck: Story = {
+  args: {
+    playerId: opponentPlayerId,
     game,
     size: defaultDeckCardSize,
     deckThicknessPx: defaultDeckThicknessPx,

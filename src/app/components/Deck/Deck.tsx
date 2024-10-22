@@ -31,12 +31,17 @@ export const Deck = ({
   const theme = useTheme()
   const player = lookup.getPlayer(game, playerId)
 
+  const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
+
   return (
     <Box
       data-testid={`deck_${playerId}`}
       height={CARD_DIMENSIONS[size].height}
       width={CARD_DIMENSIONS[size].width}
       position="relative"
+      sx={{
+        ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
+      }}
       {...rest}
     >
       {player.deck.map((cardId, idx) => {
