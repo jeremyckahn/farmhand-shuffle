@@ -8,7 +8,7 @@ import { cardFlipWrapperClassName } from './CardTemplate'
 
 const stubCard = carrot
 
-const StubCard = (overrides: Partial<CardProps> = {}) => (
+const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
   <Card card={stubCard} {...overrides} />
 )
 

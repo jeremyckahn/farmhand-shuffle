@@ -1,6 +1,8 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
+import Tooltip from '@mui/material/Tooltip'
+
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
 import * as cards from '../../../game/cards'
@@ -53,15 +55,21 @@ export const DiscardPile = ({
           (discardPileThicknessPx / player.discardPile.length) * idx
 
         return (
-          <Card
+          <Tooltip
             key={`${cardId}_${idx}`}
-            card={card}
-            position="absolute"
-            sx={{
-              transform: `translateX(${offset}px)`,
-              transition: theme.transitions.create(['transform']),
-            }}
-          />
+            title={card.name}
+            placement="top"
+            arrow
+          >
+            <Card
+              card={card}
+              position="absolute"
+              sx={{
+                transform: `translateX(${offset}px)`,
+                transition: theme.transitions.create(['transform']),
+              }}
+            />
+          </Tooltip>
         )
       })}
     </Box>

@@ -1,6 +1,8 @@
 import { BoxProps } from '@mui/material/Box'
 import { PaperProps } from '@mui/material/Paper'
 
+import { forwardRef } from 'react'
+
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import {
   ICard,
@@ -39,28 +41,38 @@ const isPropsWaterCardProps = (props: CardProps): props is WaterCardProps => {
   return isWaterCard(props.card)
 }
 
-export const CropCard = ({ playedCrop, ...props }: CropCardProps) => {
-  return (
-    <CardTemplate {...props}>
-      {isCrop(props.card) ? (
-        <CardCropText crop={props.card} playedCrop={playedCrop} />
-      ) : null}
-    </CardTemplate>
-  )
-}
+export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
+  ({ playedCrop, ...props }, ref) => {
+    return (
+      <CardTemplate {...props} ref={ref}>
+        {isCrop(props.card) ? (
+          <CardCropText crop={props.card} playedCrop={playedCrop} />
+        ) : null}
+      </CardTemplate>
+    )
+  }
+)
 
-export const WaterCard = (props: WaterCardProps) => {
-  return <CardTemplate {...props} />
-}
+CropCard.displayName = 'CropCard'
 
-export const Card = (props: CardProps) => {
+export const WaterCard = forwardRef<HTMLDivElement, WaterCardProps>(
+  (props, ref) => {
+    return <CardTemplate {...props} ref={ref} />
+  }
+)
+
+WaterCard.displayName = 'WaterCard'
+
+export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   if (isPropsCropCardProps(props)) {
-    return <CropCard {...props} />
+    return <CropCard {...props} ref={ref} />
   }
 
   if (isPropsWaterCardProps(props)) {
-    return <WaterCard {...props} />
+    return <WaterCard {...props} ref={ref} />
   }
 
   throw new UnimplementedError('Unexpected CardType')
-}
+})
+
+Card.displayName = 'Card'
