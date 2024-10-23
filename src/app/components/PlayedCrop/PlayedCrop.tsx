@@ -20,7 +20,7 @@ export const unfilledWaterIndicatorOpacity = 0.25
 
 export const PlayedCrop = ({
   isInBackground,
-  cropCardProps,
+  cropCardProps: { ref, ...cropCardProps },
   ...props
 }: PlayedCropProps) => {
   const { card, playedCrop, size = CardSize.MEDIUM } = cropCardProps
