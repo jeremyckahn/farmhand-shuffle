@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
@@ -12,8 +12,6 @@ import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
-
-export const selectedCardTransform = `translateX(-50%) translateY(0) rotate(0deg) scale(1) rotateY(0deg)`
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -54,10 +52,25 @@ export const Hand = ({
   const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
+  const [containerRect, setContainerRect] = useState<DOMRect | null>(null)
+
+  useEffect(() => {
+    const updateContainerRect = () => {
+      if (containerRef.current) {
+        setContainerRect(containerRef.current.getBoundingClientRect())
+      }
+    }
+
+    updateContainerRect()
+    window.addEventListener('resize', updateContainerRect)
+
+    return () => {
+      window.removeEventListener('resize', updateContainerRect)
+    }
+  }, [])
 
   const resetSelectedCard = () => {
     setSelectedCardIdx(deselectedIdx)
-
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
@@ -119,20 +132,30 @@ export const Hand = ({
 
         const isSelected = selectedCardIdx === idx
 
-        const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
-        const translateY =
-          selectedCardIdx === deselectedIdx
-            ? '0rem'
-            : `calc(${CARD_DIMENSIONS[cardSize].height} / 2)`
-        const rotationDeg = -5
-        const scale =
-          selectedCardIdx === deselectedIdx
-            ? foregroundCardScale
-            : backgroundCardScale
+        let transform = ''
+        if (isSelected && containerRect) {
+          const centerX = window.innerWidth / 2
+          const centerY = window.innerHeight / 2
 
-        const transform = isSelected
-          ? selectedCardTransform
-          : `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
+          const cardCenterX = `calc(${containerRect.left}px + ${CARD_DIMENSIONS[cardSize].width} / 2)`
+          const cardCenterY = `calc(${containerRect.top}px + ${CARD_DIMENSIONS[cardSize].height} / 2)`
+
+          const translateX = `calc(${centerX}px - ${cardCenterX})`
+          const translateY = `calc(${centerY}px - ${cardCenterY})`
+          transform = `translate(${translateX}, ${translateY}) scale(1)`
+        } else {
+          const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
+          const translateY =
+            selectedCardIdx === deselectedIdx
+              ? '0rem'
+              : `calc(${CARD_DIMENSIONS[cardSize].height} / 2)`
+          const rotationDeg = -5
+          const scale =
+            selectedCardIdx === deselectedIdx
+              ? foregroundCardScale
+              : backgroundCardScale
+          transform = `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
+        }
 
         return (
           <Card
