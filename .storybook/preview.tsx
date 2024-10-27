@@ -3,12 +3,13 @@ import type { Preview, ReactRenderer } from '@storybook/react'
 import { DecoratorFunction } from '@storybook/types'
 import { themes } from '@storybook/theming'
 import { ThemeProvider, CssBaseline } from '@mui/material'
+
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
+
 import { lightTheme, darkTheme } from '../src/app/theme'
-import { SelectedCardContext } from '../src/app/contexts/SelectedCard'
 
 const THEMES = {
   light: lightTheme,
@@ -42,15 +43,6 @@ export const withMuiTheme = (
   )
 }
 
-// Create a new decorator for SelectedCardContext
-const withSelectedCardContext: DecoratorFunction<ReactRenderer> = Story => {
-  return (
-    <SelectedCardContext>
-      <Story />
-    </SelectedCardContext>
-  )
-}
-
 export const globalTypes = {
   theme: {
     name: 'Theme',
@@ -80,7 +72,7 @@ const preview: Preview = {
     },
   },
 
-  decorators: [withMuiTheme, withSelectedCardContext],
+  decorators: [withMuiTheme],
 }
 
 export default preview
