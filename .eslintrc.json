@@ -12,7 +12,8 @@
       }
     ],
     "react/react-in-jsx-scope": "off",
-    "react/jsx-curly-brace-presence": ["error", { "props": "never" }]
+    "react/jsx-curly-brace-presence": ["error", { "props": "never" }],
+    "object-shorthand": "error"
   },
   "plugins": ["react"],
   "ignorePatterns": ["dist"]
