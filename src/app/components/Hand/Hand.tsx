@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
@@ -10,13 +10,13 @@ import { IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
+import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
 const backgroundCardScale = 0.65
-const foregroundCardZIndex = 20
 
 export const getGapPixelWidth = (numberOfCards: number) => {
   if (numberOfCards > 60) {
@@ -47,27 +47,14 @@ export const Hand = ({
   sx = [],
   ...rest
 }: HandProps) => {
+  const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
+    cardSize,
+  })
+
   const player = lookup.getPlayer(game, playerId)
 
-  const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
-  const [containerRect, setContainerRect] = useState<DOMRect | null>(null)
-
-  useEffect(() => {
-    const updateContainerRect = () => {
-      if (containerRef.current) {
-        setContainerRect(containerRef.current.getBoundingClientRect())
-      }
-    }
-
-    updateContainerRect()
-    window.addEventListener('resize', updateContainerRect)
-
-    return () => {
-      window.removeEventListener('resize', updateContainerRect)
-    }
-  }, [])
 
   const resetSelectedCard = () => {
     setSelectedCardIdx(deselectedIdx)
@@ -133,17 +120,7 @@ export const Hand = ({
         const isSelected = selectedCardIdx === idx
 
         let transform = ''
-        if (isSelected && containerRect) {
-          const centerX = window.innerWidth / 2
-          const centerY = window.innerHeight / 2
-
-          const cardCenterX = `calc(${containerRect.left}px + ${CARD_DIMENSIONS[cardSize].width} / 2)`
-          const cardCenterY = `calc(${containerRect.top}px + ${CARD_DIMENSIONS[cardSize].height} / 2)`
-
-          const translateX = `calc(${centerX}px - ${cardCenterX})`
-          const translateY = `calc(${centerY}px - ${cardCenterY})`
-          transform = `translate(${translateX}, ${translateY}) scale(1)`
-        } else {
+        if (!isSelected) {
           const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
           const translateY =
             selectedCardIdx === deselectedIdx
@@ -172,9 +149,7 @@ export const Hand = ({
               position: 'absolute',
               transition: theme.transitions.create(['transform']),
               cursor: 'pointer',
-              ...(isSelected && {
-                zIndex: foregroundCardZIndex,
-              }),
+              ...(isSelected && selectedCardSxProps),
             }}
             onFocus={() => handleCardFocus(idx)}
             tabIndex={0}
