@@ -18,7 +18,7 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
-    size: {
+    cardSize: {
       control: { type: 'number' },
       description: 'The card size of the discard pile',
     },
@@ -38,7 +38,7 @@ const [selfPlayerId, opponentPlayerId] = Object.keys(game.table.players)
 export const SelfDiscardPile: Story = {
   args: {
     playerId: selfPlayerId,
-    size: defaultDiscardPileCardSize,
+    cardSize: defaultDiscardPileCardSize,
     discardPileThicknessPx: defaultDiscardPileThicknessPx,
     game: (() => {
       return ['carrot', 'pumpkin', 'pumpkin', 'water'].reduce(
@@ -52,7 +52,7 @@ export const SelfDiscardPile: Story = {
 export const OpponentDiscardPile: Story = {
   args: {
     playerId: opponentPlayerId,
-    size: defaultDiscardPileCardSize,
+    cardSize: defaultDiscardPileCardSize,
     discardPileThicknessPx: defaultDiscardPileThicknessPx,
     game: (() => {
       return ['carrot', 'pumpkin', 'pumpkin', 'water'].reduce(

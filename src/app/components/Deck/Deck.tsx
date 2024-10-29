@@ -75,6 +75,7 @@ export const Deck = ({
             card={card}
             position="absolute"
             isFlipped={!(isTopCard && isTopCardSelected)}
+            size={cardSize}
             sx={{
               transform: `translateX(${offset}px) translateY(${offset / 2}px)`,
               transition: theme.transitions.create(['transform']),

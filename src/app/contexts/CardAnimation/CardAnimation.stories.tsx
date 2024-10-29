@@ -10,6 +10,7 @@ import { Field } from '../../components/Field'
 import { Hand } from '../../components/Hand'
 import { Deck, DeckProps } from '../../components/Deck/Deck'
 import { drawCard } from '../../../game/reducers/draw-card'
+import { CardSize } from '../../types'
 
 import { CardAnimationProvider } from './CardAnimation'
 
@@ -23,6 +24,8 @@ const CardAnimationTestHarness = ({ game: initialGame }: { game: IGame }) => {
     setGame(drawCard(game, userPlayerId))
   }
 
+  const cardSize = CardSize.SMALL
+
   return (
     <CardAnimationProvider game={game}>
       <Box>
@@ -34,9 +37,10 @@ const CardAnimationTestHarness = ({ game: initialGame }: { game: IGame }) => {
           game={game}
           playerId={userPlayerId}
           handleClickTopCard={handleClickTopCard}
+          cardSize={cardSize}
         />
-        <Hand game={game} playerId={userPlayerId} />
-        <DiscardPile game={game} playerId={userPlayerId} />
+        <Hand game={game} playerId={userPlayerId} cardSize={cardSize} />
+        <DiscardPile game={game} playerId={userPlayerId} cardSize={cardSize} />
       </Box>
     </CardAnimationProvider>
   )

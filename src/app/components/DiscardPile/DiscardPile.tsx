@@ -15,7 +15,7 @@ import { UnimplementedError } from '../../../game/services/Rules/errors'
 export interface DiscardPileProps extends BoxProps {
   game: IGame
   playerId: IPlayer['id']
-  size?: CardSize
+  cardSize?: CardSize
   discardPileThicknessPx?: number
 }
 
@@ -25,7 +25,7 @@ export const defaultDiscardPileCardSize = CardSize.MEDIUM
 export const DiscardPile = ({
   playerId,
   game,
-  size = defaultDiscardPileCardSize,
+  cardSize = defaultDiscardPileCardSize,
   discardPileThicknessPx = defaultDiscardPileThicknessPx,
   ...rest
 }: DiscardPileProps) => {
@@ -37,8 +37,8 @@ export const DiscardPile = ({
   return (
     <Box
       data-testid={`discard-pile_${playerId}`}
-      height={CARD_DIMENSIONS[size].height}
-      width={CARD_DIMENSIONS[size].width}
+      height={CARD_DIMENSIONS[cardSize].height}
+      width={CARD_DIMENSIONS[cardSize].width}
       position="relative"
       sx={{
         ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
