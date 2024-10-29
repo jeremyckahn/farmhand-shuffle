@@ -1,8 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Hand > clicking a card selects it 1`] = `"translateX(calc(-50% + 50px + -50px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`;
+exports[`Hand > clicking a card selects it 2`] = `"translateX(calc(-50% + 50px + -50px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`;
 
-exports[`Hand > clicking a card selects it 2`] = `"translateX(calc(-50% + 50px + 50px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`;
+exports[`Hand > clicking a card selects it 3`] = `"translateX(calc(-50% + 50px + 50px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`;
 
 exports[`Hand > renders hand with no cards are selected 1`] = `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`;
 

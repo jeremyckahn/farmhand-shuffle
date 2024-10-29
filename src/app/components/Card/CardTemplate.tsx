@@ -58,7 +58,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
               height: CARD_DIMENSIONS[size].height,
               position: 'relative',
               transformStyle: 'preserve-3d',
-              transition: theme.transitions.create(['transform']),
+              transition: theme.transitions.create(['transform', 'box-shadow']),
               width: CARD_DIMENSIONS[size].width,
               ...(isFlipped && {
                 transform: 'rotateY(180deg)',

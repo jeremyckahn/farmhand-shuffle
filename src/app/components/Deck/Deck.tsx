@@ -1,6 +1,8 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
+import { MouseEventHandler } from 'react'
+
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
 import * as cards from '../../../game/cards'
@@ -9,24 +11,34 @@ import { isCardId } from '../../../game/types/guards'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
+import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 
 export interface DeckProps extends BoxProps {
   game: IGame
+  handleClickTopCard?: MouseEventHandler<HTMLDivElement>
+  isTopCardSelected?: boolean
   playerId: IPlayer['id']
-  size?: CardSize
   deckThicknessPx?: number
+  cardSize?: CardSize
 }
 
 export const defaultDeckThicknessPx = 30
 export const defaultDeckCardSize = CardSize.MEDIUM
 
 export const Deck = ({
-  playerId,
   game,
-  size = defaultDeckCardSize,
+  handleClickTopCard,
+  isTopCardSelected,
+  playerId,
   deckThicknessPx = defaultDeckThicknessPx,
+  cardSize = defaultDeckCardSize,
+  sx,
   ...rest
 }: DeckProps) => {
+  const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
+    cardSize,
+  })
+
   const theme = useTheme()
   const player = lookup.getPlayer(game, playerId)
 
@@ -35,12 +47,16 @@ export const Deck = ({
   return (
     <Box
       data-testid={`deck_${playerId}`}
-      height={CARD_DIMENSIONS[size].height}
-      width={CARD_DIMENSIONS[size].width}
+      height={CARD_DIMENSIONS[cardSize].height}
+      width={CARD_DIMENSIONS[cardSize].width}
       position="relative"
-      sx={{
-        ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
-      }}
+      ref={containerRef}
+      sx={[
+        {
+          ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
       {...rest}
     >
       {player.deck.map((cardId, idx) => {
@@ -50,17 +66,22 @@ export const Deck = ({
 
         const card = cards[cardId]
         const offset = (deckThicknessPx / player.deck.length) * idx
+        const isTopCard = idx === player.deck.length - 1
 
         return (
           <Card
             key={`${cardId}_${idx}`}
             card={card}
             position="absolute"
-            isFlipped
+            isFlipped={!(isTopCard && isTopCardSelected)}
             sx={{
               transform: `translateX(${offset}px) translateY(${offset / 2}px)`,
               transition: theme.transitions.create(['transform']),
+              ...(isTopCard && isTopCardSelected && selectedCardSxProps),
             }}
+            {...(isTopCard && {
+              onClick: handleClickTopCard,
+            })}
           />
         )
       })}

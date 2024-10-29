@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { useState } from 'react'
+
 import { stubGame } from '../../../test-utils/stubs/game'
 
 import { Deck, defaultDeckCardSize, defaultDeckThicknessPx } from './Deck'
@@ -12,7 +14,7 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
-    size: {
+    cardSize: {
       control: { type: 'number' },
       description: 'The card size of the deck',
     },
@@ -33,16 +35,35 @@ export const SelfDeck: Story = {
   args: {
     playerId: game.sessionOwnerPlayerId,
     game,
-    size: defaultDeckCardSize,
+    cardSize: defaultDeckCardSize,
     deckThicknessPx: defaultDeckThicknessPx,
   },
+  decorators: [
+    (Story, ctx) => {
+      const [isTopCardSelected, setIsTopCardSelected] = useState(false)
+
+      const handleClickTopCard = () => {
+        setIsTopCardSelected(!isTopCardSelected)
+      }
+
+      return (
+        <Story
+          args={{
+            ...ctx.args,
+            handleClickTopCard,
+            isTopCardSelected,
+          }}
+        />
+      )
+    },
+  ],
 }
 
 export const OpponentDeck: Story = {
   args: {
     playerId: opponentPlayerId,
     game,
-    size: defaultDeckCardSize,
+    cardSize: defaultDeckCardSize,
     deckThicknessPx: defaultDeckThicknessPx,
   },
 }

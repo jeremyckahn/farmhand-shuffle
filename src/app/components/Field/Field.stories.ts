@@ -44,13 +44,13 @@ game = updateField(game, opponentPlayerId, {
 export const SelfField: Story = {
   args: {
     playerId: game.sessionOwnerPlayerId,
-    game: game,
+    game,
   },
 }
 
 export const OpponentField: Story = {
   args: {
     playerId: opponentPlayerId,
-    game: game,
+    game,
   },
 }

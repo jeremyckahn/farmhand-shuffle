@@ -6,12 +6,7 @@ import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { cardClassName } from '../Card/CardTemplate'
 
-import {
-  getGapPixelWidth,
-  Hand,
-  HandProps,
-  selectedCardTransform,
-} from './Hand'
+import { getGapPixelWidth, Hand, HandProps } from './Hand'
 
 const baseGame = stubGame()
 
@@ -47,7 +42,9 @@ describe('Hand', () => {
     await userEvent.click(card1!)
 
     const { transform: card1Transform } = getComputedStyle(card1!)
-    expect(card1Transform).toEqual(selectedCardTransform)
+    expect(card1Transform).toMatchInlineSnapshot(
+      `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
+    )
 
     for (const { name } of handCards.slice(1)) {
       const card = screen.getByText(name).closest(`.${cardClassName}`)
@@ -71,7 +68,9 @@ describe('Hand', () => {
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)
-    expect(card1Transform).not.toEqual(selectedCardTransform)
+    expect(card1Transform).toMatchInlineSnapshot(
+      `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+    )
   })
 
   test('supports tab navigation', async () => {
@@ -91,10 +90,14 @@ describe('Hand', () => {
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)
-    expect(card1Transform).not.toEqual(selectedCardTransform)
+    expect(card1Transform).toMatchInlineSnapshot(
+      `"translateX(calc(-50% + 50px + -150px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`
+    )
 
     const { transform: card2Transform } = getComputedStyle(card2!)
-    expect(card2Transform).toEqual(selectedCardTransform)
+    expect(card2Transform).toMatchInlineSnapshot(
+      `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
+    )
   })
 
   test('focus can be escaped', async () => {
@@ -111,7 +114,9 @@ describe('Hand', () => {
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)
-    expect(card1Transform).not.toEqual(selectedCardTransform)
+    expect(card1Transform).toMatchInlineSnapshot(
+      `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+    )
     expect(document.activeElement).toBe(document.body)
   })
 
