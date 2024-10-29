@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { SxProps } from '@mui/material'
+import { SxProps, useTheme } from '@mui/material'
 
 import { CARD_DIMENSIONS } from '../config/dimensions'
 import { CardSize } from '../types'
@@ -25,6 +25,7 @@ export const useSelectedCardPosition = ({
 }: {
   cardSize: CardSize
 }) => {
+  const theme = useTheme()
   const containerRef = useRef<HTMLDivElement>()
   const [containerRect, setContainerRect] =
     useState<DOMRect>(defaultContainerRect)
@@ -54,6 +55,7 @@ export const useSelectedCardPosition = ({
   const translateY = `calc(${centerY}px - ${cardCenterY})`
 
   const selectedCardSxProps: SxProps = {
+    boxShadow: theme.shadows['11'],
     transform: `translate(${translateX}, ${translateY}) scale(1)`,
     zIndex: foregroundCardZIndex,
   }
