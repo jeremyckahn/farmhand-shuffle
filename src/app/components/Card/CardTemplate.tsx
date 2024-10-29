@@ -137,7 +137,9 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
             <Typography
               variant="h2"
               sx={{
-                ...theme.typography.h4,
+                ...(size === CardSize.SMALL && theme.typography.h6),
+                ...(size === CardSize.MEDIUM && theme.typography.h5),
+                ...(size === CardSize.LARGE && theme.typography.h4),
               }}
             >
               Farmhand Shuffle
