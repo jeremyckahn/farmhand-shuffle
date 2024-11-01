@@ -38,7 +38,7 @@ describe('water', () => {
         })
 
       const playedCrop = factory.buildPlayedCrop(carrot)
-      let newGame = updateField(game, player1Id, { crops: [playedCrop] })
+      const newGame = updateField(game, player1Id, { crops: [playedCrop] })
 
       expect(async () => {
         await water.onPlayFromHand(newGame, interactionHandlers, player1Id, 0)

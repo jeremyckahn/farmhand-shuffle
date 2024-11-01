@@ -31,7 +31,7 @@ describe('handlePlayFromHand', () => {
   test('throws error if card lookup fails', async () => {
     const game = stubGame()
     const [player1Id] = Object.keys(game.table.players)
-    let newGame = updatePlayer(game, player1Id, { hand: [water.id] })
+    const newGame = updatePlayer(game, player1Id, { hand: [water.id] })
 
     expect(async () => {
       await handlePlayFromHand(newGame, interactionHandlers, player1Id, 0)

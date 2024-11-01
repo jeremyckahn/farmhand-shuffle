@@ -11,7 +11,7 @@ vitest.mock('lodash.shuffle', () => ({
 }))
 
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation((arr: any[]) => arr)
+  ;(shuffle as unknown as MockInstance).mockImplementation(arr => arr)
 })
 
 describe('shuffleDeck', () => {
