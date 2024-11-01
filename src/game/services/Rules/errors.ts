@@ -1,3 +1,4 @@
+/* eslint-disable prefer-rest-params */
 import { IPlayer } from '../../types'
 
 export class PlayerOutOfFundsError extends Error {

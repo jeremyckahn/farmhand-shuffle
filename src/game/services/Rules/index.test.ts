@@ -34,7 +34,7 @@ vitest.mock('lodash.shuffle', () => ({
 }))
 
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation((arr: any[]) => arr)
+  ;(shuffle as unknown as MockInstance).mockImplementation(arr => arr)
 })
 
 // Make player2's deck slightly different from player1's to prevent false
@@ -110,7 +110,7 @@ describe('Rules', () => {
     })
 
     test('aborts if player is out of money after paying tax', () => {
-      let newGame = updatePlayer(game, player1Id, {
+      const newGame = updatePlayer(game, player1Id, {
         funds: STANDARD_TAX_AMOUNT,
       })
 

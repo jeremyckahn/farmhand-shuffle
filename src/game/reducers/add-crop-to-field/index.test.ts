@@ -28,7 +28,7 @@ describe('addCropToField', () => {
       crops: new Array(STANDARD_FIELD_SIZE).fill(playedCrop),
     })
 
-    let newGame = updateField(game, player1Id, fullField)
+    const newGame = updateField(game, player1Id, fullField)
 
     expect(() => {
       addCropToField(newGame, player1Id, playedCrop)

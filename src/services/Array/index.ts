@@ -1,5 +1,5 @@
 export class ArrayService {
-  removeAt<T = any>(array: T[], idx: number): T[] {
+  removeAt<T>(array: T[], idx: number): T[] {
     if (idx >= array.length) {
       throw new Error(`removeAt: Index ${idx} out of bounds`)
     }

@@ -26,7 +26,7 @@ export interface CropCardProps extends BaseCardProps {
   playedCrop?: IPlayedCrop
 }
 
-export interface WaterCardProps extends BaseCardProps {}
+export type WaterCardProps = BaseCardProps
 
 export type CardProps = (CropCardProps | WaterCardProps) & {
   isFlipped?: boolean

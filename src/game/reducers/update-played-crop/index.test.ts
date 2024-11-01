@@ -29,7 +29,7 @@ describe('updatePlayedCrop', () => {
       crops: [playedCrop],
     }
 
-    let newGame = updateField(game, player1Id, field)
+    const newGame = updateField(game, player1Id, field)
 
     expect(() => {
       updatePlayedCrop(newGame, player1Id, -1, { waterCards: 1 })
