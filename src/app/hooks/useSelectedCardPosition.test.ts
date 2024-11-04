@@ -39,8 +39,11 @@ describe('useSelectedCardPosition', () => {
     expect(result.current.containerRef).toBeDefined()
     expect(result.current.selectedCardSxProps).toEqual(
       expect.objectContaining({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         boxShadow: expect.any(String),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         transform: expect.stringContaining('translate'),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         zIndex: expect.any(Number),
       })
     )

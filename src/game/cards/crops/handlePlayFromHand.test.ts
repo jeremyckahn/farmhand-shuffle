@@ -33,7 +33,7 @@ describe('handlePlayFromHand', () => {
     const [player1Id] = Object.keys(game.table.players)
     const newGame = updatePlayer(game, player1Id, { hand: [water.id] })
 
-    expect(async () => {
+    await expect(async () => {
       await handlePlayFromHand(newGame, interactionHandlers, player1Id, 0)
     }).rejects.toThrow(InvalidCardError)
   })

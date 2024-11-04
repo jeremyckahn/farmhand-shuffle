@@ -55,7 +55,7 @@ describe('Field', () => {
     }
   })
 
-  test('renders crop cards for opponent upside-down', async () => {
+  test('renders crop cards for opponent upside-down', () => {
     render(<StubField playerId={opponentPlayerId} />)
 
     const playedCrops = screen.getAllByLabelText(unselectedCardLabel)
@@ -127,8 +127,8 @@ describe('Field', () => {
       screen.getAllByLabelText(unselectedCardLabel)
     await userEvent.click(playedCrop1)
 
-    await waitFor(() => {
-      userEvent.keyboard('{Tab}')
+    await waitFor(async () => {
+      await userEvent.keyboard('{Tab}')
     })
 
     const { transform: card1Transform } = getComputedStyle(playedCrop1)
@@ -149,8 +149,8 @@ describe('Field', () => {
 
     await userEvent.click(playedCrop1)
 
-    await waitFor(() => {
-      userEvent.keyboard('{Escape}')
+    await waitFor(async () => {
+      await userEvent.keyboard('{Escape}')
     })
 
     const { transform: card1Transform } = getComputedStyle(playedCrop1)

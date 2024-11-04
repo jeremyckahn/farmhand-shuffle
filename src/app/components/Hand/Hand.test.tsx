@@ -85,8 +85,8 @@ describe('Hand', () => {
 
     await userEvent.click(card1!)
 
-    await waitFor(() => {
-      userEvent.keyboard('{Tab}')
+    await waitFor(async () => {
+      await userEvent.keyboard('{Tab}')
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)
@@ -109,8 +109,8 @@ describe('Hand', () => {
 
     await userEvent.click(card1!)
 
-    await waitFor(() => {
-      userEvent.keyboard('{Escape}')
+    await waitFor(async () => {
+      await userEvent.keyboard('{Escape}')
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)

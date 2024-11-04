@@ -2,6 +2,6 @@ import { InteractionHandlers } from '../../game/services/Rules/InteractionHandle
 
 export const stubInteractionHandlers = (): InteractionHandlers => {
   return {
-    selectCropFromField: async () => 0,
+    selectCropFromField: () => Promise.resolve(0),
   }
 }

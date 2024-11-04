@@ -3,7 +3,7 @@ import shuffle from 'lodash.shuffle'
 
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot, pumpkin, water } from '../../cards'
-import { IGame, IPlayer } from '../../types'
+import { ICard, IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
 import { drawCard } from '.'
@@ -14,7 +14,9 @@ vitest.mock('lodash.shuffle', () => ({
 }))
 
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation(arr => arr)
+  ;(shuffle as unknown as MockInstance).mockImplementation(
+    (arr: ICard[]) => arr
+  )
 })
 
 describe('drawCard', () => {

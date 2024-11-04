@@ -10,6 +10,7 @@ import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { cards, isCardImageKey, ui } from '../../img'
 import { Image } from '../Image'
 import { CardSize } from '../../types'
+import { isSxArray } from '../../type-guards'
 
 import { CardProps } from './Card'
 
@@ -47,7 +48,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
             height: CARD_DIMENSIONS[size].height,
             width: CARD_DIMENSIONS[size].width,
           },
-          ...(Array.isArray(sx) ? sx : [sx]),
+          ...(isSxArray(sx) ? sx : [sx]),
         ]}
         {...props}
       >

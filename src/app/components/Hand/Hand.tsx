@@ -13,6 +13,7 @@ import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
+import { isSxArray } from '../../type-guards'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -96,7 +97,7 @@ export const Hand = ({
           position: 'relative',
           minHeight: CARD_DIMENSIONS[cardSize].height,
         },
-        ...(Array.isArray(sx) ? sx : [sx]),
+        ...(isSxArray(sx) ? sx : [sx]),
       ]}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}

@@ -33,14 +33,14 @@ describe('water', () => {
     test('throws an error when the player cancels selection', async () => {
       vitest
         .spyOn(interactionHandlers, 'selectCropFromField')
-        .mockImplementation(async () => {
-          throw new PlayerAbortError()
+        .mockImplementation(() => {
+          return Promise.reject(new PlayerAbortError())
         })
 
       const playedCrop = factory.buildPlayedCrop(carrot)
       const newGame = updateField(game, player1Id, { crops: [playedCrop] })
 
-      expect(async () => {
+      await expect(async () => {
         await water.onPlayFromHand(newGame, interactionHandlers, player1Id, 0)
       }).rejects.toThrow(PlayerAbortError)
     })
@@ -50,7 +50,7 @@ describe('water', () => {
         .spyOn(interactionHandlers, 'selectCropFromField')
         .mockReturnValue(Promise.resolve(0))
 
-      expect(async () => {
+      await expect(async () => {
         await water.onPlayFromHand(game, interactionHandlers, player1Id, 0)
       }).rejects.toThrow(FieldEmptyError)
     })
