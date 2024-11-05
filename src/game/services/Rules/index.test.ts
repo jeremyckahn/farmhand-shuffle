@@ -10,7 +10,7 @@ import {
 } from '../../config'
 import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
-import { IGame, IPlayer } from '../../types'
+import { ICard, IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { randomNumber } from '../../../services/RandomNumber'
 import { carrot, pumpkin } from '../../cards'
@@ -34,11 +34,14 @@ vitest.mock('lodash.shuffle', () => ({
 }))
 
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation(arr => arr)
+  ;(shuffle as unknown as MockInstance).mockImplementation(
+    (arr: ICard[]) => arr
+  )
 })
 
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
+// eslint-disable-next-line functional/immutable-data
 player2.deck[DECK_SIZE - 1] = pumpkin.id
 
 describe('Rules', () => {
@@ -154,13 +157,14 @@ describe('Rules', () => {
         mockCropHandlePlayFromHand as unknown as MockInstance<
           typeof mockCropHandlePlayFromHand
         >
-      ).mockImplementation(async (game: IGame) => {
-        return game
+      ).mockImplementation((game: IGame) => {
+        return Promise.resolve(game)
       })
 
       game = rules.processGameStart([player1, player2])
       player1Id = Object.keys(game.table.players)[0]
 
+      // eslint-disable-next-line functional/immutable-data
       game.table.players[player1Id].hand[0] = carrot.id
     })
 

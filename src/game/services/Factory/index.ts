@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { INITIAL_PLAYER_FUNDS } from '../../config'
 import { ICrop, IField, IGame, IPlayedCrop, IPlayer, ITable } from '../../types'
+import { updateTable } from '../../reducers/update-table'
 
 export class FactoryService {
   buildField(overrides: Partial<IField> = {}): IField {
@@ -31,27 +32,31 @@ export class FactoryService {
     }
   }
 
-  buildGame(
-    overrides: Partial<IGame> = {},
-    sessionOwnerPlayerId = uuid()
-  ): IGame {
+  buildGame(overrides: Partial<IGame> = {}, sessionOwnerPlayerId = uuid()) {
     const table = this.buildTable(overrides?.table)
     const { players } = table
 
-    if (Object.keys(players).length === 0) {
-      players[sessionOwnerPlayerId] = this.buildPlayer({
-        id: sessionOwnerPlayerId,
-      })
-    }
-
     const [currentPlayerId = null] = Object.keys(players)
 
-    return {
+    let game: IGame = {
       sessionOwnerPlayerId,
       table,
       currentPlayerId,
       ...overrides,
     }
+
+    if (Object.keys(players).length === 0) {
+      game = updateTable(game, {
+        players: {
+          ...game.table.players,
+          [sessionOwnerPlayerId]: this.buildPlayer({
+            id: sessionOwnerPlayerId,
+          }),
+        },
+      })
+    }
+
+    return game
   }
 
   buildPlayedCrop({ id }: ICrop): IPlayedCrop {

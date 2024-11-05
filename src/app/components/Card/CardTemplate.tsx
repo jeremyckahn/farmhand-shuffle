@@ -10,6 +10,7 @@ import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { cards, isCardImageKey, ui } from '../../img'
 import { Image } from '../Image'
 import { CardSize } from '../../types'
+import { isSxArray } from '../../type-guards'
 
 import { CardProps } from './Card'
 
@@ -17,7 +18,7 @@ export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'
 
 export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
-  (
+  function CardTemplate(
     {
       card,
       children,
@@ -29,7 +30,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       ...props
     },
     ref
-  ) => {
+  ) {
     const theme = useTheme()
     const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
@@ -47,7 +48,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
             height: CARD_DIMENSIONS[size].height,
             width: CARD_DIMENSIONS[size].width,
           },
-          ...(Array.isArray(sx) ? sx : [sx]),
+          ...(isSxArray(sx) ? sx : [sx]),
         ]}
         {...props}
       >
@@ -147,5 +148,3 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
     )
   }
 )
-
-CardTemplate.displayName = 'CardTemplate'

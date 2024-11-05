@@ -11,6 +11,7 @@ export const handlePlayFromHand = async (
   _interactionHandlers: InteractionHandlers,
   playerId: IPlayer['id'],
   cardIdx: number
+  // eslint-disable-next-line @typescript-eslint/require-await
 ) => {
   const card = lookup.getCardFromHand(game, playerId, cardIdx)
 

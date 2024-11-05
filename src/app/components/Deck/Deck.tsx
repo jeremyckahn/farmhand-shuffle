@@ -12,6 +12,7 @@ import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
+import { isSxArray } from '../../type-guards'
 
 export interface DeckProps extends BoxProps {
   game: IGame
@@ -32,7 +33,7 @@ export const Deck = ({
   playerId,
   deckThicknessPx = defaultDeckThicknessPx,
   cardSize = defaultDeckCardSize,
-  sx,
+  sx = [],
   ...rest
 }: DeckProps) => {
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
@@ -55,7 +56,7 @@ export const Deck = ({
         {
           ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
         },
-        ...(Array.isArray(sx) ? sx : [sx]),
+        ...(isSxArray(sx) ? sx : [sx]),
       ]}
       {...rest}
     >

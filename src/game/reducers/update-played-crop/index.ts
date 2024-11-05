@@ -16,8 +16,11 @@ export const updatePlayedCrop = (
     )
   }
 
-  const newCrops = crops.slice()
-  newCrops[cropIdx] = { ...playedCrop, ...newPlayedCropProperties }
+  const newCrops = [
+    ...crops.slice(0, cropIdx - 1),
+    { ...playedCrop, ...newPlayedCropProperties },
+    ...crops.slice(cropIdx + 1),
+  ]
 
   game = updateField(game, playerId, {
     crops: newCrops,

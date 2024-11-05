@@ -27,7 +27,9 @@ export class RulesService {
         funds: Math.floor(game.table.communityFund / playerSeeds.length),
       })
 
-      game.table.players[player.id] = player
+      game = updateTable(game, {
+        players: { ...game.table.players, [player.id]: player },
+      })
       game = shuffleDeck(game, player.id)
       game = drawCard(game, player.id, INITIAL_HAND_SIZE)
     }

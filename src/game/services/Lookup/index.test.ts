@@ -18,6 +18,7 @@ describe('Lookup', () => {
       mutatedGame = stubGame()
       player1Id = Object.keys(mutatedGame.table.players)[0]
 
+      // eslint-disable-next-line functional/immutable-data
       mutatedGame.table.players[player1Id].hand[0] = carrot.id
     })
 

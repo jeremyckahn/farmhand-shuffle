@@ -1,10 +1,11 @@
+/* eslint-disable functional/immutable-data */
 import { carrot, pumpkin } from '../../game/cards'
 import { water } from '../../game/cards/water'
 import { DECK_SIZE } from '../../game/config'
-import { ICrop } from '../../game/types'
+import { ICard, ICrop } from '../../game/types'
 
 export const stubDeck = (): ICrop['id'][] => {
-  const deck = new Array(DECK_SIZE)
+  const deck = new Array<ICard>(DECK_SIZE)
 
   deck.fill(water)
 

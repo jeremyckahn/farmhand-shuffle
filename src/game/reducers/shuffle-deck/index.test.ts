@@ -2,6 +2,7 @@ import { MockInstance } from 'vitest'
 import shuffle from 'lodash.shuffle'
 
 import { stubGame } from '../../../test-utils/stubs/game'
+import { ICard } from '../../types'
 
 import { shuffleDeck } from '.'
 
@@ -11,7 +12,9 @@ vitest.mock('lodash.shuffle', () => ({
 }))
 
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation(arr => arr)
+  ;(shuffle as unknown as MockInstance).mockImplementation(
+    (arr: ICard[]) => arr
+  )
 })
 
 describe('shuffleDeck', () => {

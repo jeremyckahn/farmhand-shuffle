@@ -3,14 +3,24 @@ import pluginJs from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import pluginReact from 'eslint-plugin-react'
 import importPlugin from 'eslint-plugin-import'
+import functionalPlugin from 'eslint-plugin-functional'
 
 export default [
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
   pluginReact.configs.flat.recommended,
   importPlugin.flatConfigs.typescript,
+  functionalPlugin.configs.off,
   {
     plugins: {
       import: importPlugin,
@@ -43,6 +53,7 @@ export default [
           'newlines-between': 'always-and-inside-groups',
         },
       ],
+      'functional/immutable-data': ['error'],
     },
     ignores: ['dist'],
   },
