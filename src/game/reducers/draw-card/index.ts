@@ -8,7 +8,9 @@ export const drawCard = (game: IGame, playerId: IPlayer['id'], howMany = 1) => {
   let newDeck = [...game.table.players[playerId].deck]
   let newDiscardPile = [...game.table.players[playerId].discardPile]
 
-  const drawnCards = newDeck.splice(0, howMany)
+  const drawnCards = newDeck.slice(0, howMany)
+  newDeck = newDeck.slice(howMany)
+
   newHand = [...newHand, ...drawnCards]
 
   if (newDeck.length === 0) {

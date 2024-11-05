@@ -18,7 +18,7 @@ export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'
 
 export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
-  (
+  function CardTemplate(
     {
       card,
       children,
@@ -30,7 +30,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       ...props
     },
     ref
-  ) => {
+  ) {
     const theme = useTheme()
     const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
@@ -148,5 +148,3 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
     )
   }
 )
-
-CardTemplate.displayName = 'CardTemplate'

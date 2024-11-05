@@ -64,6 +64,7 @@ describe('useSelectedCardPosition', () => {
       () => mockBoundingClientRect
     )
 
+    // eslint-disable-next-line functional/immutable-data
     result.current.containerRef.current = div
 
     // Trigger resize event

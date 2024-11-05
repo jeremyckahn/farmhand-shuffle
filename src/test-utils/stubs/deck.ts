@@ -1,3 +1,4 @@
+/* eslint-disable functional/immutable-data */
 import { carrot, pumpkin } from '../../game/cards'
 import { water } from '../../game/cards/water'
 import { DECK_SIZE } from '../../game/config'

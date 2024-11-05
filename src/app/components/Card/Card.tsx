@@ -42,7 +42,7 @@ const isPropsWaterCardProps = (props: CardProps): props is WaterCardProps => {
 }
 
 export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
-  ({ playedCrop, ...props }, ref) => {
+  function CropCard({ playedCrop, ...props }, ref) {
     return (
       <CardTemplate {...props} ref={ref}>
         {isCrop(props.card) ? (
@@ -53,17 +53,16 @@ export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
   }
 )
 
-CropCard.displayName = 'CropCard'
-
 export const WaterCard = forwardRef<HTMLDivElement, WaterCardProps>(
-  (props, ref) => {
+  function WaterCard(props, ref) {
     return <CardTemplate {...props} ref={ref} />
   }
 )
 
-WaterCard.displayName = 'WaterCard'
-
-export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
+  props,
+  ref
+) {
   if (isPropsCropCardProps(props)) {
     return <CropCard {...props} ref={ref} />
   }
@@ -74,5 +73,3 @@ export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
 
   throw new UnimplementedError('Unexpected CardType')
 })
-
-Card.displayName = 'Card'

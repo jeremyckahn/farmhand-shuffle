@@ -41,6 +41,7 @@ beforeEach(() => {
 
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
+// eslint-disable-next-line functional/immutable-data
 player2.deck[DECK_SIZE - 1] = pumpkin.id
 
 describe('Rules', () => {
@@ -163,6 +164,7 @@ describe('Rules', () => {
       game = rules.processGameStart([player1, player2])
       player1Id = Object.keys(game.table.players)[0]
 
+      // eslint-disable-next-line functional/immutable-data
       game.table.players[player1Id].hand[0] = carrot.id
     })
 

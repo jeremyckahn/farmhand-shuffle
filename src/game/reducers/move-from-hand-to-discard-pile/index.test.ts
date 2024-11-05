@@ -8,6 +8,7 @@ describe('moveFromHandToDiscardPile', () => {
     const game = stubGame()
     const [player1Id] = Object.keys(game.table.players)
 
+    // eslint-disable-next-line functional/immutable-data
     game.table.players[player1Id].hand[0] = carrot.id
     const newGame = moveFromHandToDiscardPile(game, player1Id, 0)
 
