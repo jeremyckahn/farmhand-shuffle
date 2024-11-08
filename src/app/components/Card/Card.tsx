@@ -20,6 +20,7 @@ export interface BaseCardProps extends BoxProps {
   card: ICard
   size?: CardSize
   imageScale?: number
+  isProxy?: boolean
 }
 
 export interface CropCardProps extends BaseCardProps {

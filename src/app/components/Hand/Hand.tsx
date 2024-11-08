@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
-import useTheme from '@mui/material/styles/useTheme'
 
 import { math } from '../../../services/Math'
 import { lookup } from '../../../game/services/Lookup'
@@ -54,7 +53,6 @@ export const Hand = ({
 
   const player = lookup.getPlayer(game, playerId)
 
-  const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
 
   const resetSelectedCard = () => {
@@ -154,7 +152,6 @@ export const Hand = ({
             sx={{
               transform,
               position: 'absolute',
-              transition: theme.transitions.create(['transform']),
               cursor: 'pointer',
               ...(isSelected && selectedCardSxProps),
             }}

@@ -47,6 +47,10 @@ export default [
           ignoreRestSiblings: true,
         },
       ],
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        { ignoreIIFE: true },
+      ],
       'import/order': [
         'error',
         {
