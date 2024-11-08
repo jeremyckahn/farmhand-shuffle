@@ -1,8 +1,5 @@
-import { v4 as uuid } from 'uuid'
-
 import { uuidString } from '../../services/types'
 import { InteractionHandlers } from '../services/Rules/InteractionHandlers'
-import { UnimplementedError } from '../services/Rules/errors'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
@@ -46,23 +43,6 @@ export interface ICard {
      */
     cardIdx: number
   ) => Promise<IGame>
-}
-
-// FIXME: Move this to its own file
-export class CardInstance implements ICard {
-  id = ''
-  name = ''
-  type = CardType.WATER
-
-  onPlayFromHand = () => {
-    throw new UnimplementedError('CardInstance was not initialized')
-  }
-
-  instanceId = uuid()
-
-  constructor(card: ICard) {
-    Object.assign(this, card)
-  }
 }
 
 export interface ICrop extends ICard {
