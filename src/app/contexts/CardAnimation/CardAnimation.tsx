@@ -1,6 +1,8 @@
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
+import { LayoutGroup } from 'motion/react'
+
 import { ICard, IGame } from '../../../game/types'
 import { factory } from '../../../game/services/Factory'
 import { uuidString } from '../../../services/types'
@@ -9,7 +11,7 @@ interface ICardAnimationContext {
   game: IGame
   cardInstancePool: CardInstance[]
   handleMount: (cardId: ICard['id']) => Promise<string>
-  handleUnmount: (cardId: ICard['id']) => void
+  handleUnmount: (instanceId: uuidString) => void
 }
 
 interface CardAnimationProviderProps {
@@ -65,7 +67,8 @@ export const CardAnimationProvider = ({
   )
 
   useEffect(() => {
-    setCardInstancePool(initializeCardInstancePool(game))
+    // FIXME: This is needed
+    //setCardInstancePool(initializeCardInstancePool(game))
   }, [Object.keys(game.table.players).length])
 
   const handleMount: ICardAnimationContext['handleMount'] = async cardId => {
@@ -96,10 +99,10 @@ export const CardAnimationProvider = ({
     })
   }
 
-  const handleUnmount: ICardAnimationContext['handleUnmount'] = cardId => {
+  const handleUnmount: ICardAnimationContext['handleUnmount'] = instanceId => {
     setCardInstancePool(previousCardInstancePool => {
       const mountedInstanceIdx = previousCardInstancePool.findIndex(
-        cardProxy => !cardProxy.isMounted && cardProxy.cardId === cardId
+        cardProxy => cardProxy.instanceId === instanceId
       )
 
       if (mountedInstanceIdx === -1) {
@@ -130,7 +133,7 @@ export const CardAnimationProvider = ({
 
   return (
     <CardAnimationContext.Provider value={contextValue}>
-      {children}
+      <LayoutGroup>{children}</LayoutGroup>
     </CardAnimationContext.Provider>
   )
 }

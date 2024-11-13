@@ -41,12 +41,15 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
     const { handleMount, handleUnmount } = useContext(CardAnimationContext)
 
     useEffect(() => {
+      let provisionedInstanceId = ''
+
       ;(async () => {
-        setInstanceId(await handleMount(card.id))
+        provisionedInstanceId = await handleMount(card.id)
+        setInstanceId(provisionedInstanceId)
       })()
 
       return () => {
-        handleUnmount(card.id)
+        handleUnmount(provisionedInstanceId)
       }
     }, [])
 
