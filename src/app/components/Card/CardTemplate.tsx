@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
@@ -12,8 +12,6 @@ import { cards, isCardImageKey, ui } from '../../img'
 import { Image } from '../Image'
 import { CardSize } from '../../types'
 import { isSxArray } from '../../type-guards'
-
-import { CardAnimationContext } from '../../contexts/CardAnimation/CardAnimation'
 
 import { CardProps } from './Card'
 
@@ -37,22 +35,6 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
 
-    const [instanceId, setInstanceId] = useState('')
-    const { handleMount, handleUnmount } = useContext(CardAnimationContext)
-
-    useEffect(() => {
-      let provisionedInstanceId = ''
-
-      ;(async () => {
-        provisionedInstanceId = await handleMount(card.id)
-        setInstanceId(provisionedInstanceId)
-      })()
-
-      return () => {
-        handleUnmount(provisionedInstanceId)
-      }
-    }, [])
-
     const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
     if (imageSrc === ui.pixel) {
@@ -72,7 +54,6 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
             },
             ...(isSxArray(sx) ? sx : [sx]),
           ]}
-          data-instanceid={instanceId}
           {...props}
         >
           <motion.div
