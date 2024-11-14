@@ -5,11 +5,8 @@ import Grid from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
 
 import { PlayedCrop } from '../PlayedCrop'
-import * as cards from '../../../game/cards'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import { isCardId } from '../../../game/types/guards'
-import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 
 const deselectedIdx = -1
@@ -120,19 +117,14 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
         alignItems={isSessionOwnerPlayer ? 'flex-start' : 'flex-end'}
       >
         {crops.map((playedCrop, idx) => {
-          const { id, waterCards } = playedCrop
+          const { card, waterCards } = playedCrop
 
-          if (!isCardId(id)) {
-            throw new UnimplementedError(`${id} is not a card`)
-          }
-
-          const card = cards[id]
           const isSelected = selectedCardIdx === idx
           const isInBackground =
             selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
-            <Grid key={`${idx}_${id}_${waterCards}`} item xs>
+            <Grid key={`${idx}_${card.id}_${waterCards}`} item xs>
               <PlayedCrop
                 aria-label={
                   isSelected ? selectedCardLabel : unselectedCardLabel

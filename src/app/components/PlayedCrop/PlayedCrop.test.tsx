@@ -13,7 +13,7 @@ import {
 const stubCard = carrot
 const stubWaterCards = 1
 const stubPlayedCrop: IPlayedCrop = {
-  id: stubCard.id,
+  card: stubCard.id,
   waterCards: stubWaterCards,
 }
 const stubCropCardProps = { card: stubCard, playedCrop: stubPlayedCrop }

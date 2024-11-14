@@ -7,6 +7,7 @@ export const water: IWater = Object.freeze({
   type: CardType.WATER,
   id: 'water',
   name: 'Water',
+  instanceId: null,
   async onPlayFromHand(
     game: IGame,
     interactionHandlers: InteractionHandlers,

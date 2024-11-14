@@ -31,7 +31,7 @@ describe('Card', () => {
   test('renders played crop card', () => {
     const waterCards = 1
 
-    render(<StubCard playedCrop={{ id: stubCard.id, waterCards }} />)
+    render(<StubCard playedCrop={{ card: stubCard.id, waterCards }} />)
 
     expect(
       screen.findByText(

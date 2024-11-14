@@ -5,12 +5,9 @@ import Tooltip from '@mui/material/Tooltip'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import * as cards from '../../../game/cards'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { isCardId } from '../../../game/types/guards'
-import { UnimplementedError } from '../../../game/services/Rules/errors'
 
 export interface DiscardPileProps extends BoxProps {
   game: IGame
@@ -45,18 +42,13 @@ export const DiscardPile = ({
       }}
       {...rest}
     >
-      {player.discardPile.map((cardId, idx) => {
-        if (!isCardId(cardId)) {
-          throw new UnimplementedError(`${cardId} is not a card`)
-        }
-
-        const card = cards[cardId]
+      {player.discardPile.map((card, idx) => {
         const offset =
           (discardPileThicknessPx / player.discardPile.length) * idx
 
         return (
           <Tooltip
-            key={`${cardId}_${idx}`}
+            key={`${card.id}_${idx}`}
             title={card.name}
             placement="top"
             arrow
