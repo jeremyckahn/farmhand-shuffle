@@ -60,13 +60,18 @@ export const Deck = ({
       ]}
       {...rest}
     >
-      {player.deck.map((card, idx) => {
+      {player.deck.map((cardId, idx) => {
+        if (!isCardId(cardId)) {
+          throw new UnimplementedError(`${cardId} is not a card`)
+        }
+
+        const card = cards[cardId]
         const offset = (deckThicknessPx / player.deck.length) * idx
         const isTopCard = idx === player.deck.length - 1
 
         return (
           <Card
-            key={`${card.id}_${idx}`}
+            key={`${cardId}_${idx}`}
             card={card}
             position="absolute"
             isFlipped={!(isTopCard && isTopCardSelected)}

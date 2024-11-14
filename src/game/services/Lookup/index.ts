@@ -1,5 +1,7 @@
+import * as cards from '../../cards'
+import { isCardId } from '../../types/guards'
 import { ICard, IGame, IPlayer } from '../../types'
-import { InvalidIdError } from '../Rules/errors'
+import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 
 export class LookupService {
   getCardFromHand = (
@@ -8,13 +10,21 @@ export class LookupService {
     cardIdx: number
   ): ICard => {
     const { hand } = game.table.players[playerId]
-    const card = hand[cardIdx]
+    const cardId = hand[cardIdx]
 
-    if (!card) {
+    if (!cardId) {
       throw new Error(
         `Card index ${cardIdx} is not in player ${playerId}'s hand`
       )
     }
+
+    // NOTE: This check is not logically necessary, but it is required to
+    // prevent cards[cardId] from being implicitly cast as an any type.
+    if (!isCardId(cardId)) {
+      throw new GameStateCorruptError(`${cardId} is not a valid card ID`)
+    }
+
+    const card = cards[cardId]
 
     return card
   }

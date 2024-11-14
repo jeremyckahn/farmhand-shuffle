@@ -3,7 +3,10 @@ import Box, { BoxProps } from '@mui/material/Box'
 
 import { math } from '../../../services/Math'
 import { lookup } from '../../../game/services/Lookup'
+import { UnimplementedError } from '../../../game/services/Rules/errors'
+import * as cards from '../../../game/cards'
 import { IGame, IPlayer } from '../../../game/types'
+import { isCardId } from '../../../game/types/guards'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
@@ -102,7 +105,13 @@ export const Hand = ({
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
-      {player.hand.map((card, idx) => {
+      {player.hand.map((cardId, idx) => {
+        if (!isCardId(cardId)) {
+          throw new UnimplementedError(`${cardId} is not a card`)
+        }
+
+        const card = cards[cardId]
+
         const gapWidthTotal = gapWidthPx * player.hand.length
         const multipliedGap = math.scaleNumber(
           idx / player.hand.length,
@@ -132,7 +141,7 @@ export const Hand = ({
 
         return (
           <Card
-            key={`${card.id}_${idx}`}
+            key={`${cardId}_${idx}`}
             card={card}
             size={cardSize}
             paperProps={{

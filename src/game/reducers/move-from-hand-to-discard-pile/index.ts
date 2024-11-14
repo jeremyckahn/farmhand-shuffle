@@ -9,16 +9,16 @@ export const moveFromHandToDiscardPile = (
   cardIdx: number
 ) => {
   const { hand } = game.table.players[playerId]
-  const card = hand[cardIdx]
+  const cardId = hand[cardIdx]
 
-  if (!card) {
+  if (!cardId) {
     throw new Error(`Card index ${cardIdx} is not in player ${playerId}'s hand`)
   }
 
   const newHand = array.removeAt(hand, cardIdx)
 
   game = updatePlayer(game, playerId, { hand: newHand })
-  game = addToDiscardPile(game, playerId, card)
+  game = addToDiscardPile(game, playerId, cardId)
 
   return game
 }

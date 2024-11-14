@@ -74,7 +74,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
         data-instanceid={instanceId}
         {...props}
       >
-        <motion.div layoutId={card.instanceId ?? ''}>
+        <motion.div layoutId={instanceId}>
           <Box
             className={cardFlipWrapperClassName}
             sx={[

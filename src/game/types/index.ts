@@ -20,8 +20,6 @@ export interface ICard {
 
   readonly type: CardType
 
-  readonly instanceId: uuidString | null
-
   /**
    * @throws A custom error that describes why the card could not be played. If
    * this happens, the card must not be discarded from the player's hand.
@@ -68,7 +66,7 @@ export interface IPlayedCrop {
   /**
    * The card ID of this crop.
    */
-  readonly card: ICard
+  readonly id: ICard['id']
 
   /**
    * How many water cards are attached to this crop.
@@ -119,17 +117,17 @@ export interface IPlayer {
   /**
    * Cards that the player can draw from.
    */
-  readonly deck: ICard[]
+  readonly deck: ICard['id'][]
 
   /**
    * Cards in the player's hand.
    */
-  readonly hand: ICard[]
+  readonly hand: ICard['id'][]
 
   /**
    * Cards that have been used.
    */
-  readonly discardPile: ICard[]
+  readonly discardPile: ICard['id'][]
 
   /**
    * Cards in the player's Field.

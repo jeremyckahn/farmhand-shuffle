@@ -22,7 +22,7 @@ export const PlayedCropCard: Story = {
     cropCardProps: {
       card: carrot,
       playedCrop: {
-        card: carrot.id,
+        id: carrot.id,
         waterCards: 1,
       },
     },
@@ -35,7 +35,7 @@ export const PlayedCropCardWithExtraWater: Story = {
     cropCardProps: {
       card: carrot,
       playedCrop: {
-        card: carrot.id,
+        id: carrot.id,
         waterCards: 5,
       },
     },

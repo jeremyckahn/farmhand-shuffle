@@ -8,7 +8,6 @@ export const baseToCrop = (
   return Object.freeze({
     type: CardType.CROP,
     onPlayFromHand: handlePlayFromHand,
-    instanceId: null,
     ...base,
   })
 }

@@ -59,9 +59,9 @@ export class FactoryService {
     return game
   }
 
-  buildPlayedCrop(card: ICrop): IPlayedCrop {
+  buildPlayedCrop({ id }: ICrop): IPlayedCrop {
     return {
-      card,
+      id,
       waterCards: 0,
     }
   }

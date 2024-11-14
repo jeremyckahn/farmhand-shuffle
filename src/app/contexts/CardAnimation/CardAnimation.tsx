@@ -39,12 +39,12 @@ const initializeCardInstancePool = (game: IGame) => {
         ...player.deck,
         ...player.discardPile,
         ...player.hand,
-        ...player.field.crops.map(({ card: id }) => id),
+        ...player.field.crops.map(({ id }) => id),
       ].sort()
 
       const playerCards = playerCardIds.map(
-        (card): CardInstance => ({
-          cardId: card.id,
+        (cardId): CardInstance => ({
+          cardId,
           instanceId: uuid(),
           isMounted: false,
         })
