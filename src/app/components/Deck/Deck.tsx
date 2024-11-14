@@ -60,7 +60,11 @@ export const Deck = ({
       ]}
       {...rest}
     >
-      {player.deck.map((cardId, idx) => {
+      {player.deck.map((_, idx, deck) => {
+        // NOTE: Looping backwards through the deck prevents card animation
+        // artifacting (for some reason)
+        const cardId = deck[deck.length - 1 - idx]
+
         if (!isCardId(cardId)) {
           throw new UnimplementedError(`${cardId} is not a card`)
         }

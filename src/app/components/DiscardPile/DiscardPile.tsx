@@ -41,6 +41,9 @@ export const DiscardPile = ({
       width={CARD_DIMENSIONS[cardSize].width}
       position="relative"
       sx={{
+        // NOTE: This is needed to fix a Firefox bug that prevents opponent
+        // discard piles from appearing upside down
+        transformStyle: 'preserve-3d',
         ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
       }}
       {...rest}
