@@ -87,6 +87,11 @@ export const Hand = ({
 
   const gapWidthPx = getGapPixelWidth(player.hand.length)
 
+  const { width: containerWidth } =
+    containerRef.current?.getBoundingClientRect() ?? {
+      width: 0,
+    }
+
   return (
     <Box
       {...rest}
@@ -110,13 +115,14 @@ export const Hand = ({
         const card = cards[cardId]
 
         const gapWidthTotal = gapWidthPx * player.hand.length
-        const xOffsetPx = math.scaleNumber(
+        const multipliedGap = math.scaleNumber(
           idx / player.hand.length,
           0,
           1,
           -gapWidthTotal,
           gapWidthTotal
         )
+        const xOffsetPx = containerWidth / 2 + multipliedGap
 
         const isSelected = selectedCardIdx === idx
 

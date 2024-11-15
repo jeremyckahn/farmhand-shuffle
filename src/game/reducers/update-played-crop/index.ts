@@ -17,7 +17,7 @@ export const updatePlayedCrop = (
   }
 
   const newCrops = [
-    ...crops.slice(0, cropIdx - 1),
+    ...crops.slice(0, cropIdx),
     { ...playedCrop, ...newPlayedCropProperties },
     ...crops.slice(cropIdx + 1),
   ]

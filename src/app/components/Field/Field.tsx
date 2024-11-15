@@ -151,6 +151,9 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                   position: 'relative',
                   transition: theme.transitions.create(['transform']),
                   outline: 'none',
+                  // NOTE: This is needed to fix a Firefox bug that prevents
+                  // opponent fields from appearing upside down
+                  transformStyle: 'preserve-3d',
                   ...(!isSessionOwnerPlayer && {
                     transform: rotationTransform,
                   }),

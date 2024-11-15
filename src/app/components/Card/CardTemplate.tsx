@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useRef } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
@@ -29,9 +30,11 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       sx = [],
       ...props
     },
-    ref
+    containerRef
   ) {
     const theme = useTheme()
+    const cardRef = useRef<HTMLDivElement>(null)
+
     const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
     if (imageSrc === ui.pixel) {
@@ -39,112 +42,126 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
     }
 
     return (
-      <Box
-        ref={ref}
-        className={cardClassName}
-        sx={[
-          {
-            perspective: '1000px',
-            height: CARD_DIMENSIONS[size].height,
-            width: CARD_DIMENSIONS[size].width,
-          },
-          ...(isSxArray(sx) ? sx : [sx]),
-        ]}
-        {...props}
-      >
+      <AnimatePresence>
         <Box
-          className={cardFlipWrapperClassName}
+          ref={containerRef}
+          className={cardClassName}
           sx={[
             {
+              perspective: '1000px',
               height: CARD_DIMENSIONS[size].height,
-              position: 'relative',
-              transformStyle: 'preserve-3d',
-              transition: theme.transitions.create(['transform', 'box-shadow']),
               width: CARD_DIMENSIONS[size].width,
-              ...(isFlipped && {
-                transform: 'rotateY(180deg)',
-              }),
             },
+            ...(isSxArray(sx) ? sx : [sx]),
           ]}
+          {...props}
         >
-          <Paper
-            {...paperProps}
-            sx={[
-              {
-                backfaceVisibility: 'hidden',
-                background:
-                  theme.palette.mode === 'light'
-                    ? darken(theme.palette.background.paper, 0.05)
-                    : lighten(theme.palette.background.paper, 0.15),
-                display: 'flex',
-                flexDirection: 'column',
-                height: 1,
-                p: theme.spacing(1),
-                position: 'absolute',
-                width: 1,
-              },
-            ]}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            style={{ originX: 0.5, originY: 0.5 }}
           >
-            <Typography
-              variant="overline"
-              sx={{ fontWeight: theme.typography.fontWeightBold }}
-            >
-              {card.name}
-            </Typography>
             <Box
-              sx={{
-                height: '50%',
-                display: 'flex',
-                background: theme.palette.common.white,
-                backgroundImage: `url(${ui.dirt})`,
-                backgroundSize: '100%',
-                backgroundRepeat: 'repeat',
-                borderColor: theme.palette.divider,
-                borderRadius: `${theme.shape.borderRadius}px`,
-                borderWidth: 1,
-                borderStyle: 'solid',
-                imageRendering: 'pixelated',
-              }}
+              className={cardFlipWrapperClassName}
+              sx={[
+                {
+                  height: CARD_DIMENSIONS[size].height,
+                  position: 'relative',
+                  transformStyle: 'preserve-3d',
+                  width: CARD_DIMENSIONS[size].width,
+                  ...(isFlipped && {
+                    transform: 'rotateY(180deg)',
+                  }),
+                  transition: theme.transitions.create([
+                    'transform',
+                    'box-shadow',
+                  ]),
+                },
+              ]}
             >
-              <Image
-                src={imageSrc}
-                alt={card.name}
+              <Paper
+                ref={cardRef}
+                {...paperProps}
+                sx={[
+                  {
+                    backfaceVisibility: 'hidden',
+                    background:
+                      theme.palette.mode === 'light'
+                        ? darken(theme.palette.background.paper, 0.05)
+                        : lighten(theme.palette.background.paper, 0.15),
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 1,
+                    p: theme.spacing(1),
+                    position: 'absolute',
+                    width: 1,
+                  },
+                ]}
+              >
+                <Typography
+                  variant="overline"
+                  sx={{ fontWeight: theme.typography.fontWeightBold }}
+                >
+                  {card.name}
+                </Typography>
+                <Box
+                  sx={{
+                    height: '50%',
+                    display: 'flex',
+                    background: theme.palette.common.white,
+                    backgroundImage: `url(${ui.dirt})`,
+                    backgroundSize: '100%',
+                    backgroundRepeat: 'repeat',
+                    borderColor: theme.palette.divider,
+                    borderRadius: `${theme.shape.borderRadius}px`,
+                    borderWidth: 1,
+                    borderStyle: 'solid',
+                    imageRendering: 'pixelated',
+                  }}
+                >
+                  <Image
+                    src={imageSrc}
+                    alt={card.name}
+                    sx={{
+                      height: `${100 * imageScale}%`,
+                      p: 0,
+                      m: 'auto',
+                      imageRendering: 'pixelated',
+                      filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
+                    }}
+                  />
+                </Box>
+                <Divider sx={{ my: theme.spacing(1) }} />
+                <Box sx={{ height: '50%' }}>{children}</Box>
+              </Paper>
+              <Paper
+                {...paperProps}
                 sx={{
-                  height: `${100 * imageScale}%`,
-                  p: 0,
-                  m: 'auto',
-                  imageRendering: 'pixelated',
-                  filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
+                  alignItems: 'center',
+                  backfaceVisibility: 'hidden',
+                  display: 'flex',
+                  height: 1,
+                  position: 'absolute',
+                  textAlign: 'center',
+                  transform: 'rotateY(180deg)',
+                  width: 1,
                 }}
-              />
+              >
+                <Typography
+                  variant="h2"
+                  sx={{
+                    ...(size === CardSize.SMALL && theme.typography.h6),
+                    ...(size === CardSize.MEDIUM && theme.typography.h5),
+                    ...(size === CardSize.LARGE && theme.typography.h4),
+                  }}
+                >
+                  Farmhand Shuffle
+                </Typography>
+              </Paper>
             </Box>
-            <Divider sx={{ my: theme.spacing(1) }} />
-            <Box sx={{ height: '50%' }}>{children}</Box>
-          </Paper>
-          <Paper
-            {...paperProps}
-            sx={{
-              alignItems: 'center',
-              backfaceVisibility: 'hidden',
-              display: 'flex',
-              height: 1,
-              position: 'absolute',
-              textAlign: 'center',
-              transform: 'rotateY(180deg)',
-              width: 1,
-            }}
-          >
-            <Typography
-              variant="h2"
-              sx={{
-                ...theme.typography.h4,
-              }}
-            >
-              Farmhand Shuffle
-            </Typography>
-          </Paper>
+          </motion.div>
         </Box>
-      </Box>
+      </AnimatePresence>
     )
   }
 )

@@ -9,7 +9,6 @@
 Session.vim
 coverage/
 dist/
-lib/
 node_modules/
 
 # Logs
