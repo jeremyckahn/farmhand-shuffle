@@ -3,5 +3,7 @@ import { InteractionHandlers } from '../../game/services/Rules/InteractionHandle
 export const stubInteractionHandlers = (): InteractionHandlers => {
   return {
     selectCropFromField: () => Promise.resolve(0),
+
+    selectCardFromHand: () => Promise.resolve(0),
   }
 }

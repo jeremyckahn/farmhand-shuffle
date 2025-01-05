@@ -10,13 +10,15 @@ import {
 } from '../../config'
 import { isGame } from '../../types/guards'
 import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
-import { ICard, IGame, IPlayer } from '../../types'
+import { ICard, IGame, IPlayedCrop, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { randomNumber } from '../../../services/RandomNumber'
-import { carrot, pumpkin } from '../../cards'
+import { carrot, pumpkin, water } from '../../cards'
 import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
 
-import { rules } from '.'
+import { PlayerOutOfCropsError } from './errors'
+
+import { rules, RulesService } from '.'
 
 const player1 = stubPlayer()
 const player2 = stubPlayer()
@@ -201,6 +203,76 @@ describe('Rules', () => {
         player1Id,
         0
       )
+    })
+  })
+
+  describe('setUpField', () => {
+    test('adds crop to field', async () => {
+      let game = rules.initializeGame([player1, player2])
+
+      game = updatePlayer(game, player1.id, {
+        hand: [carrot.id, ...game.table.players[player1.id].hand],
+      })
+
+      const oldHand = game.table.players[player1.id].hand
+
+      game = await rules.setUpField(game, interactionHandlers, player1.id)
+
+      expect(
+        game.table.players[player1.id].field.crops[0]
+      ).toEqual<IPlayedCrop>({
+        id: carrot.id,
+        waterCards: 0,
+      })
+
+      expect(game.table.players[player1.id].hand).toEqual(oldHand.slice(1))
+    })
+
+    test('draws cards until a crop card is found', async () => {
+      let game = rules.initializeGame([player1, player2])
+
+      game = updatePlayer(game, player1.id, {
+        hand: [water.id],
+        deck: [water.id, water.id, carrot.id],
+      })
+
+      vi.spyOn(interactionHandlers, 'selectCardFromHand')
+        .mockResolvedValueOnce(RulesService.unselectedCardIdx) // no crop in hand
+        .mockResolvedValueOnce(RulesService.unselectedCardIdx) // no crop in hand
+        .mockResolvedValueOnce(RulesService.unselectedCardIdx) // no crop in hand
+        .mockResolvedValueOnce(3) // player selects carrot
+
+      game = await rules.setUpField(game, interactionHandlers, player1.id)
+
+      expect(game.table.players[player1.id]).toMatchObject<Partial<IPlayer>>({
+        deck: [],
+        field: {
+          crops: [
+            {
+              id: carrot.id,
+              waterCards: 0,
+            },
+          ],
+        },
+        hand: [water.id, water.id, water.id],
+      })
+    })
+
+    test('throws PlayerOutOfCropsError if player has no crop cards left in deck', async () => {
+      let game = rules.initializeGame([player1, player2])
+
+      game = updatePlayer(game, player1.id, {
+        hand: [water.id],
+        deck: [water.id],
+      })
+
+      vi.spyOn(interactionHandlers, 'selectCardFromHand')
+        .mockResolvedValueOnce(RulesService.unselectedCardIdx)
+        .mockResolvedValueOnce(RulesService.unselectedCardIdx)
+
+      await expect(async () => {
+        await rules.setUpField(game, interactionHandlers, player1.id)
+      }).rejects.toThrow(PlayerOutOfCropsError)
     })
   })
 })

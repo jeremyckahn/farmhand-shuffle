@@ -3,7 +3,7 @@ import { drawCard } from '../../reducers/draw-card'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
 import { updateTable } from '../../reducers/update-table'
-import { IGame, IPlayer, IPlayerSeed } from '../../types'
+import { CardType, IGame, IPlayer, IPlayerSeed } from '../../types'
 import { factory } from '../Factory'
 import { payFromPlayerToCommunity } from '../../reducers/pay-from-player-to-community'
 import { updateGame } from '../../reducers/update-game'
@@ -11,10 +11,14 @@ import { incrementPlayer } from '../../reducers/increment-player'
 import { randomNumber } from '../../../services/RandomNumber'
 import { lookup } from '../Lookup'
 
-import { PlayerOutOfFundsError } from './errors'
+import { moveCropFromHandToField } from '../../reducers/move-crop-from-hand-to-field'
+
+import { PlayerOutOfCropsError, PlayerOutOfFundsError } from './errors'
 import { InteractionHandlers } from './InteractionHandlers'
 
 export class RulesService {
+  static readonly unselectedCardIdx = -1
+
   initializeGame(
     playerSeeds: IPlayerSeed[],
     userPlayerId: string | undefined = playerSeeds[0]?.id
@@ -85,6 +89,36 @@ export class RulesService {
     )
 
     game = moveFromHandToDiscardPile(game, playerId, cardIdx)
+
+    return game
+  }
+
+  async setUpField(
+    game: IGame,
+    interactionHandlers: InteractionHandlers,
+    playerId: IPlayer['id']
+  ) {
+    let cropCardHandIdx = RulesService.unselectedCardIdx
+
+    while (true) {
+      cropCardHandIdx = await interactionHandlers.selectCardFromHand(
+        game,
+        playerId,
+        CardType.CROP
+      )
+
+      if (cropCardHandIdx === RulesService.unselectedCardIdx) {
+        if (game.table.players[playerId].deck.length === 0) {
+          throw new PlayerOutOfCropsError(playerId)
+        }
+
+        game = drawCard(game, playerId)
+      } else {
+        break
+      }
+    }
+
+    game = moveCropFromHandToField(game, playerId, cropCardHandIdx)
 
     return game
   }

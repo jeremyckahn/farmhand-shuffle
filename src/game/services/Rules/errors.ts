@@ -8,6 +8,13 @@ export class PlayerOutOfFundsError extends Error {
   }
 }
 
+export class PlayerOutOfCropsError extends Error {
+  constructor(playerId: IPlayer['id']) {
+    super(...arguments)
+    this.message = `[PlayerOutOfCropsError] Player ${playerId} is out of crop cards to play.`
+  }
+}
+
 export class GameStateCorruptError extends Error {
   constructor(message: string) {
     super(...arguments)
