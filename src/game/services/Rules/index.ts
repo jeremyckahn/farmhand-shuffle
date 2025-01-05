@@ -15,7 +15,7 @@ import { PlayerOutOfFundsError } from './errors'
 import { InteractionHandlers } from './InteractionHandlers'
 
 export class RulesService {
-  processGameStart(
+  initializeGame(
     playerSeeds: IPlayerSeed[],
     userPlayerId: string | undefined = playerSeeds[0]?.id
   ): IGame {

@@ -45,15 +45,15 @@ beforeEach(() => {
 player2.deck[DECK_SIZE - 1] = pumpkin.id
 
 describe('Rules', () => {
-  describe('processGameStart', () => {
+  describe('initializeGame', () => {
     test('creates a new game', () => {
-      const game = rules.processGameStart([player1, player2])
+      const game = rules.initializeGame([player1, player2])
 
       expect(isGame(game)).toBe(true)
     })
 
     test('shuffles decks', () => {
-      rules.processGameStart([player1, player2])
+      rules.initializeGame([player1, player2])
 
       expect(shuffle).toHaveBeenCalledWith(player1.deck)
       expect(shuffle).toHaveBeenCalledWith(player2.deck)
@@ -61,7 +61,7 @@ describe('Rules', () => {
     })
 
     test('sets up player hands', () => {
-      const game = rules.processGameStart([player1, player2])
+      const game = rules.initializeGame([player1, player2])
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.players[player1Id].hand).toEqual(
@@ -74,7 +74,7 @@ describe('Rules', () => {
     })
 
     test('distributes community fund to players', () => {
-      const game = rules.processGameStart([player1, player2])
+      const game = rules.initializeGame([player1, player2])
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.communityFund).toEqual(0)
@@ -84,7 +84,7 @@ describe('Rules', () => {
 
     test('determines first player', () => {
       vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
-      const game = rules.processGameStart([player1, player2])
+      const game = rules.initializeGame([player1, player2])
       const [, player2Id] = Object.keys(game.table.players)
 
       expect(game.currentPlayerId).toEqual(player2Id)
@@ -96,7 +96,7 @@ describe('Rules', () => {
     let player1Id: IPlayer['id']
 
     beforeEach(() => {
-      game = rules.processGameStart([player1, player2])
+      game = rules.initializeGame([player1, player2])
       player1Id = Object.keys(game.table.players)[0]
     })
 
@@ -139,7 +139,7 @@ describe('Rules', () => {
   describe('processTurnEnd', () => {
     test('increments player', () => {
       vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
-      const game = rules.processGameStart([player1, player2])
+      const game = rules.initializeGame([player1, player2])
       const [player1Id] = Object.keys(game.table.players)
 
       const newGame = rules.processTurnEnd(game)
@@ -161,7 +161,7 @@ describe('Rules', () => {
         return Promise.resolve(game)
       })
 
-      game = rules.processGameStart([player1, player2])
+      game = rules.initializeGame([player1, player2])
       player1Id = Object.keys(game.table.players)[0]
 
       // eslint-disable-next-line functional/immutable-data
