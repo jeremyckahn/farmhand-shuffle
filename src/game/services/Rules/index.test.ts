@@ -206,6 +206,35 @@ describe('Rules', () => {
     })
   })
 
+  describe('startGame', () => {
+    test.each([
+      [
+        { firstPlayer: player1, secondPlayer: player2 },
+        { firstPlayer: player2, secondPlayer: player1 },
+      ],
+    ])('sets up fields for players', async ({ firstPlayer, secondPlayer }) => {
+      const game = rules.initializeGame([firstPlayer, secondPlayer])
+
+      const setUpField = vi.spyOn(rules, 'setUpField')
+
+      await rules.startGame(game, interactionHandlers)
+
+      expect(setUpField).toHaveBeenNthCalledWith(
+        1,
+        game,
+        interactionHandlers,
+        player1.id
+      )
+
+      expect(setUpField).toHaveBeenNthCalledWith(
+        2,
+        game,
+        interactionHandlers,
+        player2.id
+      )
+    })
+  })
+
   describe('setUpField', () => {
     test('adds crop to field', async () => {
       let game = rules.initializeGame([player1, player2])

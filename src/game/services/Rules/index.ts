@@ -93,6 +93,17 @@ export class RulesService {
     return game
   }
 
+  async startGame(game: IGame, interactionHandlers: InteractionHandlers) {
+    const { [game.sessionOwnerPlayerId]: sessionOwnerPlayer, ...otherPlayers } =
+      game.table.players
+
+    await this.setUpField(game, interactionHandlers, sessionOwnerPlayer.id)
+
+    for (const playerId of Object.keys(otherPlayers)) {
+      await this.setUpField(game, interactionHandlers, playerId)
+    }
+  }
+
   async setUpField(
     game: IGame,
     interactionHandlers: InteractionHandlers,
