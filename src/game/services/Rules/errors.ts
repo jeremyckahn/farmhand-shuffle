@@ -29,6 +29,13 @@ export class FieldEmptyError extends Error {
   }
 }
 
+export class InvalidCardIndexError extends Error {
+  constructor(cardIdx: number, playerId: string) {
+    super(...arguments)
+    this.message = `[InvalidCardIndexError] Card index ${cardIdx} is out of bounds for player ${playerId}.`
+  }
+}
+
 export class InvalidCardError extends Error {
   constructor(message: string) {
     super(...arguments)

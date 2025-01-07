@@ -1,4 +1,5 @@
 import { array } from '../../../services/Array'
+import { InvalidCardIndexError } from '../../services/Rules/errors'
 import { IGame, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
@@ -12,7 +13,7 @@ export const moveFromHandToDiscardPile = (
   const cardId = hand[cardIdx]
 
   if (!cardId) {
-    throw new Error(`Card index ${cardIdx} is not in player ${playerId}'s hand`)
+    throw new InvalidCardIndexError(cardIdx, playerId)
   }
 
   const newHand = array.removeAt(hand, cardIdx)

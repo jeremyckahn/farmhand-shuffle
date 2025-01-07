@@ -1,6 +1,8 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot } from '../../cards'
 
+import { InvalidCardIndexError } from '../../services/Rules/errors'
+
 import { moveFromHandToDiscardPile } from '.'
 
 describe('moveFromHandToDiscardPile', () => {
@@ -29,6 +31,6 @@ describe('moveFromHandToDiscardPile', () => {
         player1Id,
         game.table.players[player1Id].hand.length
       )
-    }).toThrow()
+    }).toThrow(InvalidCardIndexError)
   })
 })
