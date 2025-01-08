@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
 import { Game } from './Game'
 
@@ -17,10 +17,9 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const game = stubGame()
-
 export const BaseGame: Story = {
   args: {
-    game,
+    playerSeeds: [stubPlayer1, stubPlayer2],
+    userPlayerId: stubPlayer1.id,
   },
 }
