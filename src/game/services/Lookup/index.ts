@@ -1,7 +1,11 @@
 import * as cards from '../../cards'
-import { isCardId } from '../../types/guards'
+import { isCardId, isCrop } from '../../types/guards'
 import { ICard, IGame, IPlayer } from '../../types'
-import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
+import {
+  GameStateCorruptError,
+  InvalidCardError,
+  InvalidIdError,
+} from '../Rules/errors'
 
 export class LookupService {
   getCardFromHand = (
@@ -25,6 +29,19 @@ export class LookupService {
     }
 
     const card = cards[cardId]
+
+    return card
+  }
+
+  /**
+   * @throws InvalidCardError if card is not an ICrop.
+   */
+  getCropFromHand(game: IGame, playerId: IPlayer['id'], cardIdx: number) {
+    const card = this.getCardFromHand(game, playerId, cardIdx)
+
+    if (!isCrop(card)) {
+      throw new InvalidCardError(`${card.id} is not a crop card.`)
+    }
 
     return card
   }

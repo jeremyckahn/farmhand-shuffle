@@ -1,13 +1,9 @@
 import { array } from '../../../services/Array'
-import {
-  InvalidCardError,
-  InvalidCardIndexError,
-} from '../../services/Rules/errors'
+import { InvalidCardIndexError } from '../../services/Rules/errors'
 import { IGame, IPlayedCrop, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 import { addCropToField } from '../add-crop-to-field'
 import { lookup } from '../../services/Lookup'
-import { isCrop } from '../../types/guards'
 
 export const moveCropFromHandToField = (
   game: IGame,
@@ -22,11 +18,7 @@ export const moveCropFromHandToField = (
   }
 
   const newHand = array.removeAt(hand, cropCardIdx)
-  const cropCard = lookup.getCardFromHand(game, playerId, cropCardIdx)
-
-  if (!isCrop(cropCard)) {
-    throw new InvalidCardError(`${cropCard.id} is not a crop card.`)
-  }
+  const cropCard = lookup.getCropFromHand(game, playerId, cropCardIdx)
 
   const playedCropCard: IPlayedCrop = {
     id: cropCard.id,

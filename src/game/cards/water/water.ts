@@ -1,10 +1,25 @@
-import { updatePlayedCrop } from '../../reducers/update-played-crop'
-import { FieldEmptyError } from '../../services/Rules/errors'
-import { InteractionHandlers } from '../../services/Rules/InteractionHandlers'
-import { CardType, IGame, IPlayedCrop, IWater } from '../../types'
+import {
+  CardType,
+  GameEvent,
+  GameEventPayload,
+  IGame,
+  IWater,
+} from '../../types'
 
 export const water: IWater = Object.freeze({
   type: CardType.WATER,
   id: 'water',
   name: 'Water',
+
+  onPlayFromHand(
+    _game: IGame,
+    playerId: string,
+    cardIdx: number
+  ): GameEventPayload[GameEvent.PLAY_WATER] {
+    return {
+      type: GameEvent.PLAY_WATER,
+      playerId,
+      cardIdx,
+    }
+  },
 })
