@@ -7,29 +7,4 @@ export const water: IWater = Object.freeze({
   type: CardType.WATER,
   id: 'water',
   name: 'Water',
-  async onPlayFromHand(
-    game: IGame,
-    interactionHandlers: InteractionHandlers,
-    playerId: string
-  ) {
-    const selectedCardIdx = await interactionHandlers.selectCropFromField(
-      game,
-      playerId
-    )
-
-    const playedCrop = game.table.players[playerId].field.crops[selectedCardIdx]
-
-    if (playedCrop === undefined) {
-      throw new FieldEmptyError(playerId)
-    }
-
-    const newPlayedCrop: IPlayedCrop = {
-      ...playedCrop,
-      waterCards: playedCrop.waterCards + 1,
-    }
-
-    game = updatePlayedCrop(game, playerId, selectedCardIdx, newPlayedCrop)
-
-    return game
-  },
 })

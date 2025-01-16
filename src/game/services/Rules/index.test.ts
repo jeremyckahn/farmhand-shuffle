@@ -9,7 +9,6 @@ import {
   STANDARD_TAX_AMOUNT,
 } from '../../config'
 import { isGame } from '../../types/guards'
-import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
 import { ICard, IGame, IPlayedCrop, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { randomNumber } from '../../../services/RandomNumber'
@@ -147,62 +146,6 @@ describe('Rules', () => {
       const newGame = rules.processTurnEnd(game)
 
       expect(newGame.currentPlayerId).toEqual(player1Id)
-    })
-  })
-
-  describe('playCardFromHand', () => {
-    let game: IGame
-    let player1Id: IPlayer['id']
-
-    beforeEach(() => {
-      ;(
-        mockCropHandlePlayFromHand as unknown as MockInstance<
-          typeof mockCropHandlePlayFromHand
-        >
-      ).mockImplementation((game: IGame) => {
-        return Promise.resolve(game)
-      })
-
-      game = rules.initializeGame([player1, player2])
-      player1Id = Object.keys(game.table.players)[0]
-
-      // eslint-disable-next-line functional/immutable-data
-      game.table.players[player1Id].hand[0] = carrot.id
-    })
-
-    test('removes played card from hand', async () => {
-      const newGame = await rules.playCardFromHand(
-        game,
-        interactionHandlers,
-        player1Id,
-        0
-      )
-
-      expect(newGame.table.players[player1Id].hand.length).toEqual(
-        game.table.players[player1Id].hand.length - 1
-      )
-    })
-
-    test('moves played card to discard pile', async () => {
-      const newGame = await rules.playCardFromHand(
-        game,
-        interactionHandlers,
-        player1Id,
-        0
-      )
-
-      expect(newGame.table.players[player1Id].discardPile).toEqual([carrot.id])
-    })
-
-    test('performs card-specific behavior', async () => {
-      await rules.playCardFromHand(game, interactionHandlers, player1Id, 0)
-
-      expect(mockCropHandlePlayFromHand).toHaveBeenCalledWith(
-        game,
-        interactionHandlers,
-        player1Id,
-        0
-      )
     })
   })
 

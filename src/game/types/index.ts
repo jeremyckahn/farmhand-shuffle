@@ -1,5 +1,4 @@
 import { uuidString } from '../../services/types'
-import { InteractionHandlers } from '../services/Rules/InteractionHandlers'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
@@ -19,30 +18,6 @@ export interface ICard {
   readonly name: string
 
   readonly type: CardType
-
-  /**
-   * @throws A custom error that describes why the card could not be played. If
-   * this happens, the card must not be discarded from the player's hand.
-   */
-  readonly onPlayFromHand: (
-    game: IGame,
-
-    /**
-     * A map of asynchronous functions that solicit interactive feedback from
-     * the player.
-     */
-    interactionHandlers: InteractionHandlers,
-
-    /**
-     * The ID of the player playing the card
-     */
-    playerId: IPlayer['id'],
-
-    /**
-     * The index of the card within the player's hand
-     */
-    cardIdx: number
-  ) => Promise<IGame>
 }
 
 export interface ICrop extends ICard {
