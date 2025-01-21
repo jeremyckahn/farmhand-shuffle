@@ -6,6 +6,7 @@ const viteConfig = defineConfig({})
 
 const vitestConfig = vitestDefineConfig({
   test: {
+    silent: true,
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
