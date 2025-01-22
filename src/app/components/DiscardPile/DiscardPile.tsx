@@ -20,7 +20,7 @@ export interface DiscardPileProps extends BoxProps {
 }
 
 export const defaultDiscardPileThicknessPx = 30
-export const defaultDiscardPileCardSize = CardSize.MEDIUM
+export const defaultDiscardPileCardSize = CardSize.SMALL
 
 export const DiscardPile = ({
   playerId,
@@ -44,6 +44,10 @@ export const DiscardPile = ({
         // NOTE: This is needed to fix a Firefox bug that prevents opponent
         // discard piles from appearing upside down
         transformStyle: 'preserve-3d',
+        outlineStyle: 'solid',
+        outlineWidth: '2px',
+        outlineColor: theme.palette.divider,
+        borderRadius: theme.shape.borderRadius,
         ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
       }}
       {...rest}

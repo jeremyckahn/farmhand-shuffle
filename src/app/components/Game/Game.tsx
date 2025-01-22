@@ -1,32 +1,58 @@
 import { useEffect } from 'react'
-import Box, { BoxProps } from '@mui/material/Box'
+import Container, { ContainerProps } from '@mui/material/Container'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import useTheme from '@mui/material/styles/useTheme'
 
 import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
 import { Table } from '../Table/Table'
 
+import { isSxArray } from '../../type-guards'
+
 import { ActorContext } from './ActorContext'
 
-export interface GameProps extends BoxProps {
+export interface GameProps extends ContainerProps {
   playerSeeds: IPlayerSeed[]
   userPlayerId: string
 }
 
-const GameCore = ({ playerSeeds, userPlayerId, ...rest }: GameProps) => {
+const GameCore = ({
+  playerSeeds,
+  userPlayerId,
+  sx = [],
+  ...rest
+}: GameProps) => {
+  const theme = useTheme()
   const actorRef = ActorContext.useActorRef()
-  const [value, game] = ActorContext.useSelector(
+  const [state, game] = ActorContext.useSelector(
     ({ value, context: { game } }) => [value, game]
   )
 
   useEffect(() => {
-    if (value === GameState.UNINITIALIZED) {
+    if (state === GameState.UNINITIALIZED) {
       actorRef.send({ type: GameEvent.INIT, playerSeeds, userPlayerId })
     }
-  }, [value, playerSeeds, userPlayerId])
+  }, [state, playerSeeds, userPlayerId])
+
+  const stateString = typeof state === 'string' ? state : 'Unknown state'
 
   return (
-    <Box {...rest}>
-      <Table game={game} />
-    </Box>
+    <Container
+      maxWidth={false}
+      data-testid="game"
+      sx={[
+        { backgroundColor: theme.palette.grey['500'], py: 3, overflow: 'auto' },
+        ...(isSxArray(sx) ? sx : [sx]),
+      ]}
+      {...rest}
+    >
+      <Paper sx={{ width: 1, mb: 2 }}>
+        <Typography variant="h1" fontSize={24} py={2} textAlign="center">
+          Game state: {stateString}
+        </Typography>
+      </Paper>
+      <Table sx={{ pt: 4 }} game={game} />
+    </Container>
   )
 }
 
