@@ -1,6 +1,6 @@
 import * as cards from '../../cards'
 import { isCardId, isCrop } from '../../types/guards'
-import { ICard, IGame, IPlayer } from '../../types'
+import { ICard, IGame, IPlayer, isCropCard } from '../../types'
 import {
   GameStateCorruptError,
   InvalidCardError,
@@ -69,6 +69,39 @@ export class LookupService {
     }
 
     return player
+  }
+
+  findCropIndexesInDeck = (
+    game: IGame,
+    playerId: IPlayer['id'],
+    howMany = 1
+  ) => {
+    const player = this.getPlayer(game, playerId)
+    const { deck } = player
+
+    let cropCardIdxs: number[] = []
+
+    for (
+      let i = 0;
+      i < howMany && i <= deck.length - 1 && cropCardIdxs.length < howMany;
+      i++
+    ) {
+      const cardId = deck[i]
+
+      // NOTE: This check is not logically necessary, but it is required to
+      // prevent cards[cardId] from being implicitly cast as an any type.
+      if (!isCardId(cardId)) {
+        throw new GameStateCorruptError(`${cardId} is not a valid card ID`)
+      }
+
+      const card = cards[cardId]
+
+      if (isCropCard(card)) {
+        cropCardIdxs = [...cropCardIdxs, i]
+      }
+    }
+
+    return cropCardIdxs
   }
 }
 

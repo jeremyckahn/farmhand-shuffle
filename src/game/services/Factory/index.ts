@@ -1,6 +1,10 @@
 import { v4 as uuid } from 'uuid'
 
-import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
+import { randomNumber } from '../../../services/RandomNumber'
+import { INITIAL_PLAYER_FUNDS } from '../../config'
+import { drawValidStartingHand } from '../../reducers/draw-valid-starting-hand'
+import { updateGame } from '../../reducers/update-game'
+import { updateTable } from '../../reducers/update-table'
 import {
   ICrop,
   IField,
@@ -10,11 +14,8 @@ import {
   IPlayerSeed,
   ITable,
 } from '../../types'
-import { updateTable } from '../../reducers/update-table'
-import { randomNumber } from '../../../services/RandomNumber'
-import { drawCard } from '../../reducers/draw-card'
+import { validate } from '../Validation'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
-import { updateGame } from '../../reducers/update-game'
 
 export class FactoryService {
   buildField(overrides: Partial<IField> = {}): IField {
@@ -90,11 +91,14 @@ export class FactoryService {
         funds: Math.floor(game.table.communityFund / playerSeeds.length),
       })
 
+      validate.player(player)
+
       game = updateTable(game, {
         players: { ...game.table.players, [player.id]: player },
       })
+
       game = shuffleDeck(game, player.id)
-      game = drawCard(game, player.id, INITIAL_HAND_SIZE)
+      game = drawValidStartingHand(game, player)
     }
 
     game = updateTable(game, {

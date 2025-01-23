@@ -9,7 +9,7 @@ const player2 = stubPlayer()
 
 describe('endTurn', () => {
   test('increments player', () => {
-    vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
+    vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
     const game = factory.buildGameForSession([player1, player2])
     const [player1Id] = Object.keys(game.table.players)
 

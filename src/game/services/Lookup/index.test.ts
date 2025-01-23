@@ -1,9 +1,12 @@
-import { carrot } from '../../cards'
+import { test } from 'vitest'
+
+import { carrot, water } from '../../cards'
 import { IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../../reducers/update-player'
 import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { isPlayer } from '../../types/guards'
+import { stubPlayer1 } from '../../../test-utils/stubs/players'
 
 import { lookup } from '.'
 
@@ -71,5 +74,32 @@ describe('Lookup', () => {
         lookup.getPlayer(game, '')
       }).toThrow(InvalidIdError)
     })
+  })
+
+  describe('findCropIndexesInDeck', () => {
+    test.each([
+      { deck: [], howMany: undefined, expected: [] },
+      { deck: [], howMany: 1, expected: [] },
+      { deck: [carrot.id], howMany: 1, expected: [0] },
+      { deck: [water.id], howMany: 1, expected: [] },
+      { deck: [carrot.id, water.id, carrot.id], howMany: 3, expected: [0, 2] },
+    ])(
+      'retrieves $howMany crop indices in deck ($deck)',
+      ({ deck, howMany, expected }) => {
+        let game = stubGame()
+
+        game = updatePlayer(game, stubPlayer1.id, {
+          deck,
+        })
+
+        const cropIndexesInDeck = lookup.findCropIndexesInDeck(
+          game,
+          stubPlayer1.id,
+          howMany
+        )
+
+        expect(cropIndexesInDeck).toEqual(expected)
+      }
+    )
   })
 })

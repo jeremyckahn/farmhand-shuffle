@@ -67,8 +67,8 @@ describe('Factory', () => {
     test('shuffles decks', () => {
       factory.buildGameForSession([player1, player2])
 
-      expect(shuffle).toHaveBeenCalledWith(player1.deck)
-      expect(shuffle).toHaveBeenCalledWith(player2.deck)
+      expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player1.deck))
+      expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player2.deck))
       expect(shuffle).toHaveBeenCalledTimes(2)
     })
 
@@ -77,11 +77,11 @@ describe('Factory', () => {
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
       expect(game.table.players[player1Id].hand).toEqual(
-        player1.deck.slice(0, INITIAL_HAND_SIZE)
+        expect.arrayContaining(player1.deck.slice(0, INITIAL_HAND_SIZE))
       )
 
       expect(game.table.players[player2Id].hand).toEqual(
-        player2.deck.slice(0, INITIAL_HAND_SIZE)
+        expect.arrayContaining(player2.deck.slice(0, INITIAL_HAND_SIZE))
       )
     })
 
@@ -95,7 +95,7 @@ describe('Factory', () => {
     })
 
     test('determines first player', () => {
-      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
+      vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
       const game = factory.buildGameForSession([player1, player2])
       const [, player2Id] = Object.keys(game.table.players)
 
