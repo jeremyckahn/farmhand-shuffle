@@ -1,13 +1,11 @@
-import { useEffect } from 'react'
 import Container, { ContainerProps } from '@mui/material/Container'
-import Paper from '@mui/material/Paper'
-import Typography from '@mui/material/Typography'
 import useTheme from '@mui/material/styles/useTheme'
+import { useEffect } from 'react'
 
 import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
-import { Table } from '../Table/Table'
-
 import { isSxArray } from '../../type-guards'
+import { Table } from '../Table'
+import { TurnControl } from '../TurnControl'
 
 import { ActorContext } from './ActorContext'
 
@@ -34,8 +32,6 @@ const GameCore = ({
     }
   }, [state, playerSeeds, userPlayerId])
 
-  const stateString = typeof state === 'string' ? state : 'Unknown state'
-
   return (
     <Container
       maxWidth={false}
@@ -46,11 +42,7 @@ const GameCore = ({
       ]}
       {...rest}
     >
-      <Paper sx={{ width: 1, mb: 2 }}>
-        <Typography variant="h1" fontSize={24} py={2} textAlign="center">
-          Game state: {stateString}
-        </Typography>
-      </Paper>
+      <TurnControl />
       <Table sx={{ pt: 4 }} game={game} />
     </Container>
   )

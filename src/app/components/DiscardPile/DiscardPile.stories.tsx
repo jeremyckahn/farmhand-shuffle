@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'
 import { IGame } from '../../../game/types'
+import { ActorContext } from '../Game/ActorContext'
 
 import {
   DiscardPile,
@@ -26,6 +27,13 @@ const meta = {
       control: { type: 'number' },
       description: 'The thickness of the discard pile in pixels',
     },
+  },
+  decorators: Story => {
+    return (
+      <ActorContext.Provider>
+        <Story />
+      </ActorContext.Provider>
+    )
   },
 } satisfies Meta<typeof DiscardPile>
 

@@ -70,6 +70,9 @@ export const DiscardPile = ({
           >
             <Card
               card={card}
+              size={cardSize}
+              cardIdx={idx}
+              playerId={playerId}
               position="absolute"
               sx={{
                 transform: `translateX(${offset}px)`,

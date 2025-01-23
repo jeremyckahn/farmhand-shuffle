@@ -4,6 +4,7 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { updateField } from '../../../game/reducers/update-field'
 import { carrot, pumpkin } from '../../../game/cards'
 import { factory } from '../../../game/services/Factory'
+import { ActorContext } from '../Game/ActorContext'
 
 import { Field } from './Field'
 
@@ -15,6 +16,13 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {},
+  decorators: Story => {
+    return (
+      <ActorContext.Provider>
+        <Story />
+      </ActorContext.Provider>
+    )
+  },
 } satisfies Meta<typeof Field>
 
 export default meta

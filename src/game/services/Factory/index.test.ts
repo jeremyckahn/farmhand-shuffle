@@ -3,7 +3,6 @@ import { MockInstance } from 'vitest'
 
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { isField, isGame, isPlayer, isTable } from '../../types/guards'
-import { randomNumber } from '../../../services/RandomNumber'
 import { carrot } from '../../cards'
 import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
 import { ICard } from '../../types'
@@ -95,11 +94,9 @@ describe('Factory', () => {
     })
 
     test('determines first player', () => {
-      vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
       const game = factory.buildGameForSession([player1, player2])
-      const [, player2Id] = Object.keys(game.table.players)
 
-      expect(game.currentPlayerId).toEqual(player2Id)
+      expect(game.currentPlayerId).toEqual(game.sessionOwnerPlayerId)
     })
   })
 

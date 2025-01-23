@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid'
 
-import { randomNumber } from '../../../services/RandomNumber'
 import { INITIAL_PLAYER_FUNDS } from '../../config'
 import { drawValidStartingHand } from '../../reducers/draw-valid-starting-hand'
 import { updateGame } from '../../reducers/update-game'
@@ -105,11 +104,7 @@ export class FactoryService {
       communityFund: game.table.communityFund % playerSeeds.length,
     })
 
-    const firstPlayerId = randomNumber.chooseElement(
-      Object.keys(game.table.players)
-    )
-
-    game = updateGame(game, { currentPlayerId: firstPlayerId })
+    game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
 
     return game
   }

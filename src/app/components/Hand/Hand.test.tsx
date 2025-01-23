@@ -5,6 +5,7 @@ import { carrot, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { cardClassName } from '../Card/CardTemplate'
+import { ActorContext } from '../Game/ActorContext'
 
 import { getGapPixelWidth, Hand, HandProps } from './Hand'
 
@@ -17,7 +18,9 @@ const game = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
 
 const StubHand = (overrides: Partial<HandProps>) => {
   return (
-    <Hand game={game} playerId={game.sessionOwnerPlayerId} {...overrides} />
+    <ActorContext.Provider>
+      <Hand game={game} playerId={game.sessionOwnerPlayerId} {...overrides} />
+    </ActorContext.Provider>
   )
 }
 

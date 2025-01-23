@@ -152,6 +152,8 @@ export const Field = ({
                 tabIndex={0}
                 cropCardProps={{
                   card,
+                  cardIdx: idx,
+                  playerId: player.id,
                   size: cardSize,
                   playedCrop,
                   ...(isSelected && {

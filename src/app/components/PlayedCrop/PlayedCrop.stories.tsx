@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { carrot } from '../../../game/cards'
+import { ActorContext } from '../Game/ActorContext'
 
 import { PlayedCrop } from './PlayedCrop'
 
@@ -12,6 +13,13 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {},
+  decorators: Story => {
+    return (
+      <ActorContext.Provider>
+        <Story />
+      </ActorContext.Provider>
+    )
+  },
 } satisfies Meta<typeof PlayedCrop>
 
 export default meta
@@ -21,6 +29,8 @@ export const PlayedCropCard: Story = {
   args: {
     cropCardProps: {
       card: carrot,
+      cardIdx: 0,
+      playerId: '',
       playedCrop: {
         id: carrot.id,
         waterCards: 1,
@@ -34,6 +44,8 @@ export const PlayedCropCardWithExtraWater: Story = {
   args: {
     cropCardProps: {
       card: carrot,
+      cardIdx: 0,
+      playerId: '',
       playedCrop: {
         id: carrot.id,
         waterCards: 5,

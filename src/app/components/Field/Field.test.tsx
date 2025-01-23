@@ -6,6 +6,8 @@ import { updateField } from '../../../game/reducers/update-field'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot, pumpkin } from '../../../game/cards'
 
+import { ActorContext } from '../Game/ActorContext'
+
 import {
   Field,
   FieldProps,
@@ -35,11 +37,13 @@ gameStub = updateField(gameStub, opponentPlayerId, {
 
 const StubField = (overrides: Partial<FieldProps>) => {
   return (
-    <Field
-      game={gameStub}
-      playerId={gameStub.sessionOwnerPlayerId}
-      {...overrides}
-    />
+    <ActorContext.Provider>
+      <Field
+        game={gameStub}
+        playerId={gameStub.sessionOwnerPlayerId}
+        {...overrides}
+      />
+    </ActorContext.Provider>
   )
 }
 

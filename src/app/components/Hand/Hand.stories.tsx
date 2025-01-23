@@ -14,6 +14,8 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 
+import { ActorContext } from '../Game/ActorContext'
+
 import { Hand } from './Hand'
 
 const meta = {
@@ -45,54 +47,58 @@ const meta = {
       game = updatePlayer(game, game.sessionOwnerPlayerId, { hand })
 
       return (
-        <Box
-          sx={{
-            minHeight: `calc(${CARD_DIMENSIONS[CardSize.LARGE].height} * 1.35)`,
-            minWidth: `calc(${CARD_DIMENSIONS[CardSize.LARGE].width} * 3)`,
-            display: 'flex',
-            position: 'relative',
-          }}
-        >
-          <Story args={{ ...args, game, sx: { m: 'auto', mt: 0 } }} />
-          <Tooltip
-            title={`Cards: ${
-              game.table.players[game.sessionOwnerPlayerId].hand.length
-            }`}
-            open
+        <ActorContext.Provider>
+          <Box
+            sx={{
+              minHeight: `calc(${
+                CARD_DIMENSIONS[CardSize.LARGE].height
+              } * 1.35)`,
+              minWidth: `calc(${CARD_DIMENSIONS[CardSize.LARGE].width} * 3)`,
+              display: 'flex',
+              position: 'relative',
+            }}
           >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
+            <Story args={{ ...args, game, sx: { m: 'auto', mt: 0 } }} />
+            <Tooltip
+              title={`Cards: ${
+                game.table.players[game.sessionOwnerPlayerId].hand.length
+              }`}
+              open
             >
               <Box
                 sx={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
                   display: 'flex',
                   flexDirection: 'column',
                 }}
               >
-                <Tooltip title="Add a random card" placement="left">
-                  <Fab color="primary" onClick={handleClickAdd}>
-                    <AddIcon />
-                  </Fab>
-                </Tooltip>
-                <Tooltip title="Remove the last card" placement="left">
-                  <Fab
-                    color="secondary"
-                    sx={{ mt: 1.5 }}
-                    onClick={handleClickRemove}
-                  >
-                    <RemoveIcon />
-                  </Fab>
-                </Tooltip>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Tooltip title="Add a random card" placement="left">
+                    <Fab color="primary" onClick={handleClickAdd}>
+                      <AddIcon />
+                    </Fab>
+                  </Tooltip>
+                  <Tooltip title="Remove the last card" placement="left">
+                    <Fab
+                      color="secondary"
+                      sx={{ mt: 1.5 }}
+                      onClick={handleClickRemove}
+                    >
+                      <RemoveIcon />
+                    </Fab>
+                  </Tooltip>
+                </Box>
               </Box>
-            </Box>
-          </Tooltip>
-        </Box>
+            </Tooltip>
+          </Box>
+        </ActorContext.Provider>
       )
     },
   ],
