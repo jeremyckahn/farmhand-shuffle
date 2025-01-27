@@ -17,6 +17,8 @@ import {
 import { factory } from '../Factory'
 import { lookup } from '../Lookup'
 import { moveCropFromHandToField } from '../../reducers/move-crop-from-hand-to-field'
+import { setUpCpuPlayer } from '../../reducers/cpu/set-up-player'
+import { assertCurrentPlayer } from '../../types/guards'
 
 export const { createMachine } = setup({
   types: {
@@ -94,12 +96,15 @@ export const machineConfig: RulesMachineConfig = {
 
             game = incrementPlayer(game)
 
-            const { currentPlayerId } = game
+            const { currentPlayerId, sessionOwnerPlayerId } = game
 
-            if (currentPlayerId === null) {
-              throw new TypeError(
-                '[TypeError] currentPlayerId must not be null'
-              )
+            assertCurrentPlayer(currentPlayerId)
+
+            if (currentPlayerId !== sessionOwnerPlayerId) {
+              game = setUpCpuPlayer(game, currentPlayerId)
+
+              // TODO: Randomize who goes first instead of just having the player go first
+              game = incrementPlayer(game)
             }
 
             const currentPlayerField = game.table.players[currentPlayerId].field

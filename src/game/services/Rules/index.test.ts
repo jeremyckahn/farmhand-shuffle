@@ -137,7 +137,7 @@ describe('createGameStateMachine', () => {
       ])
     })
 
-    it('lets the next player set up', () => {
+    it('completes the setup sequence', () => {
       const gameActor = rules.startGame()
 
       gameActor.send({
@@ -153,6 +153,9 @@ describe('createGameStateMachine', () => {
       game = updatePlayer(game, player1.id, {
         hand: [carrot.id],
       })
+      game = updatePlayer(game, player2.id, {
+        hand: [carrot.id],
+      })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
       gameActor.send({
@@ -160,7 +163,7 @@ describe('createGameStateMachine', () => {
         playerId: player1.id,
         cardIdx: 0,
       })
-      // NOTE: Prompts player 2
+      // NOTE: Prompts player 2 (CPU player)
       gameActor.send({
         type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
       })
@@ -170,8 +173,13 @@ describe('createGameStateMachine', () => {
         context: { game: gameResult },
       } = gameActor.getSnapshot()
 
-      expect(value).toBe(GameState.WAITING_FOR_PLAYER_SETUP_ACTION)
-      expect(gameResult.currentPlayerId).toEqual(player2.id)
+      // NOTE: Indicates that the CPU player has completed setup and has given control back to the player
+      expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+
+      expect(gameResult.currentPlayerId).toEqual(player1.id)
+      expect(gameResult.table.players[player2.id].field.crops).toEqual<
+        IPlayedCrop[]
+      >([{ id: carrot.id, waterCards: 0 }])
     })
 
     it('does not let game start until all players have set up', () => {
@@ -208,56 +216,6 @@ describe('createGameStateMachine', () => {
 
       // NOTE: Indicates that the state change was prevented by a guard
       expect(previousSnapshot).toEqual(latestSnapshot)
-    })
-
-    it('completes the setup sequence', () => {
-      const gameActor = rules.startGame()
-
-      gameActor.send({
-        type: GameEvent.INIT,
-        playerSeeds,
-        userPlayerId: player1.id,
-      })
-
-      let {
-        context: { game },
-      } = gameActor.getSnapshot()
-
-      game = updatePlayer(game, player1.id, {
-        hand: [carrot.id],
-      })
-      game = updatePlayer(game, player2.id, {
-        hand: [carrot.id],
-      })
-
-      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
-
-      gameActor.send({
-        type: GameEvent.PLAY_CROP,
-        playerId: player1.id,
-        cardIdx: 0,
-      })
-      // NOTE: Prompts player 2
-      gameActor.send({
-        type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
-      })
-      gameActor.send({
-        type: GameEvent.PLAY_CROP,
-        playerId: player2.id,
-        cardIdx: 0,
-      })
-      // NOTE: Prompts player 1 again
-      gameActor.send({
-        type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
-      })
-
-      const {
-        value,
-        context: { game: gameResult },
-      } = gameActor.getSnapshot()
-
-      expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-      expect(gameResult.currentPlayerId).toEqual(player1.id)
     })
   })
 
