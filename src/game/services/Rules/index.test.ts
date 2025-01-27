@@ -254,6 +254,8 @@ describe('createGameStateMachine', () => {
     })
 
     it('player cannot play crop card if field is full', () => {
+      vi.spyOn(console, 'error').mockImplementationOnce(vi.fn())
+
       const gameActor = createSetUpGameActor()
 
       let {
@@ -360,6 +362,8 @@ describe('createGameStateMachine', () => {
     })
 
     it('handles failure when watering a crop', () => {
+      vi.spyOn(console, 'error').mockImplementationOnce(vi.fn())
+
       const gameActor = createSetUpGameActor()
 
       let {
