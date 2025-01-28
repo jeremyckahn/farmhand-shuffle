@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
@@ -63,10 +63,15 @@ export const Hand = ({
 
   const resetSelectedCard = () => {
     setSelectedCardIdx(deselectedIdx)
+
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
   }
+
+  useEffect(() => {
+    resetSelectedCard()
+  }, [player.hand])
 
   const handleCardFocus = (cardIdx: number) => {
     setSelectedCardIdx(cardIdx)

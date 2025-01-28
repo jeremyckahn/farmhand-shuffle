@@ -123,6 +123,29 @@ describe('Hand', () => {
     expect(document.activeElement).toBe(document.body)
   })
 
+  test('receiving a new hand resets focus', async () => {
+    render(<StubHand />)
+
+    const card1 = screen
+      .getByText(handCards[0].name)
+      .closest(`.${cardClassName}`)
+
+    await userEvent.click(card1!)
+
+    const newHand = [...handCards, water]
+    const newGame = updatePlayer(game, game.sessionOwnerPlayerId, {
+      hand: newHand.map(({ id }) => id),
+    })
+
+    render(<StubHand game={newGame} />)
+
+    const { transform: card1Transform } = getComputedStyle(card1!)
+    expect(card1Transform).toMatchInlineSnapshot(
+      `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+    )
+    expect(document.activeElement).toBe(document.body)
+  })
+
   describe('getGapPixelWidth', () => {
     test.each([
       { numberOfCards: 0, gapSize: 50 },
