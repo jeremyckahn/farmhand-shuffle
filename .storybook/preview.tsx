@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import type { Preview, ReactRenderer } from '@storybook/react'
 import { DecoratorFunction } from '@storybook/types'
 import { themes } from '@storybook/theming'
+import '@storybook/addon-console'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 
 import '@fontsource/roboto/300.css'
@@ -66,7 +67,6 @@ const preview: Preview = {
     controls: {
       expanded: true, // Adds the description and default columns
       matchers: {
-        color: /(background|color)$/i,
         date: /Date$/,
       },
     },
