@@ -4,6 +4,7 @@ import { render } from '@testing-library/react'
 import { carrot } from '../../../game/cards'
 import { ActorContext } from '../Game/ActorContext'
 import { GameEvent, GameEventPayload } from '../../../game/types'
+import { mockSend } from '../../../test-utils/mocks/send'
 
 import { Card, CardFocusMode, CardProps } from './Card'
 import { cardFlipWrapperClassName } from './CardTemplate'
@@ -68,12 +69,8 @@ describe('Card', () => {
 
   describe('cardFocusMode: CardFocusMode.CROP_PLACEMENT', () => {
     test('allows player to place crop', () => {
-      const mockSend = vi.fn()
+      const send = mockSend()
 
-      // @ts-expect-error Irrelevant useActorRef return properties are omitted
-      vi.spyOn(ActorContext, 'useActorRef').mockReturnValue({
-        send: mockSend,
-      })
       render(
         <StubCard card={carrot} cardFocusMode={CardFocusMode.CROP_PLACEMENT} />
       )
@@ -82,7 +79,7 @@ describe('Card', () => {
 
       fireEvent.click(playCardButton)
 
-      expect(mockSend).toHaveBeenCalledWith<
+      expect(send).toHaveBeenCalledWith<
         [GameEventPayload[GameEvent.PLAY_CROP]]
       >({
         type: GameEvent.PLAY_CROP,

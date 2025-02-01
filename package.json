@@ -71,7 +71,8 @@
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.12.2",
     "vite": "^4.5.3",
-    "vitest": "^2.0.5"
+    "vitest": "^2.0.5",
+    "vitest-mock-extended": "^2.0.2"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {

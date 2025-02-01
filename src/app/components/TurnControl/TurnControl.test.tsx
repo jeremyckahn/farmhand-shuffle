@@ -7,6 +7,7 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { GameEvent, GameState } from '../../../game/types'
+import { mockSend } from '../../../test-utils/mocks/send'
 
 import { TurnControl } from './TurnControl'
 
@@ -81,19 +82,14 @@ describe('TurnControl Component', () => {
 
     vi.spyOn(ActorContext, 'useSelector').mockReturnValue([mockState, mockGame])
 
-    const mockSend = vi.fn()
-
-    // @ts-expect-error Irrelevant useActorRef return properties are omitted
-    vi.spyOn(ActorContext, 'useActorRef').mockReturnValueOnce({
-      send: mockSend,
-    })
+    const send = mockSend()
 
     render(<StubTurnControl />)
 
     const button = screen.getByRole('button', { name: /Complete setup/i })
     fireEvent.click(button)
 
-    expect(mockSend).toHaveBeenCalledWith({
+    expect(send).toHaveBeenCalledWith({
       type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
     })
   })
