@@ -1,12 +1,12 @@
 import { test } from 'vitest'
 
-import { carrot, water } from '../../cards'
-import { IGame, IPlayer } from '../../types'
-import { updatePlayer } from '../../reducers/update-player'
-import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 import { stubGame } from '../../../test-utils/stubs/game'
-import { isPlayer } from '../../types/guards'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { carrot, water } from '../../cards'
+import { updatePlayer } from '../../reducers/update-player'
+import { IGame, IPlayer } from '../../types'
+import { isPlayer } from '../../types/guards'
+import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
 
 import { lookup } from '.'
 

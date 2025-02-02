@@ -1,24 +1,24 @@
-import { setup, enqueueActions, assertEvent, assign } from 'xstate'
+import { assertEvent, assign, enqueueActions, setup } from 'xstate'
 
 import { addCropToField } from '../../reducers/add-crop-to-field'
+import { setUpCpuPlayer } from '../../reducers/cpu/set-up-player'
 import { incrementPlayer } from '../../reducers/increment-player'
+import { moveCropFromHandToField } from '../../reducers/move-crop-from-hand-to-field'
 import { moveFromHandToDiscardPile } from '../../reducers/move-from-hand-to-discard-pile'
 import { startTurn } from '../../reducers/start-turn'
 import { updatePlayedCrop } from '../../reducers/update-played-crop'
 import {
-  IGame,
+  GameEvent,
   GameEventPayload,
   GameEventPayloadKey,
   GameState,
-  GameEvent,
-  IPlayedCrop,
   GameStateGuard,
+  IGame,
+  IPlayedCrop,
 } from '../../types'
+import { assertCurrentPlayer } from '../../types/guards'
 import { factory } from '../Factory'
 import { lookup } from '../Lookup'
-import { moveCropFromHandToField } from '../../reducers/move-crop-from-hand-to-field'
-import { setUpCpuPlayer } from '../../reducers/cpu/set-up-player'
-import { assertCurrentPlayer } from '../../types/guards'
 
 export const { createMachine } = setup({
   types: {
@@ -216,6 +216,7 @@ export const machineConfig: RulesMachineConfig = {
     [GameState.PLAYING_CARD]: {
       on: {
         [GameEvent.PLAY_CROP]: GameState.PLANTING_CROP,
+
         [GameEvent.PLAY_WATER]: GameState.WATERING_CROP,
       },
 
@@ -224,7 +225,6 @@ export const machineConfig: RulesMachineConfig = {
 
         const { playerId, cardIdx } = event
         const card = lookup.getCardFromHand(game, playerId, cardIdx)
-
         const gameEventPayload = card.onPlayFromHand(game, playerId, cardIdx)
 
         enqueue.raise(gameEventPayload)

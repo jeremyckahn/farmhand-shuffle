@@ -72,7 +72,7 @@ describe('TurnControl Component', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('calls handleCompleteSetup when Complete setup button is clicked', () => {
+  it('calls handleCompleteSetup when "Complete setup" button is clicked', () => {
     const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let game = stubGame()

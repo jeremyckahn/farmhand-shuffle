@@ -1,9 +1,9 @@
 import { array } from '../../../services/Array'
+import { lookup } from '../../services/Lookup'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
 import { IGame, IPlayedCrop, IPlayer } from '../../types'
-import { updatePlayer } from '../update-player'
 import { addCropToField } from '../add-crop-to-field'
-import { lookup } from '../../services/Lookup'
+import { updatePlayer } from '../update-player'
 
 export const moveCropFromHandToField = (
   game: IGame,

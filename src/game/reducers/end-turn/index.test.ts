@@ -7,10 +7,10 @@ import { endTurn } from '.'
 describe('endTurn', () => {
   test('increments player', () => {
     vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
-    const game = factory.buildGameForSession([stubPlayer1, stubPlayer2])
+    let game = factory.buildGameForSession([stubPlayer1, stubPlayer2])
 
-    const newGame = endTurn(game)
+    game = endTurn(game)
 
-    expect(newGame.currentPlayerId).toEqual(stubPlayer2.id)
+    expect(game.currentPlayerId).toEqual(stubPlayer2.id)
   })
 })

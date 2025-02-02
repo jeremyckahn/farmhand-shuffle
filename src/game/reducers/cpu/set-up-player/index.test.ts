@@ -1,12 +1,12 @@
 import { test } from 'vitest'
 
 import { stubGame } from '../../../../test-utils/stubs/game'
-import { updateGame } from '../../update-game'
 import { stubPlayer1, stubPlayer2 } from '../../../../test-utils/stubs/players'
-import { updatePlayer } from '../../update-player'
-import { INITIAL_HAND_SIZE } from '../../../config'
 import { carrot, water } from '../../../cards'
+import { INITIAL_HAND_SIZE } from '../../../config'
 import { IPlayedCrop } from '../../../types'
+import { updateGame } from '../../update-game'
+import { updatePlayer } from '../../update-player'
 
 import { setUpCpuPlayer } from '.'
 

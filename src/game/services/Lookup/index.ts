@@ -1,6 +1,6 @@
 import * as cards from '../../cards'
-import { isCardId, isCrop } from '../../types/guards'
 import { ICard, IGame, IPlayer, isCropCard } from '../../types'
+import { assertIsCardId, isCardId, isCrop } from '../../types/guards'
 import {
   GameStateCorruptError,
   InvalidCardError,
@@ -88,11 +88,7 @@ export class LookupService {
     ) {
       const cardId = deck[i]
 
-      // NOTE: This check is not logically necessary, but it is required to
-      // prevent cards[cardId] from being implicitly cast as an any type.
-      if (!isCardId(cardId)) {
-        throw new GameStateCorruptError(`${cardId} is not a valid card ID`)
-      }
+      assertIsCardId(cardId)
 
       const card = cards[cardId]
 

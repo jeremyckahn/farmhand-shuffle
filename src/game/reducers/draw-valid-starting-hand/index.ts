@@ -14,6 +14,7 @@ export const drawValidStartingHand = (game: IGame, player: IPlayer) => {
   const randomCropIdx = randomNumber.chooseElement(cropIdxs)
 
   game = pullCardFromDeck(game, player.id, randomCropIdx)
+  // TODO: Shuffle the hand
   game = drawCard(game, player.id, INITIAL_HAND_SIZE - 1)
 
   return game

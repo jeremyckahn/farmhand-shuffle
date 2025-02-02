@@ -10,28 +10,28 @@ export const pullCardFromDeck = (
   idx: number
 ) => {
   const player = game.table.players[playerId]
-  let newHand = [...player.hand]
-  let newDeck = [...player.deck]
-  let newDiscardPile = [...player.discardPile]
+  let hand = [...player.hand]
+  let deck = [...player.deck]
+  let discardPile = [...player.discardPile]
 
-  if (idx >= newDeck.length) {
+  if (idx >= deck.length) {
     throw new InvalidCardIndexError(idx, playerId)
   }
 
-  const [drawnCard] = newDeck.slice(idx, idx + 1)
+  const [drawnCard] = deck.slice(idx, idx + 1)
 
-  newDeck = [...newDeck.slice(0, idx), ...newDeck.slice(idx + 1)]
-  newHand = [...newHand, drawnCard]
+  deck = [...deck.slice(0, idx), ...deck.slice(idx + 1)]
+  hand = [...hand, drawnCard]
 
-  if (newDeck.length === 0) {
-    newDeck = shuffle(newDiscardPile)
-    newDiscardPile = []
+  if (deck.length === 0) {
+    deck = shuffle(discardPile)
+    discardPile = []
   }
 
   game = updatePlayer(game, playerId, {
-    deck: newDeck,
-    hand: newHand,
-    discardPile: newDiscardPile,
+    deck,
+    hand,
+    discardPile,
   })
 
   return game

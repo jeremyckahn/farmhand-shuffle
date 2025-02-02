@@ -1,6 +1,5 @@
 import { stubGame } from '../../../test-utils/stubs/game'
 import { carrot } from '../../cards'
-
 import { InvalidCardIndexError } from '../../services/Rules/errors'
 
 import { moveFromHandToDiscardPile } from '.'
