@@ -1,5 +1,4 @@
-# Game logic
+# Game directory
 
-This directory contains Farmhand Shuffle game logic. Game logic is distinct from app logic. It is concerned with the mechanics of the core Farmhand Shuffle card game. It is not concerned with user experience or presentation.
-
-In terms of a [three-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture#Three-tier_architecture), game logic encompasses both the Business Logic and Data layers.
+This directory implements the Farmhand Shuffle game rules. It is concerned with
+the mechanics of the game and not the user experience or presentation.

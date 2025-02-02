@@ -1,6 +1,6 @@
 import { DeepMockProxy, mockDeep } from 'vitest-mock-extended'
 
-import { ActorContext } from '../../app/components/Game/ActorContext'
+import { ActorContext } from '../../ui/components/Game/ActorContext'
 
 export const mockSend = () => {
   const mockSend = vi.fn()
