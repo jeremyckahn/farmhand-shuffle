@@ -42,7 +42,7 @@ const GameCore = ({
       ]}
       {...rest}
     >
-      <TurnControl />
+      <TurnControl game={game} />
       <Table sx={{ pt: 4 }} game={game} />
     </Container>
   )

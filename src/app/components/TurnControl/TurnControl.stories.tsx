@@ -1,14 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { spyOn } from '@storybook/test'
 
-import { ActorContext } from '../Game/ActorContext'
-
-import { GameState } from '../../../game/types'
-import { stubGame } from '../../../test-utils/stubs/game'
-
 import { carrot } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
+import { GameState } from '../../../game/types'
+import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { ActorContext } from '../Game/ActorContext'
 
 import { TurnControl } from './TurnControl'
 
@@ -17,6 +15,9 @@ const meta = {
   component: TurnControl,
   parameters: {
     layout: 'centered',
+  },
+  args: {
+    game: stubGame(),
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof TurnControl>
@@ -32,18 +33,16 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
   args: {},
   decorators: [
     Story => {
-      const mockState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+      const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
-      let mockGame = stubGame()
-      mockGame = updatePlayer(mockGame, stubPlayer1.id, {
+      let game = stubGame()
+      game = updatePlayer(game, stubPlayer1.id, {
         field: { crops: [{ id: carrot.id, waterCards: 0 }] },
       })
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce([
-        mockState,
-        mockGame,
-      ])
 
-      return <Story />
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(state)
+
+      return <Story args={{ game }} />
     },
   ],
 }

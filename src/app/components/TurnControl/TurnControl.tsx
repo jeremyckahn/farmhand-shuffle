@@ -5,14 +5,16 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { ReactNode } from 'react'
 
-import { GameEvent, GameState } from '../../../game/types'
+import { GameEvent, GameState, IGame } from '../../../game/types'
 import { ActorContext } from '../Game/ActorContext'
 
-export const TurnControl = () => {
+export interface TurnControlProps {
+  game: IGame
+}
+
+export const TurnControl = ({ game }: TurnControlProps) => {
   const actorRef = ActorContext.useActorRef()
-  const [state, game] = ActorContext.useSelector(
-    ({ value, context: { game } }) => [value, game]
-  )
+  const state = ActorContext.useSelector(({ value }) => value)
   const stateString = typeof state === 'string' ? state : 'Unknown state'
 
   const handleCompleteSetup = () => {
