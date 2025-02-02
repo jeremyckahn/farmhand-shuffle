@@ -3,6 +3,7 @@ import { screen } from '@testing-library/dom'
 
 import { carrot } from '../../../game/cards'
 import { IPlayedCrop } from '../../../game/types'
+import { ActorContext } from '../Game/ActorContext'
 
 import {
   PlayedCrop,
@@ -16,14 +17,21 @@ const stubPlayedCrop: IPlayedCrop = {
   id: stubCard.id,
   waterCards: stubWaterCards,
 }
-const stubCropCardProps = { card: stubCard, playedCrop: stubPlayedCrop }
+const stubCropCardProps = {
+  card: stubCard,
+  playedCrop: stubPlayedCrop,
+  cardIdx: 0,
+  playerId: '',
+}
 
 const StubCropCard = (overrides: Partial<PlayedCropProps> = {}) => (
-  <PlayedCrop
-    cropCardProps={stubCropCardProps}
-    isInBackground={false}
-    {...overrides}
-  />
+  <ActorContext.Provider>
+    <PlayedCrop
+      cropCardProps={stubCropCardProps}
+      isInBackground={false}
+      {...overrides}
+    />
+  </ActorContext.Provider>
 )
 
 describe('PlayedCrop', () => {

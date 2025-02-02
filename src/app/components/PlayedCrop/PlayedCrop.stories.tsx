@@ -21,6 +21,8 @@ export const PlayedCropCard: Story = {
   args: {
     cropCardProps: {
       card: carrot,
+      cardIdx: 0,
+      playerId: '',
       playedCrop: {
         id: carrot.id,
         waterCards: 1,
@@ -34,6 +36,8 @@ export const PlayedCropCardWithExtraWater: Story = {
   args: {
     cropCardProps: {
       card: carrot,
+      cardIdx: 0,
+      playerId: '',
       playedCrop: {
         id: carrot.id,
         waterCards: 5,

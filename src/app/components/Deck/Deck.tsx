@@ -77,6 +77,8 @@ export const Deck = ({
           <Card
             key={`${cardId}_${idx}`}
             card={card}
+            cardIdx={idx}
+            playerId={player.id}
             position="absolute"
             isFlipped={!(isTopCard && isTopCardSelected)}
             size={cardSize}

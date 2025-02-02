@@ -1,13 +1,28 @@
-import { CardType, ICrop } from '../../types'
-
-import { handlePlayFromHand } from './handlePlayFromHand'
+import {
+  CardType,
+  ICrop,
+  IGame,
+  GameEvent,
+  GameEventPayload,
+} from '../../types'
 
 export const baseToCrop = (
   base: Pick<ICrop, 'id' | 'waterToMature' | 'name'>
 ): ICrop => {
   return Object.freeze({
     type: CardType.CROP,
-    onPlayFromHand: handlePlayFromHand,
+
+    onPlayFromHand: (
+      _game: IGame,
+      playerId: string,
+      cardIdx: number
+    ): GameEventPayload[GameEvent.PLAY_CROP] => {
+      return {
+        type: GameEvent.PLAY_CROP,
+        playerId,
+        cardIdx,
+      }
+    },
     ...base,
   })
 }

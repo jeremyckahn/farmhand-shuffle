@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
@@ -6,14 +6,15 @@ import { math } from '../../../services/Math'
 import { lookup } from '../../../game/services/Lookup'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import * as cards from '../../../game/cards'
-import { IGame, IPlayer } from '../../../game/types'
+import { GameState, IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
-import { Card } from '../Card'
+import { Card, CardFocusMode } from '../Card'
 import { isSxArray } from '../../type-guards'
+import { ActorContext } from '../Game/ActorContext'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -48,6 +49,9 @@ export const Hand = ({
   sx = [],
   ...rest
 }: HandProps) => {
+  const { useSelector } = ActorContext
+  const state = useSelector(({ value }) => value)
+
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
     cardSize,
   })
@@ -59,10 +63,15 @@ export const Hand = ({
 
   const resetSelectedCard = () => {
     setSelectedCardIdx(deselectedIdx)
+
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
   }
+
+  useEffect(() => {
+    resetSelectedCard()
+  }, [player.hand])
 
   const handleCardFocus = (cardIdx: number) => {
     setSelectedCardIdx(cardIdx)
@@ -126,6 +135,19 @@ export const Hand = ({
 
         const isSelected = selectedCardIdx === idx
 
+        let cardFocusMode: undefined | CardFocusMode
+
+        if (isSelected) {
+          switch (state) {
+            case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
+              cardFocusMode = CardFocusMode.CROP_PLACEMENT
+              break
+            }
+
+            default:
+          }
+        }
+
         let transform = ''
         if (!isSelected) {
           const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
@@ -145,6 +167,8 @@ export const Hand = ({
           <Card
             key={`${cardId}_${idx}`}
             card={card}
+            cardIdx={idx}
+            playerId={playerId}
             size={cardSize}
             paperProps={{
               ...(isSelected && {
@@ -160,6 +184,7 @@ export const Hand = ({
             }}
             onFocus={() => handleCardFocus(idx)}
             tabIndex={0}
+            cardFocusMode={cardFocusMode}
           />
         )
       })}

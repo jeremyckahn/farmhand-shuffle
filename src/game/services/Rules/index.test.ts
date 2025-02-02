@@ -1,206 +1,414 @@
-import { MockInstance } from 'vitest'
 import shuffle from 'lodash.shuffle'
 
-import { stubPlayer } from '../../../test-utils/stubs/players'
-import {
-  DECK_SIZE,
-  INITIAL_HAND_SIZE,
-  INITIAL_PLAYER_FUNDS,
-  STANDARD_TAX_AMOUNT,
-} from '../../config'
-import { isGame } from '../../types/guards'
-import { handlePlayFromHand as mockCropHandlePlayFromHand } from '../../cards/crops/handlePlayFromHand'
-import { ICard, IGame, IPlayer } from '../../types'
+import { MockInstance } from 'vitest'
+
+import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { updatePlayer } from '../../reducers/update-player'
+import { carrot, pumpkin, water } from '../../cards'
+import { GameEvent, GameState, ICard, IPlayedCrop } from '../../types'
 import { randomNumber } from '../../../services/RandomNumber'
-import { carrot, pumpkin } from '../../cards'
-import { stubInteractionHandlers } from '../../../test-utils/stubs/interactionHandlers'
+import { STANDARD_FIELD_SIZE } from '../../config'
+import { factory } from '../Factory'
 
 import { rules } from '.'
 
-const player1 = stubPlayer()
-const player2 = stubPlayer()
-const interactionHandlers = stubInteractionHandlers()
+const player1 = stubPlayer1
+const player2 = stubPlayer2
 
-vitest.mock('../../cards/crops/handlePlayFromHand', () => {
-  return {
-    handlePlayFromHand: vitest.fn(),
-  }
-})
+const playerSeeds = [player1, player2]
 
 vitest.mock('lodash.shuffle', () => ({
   __esModule: true,
   default: vitest.fn(),
 }))
 
-beforeEach(() => {
+const disableRandomization = () => {
   ;(shuffle as unknown as MockInstance).mockImplementation(
     (arr: ICard[]) => arr
   )
+
+  vi.spyOn(randomNumber, 'chooseElement').mockImplementation(([first]) => first)
+}
+
+/**
+ * Initializes a game actor and sets up each player with a played crop.
+ */
+const createSetUpGameActor = () => {
+  const gameActor = rules.startGame()
+
+  gameActor.send({
+    type: GameEvent.INIT,
+    playerSeeds,
+    userPlayerId: player1.id,
+  })
+
+  let {
+    context: { game },
+  } = gameActor.getSnapshot()
+
+  game = updatePlayer(game, player1.id, {
+    hand: [carrot.id],
+  })
+  game = updatePlayer(game, player2.id, {
+    hand: [carrot.id],
+  })
+
+  gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+
+  gameActor.send({
+    type: GameEvent.PLAY_CROP,
+    playerId: player1.id,
+    cardIdx: 0,
+  })
+  gameActor.send({
+    // NOTE: Prompts player 2
+    type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
+  })
+  gameActor.send({
+    type: GameEvent.PLAY_CROP,
+    playerId: player2.id,
+    cardIdx: 0,
+  })
+  gameActor.send({
+    // NOTE: Prompts player 1 again
+    type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
+  })
+
+  return gameActor
+}
+
+beforeEach(() => {
+  disableRandomization()
 })
 
-// Make player2's deck slightly different from player1's to prevent false
-// positives.
-// eslint-disable-next-line functional/immutable-data
-player2.deck[DECK_SIZE - 1] = pumpkin.id
+describe('createGameStateMachine', () => {
+  describe('game setup', () => {
+    it('initializes game', () => {
+      const gameActor = rules.startGame()
 
-describe('Rules', () => {
-  describe('processGameStart', () => {
-    test('creates a new game', () => {
-      const game = rules.processGameStart([player1, player2])
+      const { value } = gameActor.getSnapshot()
 
-      expect(isGame(game)).toBe(true)
+      expect(value).toBe(GameState.UNINITIALIZED)
     })
 
-    test('shuffles decks', () => {
-      rules.processGameStart([player1, player2])
+    it('lets the player set up crops', () => {
+      const gameActor = rules.startGame()
 
-      expect(shuffle).toHaveBeenCalledWith(player1.deck)
-      expect(shuffle).toHaveBeenCalledWith(player2.deck)
-      expect(shuffle).toHaveBeenCalledTimes(2)
-    })
-
-    test('sets up player hands', () => {
-      const game = rules.processGameStart([player1, player2])
-      const [player1Id, player2Id] = Object.keys(game.table.players)
-
-      expect(game.table.players[player1Id].hand).toEqual(
-        player1.deck.slice(0, INITIAL_HAND_SIZE)
-      )
-
-      expect(game.table.players[player2Id].hand).toEqual(
-        player2.deck.slice(0, INITIAL_HAND_SIZE)
-      )
-    })
-
-    test('distributes community fund to players', () => {
-      const game = rules.processGameStart([player1, player2])
-      const [player1Id, player2Id] = Object.keys(game.table.players)
-
-      expect(game.table.communityFund).toEqual(0)
-      expect(game.table.players[player1Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
-      expect(game.table.players[player2Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
-    })
-
-    test('determines first player', () => {
-      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
-      const game = rules.processGameStart([player1, player2])
-      const [, player2Id] = Object.keys(game.table.players)
-
-      expect(game.currentPlayerId).toEqual(player2Id)
-    })
-  })
-
-  describe('processTurnStart', () => {
-    let game: IGame
-    let player1Id: IPlayer['id']
-
-    beforeEach(() => {
-      game = rules.processGameStart([player1, player2])
-      player1Id = Object.keys(game.table.players)[0]
-    })
-
-    test('pays tax to community fund', () => {
-      const newGame = rules.processTurnStart(game, player1Id)
-
-      expect(newGame.table.players[player1Id].funds).toEqual(
-        game.table.players[player1Id].funds - STANDARD_TAX_AMOUNT
-      )
-
-      expect(newGame.table.communityFund).toEqual(
-        game.table.communityFund + STANDARD_TAX_AMOUNT
-      )
-    })
-
-    test('aborts if player is out of money after paying tax', () => {
-      const newGame = updatePlayer(game, player1Id, {
-        funds: STANDARD_TAX_AMOUNT,
+      gameActor.send({
+        type: GameEvent.INIT,
+        playerSeeds,
+        userPlayerId: player1.id,
       })
 
-      expect(() => {
-        rules.processTurnStart(newGame, player1Id)
-      }).toThrow(`[PlayerOutOfFundsError] Player ${player1Id} is out of funds.`)
-    })
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
 
-    test('draws a card from the deck', () => {
-      const newGame = rules.processTurnStart(game, player1Id)
+      game = updatePlayer(game, player1.id, {
+        hand: [carrot.id, carrot.id],
+      })
 
-      expect(newGame.table.players[player1Id].hand).toEqual([
-        ...game.table.players[player1Id].hand,
-        game.table.players[player1Id].deck[0],
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+      // NOTE: Plays first carrot card
+      gameActor.send({
+        type: GameEvent.PLAY_CROP,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+      // NOTE: Plays second carrot card
+      gameActor.send({
+        type: GameEvent.PLAY_CROP,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+
+      const {
+        value,
+        context: { game: gameResult },
+      } = gameActor.getSnapshot()
+
+      expect(value).toBe(GameState.WAITING_FOR_PLAYER_SETUP_ACTION)
+      expect(gameResult.table.players[player1.id].hand).toEqual([])
+      expect(gameResult.table.players[player1.id].field.crops).toEqual<
+        IPlayedCrop[]
+      >([
+        { id: carrot.id, waterCards: 0 },
+        { id: carrot.id, waterCards: 0 },
       ])
-
-      expect(newGame.table.players[player1Id].deck).toEqual(
-        game.table.players[player1Id].deck.slice(1)
-      )
     })
-  })
 
-  describe('processTurnEnd', () => {
-    test('increments player', () => {
-      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(1)
-      const game = rules.processGameStart([player1, player2])
-      const [player1Id] = Object.keys(game.table.players)
+    it('completes the setup sequence', () => {
+      const gameActor = rules.startGame()
 
-      const newGame = rules.processTurnEnd(game)
-
-      expect(newGame.currentPlayerId).toEqual(player1Id)
-    })
-  })
-
-  describe('playCardFromHand', () => {
-    let game: IGame
-    let player1Id: IPlayer['id']
-
-    beforeEach(() => {
-      ;(
-        mockCropHandlePlayFromHand as unknown as MockInstance<
-          typeof mockCropHandlePlayFromHand
-        >
-      ).mockImplementation((game: IGame) => {
-        return Promise.resolve(game)
+      gameActor.send({
+        type: GameEvent.INIT,
+        playerSeeds,
+        userPlayerId: player1.id,
       })
 
-      game = rules.processGameStart([player1, player2])
-      player1Id = Object.keys(game.table.players)[0]
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
 
-      // eslint-disable-next-line functional/immutable-data
-      game.table.players[player1Id].hand[0] = carrot.id
+      game = updatePlayer(game, player1.id, {
+        hand: [carrot.id],
+      })
+      game = updatePlayer(game, player2.id, {
+        hand: [carrot.id],
+      })
+
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+      gameActor.send({
+        type: GameEvent.PLAY_CROP,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+      // NOTE: Prompts player 2 (CPU player)
+      gameActor.send({
+        type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
+      })
+
+      const {
+        value,
+        context: { game: gameResult },
+      } = gameActor.getSnapshot()
+
+      // NOTE: Indicates that the CPU player has completed setup and has given control back to the player
+      expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+
+      expect(gameResult.currentPlayerId).toEqual(player1.id)
+      expect(gameResult.table.players[player2.id].field.crops).toEqual<
+        IPlayedCrop[]
+      >([{ id: carrot.id, waterCards: 0 }])
     })
 
-    test('removes played card from hand', async () => {
-      const newGame = await rules.playCardFromHand(
-        game,
-        interactionHandlers,
-        player1Id,
-        0
-      )
+    it('does not let game start until all players have set up', () => {
+      const gameActor = rules.startGame()
 
-      expect(newGame.table.players[player1Id].hand.length).toEqual(
-        game.table.players[player1Id].hand.length - 1
-      )
+      gameActor.send({
+        type: GameEvent.INIT,
+        playerSeeds,
+        userPlayerId: player1.id,
+      })
+
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
+
+      game = updatePlayer(game, player1.id, {
+        hand: [carrot.id],
+      })
+
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+      gameActor.send({
+        type: GameEvent.PLAY_CROP,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+
+      const previousSnapshot = gameActor.getSnapshot()
+
+      gameActor.send({
+        type: GameEvent.START_TURN,
+      })
+
+      const latestSnapshot = gameActor.getSnapshot()
+
+      // NOTE: Indicates that the state change was prevented by a guard
+      expect(previousSnapshot).toEqual(latestSnapshot)
+    })
+  })
+
+  describe('player turn action handling', () => {
+    it('player can play a crop card', () => {
+      const gameActor = createSetUpGameActor()
+
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
+
+      game = updatePlayer(game, player1.id, {
+        hand: [pumpkin.id],
+      })
+
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+      gameActor.send({
+        type: GameEvent.PLAY_CARD,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+
+      const {
+        value,
+        context: { game: gameResult },
+      } = gameActor.getSnapshot()
+
+      expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(gameResult.table.players[player1.id].hand).toEqual([])
+      expect(gameResult.table.players[player1.id].field.crops).toEqual<
+        IPlayedCrop[]
+      >([
+        { id: carrot.id, waterCards: 0 },
+        { id: pumpkin.id, waterCards: 0 },
+      ])
     })
 
-    test('moves played card to discard pile', async () => {
-      const newGame = await rules.playCardFromHand(
-        game,
-        interactionHandlers,
-        player1Id,
-        0
-      )
+    it('player cannot play crop card if field is full', () => {
+      vi.spyOn(console, 'error').mockImplementationOnce(vi.fn())
 
-      expect(newGame.table.players[player1Id].discardPile).toEqual([carrot.id])
+      const gameActor = createSetUpGameActor()
+
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
+
+      const filledField = {
+        crops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill(
+          factory.buildPlayedCrop(carrot)
+        ),
+      }
+
+      game = updatePlayer(game, player1.id, {
+        hand: [carrot.id],
+        field: filledField,
+      })
+
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+
+      const previousSnapshot = gameActor.getSnapshot()
+
+      gameActor.send({
+        type: GameEvent.PLAY_CARD,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+
+      const latestSnapshot = gameActor.getSnapshot()
+
+      expect(latestSnapshot).toEqual(previousSnapshot)
     })
 
-    test('performs card-specific behavior', async () => {
-      await rules.playCardFromHand(game, interactionHandlers, player1Id, 0)
+    it('player can play a water card', () => {
+      const gameActor = createSetUpGameActor()
 
-      expect(mockCropHandlePlayFromHand).toHaveBeenCalledWith(
-        game,
-        interactionHandlers,
-        player1Id,
-        0
-      )
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
+
+      game = updatePlayer(game, player1.id, {
+        hand: [water.id],
+      })
+
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+      // NOTE: Plays the water card
+      gameActor.send({
+        type: GameEvent.PLAY_CARD,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+      gameActor.send({
+        type: GameEvent.SELECT_CROP_TO_WATER,
+        playerId: player1.id,
+        cropIdxInFieldToWater: 0,
+        waterCardInHandIdx: 0,
+      })
+
+      const {
+        value,
+        context: { game: gameResult },
+      } = gameActor.getSnapshot()
+
+      expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(gameResult.table.players[player1.id].hand).toEqual([])
+      expect(gameResult.table.players[player1.id].field.crops).toEqual<
+        IPlayedCrop[]
+      >([
+        {
+          id: carrot.id,
+          waterCards: 1,
+        },
+      ])
+    })
+
+    it('player can abort playing a water card', () => {
+      const gameActor = createSetUpGameActor()
+
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
+
+      game = updatePlayer(game, player1.id, {
+        hand: [water.id],
+      })
+
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+
+      const previousSnapshot = gameActor.getSnapshot()
+
+      // NOTE: Plays the water card
+      gameActor.send({
+        type: GameEvent.PLAY_CARD,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+
+      gameActor.send({
+        type: GameEvent.OPERATION_ABORTED,
+      })
+
+      const latestSnapshot = gameActor.getSnapshot()
+
+      expect(latestSnapshot).toEqual(previousSnapshot)
+    })
+
+    it('handles failure when watering a crop', () => {
+      vi.spyOn(console, 'error').mockImplementationOnce(vi.fn())
+
+      const gameActor = createSetUpGameActor()
+
+      let {
+        context: { game },
+      } = gameActor.getSnapshot()
+
+      game = updatePlayer(game, player1.id, {
+        hand: [water.id],
+      })
+
+      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+
+      const previousSnapshot = gameActor.getSnapshot()
+
+      // NOTE: Plays the water card
+      gameActor.send({
+        type: GameEvent.PLAY_CARD,
+        playerId: player1.id,
+        cardIdx: 0,
+      })
+
+      gameActor.send({
+        type: GameEvent.SELECT_CROP_TO_WATER,
+        playerId: player1.id,
+        cropIdxInFieldToWater: -1, // An intentionally invalid index
+        waterCardInHandIdx: 0,
+      })
+
+      const latestSnapshot = gameActor.getSnapshot()
+
+      expect(latestSnapshot).toEqual(previousSnapshot)
+    })
+
+    it('player can end their turn', () => {
+      const gameActor = createSetUpGameActor()
+
+      gameActor.send({ type: GameEvent.START_TURN })
+
+      const {
+        value,
+        context: { game: gameResult },
+      } = gameActor.getSnapshot()
+
+      expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(gameResult.currentPlayerId).toEqual(player2.id)
     })
   })
 })

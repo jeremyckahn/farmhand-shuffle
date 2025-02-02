@@ -2,6 +2,8 @@ import React, { useMemo } from 'react'
 import type { Preview, ReactRenderer } from '@storybook/react'
 import { DecoratorFunction } from '@storybook/types'
 import { themes } from '@storybook/theming'
+import '@storybook/addon-console'
+import { fn, spyOn } from '@storybook/test'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 
 import '@fontsource/roboto/300.css'
@@ -10,6 +12,7 @@ import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 
 import { lightTheme, darkTheme } from '../src/app/theme'
+import { ActorContext } from '../src/app/components/Game/ActorContext'
 
 const THEMES = {
   light: lightTheme,
@@ -25,7 +28,7 @@ type ThemeParameters = Parameters<
   >
 >
 
-export const withMuiTheme = (
+const withMuiTheme = (
   Story: ThemeParameters[0],
   context: ThemeParameters[1]
 ) => {
@@ -40,6 +43,19 @@ export const withMuiTheme = (
       <CssBaseline />
       <Story />
     </ThemeProvider>
+  )
+}
+
+const withActorContext = (Story: ThemeParameters[0]) => {
+  // @ts-expect-error Irrelevant useActorRef return properties are omitted
+  spyOn(ActorContext, 'useActorRef').mockReturnValue({
+    send: fn().mockImplementation(console.log),
+  })
+
+  return (
+    <ActorContext.Provider>
+      <Story />
+    </ActorContext.Provider>
   )
 }
 
@@ -66,13 +82,12 @@ const preview: Preview = {
     controls: {
       expanded: true, // Adds the description and default columns
       matchers: {
-        color: /(background|color)$/i,
         date: /Date$/,
       },
     },
   },
 
-  decorators: [withMuiTheme],
+  decorators: [withMuiTheme, withActorContext],
 }
 
 export default preview

@@ -1,7 +1,24 @@
+import shuffle from 'lodash.shuffle'
+import { MockInstance } from 'vitest'
+
+import { stubPlayer } from '../../../test-utils/stubs/players'
 import { isField, isGame, isPlayer, isTable } from '../../types/guards'
 import { carrot } from '../../cards'
+import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
+import { ICard } from '../../types'
 
 import { factory } from '.'
+
+vitest.mock('lodash.shuffle', () => ({
+  __esModule: true,
+  default: vitest.fn(),
+}))
+
+beforeEach(() => {
+  ;(shuffle as unknown as MockInstance).mockImplementation(
+    (arr: ICard[]) => arr
+  )
+})
 
 describe('Factory', () => {
   describe('buildField', () => {
@@ -33,6 +50,53 @@ describe('Factory', () => {
       const game = factory.buildGame()
 
       expect(isGame(game)).toBe(true)
+    })
+  })
+
+  describe('buildGameForSession', () => {
+    const player1 = stubPlayer()
+    const player2 = stubPlayer()
+
+    test('creates a new game', () => {
+      const game = factory.buildGameForSession([player1, player2])
+
+      expect(isGame(game)).toBe(true)
+    })
+
+    test('shuffles decks', () => {
+      factory.buildGameForSession([player1, player2])
+
+      expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player1.deck))
+      expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player2.deck))
+      expect(shuffle).toHaveBeenCalledTimes(2)
+    })
+
+    test('sets up player hands', () => {
+      const game = factory.buildGameForSession([player1, player2])
+      const [player1Id, player2Id] = Object.keys(game.table.players)
+
+      expect(game.table.players[player1Id].hand).toEqual(
+        expect.arrayContaining(player1.deck.slice(0, INITIAL_HAND_SIZE))
+      )
+
+      expect(game.table.players[player2Id].hand).toEqual(
+        expect.arrayContaining(player2.deck.slice(0, INITIAL_HAND_SIZE))
+      )
+    })
+
+    test('distributes community fund to players', () => {
+      const game = factory.buildGameForSession([player1, player2])
+      const [player1Id, player2Id] = Object.keys(game.table.players)
+
+      expect(game.table.communityFund).toEqual(0)
+      expect(game.table.players[player1Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
+      expect(game.table.players[player2Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
+    })
+
+    test('determines first player', () => {
+      const game = factory.buildGameForSession([player1, player2])
+
+      expect(game.currentPlayerId).toEqual(game.sessionOwnerPlayerId)
     })
   })
 

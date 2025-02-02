@@ -16,10 +16,17 @@ import { CardSize } from '../../types'
 import { CardCropText } from './CardCropText'
 import { CardTemplate } from './CardTemplate'
 
+export enum CardFocusMode {
+  CROP_PLACEMENT,
+}
+
 export interface BaseCardProps extends BoxProps {
   card: ICard
+  cardIdx: number
+  playerId: string
   size?: CardSize
   imageScale?: number
+  cardFocusMode?: CardFocusMode
 }
 
 export interface CropCardProps extends BaseCardProps {

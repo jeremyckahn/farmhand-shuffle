@@ -10,7 +10,12 @@ import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
-import { SELECTED_CARD_ELEVATION } from '../../../game/config'
+import {
+  SELECTED_CARD_ELEVATION,
+  STANDARD_FIELD_SIZE,
+} from '../../../game/config'
+import { CardSize } from '../../types'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 
 const deselectedIdx = -1
 const selectedCardYOffset = -25
@@ -18,13 +23,19 @@ const selectedCardYOffset = -25
 export interface FieldProps extends BoxProps {
   game: IGame
   playerId: IPlayer['id']
+  cardSize?: CardSize
 }
 
 export const rotationTransform = 'rotate(180deg)'
 export const selectedCardLabel = 'Selected field card'
 export const unselectedCardLabel = 'Unselected field card'
 
-export const Field = ({ playerId, game, ...rest }: FieldProps) => {
+export const Field = ({
+  playerId,
+  game,
+  cardSize = CardSize.SMALL,
+  ...rest
+}: FieldProps) => {
   const player = lookup.getPlayer(game, playerId)
   const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
 
@@ -118,6 +129,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
         container
         spacing={2}
         alignItems={isSessionOwnerPlayer ? 'flex-start' : 'flex-end'}
+        justifyContent="center"
       >
         {crops.map((playedCrop, idx) => {
           const { id, waterCards } = playedCrop
@@ -132,7 +144,7 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
             selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
-            <Grid key={`${idx}_${id}_${waterCards}`} item xs>
+            <Grid key={`${idx}_${id}_${waterCards}`} item xs={6} sm={4} md={2}>
               <PlayedCrop
                 aria-label={
                   isSelected ? selectedCardLabel : unselectedCardLabel
@@ -140,6 +152,9 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
                 tabIndex={0}
                 cropCardProps={{
                   card,
+                  cardIdx: idx,
+                  playerId: player.id,
+                  size: cardSize,
                   playedCrop,
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
@@ -166,6 +181,25 @@ export const Field = ({ playerId, game, ...rest }: FieldProps) => {
             </Grid>
           )
         })}
+        {new Array(STANDARD_FIELD_SIZE - crops.length)
+          .fill(null)
+          .map((_, idx) => {
+            return (
+              <Grid key={`${idx}`} item xs={6} sm={4} md={2}>
+                <Box
+                  height={CARD_DIMENSIONS[cardSize].height}
+                  width={CARD_DIMENSIONS[cardSize].width}
+                  sx={{
+                    mx: 'auto',
+                    outlineStyle: 'solid',
+                    outlineWidth: '2px',
+                    outlineColor: theme.palette.divider,
+                    borderRadius: theme.shape.borderRadius,
+                  }}
+                />
+              </Grid>
+            )
+          })}
       </Grid>
     </Box>
   )

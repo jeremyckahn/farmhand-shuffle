@@ -3,6 +3,7 @@ import { updateGame } from '../update-game'
 
 export const incrementPlayer = (game: IGame) => {
   const { currentPlayerId } = game
+  // TODO: Don't rely on stable key order. Consider sorting the keys.
   const playerIds = Object.keys(game.table.players)
 
   if (currentPlayerId === null) {

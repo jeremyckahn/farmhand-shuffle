@@ -1,31 +1,36 @@
+import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
-import { screen } from '@testing-library/dom'
 
 import { carrot } from '../../../game/cards'
+import { ActorContext } from '../Game/ActorContext'
+import { GameEvent, GameEventPayload } from '../../../game/types'
+import { mockSend } from '../../../test-utils/mocks/send'
 
-import { Card, CardProps } from './Card'
+import { Card, CardFocusMode, CardProps } from './Card'
 import { cardFlipWrapperClassName } from './CardTemplate'
 
 const stubCard = carrot
 
 const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
-  <Card card={stubCard} {...overrides} />
+  <ActorContext.Provider>
+    <Card card={stubCard} cardIdx={0} playerId="" {...overrides} />
+  </ActorContext.Provider>
 )
 
 describe('Card', () => {
   test('renders card', () => {
     render(<StubCard />)
 
-    expect(screen.findByText(stubCard.name))
-    expect(screen.findByAltText(stubCard.name))
+    expect(screen.getByText(stubCard.name)).toBeInTheDocument()
+    expect(screen.getByAltText(stubCard.name)).toBeInTheDocument()
   })
 
   test('renders crop water requirements', () => {
     render(<StubCard />)
 
     expect(
-      screen.findByText(`Water needed to mature: ${stubCard.waterToMature}`)
-    )
+      screen.getByText(`Water needed to mature: ${stubCard.waterToMature}`)
+    ).toBeInTheDocument()
   })
 
   test('renders played crop card', () => {
@@ -34,10 +39,10 @@ describe('Card', () => {
     render(<StubCard playedCrop={{ id: stubCard.id, waterCards }} />)
 
     expect(
-      screen.findByText(
+      screen.getByText(
         `Water cards attached: ${waterCards}/${stubCard.waterToMature}`
       )
-    )
+    ).toBeInTheDocument()
   })
 
   test('is face up by default', () => {
@@ -60,5 +65,27 @@ describe('Card', () => {
 
     const { transform } = getComputedStyle(card!)
     expect(transform).toEqual('rotateY(180deg)')
+  })
+
+  describe('cardFocusMode: CardFocusMode.CROP_PLACEMENT', () => {
+    test('allows player to place crop', () => {
+      const send = mockSend()
+
+      render(
+        <StubCard card={carrot} cardFocusMode={CardFocusMode.CROP_PLACEMENT} />
+      )
+
+      const playCardButton = screen.getByText('Play card')
+
+      fireEvent.click(playCardButton)
+
+      expect(send).toHaveBeenCalledWith<
+        [GameEventPayload[GameEvent.PLAY_CROP]]
+      >({
+        type: GameEvent.PLAY_CROP,
+        cardIdx: 0,
+        playerId: '',
+      })
+    })
   })
 })

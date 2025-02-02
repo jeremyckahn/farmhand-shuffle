@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
 import useTheme from '@mui/material/styles/useTheme'
@@ -12,8 +13,10 @@ import { cards, isCardImageKey, ui } from '../../img'
 import { Image } from '../Image'
 import { CardSize } from '../../types'
 import { isSxArray } from '../../type-guards'
+import { ActorContext } from '../Game/ActorContext'
+import { GameEvent, isCropCard } from '../../../game/types'
 
-import { CardProps } from './Card'
+import { CardFocusMode, CardProps } from './Card'
 
 export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'
@@ -22,7 +25,10 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
   function CardTemplate(
     {
       card,
+      cardIdx,
+      playerId,
       children,
+      cardFocusMode,
       imageScale = 0.75,
       isFlipped = false,
       paperProps,
@@ -32,6 +38,8 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
     },
     containerRef
   ) {
+    const { useActorRef } = ActorContext
+    const actorRef = useActorRef()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
 
@@ -39,6 +47,13 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
 
     if (imageSrc === ui.pixel) {
       console.error(`Card ID ${card.id} does not have an image configured`)
+    }
+
+    const handlePlayCard = () => {
+      // TODO: Handle different card types appropriately (water, tool, etc.)
+      if (isCropCard(card)) {
+        actorRef.send({ type: GameEvent.PLAY_CROP, cardIdx, playerId })
+      }
     }
 
     return (
@@ -133,6 +148,16 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                 </Box>
                 <Divider sx={{ my: theme.spacing(1) }} />
                 <Box sx={{ height: '50%' }}>{children}</Box>
+                {cardFocusMode === CardFocusMode.CROP_PLACEMENT &&
+                  isCropCard(card) && (
+                    <Box position="absolute" right="-100%" width={1} px={1}>
+                      <Typography>
+                        <Button variant="contained" onClick={handlePlayCard}>
+                          Play card
+                        </Button>
+                      </Typography>
+                    </Box>
+                  )}
               </Paper>
               <Paper
                 {...paperProps}

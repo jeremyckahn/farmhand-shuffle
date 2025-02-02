@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 
 import { stubGame } from '../../../test-utils/stubs/game'
 import { DECK_SIZE } from '../../../game/config'
+import { ActorContext } from '../Game/ActorContext'
 
 import { Deck, DeckProps } from './Deck'
 
@@ -10,7 +11,9 @@ const game = stubGame()
 const [player1Id, player2Id] = Object.keys(game.table.players)
 
 const StubDeck = ({ ref, ...overrides }: Partial<DeckProps> = {}) => (
-  <Deck game={game} playerId={player1Id} {...overrides} />
+  <ActorContext.Provider>
+    <Deck game={game} playerId={player1Id} {...overrides} />
+  </ActorContext.Provider>
 )
 
 describe('Deck', () => {

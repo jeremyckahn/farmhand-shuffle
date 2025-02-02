@@ -5,6 +5,7 @@ import { carrot, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { cardClassName } from '../Card/CardTemplate'
+import { ActorContext } from '../Game/ActorContext'
 
 import { getGapPixelWidth, Hand, HandProps } from './Hand'
 
@@ -17,7 +18,9 @@ const game = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
 
 const StubHand = (overrides: Partial<HandProps>) => {
   return (
-    <Hand game={game} playerId={game.sessionOwnerPlayerId} {...overrides} />
+    <ActorContext.Provider>
+      <Hand game={game} playerId={game.sessionOwnerPlayerId} {...overrides} />
+    </ActorContext.Provider>
   )
 }
 
@@ -112,6 +115,29 @@ describe('Hand', () => {
     await waitFor(async () => {
       await userEvent.keyboard('{Escape}')
     })
+
+    const { transform: card1Transform } = getComputedStyle(card1!)
+    expect(card1Transform).toMatchInlineSnapshot(
+      `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+    )
+    expect(document.activeElement).toBe(document.body)
+  })
+
+  test('receiving a new hand resets focus', async () => {
+    render(<StubHand />)
+
+    const card1 = screen
+      .getByText(handCards[0].name)
+      .closest(`.${cardClassName}`)
+
+    await userEvent.click(card1!)
+
+    const newHand = [...handCards, water]
+    const newGame = updatePlayer(game, game.sessionOwnerPlayerId, {
+      hand: newHand.map(({ id }) => id),
+    })
+
+    render(<StubHand game={newGame} />)
 
     const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toMatchInlineSnapshot(

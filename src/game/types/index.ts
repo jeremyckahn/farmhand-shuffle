@@ -1,5 +1,4 @@
 import { uuidString } from '../../services/types'
-import { InteractionHandlers } from '../services/Rules/InteractionHandlers'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
@@ -28,12 +27,6 @@ export interface ICard {
     game: IGame,
 
     /**
-     * A map of asynchronous functions that solicit interactive feedback from
-     * the player.
-     */
-    interactionHandlers: InteractionHandlers,
-
-    /**
      * The ID of the player playing the card
      */
     playerId: IPlayer['id'],
@@ -42,7 +35,7 @@ export interface ICard {
      * The index of the card within the player's hand
      */
     cardIdx: number
-  ) => Promise<IGame>
+  ) => GameEventPayload[GameEventPayloadKey]
 }
 
 export interface ICrop extends ICard {
@@ -166,3 +159,95 @@ export interface IGame {
    */
   readonly currentPlayerId: IPlayer['id'] | null
 }
+
+export enum GameEvent {
+  DANGEROUSLY_SET_CONTEXT = 'DANGEROUSLY_SET_CONTEXT',
+  INIT = 'INIT',
+  START_TURN = 'START_TURN',
+  PLAY_CARD = 'PLAY_CARD',
+  PLAY_CROP = 'PLAY_CROP',
+  PLAY_WATER = 'PLAY_WATER',
+  PROMPT_PLAYER_FOR_SETUP = 'PROMPT_PLAYER_FOR_SETUP',
+  PROMPT_PLAYER_FOR_CROP_TO_WATER = 'PROMPT_PLAYER_FOR_CROP_TO_WATER',
+  CROP_PLANTED = 'CROP_PLANTED',
+  SELECT_CROP_TO_WATER = 'SELECT_CROP_TO_WATER',
+  PLAYER_COMPLETED_SETUP = 'PLAYER_COMPLETED_SETUP',
+  OPERATION_ABORTED = 'OPERATION_ABORTED',
+}
+
+interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
+  type: T
+  playerId: IPlayer['id']
+  /**
+   * The index of the card in the hand being played
+   */
+  cardIdx: number
+}
+
+export enum GameState {
+  UNINITIALIZED = 'UNINITIALIZED',
+  WAITING_FOR_PLAYER_SETUP_ACTION = 'WAITING_FOR_PLAYER_SETUP_ACTION',
+  WAITING_FOR_PLAYER_TURN_ACTION = 'WAITING_FOR_PLAYER_TURN_ACTION',
+  PLAYING_CARD = 'PLAYING_CARD',
+  PLANTING_CROP = 'PLANTING_CROP',
+  WATERING_CROP = 'WATERING_CROP',
+  WAITING_FOR_PLAYER_FIELD_SELECTION = 'WAITING_FOR_PLAYER_FIELD_SELECTION',
+}
+
+export enum GameStateGuard {
+  HAVE_PLAYERS_COMPLETED_SETUP = 'HAVE_PLAYERS_COMPLETED_SETUP',
+}
+
+export interface GameEventPayload {
+  [GameEvent.DANGEROUSLY_SET_CONTEXT]: {
+    type: GameEvent.DANGEROUSLY_SET_CONTEXT
+    game: IGame
+  }
+
+  [GameEvent.INIT]: {
+    type: GameEvent.INIT
+    playerSeeds: IPlayerSeed[]
+    userPlayerId: string
+  }
+
+  [GameEvent.START_TURN]: {
+    type: GameEvent.START_TURN
+  }
+
+  [GameEvent.PLAY_CARD]: PlayCardEventPayload
+
+  [GameEvent.PLAY_CROP]: PlayCardEventPayload<GameEvent.PLAY_CROP>
+
+  [GameEvent.PLAY_WATER]: PlayCardEventPayload<GameEvent.PLAY_WATER>
+
+  [GameEvent.PROMPT_PLAYER_FOR_SETUP]: {
+    type: GameEvent.PROMPT_PLAYER_FOR_SETUP
+  }
+
+  [GameEvent.PROMPT_PLAYER_FOR_CROP_TO_WATER]: {
+    type: GameEvent.PROMPT_PLAYER_FOR_CROP_TO_WATER
+    playerId: IPlayer['id']
+    waterCardInHandIdx: number
+  }
+
+  [GameEvent.CROP_PLANTED]: {
+    type: GameEvent.CROP_PLANTED
+  }
+
+  [GameEvent.SELECT_CROP_TO_WATER]: {
+    type: GameEvent.SELECT_CROP_TO_WATER
+    playerId: IPlayer['id']
+    waterCardInHandIdx: number
+    cropIdxInFieldToWater: number
+  }
+
+  [GameEvent.PLAYER_COMPLETED_SETUP]: {
+    type: GameEvent.PLAYER_COMPLETED_SETUP
+  }
+
+  [GameEvent.OPERATION_ABORTED]: {
+    type: GameEvent.OPERATION_ABORTED
+  }
+}
+
+export type GameEventPayloadKey = keyof GameEventPayload

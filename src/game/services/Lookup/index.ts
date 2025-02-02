@@ -1,7 +1,11 @@
 import * as cards from '../../cards'
-import { isCardId } from '../../types/guards'
-import { ICard, IGame, IPlayer } from '../../types'
-import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
+import { ICard, IGame, IPlayer, isCropCard } from '../../types'
+import { assertIsCardId, isCardId, isCrop } from '../../types/guards'
+import {
+  GameStateCorruptError,
+  InvalidCardError,
+  InvalidIdError,
+} from '../Rules/errors'
 
 export class LookupService {
   getCardFromHand = (
@@ -30,6 +34,19 @@ export class LookupService {
   }
 
   /**
+   * @throws InvalidCardError if card is not an ICrop.
+   */
+  getCropFromHand(game: IGame, playerId: IPlayer['id'], cardIdx: number) {
+    const card = this.getCardFromHand(game, playerId, cardIdx)
+
+    if (!isCrop(card)) {
+      throw new InvalidCardError(`${card.id} is not a crop card.`)
+    }
+
+    return card
+  }
+
+  /**
    * Returns all the IDs for players that are not the current user's.
    */
   getOpponentPlayerIds = (game: IGame) => {
@@ -52,6 +69,35 @@ export class LookupService {
     }
 
     return player
+  }
+
+  findCropIndexesInDeck = (
+    game: IGame,
+    playerId: IPlayer['id'],
+    howMany = 1
+  ) => {
+    const player = this.getPlayer(game, playerId)
+    const { deck } = player
+
+    let cropCardIdxs: number[] = []
+
+    for (
+      let i = 0;
+      i < howMany && i <= deck.length - 1 && cropCardIdxs.length < howMany;
+      i++
+    ) {
+      const cardId = deck[i]
+
+      assertIsCardId(cardId)
+
+      const card = cards[cardId]
+
+      if (isCropCard(card)) {
+        cropCardIdxs = [...cropCardIdxs, i]
+      }
+    }
+
+    return cropCardIdxs
   }
 }
 

@@ -8,6 +8,13 @@ export class PlayerOutOfFundsError extends Error {
   }
 }
 
+export class PlayerOutOfCropsError extends Error {
+  constructor(playerId: IPlayer['id']) {
+    super(...arguments)
+    this.message = `[PlayerOutOfCropsError] Player ${playerId} is out of crop cards to play.`
+  }
+}
+
 export class GameStateCorruptError extends Error {
   constructor(message: string) {
     super(...arguments)
@@ -26,6 +33,13 @@ export class FieldEmptyError extends Error {
   constructor(playerId: IPlayer['id']) {
     super(...arguments)
     this.message = `[FieldEmptyError] Player ${playerId} has no crops in the field.`
+  }
+}
+
+export class InvalidCardIndexError extends Error {
+  constructor(cardIdx: number, playerId: string) {
+    super(...arguments)
+    this.message = `[InvalidCardIndexError] Card index ${cardIdx} is out of bounds for player ${playerId}.`
   }
 }
 
