@@ -11,8 +11,8 @@ import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 
-import { lightTheme, darkTheme } from '../src/app/theme'
-import { ActorContext } from '../src/app/components/Game/ActorContext'
+import { lightTheme, darkTheme } from '../src/ui/theme'
+import { ActorContext } from '../src/ui/components/Game/ActorContext'
 
 const THEMES = {
   light: lightTheme,
