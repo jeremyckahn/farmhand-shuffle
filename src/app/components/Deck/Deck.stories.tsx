@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
 import { stubGame } from '../../../test-utils/stubs/game'
-import { ActorContext } from '../Game/ActorContext'
 
 import { Deck, defaultDeckCardSize, defaultDeckThicknessPx } from './Deck'
 
@@ -47,15 +46,13 @@ export const SelfDeck: Story = {
       }
 
       return (
-        <ActorContext.Provider>
-          <Story
-            args={{
-              ...ctx.args,
-              handleClickTopCard,
-              isTopCardSelected,
-            }}
-          />
-        </ActorContext.Provider>
+        <Story
+          args={{
+            ...ctx.args,
+            handleClickTopCard,
+            isTopCardSelected,
+          }}
+        />
       )
     },
   ],

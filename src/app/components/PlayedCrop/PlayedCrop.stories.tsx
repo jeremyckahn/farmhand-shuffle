@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { carrot } from '../../../game/cards'
-import { ActorContext } from '../Game/ActorContext'
 
 import { PlayedCrop } from './PlayedCrop'
 
@@ -13,13 +12,6 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {},
-  decorators: Story => {
-    return (
-      <ActorContext.Provider>
-        <Story />
-      </ActorContext.Provider>
-    )
-  },
 } satisfies Meta<typeof PlayedCrop>
 
 export default meta

@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn, spyOn } from '@storybook/test'
 
 import { carrot, pumpkin, water } from '../../../game/cards'
 import { CardSize } from '../../types'
-import { ActorContext } from '../Game/ActorContext'
 
 import { Card, CardFocusMode } from './Card'
 
@@ -15,18 +13,6 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {},
-  decorators: Story => {
-    // @ts-expect-error Irrelevant useActorRef return properties are omitted
-    spyOn(ActorContext, 'useActorRef').mockReturnValue({
-      send: fn().mockImplementation(console.log),
-    })
-
-    return (
-      <ActorContext.Provider>
-        <Story />
-      </ActorContext.Provider>
-    )
-  },
 } satisfies Meta<typeof Card>
 
 export default meta

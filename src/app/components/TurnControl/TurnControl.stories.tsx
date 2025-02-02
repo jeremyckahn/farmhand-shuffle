@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn, spyOn } from '@storybook/test'
+import { spyOn } from '@storybook/test'
 
 import { ActorContext } from '../Game/ActorContext'
 
@@ -26,15 +26,6 @@ type Story = StoryObj<typeof meta>
 
 export const DefaultTurnControl: Story = {
   args: {},
-  decorators: [
-    Story => {
-      return (
-        <ActorContext.Provider>
-          <Story />
-        </ActorContext.Provider>
-      )
-    },
-  ],
 }
 
 export const WaitingForPlayerSetupActionTurnControl: Story = {
@@ -52,16 +43,7 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
         mockGame,
       ])
 
-      // @ts-expect-error Irrelevant useActorRef return properties are omitted
-      spyOn(ActorContext, 'useActorRef').mockReturnValue({
-        send: fn().mockImplementation(console.log),
-      })
-
-      return (
-        <ActorContext.Provider>
-          <Story />
-        </ActorContext.Provider>
-      )
+      return <Story />
     },
   ],
 }
