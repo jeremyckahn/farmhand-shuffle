@@ -97,6 +97,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
               <Paper
                 ref={cardRef}
                 {...paperProps}
+                data-chromatic="ignore"
                 sx={[
                   {
                     backfaceVisibility: 'hidden',
