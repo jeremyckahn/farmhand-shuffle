@@ -23,6 +23,7 @@ export enum CardFocusMode {
 export interface BaseCardProps extends BoxProps {
   card: ICard
   cardIdx: number
+  disableEnterAnimation?: boolean
   playerId: string
   size?: CardSize
   imageScale?: number
@@ -38,6 +39,7 @@ export type WaterCardProps = BaseCardProps
 export type CardProps = (CropCardProps | WaterCardProps) & {
   isFlipped?: boolean
   paperProps?: Partial<Omit<PaperProps, 'sx'>>
+  onBeforePlay?: () => Promise<void>
 }
 
 const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {

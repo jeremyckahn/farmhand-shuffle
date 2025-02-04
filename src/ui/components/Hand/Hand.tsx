@@ -15,6 +15,7 @@ import { CardSize } from '../../types'
 import { Card, CardFocusMode } from '../Card'
 import { isSxArray } from '../../type-guards'
 import { ActorContext } from '../Game/ActorContext'
+import { sleep } from '../../../lib/sleep'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -101,6 +102,13 @@ export const Hand = ({
       width: 0,
     }
 
+  const handleBeforePlay = async () => {
+    // FIXME: Block input during animation
+    // FIXME: Abort async operation on unmount
+    resetSelectedCard()
+    await sleep(theme.transitions.duration.shortest)
+  }
+
   return (
     <Box
       {...rest}
@@ -166,6 +174,7 @@ export const Hand = ({
         return (
           <Card
             key={`${cardId}_${idx}`}
+            disableEnterAnimation
             card={card}
             cardIdx={idx}
             playerId={playerId}
@@ -182,6 +191,7 @@ export const Hand = ({
               cursor: 'pointer',
               ...(isSelected && selectedCardSxProps),
             }}
+            onBeforePlay={handleBeforePlay}
             onFocus={() => handleCardFocus(idx)}
             tabIndex={0}
             cardFocusMode={cardFocusMode}
