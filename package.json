@@ -63,6 +63,7 @@
     "eslint-plugin-functional": "^7.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "globals": "^15.11.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",

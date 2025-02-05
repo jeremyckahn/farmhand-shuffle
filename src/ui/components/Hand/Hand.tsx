@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
+import React, { useContext, useEffect, useState } from 'react'
 
-import { math } from '../../../services/Math'
+import * as cards from '../../../game/cards'
+import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
-import * as cards from '../../../game/cards'
 import { GameState, IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
+import { useRejectingTimeout } from '../../../lib/hooks/useRejectingTimeout'
+import { math } from '../../../services/Math'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
+import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
 import { Card, CardFocusMode } from '../Card'
-import { isSxArray } from '../../type-guards'
 import { ActorContext } from '../Game/ActorContext'
-import { sleep } from '../../../lib/sleep'
+import { InputBlockContext } from '../Game/InputBlockContext'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -52,6 +53,9 @@ export const Hand = ({
 }: HandProps) => {
   const { useSelector } = ActorContext
   const state = useSelector(({ value }) => value)
+
+  const { blockingOperation } = useContext(InputBlockContext)
+  const { setRejectingTimeout } = useRejectingTimeout()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
     cardSize,
@@ -103,10 +107,13 @@ export const Hand = ({
     }
 
   const handleBeforePlay = async () => {
-    // FIXME: Block input during animation
-    // FIXME: Abort async operation on unmount
-    resetSelectedCard()
-    await sleep(theme.transitions.duration.shortest)
+    // NOTE: Moves the card back to the player's hand before unmounting it to
+    // prevent the wrong card from briefly being rendered in the "selected"
+    // position.
+    await blockingOperation(async () => {
+      resetSelectedCard()
+      await setRejectingTimeout(theme.transitions.duration.shortest)
+    })
   }
 
   return (
