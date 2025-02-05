@@ -106,8 +106,7 @@ export const Hand = ({
     // FIXME: Block input during animation
     // FIXME: Abort async operation on unmount
     resetSelectedCard()
-    // FIXME: Use the MUI animation delay variable here
-    await sleep(500)
+    await sleep(theme.transitions.duration.shortest)
   }
 
   return (
