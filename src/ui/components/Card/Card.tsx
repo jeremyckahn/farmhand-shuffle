@@ -38,6 +38,7 @@ export type WaterCardProps = BaseCardProps
 export type CardProps = (CropCardProps | WaterCardProps) & {
   isFlipped?: boolean
   paperProps?: Partial<Omit<PaperProps, 'sx'>>
+  onBeforePlay?: () => Promise<void>
 }
 
 const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {

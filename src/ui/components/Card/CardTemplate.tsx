@@ -29,6 +29,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       playerId,
       children,
       cardFocusMode,
+      onBeforePlay,
       imageScale = 0.75,
       isFlipped = false,
       paperProps,
@@ -49,9 +50,13 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       console.error(`Card ID ${card.id} does not have an image configured`)
     }
 
-    const handlePlayCard = () => {
+    const handlePlayCard = async () => {
       // TODO: Handle different card types appropriately (water, tool, etc.)
       if (isCropCard(card)) {
+        if (onBeforePlay) {
+          await onBeforePlay()
+        }
+
         actorRef.send({ type: GameEvent.PLAY_CROP, cardIdx, playerId })
       }
     }
@@ -153,7 +158,10 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                   isCropCard(card) && (
                     <Box position="absolute" right="-100%" width={1} px={1}>
                       <Typography>
-                        <Button variant="contained" onClick={handlePlayCard}>
+                        <Button
+                          variant="contained"
+                          onClick={() => void handlePlayCard()}
+                        >
                           Play card
                         </Button>
                       </Typography>
