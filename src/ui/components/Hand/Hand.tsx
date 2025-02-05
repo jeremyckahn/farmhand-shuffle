@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 
@@ -117,81 +116,78 @@ export const Hand = ({
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
-      <AnimatePresence>
-        {player.hand.map((cardId, idx) => {
-          if (!isCardId(cardId)) {
-            throw new UnimplementedError(`${cardId} is not a card`)
-          }
+      {player.hand.map((cardId, idx) => {
+        if (!isCardId(cardId)) {
+          throw new UnimplementedError(`${cardId} is not a card`)
+        }
 
-          const card = cards[cardId]
+        const card = cards[cardId]
 
-          const gapWidthTotal = gapWidthPx * player.hand.length
-          const multipliedGap = math.scaleNumber(
-            idx / player.hand.length,
-            0,
-            1,
-            -gapWidthTotal,
-            gapWidthTotal
-          )
-          const xOffsetPx = containerWidth / 2 + multipliedGap
+        const gapWidthTotal = gapWidthPx * player.hand.length
+        const multipliedGap = math.scaleNumber(
+          idx / player.hand.length,
+          0,
+          1,
+          -gapWidthTotal,
+          gapWidthTotal
+        )
+        const xOffsetPx = containerWidth / 2 + multipliedGap
 
-          const isSelected = selectedCardIdx === idx
+        const isSelected = selectedCardIdx === idx
 
-          let cardFocusMode: undefined | CardFocusMode
+        let cardFocusMode: undefined | CardFocusMode
 
-          if (isSelected) {
-            switch (state) {
-              case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
-                cardFocusMode = CardFocusMode.CROP_PLACEMENT
-                break
-              }
-
-              default:
+        if (isSelected) {
+          switch (state) {
+            case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
+              cardFocusMode = CardFocusMode.CROP_PLACEMENT
+              break
             }
-          }
 
-          let transform = ''
-          if (!isSelected) {
-            const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
-            const translateY =
-              selectedCardIdx === deselectedIdx
-                ? '0rem'
-                : `calc(${CARD_DIMENSIONS[cardSize].height} / 2)`
-            const rotationDeg = -5
-            const scale =
-              selectedCardIdx === deselectedIdx
-                ? foregroundCardScale
-                : backgroundCardScale
-            transform = `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
+            default:
           }
+        }
 
-          return (
-            <motion.div key={`${cardId}_${idx}`} exit={{ opacity: 0 }}>
-              <Card
-                card={card}
-                cardIdx={idx}
-                playerId={playerId}
-                size={cardSize}
-                paperProps={{
-                  ...(isSelected && {
-                    elevation: SELECTED_CARD_ELEVATION,
-                  }),
-                }}
-                sx={{
-                  transform,
-                  position: 'absolute',
-                  transition: theme.transitions.create(['transform']),
-                  cursor: 'pointer',
-                  ...(isSelected && selectedCardSxProps),
-                }}
-                onFocus={() => handleCardFocus(idx)}
-                tabIndex={0}
-                cardFocusMode={cardFocusMode}
-              />
-            </motion.div>
-          )
-        })}
-      </AnimatePresence>
+        let transform = ''
+        if (!isSelected) {
+          const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
+          const translateY =
+            selectedCardIdx === deselectedIdx
+              ? '0rem'
+              : `calc(${CARD_DIMENSIONS[cardSize].height} / 2)`
+          const rotationDeg = -5
+          const scale =
+            selectedCardIdx === deselectedIdx
+              ? foregroundCardScale
+              : backgroundCardScale
+          transform = `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
+        }
+
+        return (
+          <Card
+            key={`${cardId}_${idx}`}
+            card={card}
+            cardIdx={idx}
+            playerId={playerId}
+            size={cardSize}
+            paperProps={{
+              ...(isSelected && {
+                elevation: SELECTED_CARD_ELEVATION,
+              }),
+            }}
+            sx={{
+              transform,
+              position: 'absolute',
+              transition: theme.transitions.create(['transform']),
+              cursor: 'pointer',
+              ...(isSelected && selectedCardSxProps),
+            }}
+            onFocus={() => handleCardFocus(idx)}
+            tabIndex={0}
+            cardFocusMode={cardFocusMode}
+          />
+        )
+      })}
     </Box>
   )
 }
