@@ -23,6 +23,7 @@ export enum CardFocusMode {
 export interface BaseCardProps extends BoxProps {
   card: ICard
   cardIdx: number
+  disableEnterAnimation?: boolean
   playerId: string
   size?: CardSize
   imageScale?: number

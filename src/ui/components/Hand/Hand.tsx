@@ -175,6 +175,7 @@ export const Hand = ({
         return (
           <Card
             key={`${cardId}_${idx}`}
+            disableEnterAnimation
             card={card}
             cardIdx={idx}
             playerId={playerId}

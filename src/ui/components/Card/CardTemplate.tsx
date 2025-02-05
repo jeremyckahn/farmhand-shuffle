@@ -30,6 +30,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       children,
       cardFocusMode,
       onBeforePlay,
+      disableEnterAnimation = false,
       imageScale = 0.75,
       isFlipped = false,
       paperProps,
@@ -77,7 +78,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
           {...props}
         >
           <motion.div
-            initial={{ scale: 0 }}
+            initial={disableEnterAnimation ? false : { scale: 0 }}
             animate={{ scale: 1 }}
             style={{ originX: 0.5, originY: 0.5 }}
           >
