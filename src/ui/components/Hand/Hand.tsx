@@ -1,20 +1,19 @@
+import React, { useEffect, useState } from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
-import React, { useEffect, useState } from 'react'
-import { useDebounceValue } from 'usehooks-ts'
 
-import * as cards from '../../../game/cards'
-import { SELECTED_CARD_ELEVATION } from '../../../game/config'
+import { math } from '../../../services/Math'
 import { lookup } from '../../../game/services/Lookup'
 import { UnimplementedError } from '../../../game/services/Rules/errors'
+import * as cards from '../../../game/cards'
 import { GameState, IGame, IPlayer } from '../../../game/types'
 import { isCardId } from '../../../game/types/guards'
-import { math } from '../../../services/Math'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
-import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
 import { Card, CardFocusMode } from '../Card'
+import { isSxArray } from '../../type-guards'
 import { ActorContext } from '../Game/ActorContext'
 
 const deselectedIdx = -1
@@ -70,12 +69,9 @@ export const Hand = ({
     }
   }
 
-  const hand = player.hand
-  const [debouncedHand] = useDebounceValue(hand, 1)
-
   useEffect(() => {
     resetSelectedCard()
-  }, [hand])
+  }, [player.hand])
 
   const handleCardFocus = (cardIdx: number) => {
     setSelectedCardIdx(cardIdx)
@@ -98,7 +94,7 @@ export const Hand = ({
     }
   }
 
-  const gapWidthPx = getGapPixelWidth(debouncedHand.length)
+  const gapWidthPx = getGapPixelWidth(player.hand.length)
 
   const { width: containerWidth } =
     containerRef.current?.getBoundingClientRect() ?? {
@@ -120,16 +116,16 @@ export const Hand = ({
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
-      {debouncedHand.map((cardId, idx) => {
+      {player.hand.map((cardId, idx) => {
         if (!isCardId(cardId)) {
           throw new UnimplementedError(`${cardId} is not a card`)
         }
 
         const card = cards[cardId]
 
-        const gapWidthTotal = gapWidthPx * debouncedHand.length
+        const gapWidthTotal = gapWidthPx * player.hand.length
         const multipliedGap = math.scaleNumber(
-          idx / debouncedHand.length,
+          idx / player.hand.length,
           0,
           1,
           -gapWidthTotal,
