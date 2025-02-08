@@ -5,9 +5,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import * as cards from '../../../game/cards'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
-import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { GameState, IGame, IPlayer } from '../../../game/types'
-import { isCardId } from '../../../game/types/guards'
+import { assertIsCardId } from '../../../game/types/guards'
 import { useRejectingTimeout } from '../../../lib/hooks/useRejectingTimeout'
 import { math } from '../../../services/Math'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -132,12 +131,9 @@ export const Hand = ({
       onBlur={handleBlur}
     >
       {player.hand.map((cardId, idx) => {
-        if (!isCardId(cardId)) {
-          throw new UnimplementedError(`${cardId} is not a card`)
-        }
+        assertIsCardId(cardId)
 
         const card = cards[cardId]
-
         const gapWidthTotal = gapWidthPx * player.hand.length
         const multipliedGap = math.scaleNumber(
           idx / player.hand.length,
@@ -147,7 +143,6 @@ export const Hand = ({
           gapWidthTotal
         )
         const xOffsetPx = containerWidth / 2 + multipliedGap
-
         const isSelected = selectedCardIdx === idx
 
         let cardFocusMode: undefined | CardFocusMode

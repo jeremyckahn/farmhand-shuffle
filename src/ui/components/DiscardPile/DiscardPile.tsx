@@ -1,16 +1,14 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
-
 import Tooltip from '@mui/material/Tooltip'
 
+import * as cards from '../../../game/cards'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import * as cards from '../../../game/cards'
+import { assertIsCardId } from '../../../game/types/guards'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
-import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { isCardId } from '../../../game/types/guards'
-import { UnimplementedError } from '../../../game/services/Rules/errors'
 
 export interface DiscardPileProps extends BoxProps {
   game: IGame
@@ -53,9 +51,7 @@ export const DiscardPile = ({
       {...rest}
     >
       {player.discardPile.map((cardId, idx) => {
-        if (!isCardId(cardId)) {
-          throw new UnimplementedError(`${cardId} is not a card`)
-        }
+        assertIsCardId(cardId)
 
         const card = cards[cardId]
         const offset =

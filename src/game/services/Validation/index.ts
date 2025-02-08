@@ -1,6 +1,6 @@
 import * as cards from '../../cards'
 import { IPlayer, isCropCard } from '../../types'
-import { isCardId } from '../../types/guards'
+import { assertIsCardId } from '../../types/guards'
 import { GameStateCorruptError } from '../Rules/errors'
 
 export class ValidationService {
@@ -10,9 +10,7 @@ export class ValidationService {
    */
   player = (player: IPlayer) => {
     const deckContainsCrop = player.deck.some(cardId => {
-      if (!isCardId(cardId)) {
-        throw new GameStateCorruptError(`${cardId} is not a valid card ID`)
-      }
+      assertIsCardId(cardId)
 
       const card = cards[cardId]
 
