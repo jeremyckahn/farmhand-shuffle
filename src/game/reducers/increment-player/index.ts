@@ -7,8 +7,7 @@ export const incrementPlayer = (game: IGame) => {
 
   assertCurrentPlayer(currentPlayerId)
 
-  // TODO: Don't rely on stable key order. Consider sorting the keys.
-  const playerIds = Object.keys(game.table.players)
+  const playerIds = Object.keys(game.table.players).sort()
 
   const currentPlayerIdx = playerIds.indexOf(currentPlayerId)
   const newPlayerIdx = (currentPlayerIdx + 1) % playerIds.length
