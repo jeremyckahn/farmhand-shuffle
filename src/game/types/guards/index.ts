@@ -79,7 +79,6 @@ export function assertIsCardId(id: string): asserts id is keyof typeof cards {
   }
 }
 
-// TODO: Use this everywhere instead of doing the check directly
 export function assertCurrentPlayer(
   currentPlayerId: string | null
 ): asserts currentPlayerId is string {
