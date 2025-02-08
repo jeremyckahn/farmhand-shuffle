@@ -73,14 +73,12 @@ export const isGame = (obj: unknown): obj is IGame => {
 
 export const isCardId = (id: string): id is keyof typeof cards => id in cards
 
-// TODO: Use this everywhere instead of isCardId + GameStateCorruptError
 export function assertIsCardId(id: string): asserts id is keyof typeof cards {
   if (!isCardId(id)) {
     throw new GameStateCorruptError(`${id} is not a valid card ID`)
   }
 }
 
-// TODO: Use this everywhere instead of doing the check directly
 export function assertCurrentPlayer(
   currentPlayerId: string | null
 ): asserts currentPlayerId is string {

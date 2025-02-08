@@ -32,10 +32,7 @@ export const { createMachine } = setup({
       context: { game },
     }) {
       assertEvent(event, GameEvent.START_TURN)
-
-      if (game.currentPlayerId === null) {
-        throw new TypeError('currentPlayerId is null')
-      }
+      assertCurrentPlayer(game.currentPlayerId)
 
       return Object.values(game.table.players).every(
         player => player.field.crops.length > 0
@@ -139,11 +136,7 @@ export const machineConfig: RulesMachineConfig = {
           case GameEvent.PROMPT_PLAYER_FOR_SETUP: {
             const { currentPlayerId } = game
 
-            if (currentPlayerId === null) {
-              throw new TypeError(
-                '[TypeError] currentPlayerId must not be null'
-              )
-            }
+            assertCurrentPlayer(currentPlayerId)
 
             const currentPlayerField = game.table.players[currentPlayerId].field
 
@@ -196,9 +189,7 @@ export const machineConfig: RulesMachineConfig = {
         game: ({ event, context: { game } }) => {
           switch (event.type) {
             case GameEvent.START_TURN: {
-              if (game.currentPlayerId === null) {
-                throw new TypeError('currentPlayerId is null')
-              }
+              assertCurrentPlayer(game.currentPlayerId)
 
               game = startTurn(game, game.currentPlayerId)
 

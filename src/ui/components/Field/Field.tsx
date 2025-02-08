@@ -8,8 +8,7 @@ import { PlayedCrop } from '../PlayedCrop'
 import * as cards from '../../../game/cards'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import { isCardId } from '../../../game/types/guards'
-import { UnimplementedError } from '../../../game/services/Rules/errors'
+import { assertIsCardId } from '../../../game/types/guards'
 import {
   SELECTED_CARD_ELEVATION,
   STANDARD_FIELD_SIZE,
@@ -132,19 +131,23 @@ export const Field = ({
         justifyContent="center"
       >
         {crops.map((playedCrop, idx) => {
-          const { id, waterCards } = playedCrop
+          const { id: cardId, waterCards } = playedCrop
 
-          if (!isCardId(id)) {
-            throw new UnimplementedError(`${id} is not a card`)
-          }
+          assertIsCardId(cardId)
 
-          const card = cards[id]
+          const card = cards[cardId]
           const isSelected = selectedCardIdx === idx
           const isInBackground =
             selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
-            <Grid key={`${idx}_${id}_${waterCards}`} item xs={6} sm={4} md={2}>
+            <Grid
+              key={`${idx}_${cardId}_${waterCards}`}
+              item
+              xs={6}
+              sm={4}
+              md={2}
+            >
               <PlayedCrop
                 aria-label={
                   isSelected ? selectedCardLabel : unselectedCardLabel

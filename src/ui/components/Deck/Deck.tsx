@@ -3,16 +3,15 @@ import useTheme from '@mui/material/styles/useTheme'
 
 import { MouseEventHandler } from 'react'
 
+import * as cards from '../../../game/cards'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import * as cards from '../../../game/cards'
-import { Card } from '../Card'
-import { isCardId } from '../../../game/types/guards'
-import { UnimplementedError } from '../../../game/services/Rules/errors'
+import { assertIsCardId } from '../../../game/types/guards'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { CardSize } from '../../types'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { isSxArray } from '../../type-guards'
+import { CardSize } from '../../types'
+import { Card } from '../Card'
 
 export interface DeckProps extends BoxProps {
   game: IGame
@@ -65,9 +64,7 @@ export const Deck = ({
         // artifacting (for some reason)
         const cardId = deck[deck.length - 1 - idx]
 
-        if (!isCardId(cardId)) {
-          throw new UnimplementedError(`${cardId} is not a card`)
-        }
+        assertIsCardId(cardId)
 
         const card = cards[cardId]
         const offset = (deckThicknessPx / player.deck.length) * idx
