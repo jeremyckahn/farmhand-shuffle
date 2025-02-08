@@ -169,7 +169,6 @@ export const machineConfig: RulesMachineConfig = {
       }),
     },
 
-    // TODO: Implement ending the turn
     [GameState.WAITING_FOR_PLAYER_TURN_ACTION]: {
       on: {
         [GameEvent.PLAY_CARD]: GameState.PLAYING_CARD,

@@ -21,6 +21,10 @@ export const TurnControl = ({ game }: TurnControlProps) => {
     actorRef.send({ type: GameEvent.PROMPT_PLAYER_FOR_SETUP })
   }
 
+  const handleEndTurn = () => {
+    actorRef.send({ type: GameEvent.START_TURN })
+  }
+
   let control: ReactNode = null
 
   const currentPlayer =
@@ -30,6 +34,13 @@ export const TurnControl = ({ game }: TurnControlProps) => {
     case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
       if (currentPlayer && currentPlayer.field.crops.length > 0) {
         control = <Button onClick={handleCompleteSetup}>Complete setup</Button>
+      }
+      break
+    }
+
+    case GameState.WAITING_FOR_PLAYER_TURN_ACTION: {
+      if (currentPlayer && currentPlayer.id === game.sessionOwnerPlayerId) {
+        control = <Button onClick={handleEndTurn}>End turn</Button>
       }
       break
     }

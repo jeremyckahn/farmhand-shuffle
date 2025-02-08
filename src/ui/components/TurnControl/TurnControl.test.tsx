@@ -2,12 +2,13 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { carrot } from '../../../game/cards'
-import { ActorContext } from '../Game/ActorContext'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { updateGame } from '../../../game/reducers/update-game'
 import { updatePlayer } from '../../../game/reducers/update-player'
-import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { GameEvent, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
+import { stubGame } from '../../../test-utils/stubs/game'
+import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { ActorContext } from '../Game/ActorContext'
 
 import { TurnControl, TurnControlProps } from './TurnControl'
 
@@ -20,7 +21,7 @@ const StubTurnControl = (overrides: Partial<TurnControlProps>) => {
 }
 
 describe('TurnControl Component', () => {
-  it('renders a button when in WAITING_FOR_PLAYER_SETUP_ACTION state and current player has crops', () => {
+  it('renders a "Complete setup" button when in WAITING_FOR_PLAYER_SETUP_ACTION state and current player has crops', () => {
     const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let game = stubGame()
@@ -34,6 +35,21 @@ describe('TurnControl Component', () => {
 
     expect(
       screen.getByRole('button', { name: /Complete setup/i })
+    ).toBeInTheDocument()
+  })
+
+  it('renders an "End turn" button when it is the current player turn', () => {
+    const state = GameState.WAITING_FOR_PLAYER_TURN_ACTION
+
+    let game = stubGame()
+    game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
+
+    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+
+    render(<StubTurnControl game={game} />)
+
+    expect(
+      screen.getByRole('button', { name: /End turn/i })
     ).toBeInTheDocument()
   })
 
@@ -72,7 +88,7 @@ describe('TurnControl Component', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('calls handleCompleteSetup when "Complete setup" button is clicked', () => {
+  it('handles completing player setup', () => {
     const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let game = stubGame()
@@ -91,6 +107,26 @@ describe('TurnControl Component', () => {
 
     expect(send).toHaveBeenCalledWith({
       type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
+    })
+  })
+
+  it('handles ending the player turn', () => {
+    const state = GameState.WAITING_FOR_PLAYER_TURN_ACTION
+
+    let game = stubGame()
+    game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
+
+    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+
+    const send = mockSend()
+
+    render(<StubTurnControl game={game} />)
+
+    const button = screen.getByRole('button', { name: /End turn/i })
+    fireEvent.click(button)
+
+    expect(send).toHaveBeenCalledWith({
+      type: GameEvent.START_TURN,
     })
   })
 
