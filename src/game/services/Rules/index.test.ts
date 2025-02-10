@@ -17,10 +17,7 @@ const player2 = stubPlayer2
 
 const playerSeeds = [player1, player2]
 
-vitest.mock('lodash.shuffle', () => ({
-  __esModule: true,
-  default: vitest.fn(),
-}))
+vi.mock('lodash.shuffle')
 
 const disableRandomization = () => {
   ;(shuffle as unknown as MockInstance).mockImplementation(

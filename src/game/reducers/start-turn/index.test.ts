@@ -19,10 +19,7 @@ vitest.mock('../../cards/crops/handlePlayFromHand', () => {
   }
 })
 
-vitest.mock('lodash.shuffle', () => ({
-  __esModule: true,
-  default: vitest.fn(),
-}))
+vitest.mock('lodash.shuffle')
 
 beforeEach(() => {
   ;(shuffle as unknown as MockInstance).mockImplementation(

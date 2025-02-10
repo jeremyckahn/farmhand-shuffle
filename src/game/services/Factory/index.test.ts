@@ -9,10 +9,7 @@ import { ICard } from '../../types'
 
 import { factory } from '.'
 
-vitest.mock('lodash.shuffle', () => ({
-  __esModule: true,
-  default: vitest.fn(),
-}))
+vitest.mock('lodash.shuffle')
 
 beforeEach(() => {
   ;(shuffle as unknown as MockInstance).mockImplementation(
