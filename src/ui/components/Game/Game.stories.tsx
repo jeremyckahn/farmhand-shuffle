@@ -2,7 +2,9 @@ import Box from '@mui/material/Box'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Mock } from 'vitest'
 
-import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
+import { carrot, pumpkin } from '../../../game/cards'
+import { stubDeck } from '../../../test-utils/stubs/deck'
+import { stubPlayer } from '../../../test-utils/stubs/players'
 
 import { ActorContext } from './ActorContext'
 import { Game } from './Game'
@@ -37,9 +39,24 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+const deck = stubDeck()
+
+for (let i = 0; i < 15; i++) {
+  // eslint-disable-next-line functional/immutable-data
+  deck[i] = carrot.id
+}
+
+for (let i = 15; i < 30; i++) {
+  // eslint-disable-next-line functional/immutable-data
+  deck[i] = pumpkin.id
+}
+
+const player1 = stubPlayer({ id: 'player-1', deck })
+const player2 = stubPlayer({ id: 'player-2', deck })
+
 export const BaseGame: Story = {
   args: {
-    playerSeeds: [stubPlayer1, stubPlayer2],
-    userPlayerId: stubPlayer1.id,
+    playerSeeds: [player1, player2],
+    userPlayerId: player1.id,
   },
 }
