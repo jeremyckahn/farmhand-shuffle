@@ -116,6 +116,26 @@ export const Field = ({
     ? player.field.crops
     : [...player.field.crops].reverse()
 
+  const emptyCardSlots = new Array(STANDARD_FIELD_SIZE - crops.length)
+    .fill(null)
+    .map((_, idx) => {
+      return (
+        <Grid key={`${idx}`} item xs={6} sm={4} md={2}>
+          <Box
+            height={CARD_DIMENSIONS[cardSize].height}
+            width={CARD_DIMENSIONS[cardSize].width}
+            sx={{
+              mx: 'auto',
+              outlineStyle: 'solid',
+              outlineWidth: '2px',
+              outlineColor: theme.palette.divider,
+              borderRadius: theme.shape.borderRadius,
+            }}
+          />
+        </Grid>
+      )
+    })
+
   return (
     <Box
       {...rest}
@@ -130,6 +150,7 @@ export const Field = ({
         alignItems={isSessionOwnerPlayer ? 'flex-start' : 'flex-end'}
         justifyContent="center"
       >
+        {!isSessionOwnerPlayer && emptyCardSlots}
         {crops.map((playedCrop, idx) => {
           const { id: cardId, waterCards } = playedCrop
 
@@ -184,25 +205,7 @@ export const Field = ({
             </Grid>
           )
         })}
-        {new Array(STANDARD_FIELD_SIZE - crops.length)
-          .fill(null)
-          .map((_, idx) => {
-            return (
-              <Grid key={`${idx}`} item xs={6} sm={4} md={2}>
-                <Box
-                  height={CARD_DIMENSIONS[cardSize].height}
-                  width={CARD_DIMENSIONS[cardSize].width}
-                  sx={{
-                    mx: 'auto',
-                    outlineStyle: 'solid',
-                    outlineWidth: '2px',
-                    outlineColor: theme.palette.divider,
-                    borderRadius: theme.shape.borderRadius,
-                  }}
-                />
-              </Grid>
-            )
-          })}
+        {isSessionOwnerPlayer && emptyCardSlots}
       </Grid>
     </Box>
   )
