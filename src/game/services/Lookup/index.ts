@@ -91,6 +91,25 @@ export class LookupService {
 
     return cropCardIdxs
   }
+
+  findCropIndexesInPlayerHand = (game: IGame, playerId: IPlayer['id']) => {
+    const cropCardIdxsInPlayerHand = game.table.players[playerId].hand.reduce(
+      (acc: number[], cardId, idx) => {
+        assertIsCardId(cardId)
+
+        const card = cards[cardId]
+
+        if (isCropCard(card)) {
+          acc = [...acc, idx]
+        }
+
+        return acc
+      },
+      []
+    )
+
+    return cropCardIdxsInPlayerHand
+  }
 }
 
 export const lookup = new LookupService()

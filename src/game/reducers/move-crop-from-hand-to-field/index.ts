@@ -22,6 +22,7 @@ export const moveCropFromHandToField = (
 
   const playedCropCard: IPlayedCrop = {
     id: cropCard.id,
+    wasWateredTuringTurn: false,
     waterCards: 0,
   }
 

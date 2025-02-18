@@ -2,7 +2,7 @@ import { test } from 'vitest'
 
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import { carrot, water } from '../../cards'
+import { carrot, pumpkin, water } from '../../cards'
 import { updatePlayer } from '../../reducers/update-player'
 import { IGame, IPlayer } from '../../types'
 import { isPlayer } from '../../types/guards'
@@ -101,5 +101,29 @@ describe('Lookup', () => {
         expect(cropIndexesInDeck).toEqual(expected)
       }
     )
+  })
+
+  describe('findCropIndexesInPlayerHand', () => {
+    test.each([
+      { hand: [], expected: [] },
+      { hand: [carrot.id], expected: [0] },
+      {
+        hand: [carrot.id, water.id, water.id, pumpkin.id],
+        expected: [0, 3],
+      },
+    ])('retrieves crop indices in hand ($hand)', ({ hand, expected }) => {
+      let game = stubGame()
+
+      game = updatePlayer(game, stubPlayer1.id, {
+        hand,
+      })
+
+      const cropIndexesInHand = lookup.findCropIndexesInPlayerHand(
+        game,
+        stubPlayer1.id
+      )
+
+      expect(cropIndexesInHand).toEqual(expected)
+    })
   })
 })

@@ -18,7 +18,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
   const stateString = typeof state === 'string' ? state : 'Unknown state'
 
   const handleCompleteSetup = () => {
-    actorRef.send({ type: GameEvent.PROMPT_PLAYER_FOR_SETUP })
+    actorRef.send({ type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION })
   }
 
   const handleEndTurn = () => {

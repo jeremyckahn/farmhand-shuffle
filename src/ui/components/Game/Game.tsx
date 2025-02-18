@@ -27,7 +27,8 @@ const GameCore = ({
     ({ value, context: { game } }) => [value, game]
   )
 
-  const [isInputBlocked, setIsInputBlocked] = useState(false)
+  const [isBlockingOperationExecuting, setIsBlockingOperationExecuting] =
+    useState(false)
 
   useEffect(() => {
     if (state === GameState.UNINITIALIZED) {
@@ -39,21 +40,24 @@ const GameCore = ({
     useCallback(
       async fn => {
         try {
-          setIsInputBlocked(true)
+          setIsBlockingOperationExecuting(true)
           await fn()
         } catch (_e) {
           // Empty
         } finally {
-          setIsInputBlocked(false)
+          setIsBlockingOperationExecuting(false)
         }
       },
-      [setIsInputBlocked]
+      [setIsBlockingOperationExecuting]
     )
 
   const inputBlockContextValue: InputBlockContextProps = useMemo(
     () => ({ blockingOperation }),
     [blockingOperation]
   )
+
+  const isSessionOwnersTurn = game.sessionOwnerPlayerId === game.currentPlayerId
+  const isInputBlocked = isBlockingOperationExecuting || !isSessionOwnersTurn
 
   return (
     <InputBlockContext.Provider value={inputBlockContextValue}>

@@ -15,6 +15,7 @@ const stubCard = carrot
 const stubWaterCards = 1
 const stubPlayedCrop: IPlayedCrop = {
   id: stubCard.id,
+  wasWateredTuringTurn: false,
   waterCards: stubWaterCards,
 }
 const stubCropCardProps = {

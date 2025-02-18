@@ -25,6 +25,7 @@ export const PlayedCropCard: Story = {
       playerId: '',
       playedCrop: {
         id: carrot.id,
+        wasWateredTuringTurn: false,
         waterCards: 1,
       },
     },
@@ -40,6 +41,7 @@ export const PlayedCropCardWithExtraWater: Story = {
       playerId: '',
       playedCrop: {
         id: carrot.id,
+        wasWateredTuringTurn: false,
         waterCards: 5,
       },
     },

@@ -26,7 +26,9 @@ describe('TurnControl Component', () => {
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
-      field: { crops: [{ id: carrot.id, waterCards: 0 }] },
+      field: {
+        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+      },
     })
 
     vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
@@ -75,7 +77,9 @@ describe('TurnControl Component', () => {
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
-      field: { crops: [{ id: carrot.id, waterCards: 0 }] },
+      field: {
+        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+      },
     })
 
     vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
@@ -93,7 +97,9 @@ describe('TurnControl Component', () => {
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
-      field: { crops: [{ id: carrot.id, waterCards: 0 }] },
+      field: {
+        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+      },
     })
 
     vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
@@ -106,7 +112,7 @@ describe('TurnControl Component', () => {
     fireEvent.click(button)
 
     expect(send).toHaveBeenCalledWith({
-      type: GameEvent.PROMPT_PLAYER_FOR_SETUP,
+      type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION,
     })
   })
 
@@ -153,7 +159,9 @@ describe('TurnControl Component', () => {
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
-      field: { crops: [{ id: carrot.id, waterCards: 0 }] },
+      field: {
+        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+      },
     })
 
     vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)

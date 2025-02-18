@@ -112,6 +112,7 @@ export class FactoryService {
   buildPlayedCrop({ id }: ICrop): IPlayedCrop {
     return {
       id,
+      wasWateredTuringTurn: false,
       waterCards: 0,
     }
   }
