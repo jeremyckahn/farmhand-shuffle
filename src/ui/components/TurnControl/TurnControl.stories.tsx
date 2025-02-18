@@ -37,7 +37,11 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
 
       let game = stubGame()
       game = updatePlayer(game, stubPlayer1.id, {
-        field: { crops: [{ id: carrot.id, waterCards: 0 }] },
+        field: {
+          crops: [
+            { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+          ],
+        },
       })
 
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(state)

@@ -2,12 +2,17 @@ import { createActor } from 'xstate'
 
 import { factory } from '../Factory'
 
-import { createMachine, machineConfig } from './state-machine'
+import { machineConfig } from './state-machine'
+import { createMachine } from './state-machine/createMachine'
 
 export class RulesService {
   createGameStateMachine = () => {
     const machine = createMachine({
-      context: { game: factory.buildGame() },
+      context: {
+        game: factory.buildGame(),
+        cropsToPlayDuringBotTurn: 0,
+        fieldCropIndicesToWaterDuringBotTurn: [],
+      },
       ...machineConfig,
     })
 

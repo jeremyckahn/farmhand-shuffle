@@ -36,7 +36,15 @@ describe('Card', () => {
   test('renders played crop card', () => {
     const waterCards = 1
 
-    render(<StubCard playedCrop={{ id: stubCard.id, waterCards }} />)
+    render(
+      <StubCard
+        playedCrop={{
+          id: stubCard.id,
+          wasWateredTuringTurn: false,
+          waterCards,
+        }}
+      />
+    )
 
     expect(
       screen.getByText(

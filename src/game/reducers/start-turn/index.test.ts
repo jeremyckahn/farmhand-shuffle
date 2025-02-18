@@ -2,11 +2,11 @@ import shuffle from 'lodash.shuffle'
 import { MockInstance } from 'vitest'
 
 import { stubPlayer } from '../../../test-utils/stubs/players'
-import { pumpkin } from '../../cards'
+import { carrot, pumpkin } from '../../cards'
 import { DECK_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
 import { updatePlayer } from '../../reducers/update-player'
-import { ICard, IGame, IPlayer } from '../../types'
 import { factory } from '../../services/Factory'
+import { ICard, IGame, IPlayedCrop, IPlayer } from '../../types'
 
 import { startTurn } from '.'
 
@@ -73,6 +73,28 @@ describe('startTurn', () => {
 
     expect(newGame.table.players[player1Id].deck).toEqual(
       game.table.players[player1Id].deck.slice(1)
+    )
+  })
+
+  test('resets wasWateredTuringTurn for each crop in the field', () => {
+    let newGame = updatePlayer(game, player1Id, {
+      field: {
+        crops: [
+          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
+          { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
+        ],
+      },
+    })
+
+    newGame = startTurn(newGame, player1Id)
+
+    expect(newGame.table.players[player1Id].field.crops).toEqual<IPlayedCrop[]>(
+      [
+        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 1 },
+        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 1 },
+      ]
     )
   })
 })
