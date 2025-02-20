@@ -15,7 +15,7 @@ import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
 import { Card, CardFocusMode } from '../Card'
 import { ActorContext } from '../Game/ActorContext'
-import { InputBlockContext } from '../Game/InputBlockContext'
+import { ShellContext } from '../Game/ShellContext'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -53,7 +53,7 @@ export const Hand = ({
   const { useSelector } = ActorContext
   const state = useSelector(({ value }) => value)
 
-  const { blockingOperation } = useContext(InputBlockContext)
+  const { blockingOperation } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({

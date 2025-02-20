@@ -8,7 +8,7 @@ import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 
 import { ActorContext } from './ActorContext'
-import { InputBlockContext, InputBlockContextProps } from './InputBlockContext'
+import { ShellContext, ShellContextProps } from './ShellContext'
 
 export interface GameProps extends ContainerProps {
   playerSeeds: IPlayerSeed[]
@@ -46,22 +46,21 @@ const GameCore = ({
     }
   }, [state, playerSeeds, userPlayerId, actorRef])
 
-  const blockingOperation: InputBlockContextProps['blockingOperation'] =
-    useCallback(
-      async fn => {
-        try {
-          setIsBlockingOperationExecuting(true)
-          await fn()
-        } catch (_e) {
-          // Empty
-        } finally {
-          setIsBlockingOperationExecuting(false)
-        }
-      },
-      [setIsBlockingOperationExecuting]
-    )
+  const blockingOperation: ShellContextProps['blockingOperation'] = useCallback(
+    async fn => {
+      try {
+        setIsBlockingOperationExecuting(true)
+        await fn()
+      } catch (_e) {
+        // Empty
+      } finally {
+        setIsBlockingOperationExecuting(false)
+      }
+    },
+    [setIsBlockingOperationExecuting]
+  )
 
-  const inputBlockContextValue: InputBlockContextProps = useMemo(
+  const shellContextValue: ShellContextProps = useMemo(
     () => ({ blockingOperation }),
     [blockingOperation]
   )
@@ -70,7 +69,7 @@ const GameCore = ({
   const isInputBlocked = isBlockingOperationExecuting || !isSessionOwnersTurn
 
   return (
-    <InputBlockContext.Provider value={inputBlockContextValue}>
+    <ShellContext.Provider value={shellContextValue}>
       <Container
         maxWidth={false}
         data-testid="game"
@@ -92,7 +91,7 @@ const GameCore = ({
         <TurnControl game={game} />
         <Table sx={{ pt: 4 }} game={game} />
       </Container>
-    </InputBlockContext.Provider>
+    </ShellContext.Provider>
   )
 }
 
