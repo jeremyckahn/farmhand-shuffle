@@ -27,6 +27,16 @@ const GameCore = ({
     ({ value, context: { game } }) => [value, game]
   )
 
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      actorRef.subscribe(snapshot => {
+        if (typeof snapshot.value === 'string') {
+          console.debug(`State: ${snapshot.value}`)
+        }
+      })
+    }
+  }, [actorRef])
+
   const [isBlockingOperationExecuting, setIsBlockingOperationExecuting] =
     useState(false)
 
