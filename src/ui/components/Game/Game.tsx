@@ -1,7 +1,10 @@
+import { KeyboardArrowDown } from '@mui/icons-material'
 import Container, { ContainerProps } from '@mui/material/Container'
+import Fab from '@mui/material/Fab'
 import useTheme from '@mui/material/styles/useTheme'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
 import { isSxArray } from '../../type-guards'
 import { Table } from '../Table'
@@ -68,6 +71,11 @@ const GameCore = ({
   const isSessionOwnersTurn = game.sessionOwnerPlayerId === game.currentPlayerId
   const isInputBlocked = isBlockingOperationExecuting || !isSessionOwnersTurn
 
+  const handleHandVisibilityToggle = () => {
+    // FIXME: Implement this
+    throw new UnimplementedError('handleHandVisibilityToggle is unimplemented')
+  }
+
   return (
     <ShellContext.Provider value={shellContextValue}>
       <Container
@@ -78,6 +86,7 @@ const GameCore = ({
             backgroundColor: theme.palette.grey['500'],
             py: 3,
             overflow: 'auto',
+            position: 'relative',
             ...(isInputBlocked && {
               '*': {
                 pointerEvents: 'none',
@@ -90,6 +99,17 @@ const GameCore = ({
       >
         <TurnControl game={game} />
         <Table sx={{ pt: 4 }} game={game} />
+        <Fab
+          color="secondary"
+          onClick={handleHandVisibilityToggle}
+          sx={{
+            position: 'absolute',
+            bottom: theme.spacing(2),
+            left: theme.spacing(2),
+          }}
+        >
+          <KeyboardArrowDown />
+        </Fab>
       </Container>
     </ShellContext.Provider>
   )
