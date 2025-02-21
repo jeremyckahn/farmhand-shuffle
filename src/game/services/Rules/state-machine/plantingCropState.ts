@@ -1,10 +1,7 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
-import { addCropToField } from '../../../reducers/add-crop-to-field'
-import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { GameEvent, GameState } from '../../../types'
-import { factory } from '../../Factory'
-import { lookup } from '../../Lookup'
+import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
 
 import { RulesMachineConfig } from './types'
 
@@ -27,11 +24,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         const { playerId, cardIdx } = event
 
         try {
-          const card = lookup.getCropFromHand(game, playerId, cardIdx)
-          const playedCrop = factory.buildPlayedCrop(card)
-
-          game = addCropToField(game, playerId, playedCrop)
-          game = moveFromHandToDiscardPile(game, playerId, cardIdx)
+          game = moveCropFromHandToField(game, playerId, cardIdx)
 
           const { currentPlayerId, sessionOwnerPlayerId } = game
 

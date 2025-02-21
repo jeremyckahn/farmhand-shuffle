@@ -149,6 +149,7 @@ export const Hand = ({
 
         if (isSelected) {
           switch (state) {
+            case GameState.WAITING_FOR_PLAYER_TURN_ACTION:
             case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
               cardFocusMode = CardFocusMode.CROP_PLACEMENT
               break
