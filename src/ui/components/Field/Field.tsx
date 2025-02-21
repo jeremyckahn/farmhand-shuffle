@@ -7,7 +7,7 @@ import useTheme from '@mui/material/styles/useTheme'
 import { PlayedCrop } from '../PlayedCrop'
 import * as cards from '../../../game/cards'
 import { lookup } from '../../../game/services/Lookup'
-import { IGame, IPlayer } from '../../../game/types'
+import { GameState, IGame, IPlayer } from '../../../game/types'
 import { assertIsCardId } from '../../../game/types/guards'
 import {
   SELECTED_CARD_ELEVATION,
@@ -15,6 +15,7 @@ import {
 } from '../../../game/config'
 import { CardSize } from '../../types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { useGameRules } from '../../hooks/useGameRules'
 
 const deselectedIdx = -1
 const selectedCardYOffset = -25
@@ -35,6 +36,7 @@ export const Field = ({
   cardSize = CardSize.SMALL,
   ...rest
 }: FieldProps) => {
+  const { gameState } = useGameRules()
   const player = lookup.getPlayer(game, playerId)
   const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
 
@@ -75,10 +77,24 @@ export const Field = ({
     }
   }, [handleWindowResize])
 
+  useEffect(() => {
+    setSelectedCardIdx(deselectedIdx)
+  }, [player.field])
+
   const handleCardFocus = (
     event: React.FocusEvent<HTMLDivElement, Element>,
     cardIdx: number
   ) => {
+    // NOTE: This event handler interferes with the crop watering button on the
+    // CardTemplate component. So, this handler needs to check to see if that
+    // would happen and abort the operation if so.
+    if (
+      gameState === GameState.PLAYER_WATERING_CROP &&
+      selectedCardIdx === cardIdx
+    ) {
+      return
+    }
+
     const { target } = event
 
     const boundingClientRect = target.getBoundingClientRect()
@@ -177,12 +193,19 @@ export const Field = ({
                 cropCardProps={{
                   card,
                   cardIdx: idx,
+                  isInField: true,
+                  isFocused: isSelected,
                   playerId: player.id,
                   size: cardSize,
                   playedCrop,
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
                   }),
+                  paperProps: {
+                    ...(isSelected && {
+                      elevation: SELECTED_CARD_ELEVATION,
+                    }),
+                  },
                 }}
                 isInBackground={isInBackground}
                 onFocus={event => handleCardFocus(event, idx)}
@@ -195,6 +218,9 @@ export const Field = ({
                   transformStyle: 'preserve-3d',
                   ...(!isSessionOwnerPlayer && {
                     transform: rotationTransform,
+                  }),
+                  ...(!isSelected && {
+                    cursor: 'pointer',
                   }),
                   ...(isSelected && {
                     transform: selectedCardTransform,

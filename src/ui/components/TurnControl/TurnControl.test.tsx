@@ -4,10 +4,12 @@ import { describe, expect, it, vi } from 'vitest'
 import { carrot } from '../../../game/cards'
 import { updateGame } from '../../../game/reducers/update-game'
 import { updatePlayer } from '../../../game/reducers/update-player'
+import { RulesService } from '../../../game/services/Rules'
 import { GameEvent, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import * as useGameRulesModule from '../../hooks/useGameRules'
 import { ActorContext } from '../Game/ActorContext'
 
 import { TurnControl, TurnControlProps } from './TurnControl'
@@ -22,7 +24,7 @@ const StubTurnControl = (overrides: Partial<TurnControlProps>) => {
 
 describe('TurnControl Component', () => {
   it('renders a "Complete setup" button when in WAITING_FOR_PLAYER_SETUP_ACTION state and current player has crops', () => {
-    const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
@@ -31,7 +33,12 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     render(<StubTurnControl game={game} />)
 
@@ -41,12 +48,17 @@ describe('TurnControl Component', () => {
   })
 
   it('renders an "End turn" button when it is the current player turn', () => {
-    const state = GameState.WAITING_FOR_PLAYER_TURN_ACTION
+    const gameState = GameState.WAITING_FOR_PLAYER_TURN_ACTION
 
     let game = stubGame()
     game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     render(<StubTurnControl game={game} />)
 
@@ -56,14 +68,19 @@ describe('TurnControl Component', () => {
   })
 
   it('does not render a button when in WAITING_FOR_PLAYER_SETUP_ACTION state but current player has no crops', () => {
-    const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
       field: { crops: [] },
     })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     render(<StubTurnControl game={game} />)
 
@@ -73,7 +90,7 @@ describe('TurnControl Component', () => {
   })
 
   it('does not render a button when in an unhandled game state', () => {
-    const state = GameState.UNINITIALIZED
+    const gameState = GameState.UNINITIALIZED
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
@@ -82,7 +99,12 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     render(<StubTurnControl game={game} />)
 
@@ -93,7 +115,7 @@ describe('TurnControl Component', () => {
   })
 
   it('handles completing player setup', () => {
-    const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
@@ -102,7 +124,12 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     const send = mockSend()
 
@@ -117,12 +144,17 @@ describe('TurnControl Component', () => {
   })
 
   it('handles ending the player turn', () => {
-    const state = GameState.WAITING_FOR_PLAYER_TURN_ACTION
+    const gameState = GameState.WAITING_FOR_PLAYER_TURN_ACTION
 
     let game = stubGame()
     game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     const send = mockSend()
 
@@ -137,14 +169,19 @@ describe('TurnControl Component', () => {
   })
 
   it('renders a closed accordion when no control button is present', () => {
-    const state = GameState.UNINITIALIZED
+    const gameState = GameState.UNINITIALIZED
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
       field: { crops: [] },
     })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     render(<StubTurnControl game={game} />)
 
@@ -155,7 +192,7 @@ describe('TurnControl Component', () => {
   })
 
   it('renders an expanded accordion when a control button is present', () => {
-    const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
@@ -164,7 +201,12 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(ActorContext, 'useSelector').mockReturnValue(state)
+    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      gameState,
+      game,
+      selectedWaterCardInHandIdx:
+        RulesService.defaultSelectedWaterCardInHandIdx,
+    })
 
     render(<StubTurnControl game={game} />)
 

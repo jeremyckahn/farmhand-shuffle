@@ -37,5 +37,9 @@ const config: StorybookConfig = {
           : true,
     },
   },
+  env: config => ({
+    ...config,
+    IS_STORYBOOK: 'true',
+  }),
 }
 export default config

@@ -3,10 +3,12 @@ import AccordionActions from '@mui/material/AccordionActions'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import { ReactNode } from 'react'
+import { ReactNode, useContext } from 'react'
 
 import { GameEvent, GameState, IGame } from '../../../game/types'
 import { ActorContext } from '../Game/ActorContext'
+import { useGameRules } from '../../hooks/useGameRules'
+import { ShellContext } from '../Game/ShellContext'
 
 export interface TurnControlProps {
   game: IGame
@@ -14,8 +16,8 @@ export interface TurnControlProps {
 
 export const TurnControl = ({ game }: TurnControlProps) => {
   const actorRef = ActorContext.useActorRef()
-  const state = ActorContext.useSelector(({ value }) => value)
-  const stateString = typeof state === 'string' ? state : 'Unknown state'
+  const { setIsHandInViewport } = useContext(ShellContext)
+  const { gameState } = useGameRules()
 
   const handleCompleteSetup = () => {
     actorRef.send({ type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION })
@@ -25,12 +27,17 @@ export const TurnControl = ({ game }: TurnControlProps) => {
     actorRef.send({ type: GameEvent.START_TURN })
   }
 
+  const handleCancelWatering = () => {
+    actorRef.send({ type: GameEvent.OPERATION_ABORTED })
+    setIsHandInViewport(true)
+  }
+
   let control: ReactNode = null
 
   const currentPlayer =
     game.currentPlayerId && game.table.players[game.currentPlayerId]
 
-  switch (state) {
+  switch (gameState) {
     case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
       if (currentPlayer && currentPlayer.field.crops.length > 0) {
         control = <Button onClick={handleCompleteSetup}>Complete setup</Button>
@@ -41,6 +48,17 @@ export const TurnControl = ({ game }: TurnControlProps) => {
     case GameState.WAITING_FOR_PLAYER_TURN_ACTION: {
       if (currentPlayer && currentPlayer.id === game.sessionOwnerPlayerId) {
         control = <Button onClick={handleEndTurn}>End turn</Button>
+      }
+      break
+    }
+
+    case GameState.PLAYER_WATERING_CROP: {
+      if (currentPlayer && currentPlayer.id === game.sessionOwnerPlayerId) {
+        control = (
+          <Button onClick={handleCancelWatering} color="warning">
+            Cancel watering
+          </Button>
+        )
       }
       break
     }
@@ -59,7 +77,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
         }}
       >
         <Typography variant="h1" fontSize={24} textAlign="center">
-          Game state: {stateString}
+          Game state: {gameState}
         </Typography>
       </AccordionSummary>
       <AccordionActions sx={{ justifyContent: 'center' }}>

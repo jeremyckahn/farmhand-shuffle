@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { StubShellContext } from '../../test-utils/StubShellContext'
 import { stubGame } from '../../../test-utils/stubs/game'
 
 import { Table } from './Table'
@@ -12,6 +13,15 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {},
+  decorators: [
+    Story => {
+      return (
+        <StubShellContext>
+          <Story />
+        </StubShellContext>
+      )
+    },
+  ],
 } satisfies Meta<typeof Table>
 
 export default meta

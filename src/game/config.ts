@@ -10,4 +10,4 @@ export const STANDARD_FIELD_SIZE = 6
 
 export const SELECTED_CARD_ELEVATION = 10
 
-export const BOT_ACTION_DELAY = 1000
+export const BOT_ACTION_DELAY = 750

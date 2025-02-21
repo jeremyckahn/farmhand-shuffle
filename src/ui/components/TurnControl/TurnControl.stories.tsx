@@ -33,7 +33,7 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
   args: {},
   decorators: [
     Story => {
-      const state = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+      const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
 
       let game = stubGame()
       game = updatePlayer(game, stubPlayer1.id, {
@@ -44,7 +44,10 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
         },
       })
 
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(state)
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
+        gameState,
+        game,
+      })
 
       return <Story args={{ game }} />
     },

@@ -12,6 +12,10 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [GameEvent.PLAY_CARD]: GameState.PLAYING_CARD,
 
+      [GameEvent.PLAY_CROP]: GameState.PLANTING_CROP,
+
+      [GameEvent.PLAY_WATER]: GameState.PLAYER_WATERING_CROP,
+
       [GameEvent.START_TURN]: GameState.PERFORMING_BOT_TURN_ACTION,
     },
 

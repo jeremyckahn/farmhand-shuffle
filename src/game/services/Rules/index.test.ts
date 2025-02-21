@@ -16,11 +16,11 @@ const playerSeeds = [player1, player2]
 
 vi.mock('lodash.shuffle')
 
-beforeAll(() => {
+beforeEach(() => {
   vi.useFakeTimers()
 })
 
-afterAll(() => {
+afterEach(() => {
   vi.useRealTimers()
 })
 

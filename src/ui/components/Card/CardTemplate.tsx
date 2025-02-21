@@ -1,25 +1,35 @@
-import React, { useRef } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Paper from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
+import Paper from '@mui/material/Paper'
+import { darken, lighten } from '@mui/material/styles'
 import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
-import { darken, lighten } from '@mui/material/styles'
+import { AnimatePresence, motion } from 'motion/react'
+import React, { useContext, useRef } from 'react'
 
+import {
+  CardType,
+  GameEvent,
+  GameState,
+  isCropCard,
+  isWaterCard,
+} from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { useGameRules } from '../../hooks/useGameRules'
 import { cards, isCardImageKey, ui } from '../../img'
-import { Image } from '../Image'
-import { CardSize } from '../../types'
 import { isSxArray } from '../../type-guards'
+import { CardSize } from '../../types'
 import { ActorContext } from '../Game/ActorContext'
-import { GameEvent, isCropCard } from '../../../game/types'
+import { ShellContext } from '../Game/ShellContext'
+import { Image } from '../Image'
 
-import { CardFocusMode, CardProps } from './Card'
+import { CardProps } from './Card'
 
 export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'
+
+const cropWaterIndicatorOutlineColor = '#0072ff'
 
 export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
   function CardTemplate(
@@ -28,11 +38,13 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       cardIdx,
       playerId,
       children,
-      cardFocusMode,
       onBeforePlay,
+      canBeWatered = false,
       disableEnterAnimation = false,
       imageScale = 0.75,
       isFlipped = false,
+      isFocused = false,
+      isInField = false,
       paperProps,
       size = CardSize.MEDIUM,
       sx = [],
@@ -42,8 +54,10 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
   ) {
     const { useActorRef } = ActorContext
     const actorRef = useActorRef()
+    const { game, gameState, selectedWaterCardInHandIdx } = useGameRules()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
+    const { setIsHandInViewport } = useContext(ShellContext)
 
     const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
 
@@ -52,16 +66,83 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
     }
 
     const handlePlayCard = async () => {
-      // TODO: Handle different card types appropriately (water, tool, etc.)
-      if (isCropCard(card)) {
-        if (onBeforePlay) {
-          await onBeforePlay()
+      if (onBeforePlay) {
+        await onBeforePlay()
+      }
+
+      switch (card.type) {
+        case CardType.CROP: {
+          actorRef.send({ type: GameEvent.PLAY_CROP, cardIdx, playerId })
+
+          break
         }
 
-        actorRef.send({ type: GameEvent.PLAY_CROP, cardIdx, playerId })
+        case CardType.WATER: {
+          actorRef.send({ type: GameEvent.PLAY_WATER, cardIdx, playerId })
+          setIsHandInViewport(false)
+
+          break
+        }
+
+        default:
       }
     }
 
+    const handleWaterCrop = () => {
+      actorRef.send({
+        type: GameEvent.SELECT_CROP_TO_WATER,
+        playerId,
+        cropIdxInFieldToWater: cardIdx,
+        waterCardInHandIdx: selectedWaterCardInHandIdx,
+      })
+    }
+
+    const isSessionOwnersCard = playerId === game.sessionOwnerPlayerId
+
+    let showPlayCardButton = false
+    let showWaterCropButton = false
+
+    switch (card.type) {
+      case CardType.CROP: {
+        if (
+          isSessionOwnersCard &&
+          isFocused &&
+          !isInField &&
+          [
+            GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+            GameState.WAITING_FOR_PLAYER_SETUP_ACTION,
+          ].includes(gameState)
+        ) {
+          showPlayCardButton = true
+        }
+
+        if (
+          isSessionOwnersCard &&
+          isFocused &&
+          isInField &&
+          canBeWatered &&
+          [GameState.PLAYER_WATERING_CROP].includes(gameState)
+        ) {
+          showWaterCropButton = true
+        }
+
+        break
+      }
+
+      case CardType.WATER: {
+        if (
+          isSessionOwnersCard &&
+          isFocused &&
+          [GameState.WAITING_FOR_PLAYER_TURN_ACTION].includes(gameState)
+        ) {
+          showPlayCardButton = true
+        }
+
+        break
+      }
+
+      default:
+    }
     return (
       <AnimatePresence>
         <Box
@@ -117,6 +198,13 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                     p: theme.spacing(1),
                     position: 'absolute',
                     width: 1,
+                    ...(isInField &&
+                      canBeWatered &&
+                      gameState === GameState.PLAYER_WATERING_CROP &&
+                      game.currentPlayerId === playerId &&
+                      isCropCard(card) && {
+                        filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
+                      }),
                   },
                 ]}
               >
@@ -155,19 +243,28 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                 </Box>
                 <Divider sx={{ my: theme.spacing(1) }} />
                 <Box sx={{ height: '50%' }}>{children}</Box>
-                {cardFocusMode === CardFocusMode.CROP_PLACEMENT &&
-                  isCropCard(card) && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          onClick={() => void handlePlayCard()}
-                        >
-                          Play card
-                        </Button>
-                      </Typography>
-                    </Box>
-                  )}
+                {showPlayCardButton && (
+                  <Box position="absolute" right="-100%" width={1} px={1}>
+                    <Typography>
+                      <Button
+                        variant="contained"
+                        onClick={() => void handlePlayCard()}
+                      >
+                        {isCropCard(card) && 'Play crop'}
+                        {isWaterCard(card) && 'Water a crop'}
+                      </Button>
+                    </Typography>
+                  </Box>
+                )}
+                {showWaterCropButton && (
+                  <Box position="absolute" right="-100%" width={1} px={1}>
+                    <Typography>
+                      <Button variant="contained" onClick={handleWaterCrop}>
+                        Water crop
+                      </Button>
+                    </Typography>
+                  </Box>
+                )}
               </Paper>
               <Paper
                 {...paperProps}

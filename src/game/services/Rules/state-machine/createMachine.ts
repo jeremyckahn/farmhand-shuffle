@@ -14,6 +14,7 @@ export const { createMachine } = setup({
     context: {} as {
       game: IGame
       cropsToPlayDuringBotTurn: number
+      selectedWaterCardInHandIdx: number
       fieldCropIndicesToWaterDuringBotTurn: number[]
     },
     events: {} as GameEventPayload[GameEventPayloadKey],
