@@ -2,9 +2,9 @@ import { KeyboardArrowDown } from '@mui/icons-material'
 import Container, { ContainerProps } from '@mui/material/Container'
 import Fab from '@mui/material/Fab'
 import useTheme from '@mui/material/styles/useTheme'
+import Tooltip from '@mui/material/Tooltip'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { UnimplementedError } from '../../../game/services/Rules/errors'
 import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
 import { isSxArray } from '../../type-guards'
 import { Table } from '../Table'
@@ -29,6 +29,7 @@ const GameCore = ({
   const [state, game] = ActorContext.useSelector(
     ({ value, context: { game } }) => [value, game]
   )
+  const [isHandInViewport, setIsHandInViewport] = useState(true)
 
   useEffect(() => {
     if (import.meta.env.DEV) {
@@ -64,16 +65,15 @@ const GameCore = ({
   )
 
   const shellContextValue: ShellContextProps = useMemo(
-    () => ({ blockingOperation }),
-    [blockingOperation]
+    () => ({ blockingOperation, isHandInViewport, setIsHandInViewport }),
+    [blockingOperation, isHandInViewport, setIsHandInViewport]
   )
 
   const isSessionOwnersTurn = game.sessionOwnerPlayerId === game.currentPlayerId
   const isInputBlocked = isBlockingOperationExecuting || !isSessionOwnersTurn
 
   const handleHandVisibilityToggle = () => {
-    // FIXME: Implement this
-    throw new UnimplementedError('handleHandVisibilityToggle is unimplemented')
+    setIsHandInViewport(prev => !prev)
   }
 
   return (
@@ -86,7 +86,6 @@ const GameCore = ({
             backgroundColor: theme.palette.grey['500'],
             py: 3,
             overflow: 'auto',
-            position: 'relative',
             ...(isInputBlocked && {
               '*': {
                 pointerEvents: 'none',
@@ -99,17 +98,25 @@ const GameCore = ({
       >
         <TurnControl game={game} />
         <Table sx={{ pt: 4 }} game={game} />
-        <Fab
-          color="secondary"
-          onClick={handleHandVisibilityToggle}
-          sx={{
-            position: 'absolute',
-            bottom: theme.spacing(2),
-            left: theme.spacing(2),
-          }}
-        >
-          <KeyboardArrowDown />
-        </Fab>
+        <Tooltip arrow title={isHandInViewport ? 'Hide Hand' : 'Show Hand'}>
+          <Fab
+            color="secondary"
+            disabled={isInputBlocked}
+            onClick={handleHandVisibilityToggle}
+            sx={{
+              position: 'fixed',
+              bottom: theme.spacing(2),
+              left: theme.spacing(2),
+            }}
+          >
+            <KeyboardArrowDown
+              sx={{
+                transform: `rotate(${isHandInViewport ? 0 : 180}deg)`,
+                transition: theme.transitions.create(['transform']),
+              }}
+            />
+          </Fab>
+        </Tooltip>
       </Container>
     </ShellContext.Provider>
   )

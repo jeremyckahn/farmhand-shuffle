@@ -53,7 +53,7 @@ export const Hand = ({
   const { useSelector } = ActorContext
   const state = useSelector(({ value }) => value)
 
-  const { blockingOperation } = useContext(ShellContext)
+  const { blockingOperation, isHandInViewport } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
@@ -124,6 +124,10 @@ export const Hand = ({
         {
           position: 'relative',
           minHeight: CARD_DIMENSIONS[cardSize].height,
+          transform: `translateY(${
+            isHandInViewport ? 0 : CARD_DIMENSIONS[cardSize].height
+          })`,
+          transition: theme.transitions.create(['transform']),
         },
         ...(isSxArray(sx) ? sx : [sx]),
       ]}
