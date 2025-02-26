@@ -17,9 +17,7 @@ const config: StorybookConfig = {
       strictMode: true,
     },
   },
-  docs: {
-    autodocs: 'tag',
-  },
+  docs: {},
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
