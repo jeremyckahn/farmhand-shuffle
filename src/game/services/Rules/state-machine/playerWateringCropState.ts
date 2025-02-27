@@ -26,6 +26,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
 
             break
           }
+
           default:
         }
 

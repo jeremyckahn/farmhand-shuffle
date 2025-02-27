@@ -5,6 +5,9 @@ import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
 
+// NOTE: This state serves as a sort of "router" from the generic PLAYING_CARD
+// state to a more card-specfic state. This centralizes the complexity of
+// determining the appropriate state to transition to when playing a card.
 export const playingCardState: RulesMachineConfig['states'] = {
   [GameState.PLAYING_CARD]: {
     on: {

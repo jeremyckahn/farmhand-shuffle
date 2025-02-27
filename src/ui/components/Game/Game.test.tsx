@@ -6,6 +6,8 @@ import { Game } from './Game'
 
 describe('Game', () => {
   test('renders table', () => {
+    vi.spyOn(console, 'debug').mockImplementation(() => {})
+
     render(
       <Game
         playerSeeds={[stubPlayer1, stubPlayer2]}

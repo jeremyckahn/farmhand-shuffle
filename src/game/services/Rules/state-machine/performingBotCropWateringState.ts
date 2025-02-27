@@ -44,7 +44,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         const playedCrop =
           game.table.players[currentPlayerId].field.crops[cropIdxInFieldToWater]
 
-        const newPlayedCrop: IPlayedCrop = {
+        const updatedPlayedCrop: IPlayedCrop = {
           ...playedCrop,
           wasWateredTuringTurn: true,
           waterCards: playedCrop.waterCards + 1,
@@ -54,7 +54,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
           game,
           currentPlayerId,
           cropIdxInFieldToWater,
-          newPlayedCrop
+          updatedPlayedCrop
         )
 
         game = moveFromHandToDiscardPile(

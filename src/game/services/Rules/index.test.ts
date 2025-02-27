@@ -54,15 +54,15 @@ const createSetUpGameActor = () => {
     playerId: player1.id,
     cardIdx: 0,
   })
+
   gameActor.send({
-    // NOTE: Prompts player 2
+    // NOTE: Prompts bot player
     type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION,
   })
-  gameActor.send({
-    type: GameEvent.PLAY_CROP,
-    playerId: player2.id,
-    cardIdx: 0,
-  })
+
+  // NOTE: Performs all bot setup logic
+  vi.runAllTimers()
+
   gameActor.send({
     // NOTE: Prompts player 1 again
     type: GameEvent.PROMPT_PLAYER_FOR_SETUP_ACTION,
@@ -517,7 +517,10 @@ describe('createGameStateMachine', () => {
         })
         gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
 
+        // NOTE: Prompts bot player
         gameActor.send({ type: GameEvent.START_TURN })
+
+        // NOTE: Performs all bot turn logic
         vi.runAllTimers()
 
         const {

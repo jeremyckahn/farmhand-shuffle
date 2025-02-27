@@ -27,27 +27,5 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
         ),
       },
     },
-
-    entry: enqueueActions(({ event, context: { game }, enqueue }) => {
-      switch (event.type) {
-        case GameEvent.PROMPT_PLAYER_FOR_SETUP_ACTION: {
-          const { currentPlayerId } = game
-          assertCurrentPlayer(currentPlayerId)
-
-          const currentPlayerField = game.table.players[currentPlayerId].field
-
-          if (currentPlayerField.crops.length > 0) {
-            enqueue.raise({
-              type: GameEvent.START_TURN,
-            })
-          }
-
-          break
-        }
-        default:
-      }
-
-      enqueue.assign({ game })
-    }),
   },
 }

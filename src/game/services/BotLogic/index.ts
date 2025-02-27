@@ -16,7 +16,7 @@ export class BotLogicService {
       playerId
     )
 
-    const numberOfCropsToPlay = Math.max(
+    const unboundedNumberOfCropsToPlay = Math.max(
       minimumCropsToPlay,
       Math.floor(randomNumber.generate() * cropCardIdxsInPlayerHand.length)
     )
@@ -26,7 +26,7 @@ export class BotLogicService {
 
     const safeNumberOfCropsToPlay = Math.min(
       availableFieldSpace,
-      numberOfCropsToPlay,
+      unboundedNumberOfCropsToPlay,
       cropCardIdxsInPlayerHand.length
     )
 

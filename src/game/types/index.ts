@@ -166,6 +166,10 @@ export interface IGame {
 }
 
 export enum GameEvent {
+  /**
+   * Used to override the internal game context of the state machine. This
+   * should only be used for test setup and debugging.
+   */
   DANGEROUSLY_SET_CONTEXT = 'DANGEROUSLY_SET_CONTEXT',
   INIT = 'INIT',
   START_TURN = 'START_TURN',

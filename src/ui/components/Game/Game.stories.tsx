@@ -41,6 +41,7 @@ type Story = StoryObj<typeof meta>
 
 const deck = stubDeck()
 
+// TODO: Move this setup to stubDeck
 for (let i = 0; i < 15; i++) {
   // eslint-disable-next-line functional/immutable-data
   deck[i] = carrot.id

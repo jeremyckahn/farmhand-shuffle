@@ -14,11 +14,11 @@ import { RulesMachineConfig } from './types'
 export const performingBotTurnActionState: RulesMachineConfig['states'] = {
   [GameState.PERFORMING_BOT_TURN_ACTION]: {
     on: {
-      [GameEvent.PLAY_CARD]: GameState.PLAYING_CARD,
-
-      [GameEvent.START_TURN]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      [GameEvent.PLAY_CROP]: GameState.PLANTING_CROP,
 
       [GameEvent.PLAY_WATER]: GameState.PERFORMING_BOT_CROP_WATERING,
+
+      [GameEvent.START_TURN]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
     entry: enqueueActions(
@@ -55,6 +55,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           assertCurrentPlayer(currentPlayerId)
 
           const areCropsToPlay = cropsToPlayDuringBotTurn > 0
+          let areWaterCardsToPlay = false
 
           if (areCropsToPlay) {
             const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
@@ -65,33 +66,31 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
             enqueue.raise(
               {
-                type: GameEvent.PLAY_CARD,
+                type: GameEvent.PLAY_CROP,
                 playerId: currentPlayerId,
                 cardIdx,
               },
               { delay: BOT_ACTION_DELAY }
             )
-          }
-
-          if (!areCropsToPlay) {
+          } else {
             fieldCropIndicesToWaterDuringBotTurn =
               botLogic.getCropCardIndicesToWater(game, currentPlayerId)
-          }
 
-          const areWaterCardsToPlay =
-            fieldCropIndicesToWaterDuringBotTurn.length > 0
+            areWaterCardsToPlay =
+              fieldCropIndicesToWaterDuringBotTurn.length > 0
 
-          if (areWaterCardsToPlay) {
-            enqueue.raise(
-              {
-                type: GameEvent.PLAY_WATER,
-                cardIdx: fieldCropIndicesToWaterDuringBotTurn[0],
-                playerId: currentPlayerId,
-              },
-              {
-                delay: BOT_ACTION_DELAY,
-              }
-            )
+            if (areWaterCardsToPlay) {
+              enqueue.raise(
+                {
+                  type: GameEvent.PLAY_WATER,
+                  cardIdx: fieldCropIndicesToWaterDuringBotTurn[0],
+                  playerId: currentPlayerId,
+                },
+                {
+                  delay: BOT_ACTION_DELAY,
+                }
+              )
+            }
           }
 
           if (!areCropsToPlay && !areWaterCardsToPlay) {
