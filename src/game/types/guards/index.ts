@@ -1,5 +1,5 @@
 import * as cards from '../../cards'
-import { CardType, ICrop, IField, IGame, IPlayer, ITable } from '../'
+import { CardType, GameState, ICrop, IField, IGame, IPlayer, ITable } from '../'
 import { GameStateCorruptError } from '../../services/Rules/errors'
 
 export const isCrop = (obj: unknown): obj is ICrop => {
@@ -84,5 +84,11 @@ export function assertCurrentPlayer(
 ): asserts currentPlayerId is string {
   if (currentPlayerId === null) {
     throw new TypeError('[TypeError] currentPlayerId must not be null')
+  }
+}
+
+export function assertStringIsGameState(str: string): asserts str is GameState {
+  if (!(str in GameState)) {
+    throw new TypeError(`${str} is not a GameState`)
   }
 }

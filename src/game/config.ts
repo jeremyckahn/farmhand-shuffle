@@ -9,3 +9,5 @@ export const STANDARD_TAX_AMOUNT = 5
 export const STANDARD_FIELD_SIZE = 6
 
 export const SELECTED_CARD_ELEVATION = 10
+
+export const BOT_ACTION_DELAY = 750

@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import * as cards from '../../../game/cards'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
-import { GameState, IGame, IPlayer } from '../../../game/types'
+import { IGame, IPlayer } from '../../../game/types'
 import { assertIsCardId } from '../../../game/types/guards'
 import { useRejectingTimeout } from '../../../lib/hooks/useRejectingTimeout'
 import { math } from '../../../services/Math'
@@ -13,9 +13,8 @@ import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
-import { Card, CardFocusMode } from '../Card'
-import { ActorContext } from '../Game/ActorContext'
-import { InputBlockContext } from '../Game/InputBlockContext'
+import { Card } from '../Card'
+import { ShellContext } from '../Game/ShellContext'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -50,10 +49,8 @@ export const Hand = ({
   sx = [],
   ...rest
 }: HandProps) => {
-  const { useSelector } = ActorContext
-  const state = useSelector(({ value }) => value)
-
-  const { blockingOperation } = useContext(InputBlockContext)
+  const { blockingOperation, isHandInViewport, setIsHandInViewport } =
+    useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
@@ -75,7 +72,14 @@ export const Hand = ({
 
   useEffect(() => {
     resetSelectedCard()
-  }, [player.hand])
+    setIsHandInViewport(true)
+  }, [
+    // NOTE: player.hand is intentionally present here because updated hand
+    // data should reset the presentation of the hand to the player.
+    player.hand,
+
+    setIsHandInViewport,
+  ])
 
   const handleCardFocus = (cardIdx: number) => {
     setSelectedCardIdx(cardIdx)
@@ -124,6 +128,11 @@ export const Hand = ({
         {
           position: 'relative',
           minHeight: CARD_DIMENSIONS[cardSize].height,
+          transform: `translateY(${
+            isHandInViewport ? 0 : CARD_DIMENSIONS[cardSize].height
+          })`,
+          transition: theme.transitions.create(['transform']),
+          pointerEvents: isHandInViewport ? undefined : 'none',
         },
         ...(isSxArray(sx) ? sx : [sx]),
       ]}
@@ -144,19 +153,6 @@ export const Hand = ({
         )
         const xOffsetPx = containerWidth / 2 + multipliedGap
         const isSelected = selectedCardIdx === idx
-
-        let cardFocusMode: undefined | CardFocusMode
-
-        if (isSelected) {
-          switch (state) {
-            case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
-              cardFocusMode = CardFocusMode.CROP_PLACEMENT
-              break
-            }
-
-            default:
-          }
-        }
 
         let transform = ''
         if (!isSelected) {
@@ -195,8 +191,8 @@ export const Hand = ({
             }}
             onBeforePlay={handleBeforePlay}
             onFocus={() => handleCardFocus(idx)}
-            tabIndex={0}
-            cardFocusMode={cardFocusMode}
+            tabIndex={isHandInViewport ? 0 : -1}
+            isFocused={isSelected}
           />
         )
       })}

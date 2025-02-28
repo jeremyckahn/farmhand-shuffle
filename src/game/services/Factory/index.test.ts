@@ -5,14 +5,11 @@ import { stubPlayer } from '../../../test-utils/stubs/players'
 import { isField, isGame, isPlayer, isTable } from '../../types/guards'
 import { carrot } from '../../cards'
 import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
-import { ICard } from '../../types'
+import { ICard, IPlayedCrop } from '../../types'
 
 import { factory } from '.'
 
-vitest.mock('lodash.shuffle', () => ({
-  __esModule: true,
-  default: vitest.fn(),
-}))
+vitest.mock('lodash.shuffle')
 
 beforeEach(() => {
   ;(shuffle as unknown as MockInstance).mockImplementation(
@@ -104,8 +101,9 @@ describe('Factory', () => {
     test('builds a played crop', () => {
       const playedCard = factory.buildPlayedCrop(carrot)
 
-      expect(playedCard).toEqual({
+      expect(playedCard).toEqual<IPlayedCrop>({
         id: carrot.id,
+        wasWateredTuringTurn: false,
         waterCards: 0,
       })
     })

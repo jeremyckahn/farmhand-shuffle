@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 
 import { lookup } from '../../../game/services/Lookup'
 import { stubGame } from '../../../test-utils/stubs/game'
+import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Game/ActorContext'
 
 import { Table, TableProps } from './Table'
@@ -11,9 +12,11 @@ const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
 
 const StubTable = (overrides: Partial<TableProps>) => {
   return (
-    <ActorContext.Provider>
-      <Table game={game} {...overrides} />
-    </ActorContext.Provider>
+    <StubShellContext>
+      <ActorContext.Provider>
+        <Table game={game} {...overrides} />
+      </ActorContext.Provider>
+    </StubShellContext>
   )
 }
 

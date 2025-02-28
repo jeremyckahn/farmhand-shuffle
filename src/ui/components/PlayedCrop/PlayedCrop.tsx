@@ -34,7 +34,11 @@ export const PlayedCrop = ({
 
   return (
     <Box maxWidth={CARD_DIMENSIONS[size].width} {...props}>
-      <Card size={size} {...cropCardProps} />
+      <Card
+        size={size}
+        canBeWatered={playedCrop.wasWateredTuringTurn === false}
+        {...cropCardProps}
+      />
       <Grid
         container
         spacing={1}

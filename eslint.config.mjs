@@ -42,7 +42,9 @@ export default [
     rules: {
       'react/react-in-jsx-scope': 'off',
       'react/jsx-curly-brace-presence': ['error', { props: 'never' }],
+      'react/jsx-no-constructed-context-values': ['error'],
       'object-shorthand': 'error',
+      'no-useless-rename': 'error',
       // See: https://typescript-eslint.io/rules/no-unused-vars/#benefits-over-typescript
       '@typescript-eslint/no-unused-vars': [
         'error',

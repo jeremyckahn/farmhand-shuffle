@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { carrot, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
+import { StubShellContext } from '../../test-utils/StubShellContext'
 import { cardClassName } from '../Card/CardTemplate'
 import { ActorContext } from '../Game/ActorContext'
 
@@ -18,9 +19,11 @@ const game = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
 
 const StubHand = (overrides: Partial<HandProps>) => {
   return (
-    <ActorContext.Provider>
-      <Hand game={game} playerId={game.sessionOwnerPlayerId} {...overrides} />
-    </ActorContext.Provider>
+    <StubShellContext>
+      <ActorContext.Provider>
+        <Hand game={game} playerId={game.sessionOwnerPlayerId} {...overrides} />
+      </ActorContext.Provider>
+    </StubShellContext>
   )
 }
 

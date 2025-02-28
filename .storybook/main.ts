@@ -17,9 +17,7 @@ const config: StorybookConfig = {
       strictMode: true,
     },
   },
-  docs: {
-    autodocs: 'tag',
-  },
+  docs: {},
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
@@ -39,5 +37,9 @@ const config: StorybookConfig = {
           : true,
     },
   },
+  env: config => ({
+    ...config,
+    IS_STORYBOOK: 'true',
+  }),
 }
 export default config

@@ -1,6 +1,5 @@
 import { BoxProps } from '@mui/material/Box'
 import { PaperProps } from '@mui/material/Paper'
-
 import { forwardRef } from 'react'
 
 import { UnimplementedError } from '../../../game/services/Rules/errors'
@@ -16,18 +15,24 @@ import { CardSize } from '../../types'
 import { CardCropText } from './CardCropText'
 import { CardTemplate } from './CardTemplate'
 
-export enum CardFocusMode {
-  CROP_PLACEMENT,
-}
-
 export interface BaseCardProps extends BoxProps {
+  canBeWatered?: boolean
   card: ICard
   cardIdx: number
   disableEnterAnimation?: boolean
+  imageScale?: number
+  isFlipped?: boolean
+  isFocused?: boolean
+  isInField?: boolean
+  paperProps?: Partial<Omit<PaperProps, 'sx'>>
   playerId: string
   size?: CardSize
-  imageScale?: number
-  cardFocusMode?: CardFocusMode
+  /**
+   * Optional asynchronous operation to perform when the player plays the
+   * card and before internal card play logic is run. This could be used to
+   * perform an animation.
+   */
+  onBeforePlay?: () => Promise<void>
 }
 
 export interface CropCardProps extends BaseCardProps {
@@ -36,16 +41,7 @@ export interface CropCardProps extends BaseCardProps {
 
 export type WaterCardProps = BaseCardProps
 
-export type CardProps = (CropCardProps | WaterCardProps) & {
-  isFlipped?: boolean
-  paperProps?: Partial<Omit<PaperProps, 'sx'>>
-  /**
-   * Optional asynchronous operation to perform when the player plays the
-   * card and before internal card play logic is run. This could be used to
-   * perform an animation.
-   */
-  onBeforePlay?: () => Promise<void>
-}
+export type CardProps = CropCardProps | WaterCardProps
 
 const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {
   return isCropCard(props.card)
