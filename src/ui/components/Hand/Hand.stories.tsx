@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip'
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
-import { carrot, pumpkin, water } from '../../../game/cards'
+import { carrot, instantiate, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
 import { randomNumber } from '../../../services/RandomNumber'
@@ -14,6 +14,12 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
+
+import {
+  stubCarrot,
+  stubPumpkin,
+  stubWater,
+} from '../../../test-utils/stubs/cards'
 
 import { Hand } from './Hand'
 
@@ -35,7 +41,7 @@ const meta = {
       const handleClickAdd = () => {
         setHand([
           ...hand,
-          randomNumber.chooseElement([carrot.id, water.id, pumpkin.id]),
+          randomNumber.chooseElement([stubCarrot, stubWater, stubPumpkin]),
         ])
       }
 
@@ -109,11 +115,17 @@ type Story = StoryObj<typeof meta>
 const baseGame = stubGame()
 
 const gameWithHandOf3 = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
-  hand: [carrot.id, pumpkin.id, water.id],
+  hand: [stubCarrot, stubPumpkin, stubWater],
 })
 
 const gameWithHandOf5 = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
-  hand: [carrot.id, pumpkin.id, water.id, carrot.id, pumpkin.id],
+  hand: [
+    instantiate(carrot),
+    instantiate(pumpkin),
+    instantiate(water),
+    instantiate(carrot),
+    instantiate(pumpkin),
+  ],
 })
 
 export const HandOf3: Story = {

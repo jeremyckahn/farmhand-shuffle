@@ -1,10 +1,10 @@
 import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
-import { carrot, water } from '../../../game/cards'
 import { RulesService } from '../../../game/services/Rules'
 import { GameEvent, GameEventPayload, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
+import { stubCarrot, stubWater } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import * as useGameStateModule from '../../hooks/useGameRules'
@@ -14,12 +14,17 @@ import { ActorContext } from '../Game/ActorContext'
 import { Card, CardProps } from './Card'
 import { cardFlipWrapperClassName } from './CardTemplate'
 
-const stubCard = carrot
+const stubCardInstance = stubCarrot
 
 const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
   <StubShellContext>
     <ActorContext.Provider>
-      <Card card={stubCard} cardIdx={0} playerId="" {...overrides} />
+      <Card
+        cardInstance={stubCardInstance}
+        cardIdx={0}
+        playerId=""
+        {...overrides}
+      />
     </ActorContext.Provider>
   </StubShellContext>
 )
@@ -28,15 +33,17 @@ describe('Card', () => {
   test('renders card', () => {
     render(<StubCard />)
 
-    expect(screen.getByText(stubCard.name)).toBeInTheDocument()
-    expect(screen.getByAltText(stubCard.name)).toBeInTheDocument()
+    expect(screen.getByText(stubCardInstance.name)).toBeInTheDocument()
+    expect(screen.getByAltText(stubCardInstance.name)).toBeInTheDocument()
   })
 
   test('renders crop water requirements', () => {
     render(<StubCard />)
 
     expect(
-      screen.getByText(`Water needed to mature: ${stubCard.waterToMature}`)
+      screen.getByText(
+        `Water needed to mature: ${stubCardInstance.waterToMature}`
+      )
     ).toBeInTheDocument()
   })
 
@@ -46,7 +53,7 @@ describe('Card', () => {
     render(
       <StubCard
         playedCrop={{
-          id: stubCard.id,
+          instance: stubCardInstance,
           wasWateredTuringTurn: false,
           waterCards,
         }}
@@ -55,7 +62,7 @@ describe('Card', () => {
 
     expect(
       screen.getByText(
-        `Water cards attached: ${waterCards}/${stubCard.waterToMature}`
+        `Water cards attached: ${waterCards}/${stubCardInstance.waterToMature}`
       )
     ).toBeInTheDocument()
   })
@@ -64,7 +71,7 @@ describe('Card', () => {
     render(<StubCard />)
 
     const card = screen
-      .getByText(stubCard.name)
+      .getByText(stubCardInstance.name)
       .closest(`.${cardFlipWrapperClassName}`)
 
     const { transform } = getComputedStyle(card!)
@@ -75,7 +82,7 @@ describe('Card', () => {
     render(<StubCard isFlipped={true} />)
 
     const card = screen
-      .getByText(stubCard.name)
+      .getByText(stubCardInstance.name)
       .closest(`.${cardFlipWrapperClassName}`)
 
     const { transform } = getComputedStyle(card!)
@@ -97,7 +104,13 @@ describe('Card', () => {
           RulesService.defaultSelectedWaterCardInHandIdx,
       })
 
-      render(<StubCard card={carrot} playerId={stubPlayer1.id} isFocused />)
+      render(
+        <StubCard
+          cardInstance={stubCarrot}
+          playerId={stubPlayer1.id}
+          isFocused
+        />
+      )
 
       const playCardButton = screen.getByText('Play crop')
 
@@ -124,7 +137,13 @@ describe('Card', () => {
           RulesService.defaultSelectedWaterCardInHandIdx,
       })
 
-      render(<StubCard card={water} playerId={stubPlayer1.id} isFocused />)
+      render(
+        <StubCard
+          cardInstance={stubWater}
+          playerId={stubPlayer1.id}
+          isFocused
+        />
+      )
 
       const playCardButton = screen.getByText('Water a crop')
 
@@ -152,7 +171,7 @@ describe('Card', () => {
 
     render(
       <StubCard
-        card={carrot}
+        cardInstance={stubCarrot}
         playerId={stubPlayer1.id}
         isFocused
         isInField

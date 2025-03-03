@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Mock } from 'vitest'
 
-import { carrot, pumpkin } from '../../../game/cards'
+import { carrot, instantiate, pumpkin } from '../../../game/cards'
 import { stubDeck } from '../../../test-utils/stubs/deck'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 
@@ -44,12 +44,12 @@ const deck = stubDeck()
 // TODO: Move this setup to stubDeck
 for (let i = 0; i < 15; i++) {
   // eslint-disable-next-line functional/immutable-data
-  deck[i] = carrot.id
+  deck[i] = instantiate(carrot)
 }
 
 for (let i = 15; i < 30; i++) {
   // eslint-disable-next-line functional/immutable-data
-  deck[i] = pumpkin.id
+  deck[i] = instantiate(pumpkin)
 }
 
 const player1 = stubPlayer({ id: 'player-1', deck })

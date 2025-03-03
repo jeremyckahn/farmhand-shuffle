@@ -2,10 +2,8 @@ import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip'
 
-import * as cards from '../../../game/cards'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import { assertIsCardId } from '../../../game/types/guards'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
@@ -50,22 +48,19 @@ export const DiscardPile = ({
       }}
       {...rest}
     >
-      {player.discardPile.map((cardId, idx) => {
-        assertIsCardId(cardId)
-
-        const card = cards[cardId]
+      {player.discardPile.map((cardInstance, idx) => {
         const offset =
           (discardPileThicknessPx / player.discardPile.length) * idx
 
         return (
           <Tooltip
-            key={`${cardId}_${idx}`}
-            title={card.name}
+            key={cardInstance.instanceId}
+            title={cardInstance.name}
             placement="top"
             arrow
           >
             <Card
-              card={card}
+              cardInstance={cardInstance}
               size={cardSize}
               cardIdx={idx}
               playerId={playerId}

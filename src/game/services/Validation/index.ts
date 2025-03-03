@@ -1,6 +1,4 @@
-import * as cards from '../../cards'
-import { IPlayer, isCropCard } from '../../types'
-import { assertIsCardId } from '../../types/guards'
+import { IPlayer, isCropCardInstance } from '../../types'
 import { GameStateCorruptError } from '../Rules/errors'
 
 export class ValidationService {
@@ -9,12 +7,8 @@ export class ValidationService {
    *   - That player deck contains at least one crop
    */
   player = (player: IPlayer) => {
-    const deckContainsCrop = player.deck.some(cardId => {
-      assertIsCardId(cardId)
-
-      const card = cards[cardId]
-
-      return isCropCard(card)
+    const deckContainsCrop = player.deck.some(cardInstance => {
+      return isCropCardInstance(cardInstance)
     })
 
     if (!deckContainsCrop) {

@@ -1,12 +1,13 @@
 import { test } from 'vitest'
 
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import { carrot, pumpkin, water } from '../../cards'
+import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { updatePlayer } from '../../reducers/update-player'
 import { IGame, IPlayer } from '../../types'
 import { isPlayer } from '../../types/guards'
-import { GameStateCorruptError, InvalidIdError } from '../Rules/errors'
+import { InvalidIdError } from '../Rules/errors'
 
 import { lookup } from '.'
 
@@ -22,13 +23,13 @@ describe('Lookup', () => {
       player1Id = Object.keys(mutatedGame.table.players)[0]
 
       // eslint-disable-next-line functional/immutable-data
-      mutatedGame.table.players[player1Id].hand[0] = carrot.id
+      mutatedGame.table.players[player1Id].hand[0] = stubCarrot
     })
 
     test('returns card from hand', () => {
-      const card = lookup.getCardFromHand(mutatedGame, player1Id, 0)
+      const cardInstance = lookup.getCardFromHand(mutatedGame, player1Id, 0)
 
-      expect(card).toBe(carrot)
+      expect(cardInstance).toBe(stubCarrot)
     })
 
     test('throws an error when specified card is not in hand', () => {
@@ -39,16 +40,6 @@ describe('Lookup', () => {
           mutatedGame.table.players[player1Id].hand.length
         )
       }).toThrow()
-    })
-
-    test('throws an error when specified card is not valid', () => {
-      mutatedGame = updatePlayer(mutatedGame, player1Id, {
-        hand: ['some-card-that-does-not-exist'],
-      })
-
-      expect(() => {
-        lookup.getCardFromHand(mutatedGame, player1Id, 0)
-      }).toThrow(GameStateCorruptError)
     })
   })
 
@@ -80,9 +71,13 @@ describe('Lookup', () => {
     test.each([
       { deck: [], howMany: undefined, expected: [] },
       { deck: [], howMany: 1, expected: [] },
-      { deck: [carrot.id], howMany: 1, expected: [0] },
-      { deck: [water.id], howMany: 1, expected: [] },
-      { deck: [carrot.id, water.id, carrot.id], howMany: 3, expected: [0, 2] },
+      { deck: [instantiate(carrot)], howMany: 1, expected: [0] },
+      { deck: [instantiate(water)], howMany: 1, expected: [] },
+      {
+        deck: [instantiate(carrot), instantiate(water), instantiate(carrot)],
+        howMany: 3,
+        expected: [0, 2],
+      },
     ])(
       'retrieves $howMany crop indices in deck ($deck)',
       ({ deck, howMany, expected }) => {
@@ -106,9 +101,14 @@ describe('Lookup', () => {
   describe('findCropIndexesInPlayerHand', () => {
     test.each([
       { hand: [], expected: [] },
-      { hand: [carrot.id], expected: [0] },
+      { hand: [instantiate(carrot)], expected: [0] },
       {
-        hand: [carrot.id, water.id, water.id, pumpkin.id],
+        hand: [
+          instantiate(carrot),
+          instantiate(water),
+          instantiate(water),
+          instantiate(pumpkin),
+        ],
         expected: [0, 3],
       },
     ])('retrieves crop indices in hand ($hand)', ({ hand, expected }) => {

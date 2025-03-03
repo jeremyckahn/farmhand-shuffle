@@ -1,11 +1,10 @@
+import { stubCarrot, stubWater } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
-import { carrot, water } from '../../cards'
-import { IPlayedCrop } from '../../types'
-
 import {
   InvalidCardError,
   InvalidCardIndexError,
 } from '../../services/Rules/errors'
+import { IPlayedCrop } from '../../types'
 
 import { moveCropFromHandToField } from '.'
 
@@ -15,7 +14,7 @@ describe('moveCropFromHandToField', () => {
     const [player1Id] = Object.keys(game.table.players)
 
     // eslint-disable-next-line functional/immutable-data
-    game.table.players[player1Id].hand[0] = carrot.id
+    game.table.players[player1Id].hand[0] = stubCarrot
     const newGame = moveCropFromHandToField(game, player1Id, 0)
 
     expect(newGame.table.players[player1Id].hand).toEqual(
@@ -23,7 +22,7 @@ describe('moveCropFromHandToField', () => {
     )
 
     expect(newGame.table.players[player1Id].field.crops).toEqual<IPlayedCrop[]>(
-      [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }]
+      [{ instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 }]
     )
   })
 
@@ -45,7 +44,7 @@ describe('moveCropFromHandToField', () => {
     const [player1Id] = Object.keys(game.table.players)
 
     // eslint-disable-next-line functional/immutable-data
-    game.table.players[player1Id].hand[0] = water.id
+    game.table.players[player1Id].hand[0] = stubWater
 
     expect(() => {
       moveCropFromHandToField(game, player1Id, 0)

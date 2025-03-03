@@ -38,6 +38,10 @@ export interface ICard {
   ) => GameEventPayload[GameEventPayloadKey]
 }
 
+export interface Instance {
+  instanceId: uuidString
+}
+
 export interface ICrop extends ICard {
   readonly type: CardType.CROP
 
@@ -48,8 +52,12 @@ export interface ICrop extends ICard {
   readonly waterToMature: number
 }
 
-export const isCropCard = (card: ICard): card is ICrop => {
-  return card.type === CardType.CROP
+export interface CropInstance extends ICrop, Instance {}
+
+export const isCropCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance => {
+  return cardInstance.type === CardType.CROP
 }
 
 /**
@@ -57,9 +65,9 @@ export const isCropCard = (card: ICard): card is ICrop => {
  */
 export interface IPlayedCrop {
   /**
-   * The card ID of this crop.
+   * The card instance of this crop.
    */
-  readonly id: ICard['id']
+  instance: CropInstance
 
   /**
    * How many water cards are attached to this crop.
@@ -96,8 +104,14 @@ export interface IWater extends ICard {
   readonly type: CardType.WATER
 }
 
-export const isWaterCard = (card: ICard): card is IWater => {
-  return card.type === CardType.WATER
+export interface WaterInstance extends IWater, Instance {}
+
+export type CardInstance = CropInstance | WaterInstance
+
+export const isWaterCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is WaterInstance => {
+  return cardInstance.type === CardType.WATER
 }
 
 export interface IField {
@@ -115,17 +129,17 @@ export interface IPlayer {
   /**
    * Cards that the player can draw from.
    */
-  readonly deck: ICard['id'][]
+  readonly deck: CardInstance[]
 
   /**
    * Cards in the player's hand.
    */
-  readonly hand: ICard['id'][]
+  readonly hand: CardInstance[]
 
   /**
    * Cards that have been used.
    */
-  readonly discardPile: ICard['id'][]
+  readonly discardPile: CardInstance[]
 
   /**
    * Cards in the player's Field.

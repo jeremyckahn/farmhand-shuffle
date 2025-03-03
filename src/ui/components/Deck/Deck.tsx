@@ -1,12 +1,9 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
-
 import { MouseEventHandler } from 'react'
 
-import * as cards from '../../../game/cards'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import { assertIsCardId } from '../../../game/types/guards'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { isSxArray } from '../../type-guards'
@@ -59,21 +56,14 @@ export const Deck = ({
       ]}
       {...rest}
     >
-      {player.deck.map((_, idx, deck) => {
-        // NOTE: Looping backwards through the deck prevents card animation
-        // artifacting (for some reason)
-        const cardId = deck[deck.length - 1 - idx]
-
-        assertIsCardId(cardId)
-
-        const card = cards[cardId]
+      {player.deck.map((cardInstance, idx) => {
         const offset = (deckThicknessPx / player.deck.length) * idx
         const isTopCard = idx === player.deck.length - 1
 
         return (
           <Card
-            key={`${cardId}_${idx}`}
-            card={card}
+            key={cardInstance.instanceId}
+            cardInstance={cardInstance}
             cardIdx={idx}
             playerId={player.id}
             position="absolute"

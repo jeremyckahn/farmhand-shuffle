@@ -1,8 +1,9 @@
 import shuffle from 'lodash.shuffle'
 import { MockInstance } from 'vitest'
 
+import { stubPumpkin } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
-import { carrot, pumpkin } from '../../cards'
+import { carrot, instantiate } from '../../cards'
 import { DECK_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
 import { updatePlayer } from '../../reducers/update-player'
 import { factory } from '../../services/Factory'
@@ -30,7 +31,7 @@ beforeEach(() => {
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
 // eslint-disable-next-line functional/immutable-data
-player2.deck[DECK_SIZE - 1] = pumpkin.id
+player2.deck[DECK_SIZE - 1] = stubPumpkin
 
 describe('startTurn', () => {
   let game: IGame
@@ -77,12 +78,16 @@ describe('startTurn', () => {
   })
 
   test('resets wasWateredTuringTurn for each crop in the field', () => {
+    const carrot1 = instantiate(carrot)
+    const carrot2 = instantiate(carrot)
+    const carrot3 = instantiate(carrot)
+
     let newGame = updatePlayer(game, player1Id, {
       field: {
         crops: [
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
-          { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
+          { instance: carrot1, wasWateredTuringTurn: true, waterCards: 1 },
+          { instance: carrot2, wasWateredTuringTurn: false, waterCards: 0 },
+          { instance: carrot3, wasWateredTuringTurn: true, waterCards: 1 },
         ],
       },
     })
@@ -91,9 +96,9 @@ describe('startTurn', () => {
 
     expect(newGame.table.players[player1Id].field.crops).toEqual<IPlayedCrop[]>(
       [
-        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 1 },
-        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
-        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 1 },
+        { instance: carrot1, wasWateredTuringTurn: false, waterCards: 1 },
+        { instance: carrot2, wasWateredTuringTurn: false, waterCards: 0 },
+        { instance: carrot3, wasWateredTuringTurn: false, waterCards: 1 },
       ]
     )
   })

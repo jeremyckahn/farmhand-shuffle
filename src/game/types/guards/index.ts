@@ -1,6 +1,29 @@
+import {
+  CardInstance,
+  CardType,
+  GameState,
+  ICrop,
+  IField,
+  IGame,
+  IPlayer,
+  ITable,
+} from '../'
 import * as cards from '../../cards'
-import { CardType, GameState, ICrop, IField, IGame, IPlayer, ITable } from '../'
 import { GameStateCorruptError } from '../../services/Rules/errors'
+
+export const isCardInstance = (obj: unknown): obj is CardInstance => {
+  if (typeof obj !== 'object' || obj === null) return false
+
+  return (
+    'id' in obj &&
+    typeof obj.id === 'string' &&
+    'type' in obj &&
+    typeof obj.type === 'string' &&
+    obj.type in CardType &&
+    'instanceId' in obj &&
+    typeof obj.instanceId === 'string'
+  )
+}
 
 export const isCrop = (obj: unknown): obj is ICrop => {
   if (typeof obj !== 'object' || obj === null) return false
@@ -19,6 +42,7 @@ export const isField = (obj: unknown): obj is IField => {
   return (
     'crops' in obj &&
     Array.isArray(obj.crops) &&
+    // TODO: This should be verifying that the contents are IPlayedCrops
     obj.crops.every(crop => isCrop(crop) || crop === undefined)
   )
 }
@@ -33,13 +57,13 @@ export const isPlayer = (obj: unknown): obj is IPlayer => {
     typeof obj.funds === 'number' &&
     'deck' in obj &&
     Array.isArray(obj.deck) &&
-    obj.deck.every(card => typeof card === 'string') &&
+    obj.deck.every(isCardInstance) &&
     'hand' in obj &&
     Array.isArray(obj.hand) &&
-    obj.hand.every(card => typeof card === 'string') &&
+    obj.hand.every(isCardInstance) &&
     'discardPile' in obj &&
     Array.isArray(obj.discardPile) &&
-    obj.discardPile.every(card => typeof card === 'string') &&
+    obj.discardPile.every(isCardInstance) &&
     'field' in obj &&
     isField(obj.field)
   )

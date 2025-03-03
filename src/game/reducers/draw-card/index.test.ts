@@ -2,7 +2,7 @@ import { MockInstance } from 'vitest'
 import shuffle from 'lodash.shuffle'
 
 import { stubGame } from '../../../test-utils/stubs/game'
-import { carrot, pumpkin, water } from '../../cards'
+import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { ICard, IGame, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
@@ -93,9 +93,13 @@ describe('drawCard', () => {
 
       const [player1Id] = Object.keys(game.table.players)
 
-      const deck = [pumpkin.id, water.id, pumpkin.id]
-      const discardPile = [water.id, carrot.id]
-      const hand = [pumpkin.id]
+      const deck = [
+        instantiate(pumpkin),
+        instantiate(water),
+        instantiate(pumpkin),
+      ]
+      const discardPile = [instantiate(water), instantiate(carrot)]
+      const hand = [instantiate(pumpkin)]
       game = updatePlayer(game, player1Id, { deck, discardPile, hand })
 
       const newGame = drawCard(

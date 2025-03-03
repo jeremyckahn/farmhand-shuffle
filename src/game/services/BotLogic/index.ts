@@ -1,7 +1,6 @@
-import * as cards from '../../../game/cards'
 import { randomNumber } from '../../../services/RandomNumber'
 import { STANDARD_FIELD_SIZE } from '../../config'
-import { IGame, isCropCard, isWaterCard } from '../../types'
+import { IGame, isCropCardInstance, isWaterCardInstance } from '../../types'
 import { assertIsCardId } from '../../types/guards'
 import { lookup } from '../Lookup'
 
@@ -40,10 +39,8 @@ export class BotLogicService {
     } = game.table.players[playerId]
 
     let fieldCropIdxsThatNeedWater: number[] = []
-    const { length: numberOfWaterCardsInHand } = hand.filter(cardId => {
-      assertIsCardId(cardId)
-
-      return isWaterCard(cards[cardId])
+    const { length: numberOfWaterCardsInHand } = hand.filter(cardInstance => {
+      return isWaterCardInstance(cardInstance)
     })
 
     for (let i = 0; i < crops.length; i++) {
@@ -53,12 +50,11 @@ export class BotLogicService {
       }
 
       const plantedCrop = crops[i]
-      assertIsCardId(plantedCrop.id)
-      const card = cards[plantedCrop.id]
+      assertIsCardId(plantedCrop.instance.id)
 
-      if (isCropCard(card)) {
+      if (isCropCardInstance(plantedCrop.instance)) {
         if (
-          plantedCrop.waterCards < card.waterToMature &&
+          plantedCrop.waterCards < plantedCrop.instance.waterToMature &&
           plantedCrop.wasWateredTuringTurn === false
         ) {
           fieldCropIdxsThatNeedWater = [...fieldCropIdxsThatNeedWater, i]

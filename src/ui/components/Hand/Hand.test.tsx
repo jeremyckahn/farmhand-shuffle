@@ -1,20 +1,26 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { carrot, pumpkin, water } from '../../../game/cards'
+import { instantiate, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { cardClassName } from '../Card/CardTemplate'
 import { ActorContext } from '../Game/ActorContext'
 
+import {
+  stubCarrot,
+  stubPumpkin,
+  stubWater,
+} from '../../../test-utils/stubs/cards'
+
 import { getGapPixelWidth, Hand, HandProps } from './Hand'
 
 const baseGame = stubGame()
 
-const handCards = [carrot, pumpkin, water]
+const handCards = [stubCarrot, stubPumpkin, stubWater]
 const game = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
-  hand: handCards.map(({ id }) => id),
+  hand: handCards,
 })
 
 const StubHand = (overrides: Partial<HandProps>) => {
@@ -135,9 +141,9 @@ describe('Hand', () => {
 
     await userEvent.click(card1!)
 
-    const newHand = [...handCards, water]
+    const newHand = [...handCards, instantiate(water)]
     const newGame = updatePlayer(game, game.sessionOwnerPlayerId, {
-      hand: newHand.map(({ id }) => id),
+      hand: newHand,
     })
 
     render(<StubHand game={newGame} />)

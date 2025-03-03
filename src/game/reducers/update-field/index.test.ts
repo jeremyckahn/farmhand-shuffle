@@ -1,6 +1,8 @@
 import { stubGame } from '../../../test-utils/stubs/game'
-import { carrot } from '../../cards'
 import { IField } from '../../types'
+
+import { factory } from '../../services/Factory'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 
 import { updateField } from '.'
 
@@ -9,7 +11,7 @@ describe('updateField', () => {
     const game = stubGame()
     const [player1Id] = Object.keys(game.table.players)
     const field: IField = {
-      crops: [{ ...carrot, wasWateredTuringTurn: false, waterCards: 0 }],
+      crops: [factory.buildPlayedCrop(stubCarrot)],
     }
 
     const newGame = updateField(game, player1Id, field)

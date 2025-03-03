@@ -1,10 +1,14 @@
 import { enqueueActions } from 'xstate'
 
-import * as cards from '../../../cards'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { updatePlayedCrop } from '../../../reducers/update-played-crop'
-import { GameEvent, GameState, IPlayedCrop, isWaterCard } from '../../../types'
-import { assertCurrentPlayer, assertIsCardId } from '../../../types/guards'
+import {
+  GameEvent,
+  GameState,
+  IPlayedCrop,
+  isWaterCardInstance,
+} from '../../../types'
+import { assertCurrentPlayer } from '../../../types/guards'
 import { GameStateCorruptError } from '../errors'
 
 import { RulesMachineConfig } from './types'
@@ -26,11 +30,8 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
 
         const waterCardInHandIdx = game.table.players[
           currentPlayerId
-        ].hand.findIndex(cardId => {
-          assertIsCardId(cardId)
-          const card = cards[cardId]
-
-          return isWaterCard(card)
+        ].hand.findIndex(cardInstance => {
+          return isWaterCardInstance(cardInstance)
         })
 
         const [cropIdxInFieldToWater] = fieldCropIndicesToWaterDuringBotTurn

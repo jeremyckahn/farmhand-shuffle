@@ -1,11 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { factory } from '../../../game/services/Factory'
 import { updateField } from '../../../game/reducers/update-field'
+import { factory } from '../../../game/services/Factory'
+import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
-import { carrot, pumpkin } from '../../../game/cards'
-
 import { ActorContext } from '../Game/ActorContext'
 
 import {
@@ -19,12 +18,9 @@ import {
 let gameStub = stubGame()
 const opponentPlayerId = Object.keys(gameStub.table.players)[1]
 
-const fieldCrop1 = carrot
-const fieldCrop2 = pumpkin
-
 const cropsStub = [
-  { ...factory.buildPlayedCrop(fieldCrop1), waterCards: 1 },
-  { ...factory.buildPlayedCrop(fieldCrop2), waterCards: 3 },
+  { ...factory.buildPlayedCrop(stubCarrot), waterCards: 1 },
+  { ...factory.buildPlayedCrop(stubPumpkin), waterCards: 3 },
 ]
 
 gameStub = updateField(gameStub, gameStub.sessionOwnerPlayerId, {

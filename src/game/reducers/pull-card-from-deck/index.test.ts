@@ -1,11 +1,11 @@
 import shuffle from 'lodash.shuffle'
 import { MockInstance } from 'vitest'
 
+import { stubPumpkin, stubWater } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import { pumpkin, water } from '../../cards'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { ICard } from '../../types'
+import { ICard, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
 import { pullCardFromDeck } from '.'
@@ -37,14 +37,14 @@ describe('pullCardFromDeck', () => {
     let game = stubGame()
     const player1Id = stubPlayer1.id
 
-    const deck = [pumpkin.id, water.id]
-    const hand: string[] = []
+    const deck = [stubPumpkin, stubWater]
+    const hand: IPlayer['hand'] = []
 
     game = updatePlayer(game, player1Id, { deck, hand })
     game = pullCardFromDeck(game, player1Id, 1)
 
-    expect(game.table.players[player1Id].hand).toEqual([water.id])
-    expect(game.table.players[player1Id].deck).toEqual([pumpkin.id])
+    expect(game.table.players[player1Id].hand).toEqual([stubWater])
+    expect(game.table.players[player1Id].deck).toEqual([stubPumpkin])
   })
 
   describe('drawing the last card in the deck', () => {
@@ -53,9 +53,9 @@ describe('pullCardFromDeck', () => {
 
       const [player1Id] = Object.keys(game.table.players)
 
-      const deck = [pumpkin.id]
-      const discardPile = [water.id]
-      const hand: string[] = []
+      const deck = [stubPumpkin]
+      const discardPile = [stubWater]
+      const hand: IPlayer['hand'] = []
       game = updatePlayer(game, player1Id, { deck, discardPile, hand })
 
       const newGame = pullCardFromDeck(game, player1Id, 0)
@@ -73,8 +73,8 @@ describe('pullCardFromDeck', () => {
     let game = stubGame()
     const player1Id = stubPlayer1.id
 
-    const deck = [pumpkin.id, water.id]
-    const hand: string[] = []
+    const deck = [stubPumpkin, stubWater]
+    const hand: IPlayer['hand'] = []
 
     game = updatePlayer(game, player1Id, { deck, hand })
 

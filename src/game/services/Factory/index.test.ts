@@ -1,11 +1,11 @@
 import shuffle from 'lodash.shuffle'
 import { MockInstance } from 'vitest'
 
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
-import { isField, isGame, isPlayer, isTable } from '../../types/guards'
-import { carrot } from '../../cards'
 import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
 import { ICard, IPlayedCrop } from '../../types'
+import { isField, isGame, isPlayer, isTable } from '../../types/guards'
 
 import { factory } from '.'
 
@@ -99,10 +99,10 @@ describe('Factory', () => {
 
   describe('buildPlayedCrop', () => {
     test('builds a played crop', () => {
-      const playedCard = factory.buildPlayedCrop(carrot)
+      const playedCard = factory.buildPlayedCrop(stubCarrot)
 
       expect(playedCard).toEqual<IPlayedCrop>({
-        id: carrot.id,
+        instance: stubCarrot,
         wasWateredTuringTurn: false,
         waterCards: 0,
       })

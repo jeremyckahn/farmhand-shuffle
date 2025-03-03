@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { carrot } from '../../../game/cards'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 
 import { PlayedCrop } from './PlayedCrop'
 
@@ -20,11 +20,11 @@ type Story = StoryObj<typeof meta>
 export const PlayedCropCard: Story = {
   args: {
     cropCardProps: {
-      card: carrot,
+      cardInstance: stubCarrot,
       cardIdx: 0,
       playerId: '',
       playedCrop: {
-        id: carrot.id,
+        instance: stubCarrot,
         wasWateredTuringTurn: false,
         waterCards: 1,
       },
@@ -36,11 +36,11 @@ export const PlayedCropCard: Story = {
 export const PlayedCropCardWithExtraWater: Story = {
   args: {
     cropCardProps: {
-      card: carrot,
+      cardInstance: stubCarrot,
       cardIdx: 0,
       playerId: '',
       playedCrop: {
-        id: carrot.id,
+        instance: stubCarrot,
         wasWateredTuringTurn: false,
         waterCards: 5,
       },

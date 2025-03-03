@@ -1,21 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useDebounceCallback, useWindowSize } from 'usehooks-ts'
 import Box, { BoxProps } from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
+import React, { useEffect, useRef, useState } from 'react'
+import { useDebounceCallback, useWindowSize } from 'usehooks-ts'
 
-import { PlayedCrop } from '../PlayedCrop'
-import * as cards from '../../../game/cards'
-import { lookup } from '../../../game/services/Lookup'
-import { GameState, IGame, IPlayer } from '../../../game/types'
-import { assertIsCardId } from '../../../game/types/guards'
 import {
   SELECTED_CARD_ELEVATION,
   STANDARD_FIELD_SIZE,
 } from '../../../game/config'
-import { CardSize } from '../../types'
+import { lookup } from '../../../game/services/Lookup'
+import { GameState, IGame, IPlayer } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useGameRules } from '../../hooks/useGameRules'
+import { CardSize } from '../../types'
+import { PlayedCrop } from '../PlayedCrop'
 
 const deselectedIdx = -1
 const selectedCardYOffset = -25
@@ -168,30 +166,21 @@ export const Field = ({
       >
         {!isSessionOwnerPlayer && emptyCardSlots}
         {crops.map((playedCrop, idx) => {
-          const { id: cardId, waterCards } = playedCrop
+          const { instance: cardInstance } = playedCrop
 
-          assertIsCardId(cardId)
-
-          const card = cards[cardId]
           const isSelected = selectedCardIdx === idx
           const isInBackground =
             selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
-            <Grid
-              key={`${idx}_${cardId}_${waterCards}`}
-              item
-              xs={6}
-              sm={4}
-              md={2}
-            >
+            <Grid key={cardInstance.instanceId} item xs={6} sm={4} md={2}>
               <PlayedCrop
                 aria-label={
                   isSelected ? selectedCardLabel : unselectedCardLabel
                 }
                 tabIndex={0}
                 cropCardProps={{
-                  card,
+                  cardInstance,
                   cardIdx: idx,
                   isInField: true,
                   isFocused: isSelected,
