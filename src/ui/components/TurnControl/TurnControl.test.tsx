@@ -1,12 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { carrot } from '../../../game/cards'
 import { updateGame } from '../../../game/reducers/update-game'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { RulesService } from '../../../game/services/Rules'
 import { GameEvent, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import * as useGameRulesModule from '../../hooks/useGameRules'
@@ -29,7 +29,9 @@ describe('TurnControl Component', () => {
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
-        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+        crops: [
+          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+        ],
       },
     })
 
@@ -95,7 +97,9 @@ describe('TurnControl Component', () => {
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
-        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+        crops: [
+          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+        ],
       },
     })
 
@@ -120,7 +124,9 @@ describe('TurnControl Component', () => {
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
-        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+        crops: [
+          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+        ],
       },
     })
 
@@ -197,7 +203,9 @@ describe('TurnControl Component', () => {
     let game = stubGame()
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
-        crops: [{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }],
+        crops: [
+          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+        ],
       },
     })
 

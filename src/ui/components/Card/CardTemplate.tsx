@@ -12,8 +12,8 @@ import {
   CardType,
   GameEvent,
   GameState,
-  isCropCard,
-  isWaterCard,
+  isCropCardInstance,
+  isWaterCardInstance,
 } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useGameRules } from '../../hooks/useGameRules'
@@ -34,7 +34,7 @@ const cropWaterIndicatorOutlineColor = '#0072ff'
 export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
   function CardTemplate(
     {
-      card,
+      cardInstance: card,
       cardIdx,
       playerId,
       children,
@@ -202,7 +202,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                       canBeWatered &&
                       gameState === GameState.PLAYER_WATERING_CROP &&
                       game.currentPlayerId === playerId &&
-                      isCropCard(card) && {
+                      isCropCardInstance(card) && {
                         filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
                       }),
                   },
@@ -250,8 +250,8 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                         variant="contained"
                         onClick={() => void handlePlayCard()}
                       >
-                        {isCropCard(card) && 'Play crop'}
-                        {isWaterCard(card) && 'Water a crop'}
+                        {isCropCardInstance(card) && 'Play crop'}
+                        {isWaterCardInstance(card) && 'Water a crop'}
                       </Button>
                     </Typography>
                   </Box>

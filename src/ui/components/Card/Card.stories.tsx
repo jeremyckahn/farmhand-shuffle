@@ -1,12 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { spyOn } from '@storybook/test'
 
-import { carrot, pumpkin, water } from '../../../game/cards'
 import { GameState } from '../../../game/types'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { CardSize } from '../../types'
 import { ActorContext } from '../Game/ActorContext'
+
+import {
+  stubCarrot,
+  stubPumpkin,
+  stubWater,
+} from '../../../test-utils/stubs/cards'
 
 import { Card } from './Card'
 
@@ -25,7 +30,7 @@ type Story = StoryObj<typeof meta>
 
 export const CropCard: Story = {
   args: {
-    card: carrot,
+    cardInstance: stubCarrot,
     cardIdx: 0,
     playerId: '',
     isFlipped: false,
@@ -34,7 +39,7 @@ export const CropCard: Story = {
 
 export const PlayableCropCard: Story = {
   args: {
-    card: pumpkin,
+    cardInstance: stubPumpkin,
     cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
@@ -55,7 +60,7 @@ export const PlayableCropCard: Story = {
 
 export const PlayableWaterCard: Story = {
   args: {
-    card: water,
+    cardInstance: stubWater,
     cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
@@ -76,7 +81,7 @@ export const PlayableWaterCard: Story = {
 
 export const WaterableCropCard: Story = {
   args: {
-    card: pumpkin,
+    cardInstance: stubPumpkin,
     cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
@@ -99,7 +104,7 @@ export const WaterableCropCard: Story = {
 
 export const WaterCard: Story = {
   args: {
-    card: water,
+    cardInstance: stubWater,
     cardIdx: 0,
     playerId: '',
     isFlipped: false,
@@ -108,7 +113,7 @@ export const WaterCard: Story = {
 
 export const SmallCard: Story = {
   args: {
-    card: pumpkin,
+    cardInstance: stubPumpkin,
     cardIdx: 0,
     playerId: '',
     size: CardSize.SMALL,
@@ -118,7 +123,7 @@ export const SmallCard: Story = {
 
 export const MediumCard: Story = {
   args: {
-    card: pumpkin,
+    cardInstance: stubPumpkin,
     cardIdx: 0,
     playerId: '',
     isFlipped: false,
@@ -128,7 +133,7 @@ export const MediumCard: Story = {
 
 export const LargeCard: Story = {
   args: {
-    card: pumpkin,
+    cardInstance: stubPumpkin,
     cardIdx: 0,
     playerId: '',
     isFlipped: false,

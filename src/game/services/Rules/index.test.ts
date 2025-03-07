@@ -1,10 +1,20 @@
 import { randomNumber } from '../../../services/RandomNumber'
+import { stubWater } from '../../../test-utils/stubs/cards'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
-import { carrot, pumpkin, water } from '../../cards'
+import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../config'
 import * as startTurnModule from '../../reducers/start-turn'
 import { updatePlayer } from '../../reducers/update-player'
-import { GameEvent, GameState, IPlayedCrop } from '../../types'
+import {
+  CardInstance,
+  CropInstance,
+  GameEvent,
+  GameState,
+  ICard,
+  IField,
+  IPlayedCrop,
+  IPlayer,
+} from '../../types'
 import { factory } from '../Factory'
 
 import { rules } from '.'
@@ -24,6 +34,16 @@ afterEach(() => {
   vi.useRealTimers()
 })
 
+const expectInstance = ({ id }: ICard): CropInstance => {
+  return expect.objectContaining<Partial<CropInstance>>({
+    id,
+  }) as unknown as CropInstance
+}
+
+const carrot1 = instantiate(carrot)
+const carrot2 = instantiate(carrot)
+const pumpkin1 = instantiate(pumpkin)
+
 /**
  * Initializes a game actor and sets up each player with a played crop.
  */
@@ -41,10 +61,10 @@ const createSetUpGameActor = () => {
   } = gameActor.getSnapshot()
 
   game = updatePlayer(game, player1.id, {
-    hand: [carrot.id],
+    hand: [instantiate(carrot)],
   })
   game = updatePlayer(game, player2.id, {
-    hand: [carrot.id],
+    hand: [instantiate(carrot)],
   })
 
   gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
@@ -99,7 +119,7 @@ describe('createGameStateMachine', () => {
       } = gameActor.getSnapshot()
 
       game = updatePlayer(game, player1.id, {
-        hand: [carrot.id, carrot.id],
+        hand: [carrot1, carrot2],
       })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
@@ -126,8 +146,8 @@ describe('createGameStateMachine', () => {
       expect(gameResult.table.players[player1.id].field.crops).toEqual<
         IPlayedCrop[]
       >([
-        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
-        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+        { instance: carrot1, wasWateredTuringTurn: false, waterCards: 0 },
+        { instance: carrot2, wasWateredTuringTurn: false, waterCards: 0 },
       ])
     })
 
@@ -145,10 +165,10 @@ describe('createGameStateMachine', () => {
       } = gameActor.getSnapshot()
 
       game = updatePlayer(game, player1.id, {
-        hand: [carrot.id],
+        hand: [carrot1],
       })
       game = updatePlayer(game, player2.id, {
-        hand: [carrot.id],
+        hand: [carrot2],
       })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
@@ -175,7 +195,7 @@ describe('createGameStateMachine', () => {
       expect(gameResult.currentPlayerId).toEqual(player1.id)
       expect(gameResult.table.players[player2.id].field.crops).toEqual<
         IPlayedCrop[]
-      >([{ id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 }])
+      >([{ instance: carrot2, wasWateredTuringTurn: false, waterCards: 0 }])
     })
 
     it('does not let game start until all players have set up', () => {
@@ -192,7 +212,7 @@ describe('createGameStateMachine', () => {
       } = gameActor.getSnapshot()
 
       game = updatePlayer(game, player1.id, {
-        hand: [carrot.id],
+        hand: [carrot1],
       })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
@@ -224,7 +244,7 @@ describe('createGameStateMachine', () => {
       } = gameActor.getSnapshot()
 
       game = updatePlayer(game, player1.id, {
-        hand: [pumpkin.id],
+        hand: [pumpkin1],
       })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
@@ -244,8 +264,12 @@ describe('createGameStateMachine', () => {
       expect(gameResult.table.players[player1.id].field.crops).toEqual<
         IPlayedCrop[]
       >([
-        { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
-        { id: pumpkin.id, wasWateredTuringTurn: false, waterCards: 0 },
+        {
+          instance: expectInstance(carrot),
+          wasWateredTuringTurn: false,
+          waterCards: 0,
+        },
+        { instance: pumpkin1, wasWateredTuringTurn: false, waterCards: 0 },
       ])
     })
 
@@ -260,12 +284,12 @@ describe('createGameStateMachine', () => {
 
       const filledField = {
         crops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill(
-          factory.buildPlayedCrop(carrot)
+          factory.buildPlayedCrop(instantiate(carrot))
         ),
       }
 
       game = updatePlayer(game, player1.id, {
-        hand: [carrot.id],
+        hand: [instantiate(carrot)],
         field: filledField,
       })
 
@@ -292,10 +316,11 @@ describe('createGameStateMachine', () => {
       } = gameActor.getSnapshot()
 
       game = updatePlayer(game, player1.id, {
-        hand: [water.id],
+        hand: [instantiate(water)],
       })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+
       // NOTE: Plays the water card
       gameActor.send({
         type: GameEvent.PLAY_CARD,
@@ -320,7 +345,7 @@ describe('createGameStateMachine', () => {
         IPlayedCrop[]
       >([
         {
-          id: carrot.id,
+          instance: expectInstance(carrot),
           wasWateredTuringTurn: true,
           waterCards: 1,
         },
@@ -335,7 +360,7 @@ describe('createGameStateMachine', () => {
       } = gameActor.getSnapshot()
 
       game = updatePlayer(game, player1.id, {
-        hand: [water.id],
+        hand: [instantiate(water)],
       })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
@@ -368,7 +393,7 @@ describe('createGameStateMachine', () => {
       } = gameActor.getSnapshot()
 
       game = updatePlayer(game, player1.id, {
-        hand: [water.id],
+        hand: [instantiate(water)],
       })
 
       gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
@@ -420,77 +445,111 @@ describe('createGameStateMachine', () => {
   describe('bot turn action handling', () => {
     // NOTE: For each of these test cases, there was already a carrot in the
     // field as a result of createSetUpGameActor.
-    test.each([
+    test.each<{
+      startingHand: IPlayer['hand']
+      startingDeck: IPlayer['deck']
+      resultingFieldCrops: IField['crops']
+      resultingHand: IPlayer['hand']
+      resultingDeck: IPlayer['deck']
+    }>([
       {
         startingHand: [],
-        startingDeck: new Array(DECK_SIZE).fill(water.id),
+        startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
+          {
+            instance: expectInstance(carrot),
+            wasWateredTuringTurn: true,
+            waterCards: 1,
+          },
         ],
         resultingHand: [],
-        resultingDeck: new Array(DECK_SIZE - 1).fill(water.id),
+        resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
       },
 
       {
         startingHand: [],
         startingDeck: [
-          carrot.id,
-          ...new Array<string>(DECK_SIZE - 2).fill(water.id),
+          carrot1,
+          ...new Array<CardInstance>(DECK_SIZE - 2).fill(stubWater),
         ],
         resultingFieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
-          { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+          {
+            instance: expectInstance(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: 0,
+          },
+          {
+            instance: carrot1,
+            wasWateredTuringTurn: false,
+            waterCards: 0,
+          },
         ],
         resultingHand: [],
-        resultingDeck: new Array(DECK_SIZE - 2).fill(water.id),
+        resultingDeck: new Array<CardInstance>(DECK_SIZE - 2).fill(stubWater),
       },
 
       {
-        startingHand: [water.id],
-        startingDeck: new Array(DECK_SIZE).fill(water.id),
+        startingHand: [stubWater],
+        startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
+          {
+            instance: expectInstance(carrot),
+            wasWateredTuringTurn: true,
+            waterCards: 1,
+          },
         ],
         // NOTE: The water card from startingHand was played (as seen in
         // resultingFieldCrops). This is the water card pulled from the deck.
-        resultingHand: [water.id],
+        resultingHand: [stubWater],
 
-        resultingDeck: new Array(DECK_SIZE - 1).fill(water.id),
+        resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
       },
 
       {
-        startingHand: [pumpkin.id],
-        startingDeck: new Array(DECK_SIZE).fill(water.id),
+        startingHand: [pumpkin1],
+        startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
-          { id: pumpkin.id, wasWateredTuringTurn: false, waterCards: 0 },
+          {
+            instance: expectInstance(carrot),
+            wasWateredTuringTurn: true,
+            waterCards: 1,
+          },
+          { instance: pumpkin1, wasWateredTuringTurn: false, waterCards: 0 },
         ],
         resultingHand: [],
-        resultingDeck: new Array(DECK_SIZE - 1).fill(water.id),
+        resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
       },
 
       {
-        startingHand: [pumpkin.id, carrot.id],
-        startingDeck: new Array(DECK_SIZE).fill(water.id),
+        startingHand: [pumpkin1, carrot1],
+        startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
-          { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
-          { id: pumpkin.id, wasWateredTuringTurn: false, waterCards: 0 },
+          {
+            instance: expectInstance(carrot),
+            wasWateredTuringTurn: true,
+            waterCards: 1,
+          },
+          { instance: carrot1, wasWateredTuringTurn: false, waterCards: 0 },
+          { instance: pumpkin1, wasWateredTuringTurn: false, waterCards: 0 },
         ],
         resultingHand: [],
-        resultingDeck: new Array(DECK_SIZE - 1).fill(water.id),
+        resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
       },
 
       {
-        startingHand: [water.id, pumpkin.id, carrot.id],
-        startingDeck: new Array(DECK_SIZE).fill(water.id),
+        startingHand: [stubWater, pumpkin1, carrot1],
+        startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
-          { id: carrot.id, wasWateredTuringTurn: true, waterCards: 1 },
-          { id: pumpkin.id, wasWateredTuringTurn: false, waterCards: 0 },
+          {
+            instance: expectInstance(carrot),
+            wasWateredTuringTurn: true,
+            waterCards: 1,
+          },
+          { instance: carrot1, wasWateredTuringTurn: true, waterCards: 1 },
+          { instance: pumpkin1, wasWateredTuringTurn: false, waterCards: 0 },
         ],
         resultingHand: [],
-        resultingDeck: new Array(DECK_SIZE - 1).fill(water.id),
+        resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
       },
     ])(
       'plants and waters crops from starting hand $startingHand',

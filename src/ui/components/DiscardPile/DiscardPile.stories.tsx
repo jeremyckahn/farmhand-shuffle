@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { stubGame } from '../../../test-utils/stubs/game'
+import { carrot, instantiate, pumpkin, water } from '../../../game/cards'
 import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'
 import { IGame } from '../../../game/types'
+import { stubGame } from '../../../test-utils/stubs/game'
 
 import {
   DiscardPile,
@@ -41,8 +42,14 @@ export const SelfDiscardPile: Story = {
     cardSize: defaultDiscardPileCardSize,
     discardPileThicknessPx: defaultDiscardPileThicknessPx,
     game: (() => {
-      return ['carrot', 'pumpkin', 'pumpkin', 'water'].reduce(
-        (acc: IGame, cardId) => addToDiscardPile(acc, selfPlayerId, cardId),
+      return [
+        instantiate(carrot),
+        instantiate(pumpkin),
+        instantiate(pumpkin),
+        instantiate(water),
+      ].reduce(
+        (acc: IGame, cardInstance) =>
+          addToDiscardPile(acc, selfPlayerId, cardInstance),
         game
       )
     })(),
@@ -55,8 +62,14 @@ export const OpponentDiscardPile: Story = {
     cardSize: defaultDiscardPileCardSize,
     discardPileThicknessPx: defaultDiscardPileThicknessPx,
     game: (() => {
-      return ['carrot', 'pumpkin', 'pumpkin', 'water'].reduce(
-        (acc: IGame, cardId) => addToDiscardPile(acc, opponentPlayerId, cardId),
+      return [
+        instantiate(carrot),
+        instantiate(pumpkin),
+        instantiate(pumpkin),
+        instantiate(water),
+      ].reduce(
+        (acc: IGame, cardInstance) =>
+          addToDiscardPile(acc, opponentPlayerId, cardInstance),
         game
       )
     })(),

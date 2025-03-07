@@ -2,11 +2,9 @@ import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
 import React, { useContext, useEffect, useState } from 'react'
 
-import * as cards from '../../../game/cards'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { IGame, IPlayer } from '../../../game/types'
-import { assertIsCardId } from '../../../game/types/guards'
 import { useRejectingTimeout } from '../../../lib/hooks/useRejectingTimeout'
 import { math } from '../../../services/Math'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -139,10 +137,7 @@ export const Hand = ({
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
-      {player.hand.map((cardId, idx) => {
-        assertIsCardId(cardId)
-
-        const card = cards[cardId]
+      {player.hand.map((cardInstance, idx) => {
         const gapWidthTotal = gapWidthPx * player.hand.length
         const multipliedGap = math.scaleNumber(
           idx / player.hand.length,
@@ -171,9 +166,9 @@ export const Hand = ({
 
         return (
           <Card
-            key={`${cardId}_${idx}`}
+            key={cardInstance.instanceId}
             disableEnterAnimation
-            card={card}
+            cardInstance={cardInstance}
             cardIdx={idx}
             playerId={playerId}
             size={cardSize}

@@ -1,8 +1,10 @@
 import { randomNumber } from '../../../services/RandomNumber'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import { carrot, water } from '../../cards'
+import { instantiate, water } from '../../cards'
 import { DECK_SIZE } from '../../config'
+import { CardInstance, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
 import { drawValidStartingHand } from '.'
@@ -13,10 +15,13 @@ describe('drawValidStartingHand', () => {
 
     let game = stubGame()
 
-    const hand: string[] = []
+    const hand: IPlayer['hand'] = []
 
     // NOTE: The one crop card is placed at the bottom of the deck here
-    const deck = [...new Array<string>(DECK_SIZE - 1).fill(water.id), carrot.id]
+    const deck = [
+      ...new Array<CardInstance>(DECK_SIZE - 1).fill(instantiate(water)),
+      stubCarrot,
+    ]
 
     game = updatePlayer(game, stubPlayer1.id, {
       hand,
@@ -25,6 +30,6 @@ describe('drawValidStartingHand', () => {
 
     game = drawValidStartingHand(game, stubPlayer1)
 
-    expect(game.table.players[stubPlayer1.id].hand).toContain(carrot.id)
+    expect(game.table.players[stubPlayer1.id].hand).toContain(stubCarrot)
   })
 })

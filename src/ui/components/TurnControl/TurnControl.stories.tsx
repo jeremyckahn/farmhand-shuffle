@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { spyOn } from '@storybook/test'
 
-import { carrot } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { GameState } from '../../../game/types'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { ActorContext } from '../Game/ActorContext'
@@ -39,7 +39,11 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
       game = updatePlayer(game, stubPlayer1.id, {
         field: {
           crops: [
-            { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+            {
+              instance: stubCarrot,
+              wasWateredTuringTurn: false,
+              waterCards: 0,
+            },
           ],
         },
       })

@@ -1,8 +1,8 @@
-import { render } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
+import { render } from '@testing-library/react'
 
-import { carrot } from '../../../game/cards'
 import { IPlayedCrop } from '../../../game/types'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { ActorContext } from '../Game/ActorContext'
 
 import {
@@ -11,15 +11,15 @@ import {
   unfilledWaterIndicatorOpacity,
 } from './PlayedCrop'
 
-const stubCard = carrot
+const stubCardInstance = stubCarrot
 const stubWaterCards = 1
 const stubPlayedCrop: IPlayedCrop = {
-  id: stubCard.id,
+  instance: stubCardInstance,
   wasWateredTuringTurn: false,
   waterCards: stubWaterCards,
 }
-const stubCropCardProps = {
-  card: stubCard,
+const stubCropCardProps: PlayedCropProps['cropCardProps'] = {
+  cardInstance: stubCardInstance,
   playedCrop: stubPlayedCrop,
   cardIdx: 0,
   playerId: '',
@@ -39,14 +39,14 @@ describe('PlayedCrop', () => {
   test('renders played crop card', () => {
     render(<StubCropCard />)
 
-    expect(screen.findByText(stubCard.name))
+    expect(screen.findByText(stubCardInstance.name))
   })
 
   test('renders water indicators', () => {
     render(<StubCropCard />)
 
     expect(screen.getAllByAltText('Water card indicator')).toHaveLength(
-      stubCard.waterToMature
+      stubCardInstance.waterToMature
     )
   })
 

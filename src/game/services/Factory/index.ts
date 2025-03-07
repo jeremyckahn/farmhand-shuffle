@@ -2,10 +2,11 @@ import { v4 as uuid } from 'uuid'
 
 import { INITIAL_PLAYER_FUNDS } from '../../config'
 import { drawValidStartingHand } from '../../reducers/draw-valid-starting-hand'
+import { shuffleDeck } from '../../reducers/shuffle-deck'
 import { updateGame } from '../../reducers/update-game'
 import { updateTable } from '../../reducers/update-table'
 import {
-  ICrop,
+  CropInstance,
   IField,
   IGame,
   IPlayedCrop,
@@ -14,7 +15,6 @@ import {
   ITable,
 } from '../../types'
 import { validate } from '../Validation'
-import { shuffleDeck } from '../../reducers/shuffle-deck'
 
 export class FactoryService {
   buildField(overrides: Partial<IField> = {}): IField {
@@ -109,9 +109,9 @@ export class FactoryService {
     return game
   }
 
-  buildPlayedCrop({ id }: ICrop): IPlayedCrop {
+  buildPlayedCrop(cropInstance: CropInstance): IPlayedCrop {
     return {
-      id,
+      instance: cropInstance,
       wasWateredTuringTurn: false,
       waterCards: 0,
     }

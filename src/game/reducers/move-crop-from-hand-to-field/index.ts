@@ -18,10 +18,10 @@ export const moveCropFromHandToField = (
   }
 
   const newHand = array.removeAt(hand, cropCardIdx)
-  const cropCard = lookup.getCropFromHand(game, playerId, cropCardIdx)
+  const cropInstance = lookup.getCropFromHand(game, playerId, cropCardIdx)
 
   const playedCropCard: IPlayedCrop = {
-    id: cropCard.id,
+    instance: cropInstance,
     wasWateredTuringTurn: false,
     waterCards: 0,
   }

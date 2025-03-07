@@ -1,41 +1,32 @@
-import * as cards from '../../cards'
-import { ICard, IGame, IPlayer, isCropCard } from '../../types'
-import { assertIsCardId, isCrop } from '../../types/guards'
+import { IGame, IPlayer, isCropCardInstance } from '../../types'
+import { isCrop } from '../../types/guards'
 import { InvalidCardError, InvalidIdError } from '../Rules/errors'
 
 export class LookupService {
-  getCardFromHand = (
-    game: IGame,
-    playerId: IPlayer['id'],
-    cardIdx: number
-  ): ICard => {
+  getCardFromHand = (game: IGame, playerId: IPlayer['id'], cardIdx: number) => {
     const { hand } = game.table.players[playerId]
-    const cardId = hand[cardIdx]
+    const cardInstance = hand[cardIdx]
 
-    if (!cardId) {
+    if (!cardInstance) {
       throw new Error(
         `Card index ${cardIdx} is not in player ${playerId}'s hand`
       )
     }
 
-    assertIsCardId(cardId)
-
-    const card = cards[cardId]
-
-    return card
+    return cardInstance
   }
 
   /**
-   * @throws InvalidCardError if card is not an ICrop.
+   * @throws InvalidCardError if card is not a CropInstance.
    */
   getCropFromHand(game: IGame, playerId: IPlayer['id'], cardIdx: number) {
-    const card = this.getCardFromHand(game, playerId, cardIdx)
+    const cropInstance = this.getCardFromHand(game, playerId, cardIdx)
 
-    if (!isCrop(card)) {
-      throw new InvalidCardError(`${card.id} is not a crop card.`)
+    if (!isCrop(cropInstance)) {
+      throw new InvalidCardError(`${cropInstance.id} is not a crop card.`)
     }
 
-    return card
+    return cropInstance
   }
 
   /**
@@ -78,13 +69,9 @@ export class LookupService {
       i < howMany && i <= deck.length - 1 && cropCardIdxs.length < howMany;
       i++
     ) {
-      const cardId = deck[i]
+      const cardInstance = deck[i]
 
-      assertIsCardId(cardId)
-
-      const card = cards[cardId]
-
-      if (isCropCard(card)) {
+      if (isCropCardInstance(cardInstance)) {
         cropCardIdxs = [...cropCardIdxs, i]
       }
     }
@@ -94,12 +81,8 @@ export class LookupService {
 
   findCropIndexesInPlayerHand = (game: IGame, playerId: IPlayer['id']) => {
     const cropCardIdxsInPlayerHand = game.table.players[playerId].hand.reduce(
-      (acc: number[], cardId, idx) => {
-        assertIsCardId(cardId)
-
-        const card = cards[cardId]
-
-        if (isCropCard(card)) {
+      (acc: number[], cardInstance, idx) => {
+        if (isCropCardInstance(cardInstance)) {
           acc = [...acc, idx]
         }
 

@@ -1,10 +1,10 @@
 import { randomNumber } from '../../../services/RandomNumber'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import { carrot, water } from '../../cards'
+import { carrot, instantiate, water } from '../../cards'
 import { STANDARD_FIELD_SIZE } from '../../config'
 import { updatePlayer } from '../../reducers/update-player'
-import { IPlayedCrop } from '../../types'
+import { IField, IPlayedCrop, IPlayer } from '../../types'
 
 import { botLogic } from '.'
 
@@ -21,7 +21,7 @@ describe('BotLogicService', () => {
 
       {
         rngStub: 0,
-        hand: [carrot.id],
+        hand: [instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
         expectedResult: 1,
@@ -29,7 +29,7 @@ describe('BotLogicService', () => {
 
       {
         rngStub: 1,
-        hand: [carrot.id],
+        hand: [instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
         expectedResult: 1,
@@ -37,7 +37,7 @@ describe('BotLogicService', () => {
 
       {
         rngStub: 1,
-        hand: [carrot.id],
+        hand: [instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
         expectedResult: 1,
@@ -45,7 +45,7 @@ describe('BotLogicService', () => {
 
       {
         rngStub: 0,
-        hand: [carrot.id, carrot.id],
+        hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
         expectedResult: 1,
@@ -53,7 +53,7 @@ describe('BotLogicService', () => {
 
       {
         rngStub: 1,
-        hand: [carrot.id, carrot.id],
+        hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
         expectedResult: 2,
@@ -61,9 +61,9 @@ describe('BotLogicService', () => {
 
       {
         rngStub: 1,
-        hand: [carrot.id, carrot.id],
+        hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE - 1).fill({
-          id: carrot.id,
+          instance: instantiate(carrot),
           wasWateredTuringTurn: false,
           waterCards: 0,
         }),
@@ -73,9 +73,9 @@ describe('BotLogicService', () => {
 
       {
         rngStub: 1,
-        hand: [carrot.id],
+        hand: [instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill({
-          id: carrot.id,
+          instance: instantiate(carrot),
           wasWateredTuringTurn: false,
           waterCards: 0,
         }),
@@ -109,13 +109,21 @@ describe('BotLogicService', () => {
   })
 
   describe('getCropCardIndicesToWater', () => {
-    it.each([
+    it.each<{
+      hand: IPlayer['hand']
+      fieldCrops: IField['crops']
+      expectedResult: number[]
+    }>([
       { hand: [], fieldCrops: [], expectedResult: [] },
 
       {
-        hand: [water.id],
+        hand: [instantiate(water)],
         fieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+          {
+            instance: instantiate(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: 0,
+          },
         ],
         expectedResult: [0],
       },
@@ -123,32 +131,36 @@ describe('BotLogicService', () => {
       {
         hand: [],
         fieldCrops: [
-          { id: carrot.id, wasWateredTuringTurn: false, waterCards: 0 },
+          {
+            instance: instantiate(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: 0,
+          },
         ],
         expectedResult: [],
       },
 
       {
-        hand: [water.id],
+        hand: [instantiate(water)],
         fieldCrops: [],
         expectedResult: [],
       },
 
       {
-        hand: [water.id, water.id],
+        hand: [instantiate(water), instantiate(water)],
         fieldCrops: [
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: false,
             waterCards: carrot.waterToMature,
           },
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: false,
             waterCards: carrot.waterToMature,
           },
@@ -157,20 +169,20 @@ describe('BotLogicService', () => {
       },
 
       {
-        hand: [water.id, water.id],
+        hand: [instantiate(water), instantiate(water)],
         fieldCrops: [
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: false,
             waterCards: carrot.waterToMature,
           },
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
@@ -179,15 +191,15 @@ describe('BotLogicService', () => {
       },
 
       {
-        hand: [water.id, water.id],
+        hand: [instantiate(water), instantiate(water)],
         fieldCrops: [
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: true,
             waterCards: carrot.waterToMature - 1,
           },
           {
-            id: carrot.id,
+            instance: instantiate(carrot),
             wasWateredTuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },

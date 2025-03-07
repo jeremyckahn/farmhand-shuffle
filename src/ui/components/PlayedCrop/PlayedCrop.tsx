@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid'
 
 import { useTheme } from '@mui/material'
 
-import { IPlayedCrop, isCropCard } from '../../../game/types'
+import { IPlayedCrop, isCropCardInstance } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card, CropCardProps } from '../Card'
@@ -23,10 +23,14 @@ export const PlayedCrop = ({
   cropCardProps: { ref, ...cropCardProps },
   ...props
 }: PlayedCropProps) => {
-  const { card, playedCrop, size = CardSize.MEDIUM } = cropCardProps
+  const {
+    cardInstance: card,
+    playedCrop,
+    size = CardSize.MEDIUM,
+  } = cropCardProps
   const theme = useTheme()
 
-  if (!isCropCard(card)) {
+  if (!isCropCardInstance(card)) {
     throw new InvalidCardError(`${card.id} is not a crop card.`)
   }
 

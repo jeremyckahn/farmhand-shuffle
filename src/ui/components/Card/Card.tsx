@@ -4,10 +4,10 @@ import { forwardRef } from 'react'
 
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import {
-  ICard,
+  CardInstance,
   IPlayedCrop,
-  isCropCard,
-  isWaterCard,
+  isCropCardInstance,
+  isWaterCardInstance,
 } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
 import { CardSize } from '../../types'
@@ -17,7 +17,7 @@ import { CardTemplate } from './CardTemplate'
 
 export interface BaseCardProps extends BoxProps {
   canBeWatered?: boolean
-  card: ICard
+  cardInstance: CardInstance
   cardIdx: number
   disableEnterAnimation?: boolean
   imageScale?: number
@@ -44,19 +44,19 @@ export type WaterCardProps = BaseCardProps
 export type CardProps = CropCardProps | WaterCardProps
 
 const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {
-  return isCropCard(props.card)
+  return isCropCardInstance(props.cardInstance)
 }
 
 const isPropsWaterCardProps = (props: CardProps): props is WaterCardProps => {
-  return isWaterCard(props.card)
+  return isWaterCardInstance(props.cardInstance)
 }
 
 export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
   function CropCard({ playedCrop, ...props }, ref) {
     return (
       <CardTemplate {...props} ref={ref}>
-        {isCrop(props.card) ? (
-          <CardCropText crop={props.card} playedCrop={playedCrop} />
+        {isCrop(props.cardInstance) ? (
+          <CardCropText crop={props.cardInstance} playedCrop={playedCrop} />
         ) : null}
       </CardTemplate>
     )
