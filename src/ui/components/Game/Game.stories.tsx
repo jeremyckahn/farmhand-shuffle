@@ -39,21 +39,26 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const deck = stubDeck()
+const deck1 = stubDeck()
+const deck2 = stubDeck()
 
 // TODO: Move this setup to stubDeck
 for (let i = 0; i < 15; i++) {
   // eslint-disable-next-line functional/immutable-data
-  deck[i] = instantiate(carrot)
+  deck1[i] = instantiate(carrot)
+  // eslint-disable-next-line functional/immutable-data
+  deck2[i] = instantiate(carrot)
 }
 
 for (let i = 15; i < 30; i++) {
   // eslint-disable-next-line functional/immutable-data
-  deck[i] = instantiate(pumpkin)
+  deck1[i] = instantiate(pumpkin)
+  // eslint-disable-next-line functional/immutable-data
+  deck2[i] = instantiate(pumpkin)
 }
 
-const player1 = stubPlayer({ id: 'player-1', deck })
-const player2 = stubPlayer({ id: 'player-2', deck })
+const player1 = stubPlayer({ id: 'player-1', deck: deck1 })
+const player2 = stubPlayer({ id: 'player-2', deck: deck2 })
 
 export const BaseGame: Story = {
   args: {

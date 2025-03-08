@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper'
 import { darken, lighten } from '@mui/material/styles'
 import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import React, { useContext, useRef } from 'react'
 
 import {
@@ -144,156 +144,157 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       default:
     }
     return (
-      <AnimatePresence>
-        <Box
-          ref={containerRef}
-          className={cardClassName}
-          sx={[
-            {
-              perspective: '1000px',
-              height: CARD_DIMENSIONS[size].height,
-              width: CARD_DIMENSIONS[size].width,
-            },
-            ...(isSxArray(sx) ? sx : [sx]),
-          ]}
-          {...props}
+      <Box
+        ref={containerRef}
+        className={cardClassName}
+        sx={[
+          {
+            perspective: '1000px',
+            height: CARD_DIMENSIONS[size].height,
+            width: CARD_DIMENSIONS[size].width,
+          },
+          ...(isSxArray(sx) ? sx : [sx]),
+        ]}
+        {...props}
+      >
+        <motion.div
+          layoutId={card.instanceId}
+          transition={{ type: 'tween' }}
+          // FIXME: Determine if this is needed at all
+          initial={disableEnterAnimation ? false : { scale: 1 }}
+          animate={{ scale: 1 }}
+          style={{ originX: 0.5, originY: 0.5 }}
         >
-          <motion.div
-            initial={disableEnterAnimation ? false : { scale: 0 }}
-            animate={{ scale: 1 }}
-            style={{ originX: 0.5, originY: 0.5 }}
+          <Box
+            className={cardFlipWrapperClassName}
+            sx={[
+              {
+                height: CARD_DIMENSIONS[size].height,
+                position: 'relative',
+                transformStyle: 'preserve-3d',
+                width: CARD_DIMENSIONS[size].width,
+                ...(isFlipped && {
+                  transform: 'rotateY(180deg)',
+                }),
+                transition: theme.transitions.create([
+                  'transform',
+                  'box-shadow',
+                ]),
+              },
+            ]}
           >
-            <Box
-              className={cardFlipWrapperClassName}
+            <Paper
+              ref={cardRef}
+              {...paperProps}
+              data-chromatic="ignore"
               sx={[
                 {
-                  height: CARD_DIMENSIONS[size].height,
-                  position: 'relative',
-                  transformStyle: 'preserve-3d',
-                  width: CARD_DIMENSIONS[size].width,
-                  ...(isFlipped && {
-                    transform: 'rotateY(180deg)',
-                  }),
-                  transition: theme.transitions.create([
-                    'transform',
-                    'box-shadow',
-                  ]),
+                  backfaceVisibility: 'hidden',
+                  background:
+                    theme.palette.mode === 'light'
+                      ? darken(theme.palette.background.paper, 0.05)
+                      : lighten(theme.palette.background.paper, 0.15),
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 1,
+                  p: theme.spacing(1),
+                  position: 'absolute',
+                  width: 1,
+                  ...(isInField &&
+                    canBeWatered &&
+                    gameState === GameState.PLAYER_WATERING_CROP &&
+                    game.currentPlayerId === playerId &&
+                    isCropCardInstance(card) && {
+                      filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
+                    }),
                 },
               ]}
             >
-              <Paper
-                ref={cardRef}
-                {...paperProps}
-                data-chromatic="ignore"
-                sx={[
-                  {
-                    backfaceVisibility: 'hidden',
-                    background:
-                      theme.palette.mode === 'light'
-                        ? darken(theme.palette.background.paper, 0.05)
-                        : lighten(theme.palette.background.paper, 0.15),
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 1,
-                    p: theme.spacing(1),
-                    position: 'absolute',
-                    width: 1,
-                    ...(isInField &&
-                      canBeWatered &&
-                      gameState === GameState.PLAYER_WATERING_CROP &&
-                      game.currentPlayerId === playerId &&
-                      isCropCardInstance(card) && {
-                        filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
-                      }),
-                  },
-                ]}
+              <Typography
+                variant="overline"
+                sx={{ fontWeight: theme.typography.fontWeightBold }}
               >
-                <Typography
-                  variant="overline"
-                  sx={{ fontWeight: theme.typography.fontWeightBold }}
-                >
-                  {card.name}
-                </Typography>
-                <Box
-                  sx={{
-                    height: '50%',
-                    display: 'flex',
-                    background: theme.palette.common.white,
-                    backgroundImage: `url(${ui.dirt})`,
-                    backgroundSize: '100%',
-                    backgroundRepeat: 'repeat',
-                    borderColor: theme.palette.divider,
-                    borderRadius: `${theme.shape.borderRadius}px`,
-                    borderWidth: 1,
-                    borderStyle: 'solid',
-                    imageRendering: 'pixelated',
-                  }}
-                >
-                  <Image
-                    src={imageSrc}
-                    alt={card.name}
-                    sx={{
-                      height: `${100 * imageScale}%`,
-                      p: 0,
-                      m: 'auto',
-                      imageRendering: 'pixelated',
-                      filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
-                    }}
-                  />
-                </Box>
-                <Divider sx={{ my: theme.spacing(1) }} />
-                <Box sx={{ height: '50%' }}>{children}</Box>
-                {showPlayCardButton && (
-                  <Box position="absolute" right="-100%" width={1} px={1}>
-                    <Typography>
-                      <Button
-                        variant="contained"
-                        onClick={() => void handlePlayCard()}
-                      >
-                        {isCropCardInstance(card) && 'Play crop'}
-                        {isWaterCardInstance(card) && 'Water a crop'}
-                      </Button>
-                    </Typography>
-                  </Box>
-                )}
-                {showWaterCropButton && (
-                  <Box position="absolute" right="-100%" width={1} px={1}>
-                    <Typography>
-                      <Button variant="contained" onClick={handleWaterCrop}>
-                        Water crop
-                      </Button>
-                    </Typography>
-                  </Box>
-                )}
-              </Paper>
-              <Paper
-                {...paperProps}
+                {card.name}
+              </Typography>
+              <Box
                 sx={{
-                  alignItems: 'center',
-                  backfaceVisibility: 'hidden',
+                  height: '50%',
                   display: 'flex',
-                  height: 1,
-                  position: 'absolute',
-                  textAlign: 'center',
-                  transform: 'rotateY(180deg)',
-                  width: 1,
+                  background: theme.palette.common.white,
+                  backgroundImage: `url(${ui.dirt})`,
+                  backgroundSize: '100%',
+                  backgroundRepeat: 'repeat',
+                  borderColor: theme.palette.divider,
+                  borderRadius: `${theme.shape.borderRadius}px`,
+                  borderWidth: 1,
+                  borderStyle: 'solid',
+                  imageRendering: 'pixelated',
                 }}
               >
-                <Typography
-                  variant="h2"
+                <Image
+                  src={imageSrc}
+                  alt={card.name}
                   sx={{
-                    ...(size === CardSize.SMALL && theme.typography.h6),
-                    ...(size === CardSize.MEDIUM && theme.typography.h5),
-                    ...(size === CardSize.LARGE && theme.typography.h4),
+                    height: `${100 * imageScale}%`,
+                    p: 0,
+                    m: 'auto',
+                    imageRendering: 'pixelated',
+                    filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
                   }}
-                >
-                  Farmhand Shuffle
-                </Typography>
-              </Paper>
-            </Box>
-          </motion.div>
-        </Box>
-      </AnimatePresence>
+                />
+              </Box>
+              <Divider sx={{ my: theme.spacing(1) }} />
+              <Box sx={{ height: '50%' }}>{children}</Box>
+              {showPlayCardButton && (
+                <Box position="absolute" right="-100%" width={1} px={1}>
+                  <Typography>
+                    <Button
+                      variant="contained"
+                      onClick={() => void handlePlayCard()}
+                    >
+                      {isCropCardInstance(card) && 'Play crop'}
+                      {isWaterCardInstance(card) && 'Water a crop'}
+                    </Button>
+                  </Typography>
+                </Box>
+              )}
+              {showWaterCropButton && (
+                <Box position="absolute" right="-100%" width={1} px={1}>
+                  <Typography>
+                    <Button variant="contained" onClick={handleWaterCrop}>
+                      Water crop
+                    </Button>
+                  </Typography>
+                </Box>
+              )}
+            </Paper>
+            <Paper
+              {...paperProps}
+              sx={{
+                alignItems: 'center',
+                backfaceVisibility: 'hidden',
+                display: 'flex',
+                height: 1,
+                position: 'absolute',
+                textAlign: 'center',
+                transform: 'rotateY(180deg)',
+                width: 1,
+              }}
+            >
+              <Typography
+                variant="h2"
+                sx={{
+                  ...(size === CardSize.SMALL && theme.typography.h6),
+                  ...(size === CardSize.MEDIUM && theme.typography.h5),
+                  ...(size === CardSize.LARGE && theme.typography.h4),
+                }}
+              >
+                Farmhand Shuffle
+              </Typography>
+            </Paper>
+          </Box>
+        </motion.div>
+      </Box>
     )
   }
 )
