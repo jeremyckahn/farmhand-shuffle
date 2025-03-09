@@ -1,21 +1,29 @@
+import AccountBalance from '@mui/icons-material/AccountBalance'
+import AttachMoney from '@mui/icons-material/AttachMoney'
 import Accordion from '@mui/material/Accordion'
 import AccordionActions from '@mui/material/AccordionActions'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
 import useTheme from '@mui/material/styles/useTheme'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useContext } from 'react'
 
 import { GameEvent, GameState, IGame } from '../../../game/types'
 import { assertCurrentPlayer } from '../../../game/types/guards'
+import { formatNumber } from '../../../lib/formatting/numbers'
 import { useGameRules } from '../../hooks/useGameRules'
 import { ActorContext } from '../Game/ActorContext'
 import { ShellContext } from '../Game/ShellContext'
+import { STANDARD_TAX_AMOUNT } from '../../../game/config'
 
 export interface TurnControlProps {
   game: IGame
 }
+
+const playerFundWarningThreshold = STANDARD_TAX_AMOUNT * 2
 
 export const TurnControl = ({ game }: TurnControlProps) => {
   const theme = useTheme()
@@ -23,7 +31,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
   const { setIsHandInViewport } = useContext(ShellContext)
   const {
     gameState,
-    game: { currentPlayerId },
+    game: { currentPlayerId, sessionOwnerPlayerId },
   } = useGameRules()
 
   const handleCompleteSetup = () => {
@@ -107,31 +115,112 @@ export const TurnControl = ({ game }: TurnControlProps) => {
     default:
   }
 
+  const { [sessionOwnerPlayerId]: sessionOwnerPlayer, ...opponents } =
+    game.table.players
+
+  const sessionOwnerPlayerFunds = sessionOwnerPlayer.funds
+  const opponentFunds = game.table.players[Object.keys(opponents)[0]]?.funds
+
   return (
-    <Accordion
-      sx={{ width: 1, mb: 2, borderRadius: `${theme.shape.borderRadius}px` }}
-      expanded={control !== null}
-    >
-      <AccordionSummary
-        sx={{
-          '&:hover:not(.Mui-disabled)': {
-            cursor: 'default',
-          },
-          '& .MuiAccordionSummary-content': { justifyContent: 'center' },
-        }}
+    <Stack spacing={1}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        sx={{ color: theme.palette.common.white }}
       >
-        <Typography
-          variant="h6"
-          component="h1"
-          textAlign="center"
-          fontWeight="normal"
+        <Tooltip title="Your funds" arrow>
+          <Stack
+            direction="row"
+            alignItems="center"
+            color={{
+              cursor: 'help',
+              ...(sessionOwnerPlayerFunds <= playerFundWarningThreshold && {
+                color: theme.palette.error.dark,
+              }),
+            }}
+          >
+            <AttachMoney
+              sx={{
+                fontSize: theme.typography.body1.fontSize,
+                lineHeight: theme.typography.body1.lineHeight,
+              }}
+            />
+            <Typography>{formatNumber(sessionOwnerPlayerFunds)}</Typography>
+          </Stack>
+        </Tooltip>
+        <Tooltip title="Community funds" arrow>
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={0.5}
+            sx={{ cursor: 'help' }}
+          >
+            <AccountBalance
+              sx={{
+                fontSize: theme.typography.body1.fontSize,
+                lineHeight: theme.typography.body1.lineHeight,
+              }}
+            />
+            <Typography>{formatNumber(game.table.communityFund)}</Typography>
+          </Stack>
+        </Tooltip>
+        <Tooltip
+          title={`${funAnimalName(currentPlayerId ?? '')}'s funds`}
+          arrow
         >
-          {stateInfo}
-        </Typography>
-      </AccordionSummary>
-      <AccordionActions sx={{ justifyContent: 'center' }}>
-        {control}
-      </AccordionActions>
-    </Accordion>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              cursor: 'help',
+              ...(opponentFunds <= playerFundWarningThreshold && {
+                color: theme.palette.error.dark,
+              }),
+            }}
+          >
+            <AttachMoney
+              sx={{
+                fontSize: theme.typography.body1.fontSize,
+                lineHeight: theme.typography.body1.lineHeight,
+              }}
+            />
+            <Typography>{formatNumber(opponentFunds)}</Typography>
+          </Stack>
+        </Tooltip>
+      </Stack>
+      <Accordion
+        sx={{
+          width: 1,
+          mb: 2,
+          borderRadius: `${theme.shape.borderRadius}px`,
+          '&.Mui-expanded': {
+            // NOTE: Prevents the accordion from moving down when it expands
+            mt: 1,
+          },
+        }}
+        expanded={control !== null}
+      >
+        <AccordionSummary
+          sx={{
+            '&:hover:not(.Mui-disabled)': {
+              cursor: 'default',
+            },
+            '& .MuiAccordionSummary-content': { justifyContent: 'center' },
+          }}
+        >
+          <Typography
+            variant="h6"
+            component="h1"
+            textAlign="center"
+            fontWeight="normal"
+          >
+            {stateInfo}
+          </Typography>
+        </AccordionSummary>
+        <AccordionActions sx={{ justifyContent: 'center' }}>
+          {control}
+        </AccordionActions>
+      </Accordion>
+    </Stack>
   )
 }

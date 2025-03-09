@@ -87,7 +87,7 @@ const GameCore = ({
         sx={[
           {
             backgroundColor: theme.palette.grey['500'],
-            pt: 3,
+            pt: 1,
             // NOTE: This prevents the hide/show Hand button from obscuring
             // Field cards.
             pb: 10,
