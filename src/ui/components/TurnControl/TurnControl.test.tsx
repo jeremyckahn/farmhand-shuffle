@@ -192,9 +192,10 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl game={game} />)
 
     // Assert that the accordion is not expanded
-    expect(
-      screen.getByRole('button', { name: /game state:/i })
-    ).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getAllByRole('button')[0]).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    )
   })
 
   it('renders an expanded accordion when a control button is present', () => {
@@ -219,8 +220,9 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl game={game} />)
 
     // Assert that the accordion is expanded
-    expect(
-      screen.getByRole('button', { name: /game state:/i })
-    ).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getAllByRole('button')[0]).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    )
   })
 })

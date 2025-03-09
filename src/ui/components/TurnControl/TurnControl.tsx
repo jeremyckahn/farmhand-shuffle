@@ -2,12 +2,15 @@ import Accordion from '@mui/material/Accordion'
 import AccordionActions from '@mui/material/AccordionActions'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
+import useTheme from '@mui/material/styles/useTheme'
 import Typography from '@mui/material/Typography'
+import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useContext } from 'react'
 
 import { GameEvent, GameState, IGame } from '../../../game/types'
-import { ActorContext } from '../Game/ActorContext'
+import { assertCurrentPlayer } from '../../../game/types/guards'
 import { useGameRules } from '../../hooks/useGameRules'
+import { ActorContext } from '../Game/ActorContext'
 import { ShellContext } from '../Game/ShellContext'
 
 export interface TurnControlProps {
@@ -15,9 +18,13 @@ export interface TurnControlProps {
 }
 
 export const TurnControl = ({ game }: TurnControlProps) => {
+  const theme = useTheme()
   const actorRef = ActorContext.useActorRef()
   const { setIsHandInViewport } = useContext(ShellContext)
-  const { gameState } = useGameRules()
+  const {
+    gameState,
+    game: { currentPlayerId },
+  } = useGameRules()
 
   const handleCompleteSetup = () => {
     actorRef.send({ type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION })
@@ -34,25 +41,34 @@ export const TurnControl = ({ game }: TurnControlProps) => {
 
   let control: ReactNode = null
 
-  const currentPlayer =
-    game.currentPlayerId && game.table.players[game.currentPlayerId]
+  const currentPlayer = currentPlayerId && game.table.players[currentPlayerId]
+
+  let stateInfo = ''
 
   switch (gameState) {
     case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
+      stateInfo = 'Set up your Field'
+
       if (currentPlayer && currentPlayer.field.crops.length > 0) {
         control = <Button onClick={handleCompleteSetup}>Complete setup</Button>
       }
+
       break
     }
 
     case GameState.WAITING_FOR_PLAYER_TURN_ACTION: {
+      stateInfo = 'Your turn'
+
       if (currentPlayer && currentPlayer.id === game.sessionOwnerPlayerId) {
         control = <Button onClick={handleEndTurn}>End turn</Button>
       }
+
       break
     }
 
     case GameState.PLAYER_WATERING_CROP: {
+      stateInfo = 'Select a crop to water'
+
       if (currentPlayer && currentPlayer.id === game.sessionOwnerPlayerId) {
         control = (
           <Button onClick={handleCancelWatering} color="warning">
@@ -60,6 +76,31 @@ export const TurnControl = ({ game }: TurnControlProps) => {
           </Button>
         )
       }
+
+      break
+    }
+
+    case GameState.PERFORMING_BOT_TURN_ACTION: {
+      assertCurrentPlayer(currentPlayerId)
+
+      stateInfo = `${funAnimalName(currentPlayerId)}'s turn`
+
+      break
+    }
+
+    case GameState.PERFORMING_BOT_SETUP_ACTION: {
+      assertCurrentPlayer(currentPlayerId)
+
+      stateInfo = `${funAnimalName(currentPlayerId)} is setting their field up`
+
+      break
+    }
+
+    case GameState.PERFORMING_BOT_CROP_WATERING: {
+      assertCurrentPlayer(currentPlayerId)
+
+      stateInfo = `${funAnimalName(currentPlayerId)} is watering crops}`
+
       break
     }
 
@@ -67,7 +108,10 @@ export const TurnControl = ({ game }: TurnControlProps) => {
   }
 
   return (
-    <Accordion sx={{ width: 1, mb: 2 }} expanded={control !== null}>
+    <Accordion
+      sx={{ width: 1, mb: 2, borderRadius: `${theme.shape.borderRadius}px` }}
+      expanded={control !== null}
+    >
       <AccordionSummary
         sx={{
           '&:hover:not(.Mui-disabled)': {
@@ -76,8 +120,13 @@ export const TurnControl = ({ game }: TurnControlProps) => {
           '& .MuiAccordionSummary-content': { justifyContent: 'center' },
         }}
       >
-        <Typography variant="h1" fontSize={24} textAlign="center">
-          Game state: {gameState}
+        <Typography
+          variant="h6"
+          component="h1"
+          textAlign="center"
+          fontWeight="normal"
+        >
+          {stateInfo}
         </Typography>
       </AccordionSummary>
       <AccordionActions sx={{ justifyContent: 'center' }}>
