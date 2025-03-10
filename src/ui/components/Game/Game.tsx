@@ -1,4 +1,5 @@
 import { KeyboardArrowDown } from '@mui/icons-material'
+import { AlertColor } from '@mui/material/Alert'
 import Container, { ContainerProps } from '@mui/material/Container'
 import Fab from '@mui/material/Fab'
 import useTheme from '@mui/material/styles/useTheme'
@@ -13,6 +14,7 @@ import { TurnControl } from '../TurnControl'
 
 import { ActorContext } from './ActorContext'
 import { ShellContext, ShellContextProps } from './ShellContext'
+import { Snackbar, SnackbarProps } from './Snackbar'
 
 export interface GameProps extends ContainerProps {
   playerSeeds: IPlayerSeed[]
@@ -63,9 +65,23 @@ const GameCore = ({
     [setIsBlockingOperationExecuting]
   )
 
+  const [snackbarProps, setSnackbarProps] = useState<SnackbarProps>({
+    message: '',
+    severity: 'info',
+  })
+
+  const showAlert = useCallback((message: string, severity: AlertColor) => {
+    setSnackbarProps({ message, severity })
+  }, [])
+
   const shellContextValue: ShellContextProps = useMemo(
-    () => ({ blockingOperation, isHandInViewport, setIsHandInViewport }),
-    [blockingOperation, isHandInViewport, setIsHandInViewport]
+    () => ({
+      blockingOperation,
+      isHandInViewport,
+      setIsHandInViewport,
+      showAlert,
+    }),
+    [blockingOperation, isHandInViewport, setIsHandInViewport, showAlert]
   )
 
   const isSessionOwnersTurn = game.sessionOwnerPlayerId === game.currentPlayerId
@@ -124,6 +140,7 @@ const GameCore = ({
           </Fab>
         </Tooltip>
       </Container>
+      <Snackbar {...snackbarProps} />
     </ShellContext.Provider>
   )
 }

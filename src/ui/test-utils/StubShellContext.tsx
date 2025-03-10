@@ -29,6 +29,7 @@ export const StubShellContext = ({
       blockingOperation: useVitestMocks ? vi.fn() : () => Promise.resolve(),
       isHandInViewport: true,
       setIsHandInViewport: useVitestMocks ? vi.fn() : () => {},
+      showAlert: useVitestMocks ? vi.fn() : () => {},
       ...overrides,
     }),
     [overrides, useVitestMocks]

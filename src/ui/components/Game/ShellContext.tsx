@@ -1,3 +1,4 @@
+import { AlertColor } from '@mui/material/Alert'
 import { createContext } from 'react'
 
 export interface ShellContextProps {
@@ -7,6 +8,7 @@ export interface ShellContextProps {
   blockingOperation: (fn: () => Promise<void>) => Promise<void>
   isHandInViewport: boolean
   setIsHandInViewport: React.Dispatch<React.SetStateAction<boolean>>
+  showAlert: (message: string, severity: AlertColor) => void
 }
 
 export const ShellContext = createContext<ShellContextProps>({
@@ -15,6 +17,9 @@ export const ShellContext = createContext<ShellContextProps>({
   },
   isHandInViewport: true,
   setIsHandInViewport: () => {
+    throw new Error('Calling context method outside of ShellContext.Provider')
+  },
+  showAlert: () => {
     throw new Error('Calling context method outside of ShellContext.Provider')
   },
 })
