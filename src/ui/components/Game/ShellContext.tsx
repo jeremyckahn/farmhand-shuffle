@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material/Alert'
-import { createContext } from 'react'
+import { createContext, ReactNode } from 'react'
 
 export interface ShellContextProps {
   /**
@@ -8,7 +8,7 @@ export interface ShellContextProps {
   blockingOperation: (fn: () => Promise<void>) => Promise<void>
   isHandInViewport: boolean
   setIsHandInViewport: React.Dispatch<React.SetStateAction<boolean>>
-  showAlert: (message: string, severity: AlertColor) => void
+  showAlert: (message: ReactNode, severity: AlertColor) => void
 }
 
 export const ShellContext = createContext<ShellContextProps>({

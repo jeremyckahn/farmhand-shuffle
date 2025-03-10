@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
 import { useGameRules } from '../../hooks/useGameRules'
@@ -57,7 +57,7 @@ export const useGame = ({
     severity: 'info',
   })
 
-  const showAlert = useCallback((message: string, severity: AlertColor) => {
+  const showAlert = useCallback((message: ReactNode, severity: AlertColor) => {
     setSnackbarProps({ message, severity })
   }, [])
 
