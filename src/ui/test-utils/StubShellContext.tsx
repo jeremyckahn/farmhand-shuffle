@@ -9,6 +9,9 @@ import {
 
 import { isStorybook } from './isStorybook'
 
+export const mockShowNotification =
+  typeof vi === 'undefined' ? () => {} : vi.fn()
+
 export const StubShellContext = ({
   children,
   // NOTE: isStorybook MUST be cast with Boolean() as part of a workaround for
@@ -17,7 +20,7 @@ export const StubShellContext = ({
   /**
    * This needs to be set to false when used in Storybook stories.
    */
-  useVitestMocks = Boolean(isStorybook),
+  useVitestMocks = !isStorybook,
   ...overrides
 }: {
   children: ReactNode
@@ -29,6 +32,7 @@ export const StubShellContext = ({
       blockingOperation: useVitestMocks ? vi.fn() : () => Promise.resolve(),
       isHandInViewport: true,
       setIsHandInViewport: useVitestMocks ? vi.fn() : () => {},
+      showNotification: mockShowNotification,
       ...overrides,
     }),
     [overrides, useVitestMocks]

@@ -3,6 +3,7 @@ import { render } from '@testing-library/react'
 
 import { IPlayedCrop } from '../../../game/types'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Game/ActorContext'
 
 import {
@@ -26,13 +27,15 @@ const stubCropCardProps: PlayedCropProps['cropCardProps'] = {
 }
 
 const StubCropCard = (overrides: Partial<PlayedCropProps> = {}) => (
-  <ActorContext.Provider>
-    <PlayedCrop
-      cropCardProps={stubCropCardProps}
-      isInBackground={false}
-      {...overrides}
-    />
-  </ActorContext.Provider>
+  <StubShellContext>
+    <ActorContext.Provider>
+      <PlayedCrop
+        cropCardProps={stubCropCardProps}
+        isInBackground={false}
+        {...overrides}
+      />
+    </ActorContext.Provider>
+  </StubShellContext>
 )
 
 describe('PlayedCrop', () => {

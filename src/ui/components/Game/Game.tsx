@@ -3,16 +3,16 @@ import Container, { ContainerProps } from '@mui/material/Container'
 import Fab from '@mui/material/Fab'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
-import { useGameRules } from '../../hooks/useGameRules'
+import { IPlayerSeed } from '../../../game/types'
 import { isSxArray } from '../../type-guards'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 
 import { ActorContext } from './ActorContext'
-import { ShellContext, ShellContextProps } from './ShellContext'
+import { ShellContext } from './ShellContext'
+import { Snackbar } from './Snackbar'
+import { useGame } from './useGame'
 
 export interface GameProps extends ContainerProps {
   playerSeeds: IPlayerSeed[]
@@ -26,58 +26,16 @@ const GameCore = ({
   ...rest
 }: GameProps) => {
   const theme = useTheme()
-  const actorRef = ActorContext.useActorRef()
-  const { game, gameState } = useGameRules()
-  const [isHandInViewport, setIsHandInViewport] = useState(true)
 
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      actorRef.subscribe(snapshot => {
-        if (typeof snapshot.value === 'string') {
-          console.debug(`State: ${snapshot.value}`)
-        }
-      })
-    }
-  }, [actorRef])
-
-  const [isBlockingOperationExecuting, setIsBlockingOperationExecuting] =
-    useState(false)
-
-  useEffect(() => {
-    if (gameState === GameState.UNINITIALIZED) {
-      actorRef.send({ type: GameEvent.INIT, playerSeeds, userPlayerId })
-    }
-  }, [gameState, playerSeeds, userPlayerId, actorRef])
-
-  const blockingOperation: ShellContextProps['blockingOperation'] = useCallback(
-    async fn => {
-      try {
-        setIsBlockingOperationExecuting(true)
-        await fn()
-      } catch (_e) {
-        // Empty
-      } finally {
-        setIsBlockingOperationExecuting(false)
-      }
-    },
-    [setIsBlockingOperationExecuting]
-  )
-
-  const shellContextValue: ShellContextProps = useMemo(
-    () => ({ blockingOperation, isHandInViewport, setIsHandInViewport }),
-    [blockingOperation, isHandInViewport, setIsHandInViewport]
-  )
-
-  const isSessionOwnersTurn = game.sessionOwnerPlayerId === game.currentPlayerId
-  const isInputBlocked = isBlockingOperationExecuting || !isSessionOwnersTurn
-
-  const handleHandVisibilityToggle = () => {
-    setIsHandInViewport(prev => !prev)
-  }
-
-  const isHandDisabled = [GameState.PLAYER_WATERING_CROP].includes(gameState)
-
-  const showHand = isHandInViewport || isHandDisabled
+  const {
+    game,
+    handleHandVisibilityToggle,
+    isHandDisabled,
+    isInputBlocked,
+    shellContextValue,
+    showHand,
+    snackbarProps,
+  } = useGame({ playerSeeds, userPlayerId })
 
   return (
     <ShellContext.Provider value={shellContextValue}>
@@ -124,6 +82,7 @@ const GameCore = ({
           </Fab>
         </Tooltip>
       </Container>
+      <Snackbar {...snackbarProps} />
     </ShellContext.Provider>
   )
 }

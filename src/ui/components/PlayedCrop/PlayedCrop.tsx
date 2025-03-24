@@ -1,19 +1,18 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
+import useTheme from '@mui/material/styles/useTheme'
 
-import { useTheme } from '@mui/material'
-
+import { InvalidCardError } from '../../../game/services/Rules/errors'
 import { IPlayedCrop, isCropCardInstance } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card, CropCardProps } from '../Card'
-import { Image } from '../Image'
-import { cards as cardImages } from '../../img'
-import { InvalidCardError } from '../../../game/services/Rules/errors'
+
+import { WaterIndicator } from './WaterIndicator'
 
 export interface PlayedCropProps extends BoxProps {
-  isInBackground: boolean
   cropCardProps: CropCardProps & { playedCrop: IPlayedCrop }
+  isInBackground: boolean
 }
 
 export const unfilledWaterIndicatorOpacity = 0.25
@@ -53,22 +52,21 @@ export const PlayedCrop = ({
         {new Array(waterIconsToRender).fill(null).map((_, idx) => {
           let opacity = 1
 
+          const isFilled = idx < playedCrop.waterCards
+
           if (isInBackground) {
             opacity = 0
-          } else if (idx >= playedCrop.waterCards) {
+          } else if (!isFilled) {
             opacity = unfilledWaterIndicatorOpacity
           }
 
           return (
             <Grid key={idx} item sx={{ pt: `${theme.spacing(0)} !important` }}>
-              <Image
-                src={cardImages.water}
-                alt="Water card indicator"
-                sx={{
-                  imageRendering: 'pixelated',
-                  opacity,
-                  transition: theme.transitions.create(['opacity']),
-                }}
+              <WaterIndicator
+                cardInstance={playedCrop.instance}
+                isFilled={isFilled}
+                opacity={opacity}
+                playerId={cropCardProps.playerId}
               />
             </Grid>
           )
