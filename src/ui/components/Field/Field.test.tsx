@@ -6,6 +6,7 @@ import { factory } from '../../../game/services/Factory'
 import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { ActorContext } from '../Game/ActorContext'
+import { StubShellContext } from '../../test-utils/StubShellContext'
 
 import {
   Field,
@@ -33,13 +34,15 @@ gameStub = updateField(gameStub, opponentPlayerId, {
 
 const StubField = (overrides: Partial<FieldProps>) => {
   return (
-    <ActorContext.Provider>
-      <Field
-        game={gameStub}
-        playerId={gameStub.sessionOwnerPlayerId}
-        {...overrides}
-      />
-    </ActorContext.Provider>
+    <StubShellContext>
+      <ActorContext.Provider>
+        <Field
+          game={gameStub}
+          playerId={gameStub.sessionOwnerPlayerId}
+          {...overrides}
+        />
+      </ActorContext.Provider>
+    </StubShellContext>
   )
 }
 

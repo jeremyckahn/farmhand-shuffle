@@ -4,7 +4,7 @@
 // NOTE: See https://vite.dev/guide/env-and-mode#intellisense-for-typescript
 
 interface ImportMetaEnv {
-  IS_STORYBOOK?: string
+  STORYBOOK?: string
 }
 
 interface ImportMeta {

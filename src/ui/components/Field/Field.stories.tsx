@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { stubGame } from '../../../test-utils/stubs/game'
-import { updateField } from '../../../game/reducers/update-field'
 import { carrot, instantiate, pumpkin } from '../../../game/cards'
+import { updateField } from '../../../game/reducers/update-field'
 import { factory } from '../../../game/services/Factory'
+import { stubGame } from '../../../test-utils/stubs/game'
+import { StubShellContext } from '../../test-utils/StubShellContext'
 
 import { Field } from './Field'
 
@@ -15,6 +16,15 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {},
+  decorators: [
+    Story => {
+      return (
+        <StubShellContext>
+          <Story />
+        </StubShellContext>
+      )
+    },
+  ],
 } satisfies Meta<typeof Field>
 
 export default meta

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { StubShellContext } from '../../test-utils/StubShellContext'
 
 import { PlayedCrop } from './PlayedCrop'
 
@@ -12,6 +13,15 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {},
+  decorators: [
+    Story => {
+      return (
+        <StubShellContext>
+          <Story />
+        </StubShellContext>
+      )
+    },
+  ],
 } satisfies Meta<typeof PlayedCrop>
 
 export default meta
