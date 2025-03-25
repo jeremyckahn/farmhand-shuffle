@@ -102,6 +102,29 @@ export const WaterableCropCard: Story = {
   ],
 }
 
+export const HarvestableCropCard: Story = {
+  args: {
+    cardInstance: stubPumpkin,
+    cardIdx: 0,
+    playerId: stubPlayer1.id,
+    isFlipped: false,
+    isInField: true,
+    size: CardSize.MEDIUM,
+    isFocused: true,
+    canBeHarvested: true,
+  },
+  decorators: [
+    Story => {
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
+        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+        game: stubGame(),
+      })
+
+      return <Story />
+    },
+  ],
+}
+
 export const WaterCard: Story = {
   args: {
     cardInstance: stubWater,

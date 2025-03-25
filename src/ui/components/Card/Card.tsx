@@ -16,6 +16,8 @@ import { CardCropText } from './CardCropText'
 import { CardCore } from './CardCore'
 
 export interface BaseCardProps extends BoxProps {
+  // FIXME: Test this
+  canBeHarvested?: boolean
   canBeWatered?: boolean
   cardInstance: CardInstance
   cardIdx: number
