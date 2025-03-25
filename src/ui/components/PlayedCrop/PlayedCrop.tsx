@@ -39,7 +39,9 @@ export const PlayedCrop = ({
     <Box maxWidth={CARD_DIMENSIONS[size].width} {...props}>
       <Card
         size={size}
+        // FIXME: Test these
         canBeWatered={playedCrop.wasWateredTuringTurn === false}
+        canBeHarvested={playedCrop.waterCards >= card.waterToMature}
         {...cropCardProps}
       />
       <Grid
