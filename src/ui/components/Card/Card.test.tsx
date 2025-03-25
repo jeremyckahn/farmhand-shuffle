@@ -12,7 +12,7 @@ import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Game/ActorContext'
 
 import { Card, CardProps } from './Card'
-import { cardFlipWrapperClassName } from './CardTemplate'
+import { cardFlipWrapperClassName } from './CardCore'
 
 const stubCardInstance = stubCarrot
 

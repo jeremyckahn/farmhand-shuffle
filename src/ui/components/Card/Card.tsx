@@ -13,7 +13,7 @@ import { isCrop } from '../../../game/types/guards'
 import { CardSize } from '../../types'
 
 import { CardCropText } from './CardCropText'
-import { CardTemplate } from './CardTemplate'
+import { CardCore } from './CardCore'
 
 export interface BaseCardProps extends BoxProps {
   canBeWatered?: boolean
@@ -54,18 +54,18 @@ const isPropsWaterCardProps = (props: CardProps): props is WaterCardProps => {
 export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
   function CropCard({ playedCrop, ...props }, ref) {
     return (
-      <CardTemplate {...props} ref={ref}>
+      <CardCore {...props} ref={ref}>
         {isCrop(props.cardInstance) ? (
           <CardCropText crop={props.cardInstance} playedCrop={playedCrop} />
         ) : null}
-      </CardTemplate>
+      </CardCore>
     )
   }
 )
 
 export const WaterCard = forwardRef<HTMLDivElement, WaterCardProps>(
   function WaterCard(props, ref) {
-    return <CardTemplate {...props} ref={ref} />
+    return <CardCore {...props} ref={ref} />
   }
 )
 

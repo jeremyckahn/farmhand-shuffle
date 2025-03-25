@@ -84,8 +84,8 @@ export const Field = ({
     cardIdx: number
   ) => {
     // NOTE: This event handler interferes with the crop watering button on the
-    // CardTemplate component. So, this handler needs to check to see if that
-    // would happen and abort the operation if so.
+    // CardCore component. So, this handler needs to check to see if that would
+    // happen and abort the operation if so.
     if (
       gameState === GameState.PLAYER_WATERING_CROP &&
       selectedCardIdx === cardIdx

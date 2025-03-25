@@ -5,7 +5,7 @@ import { instantiate, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { StubShellContext } from '../../test-utils/StubShellContext'
-import { cardClassName } from '../Card/CardTemplate'
+import { cardClassName } from '../Card/CardCore'
 import { ActorContext } from '../Game/ActorContext'
 
 import {

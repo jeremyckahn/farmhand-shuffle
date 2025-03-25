@@ -31,8 +31,8 @@ export const cardFlipWrapperClassName = 'CardFlipWrapper'
 
 const cropWaterIndicatorOutlineColor = '#0072ff'
 
-export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
-  function CardTemplate(
+export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
+  function CardCore(
     {
       cardInstance: card,
       cardIdx,
