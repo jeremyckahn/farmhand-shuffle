@@ -62,6 +62,9 @@ export default [
         'error',
         { ignoreIIFE: true },
       ],
+      // NOTE: This is commented out due to its impact on linting times. Enable
+      // it as necessary to check for dependency cycles.
+      // 'import/no-cycle': ['error'],
       'import/order': [
         'error',
         {

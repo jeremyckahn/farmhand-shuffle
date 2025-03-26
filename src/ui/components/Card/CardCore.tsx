@@ -24,7 +24,7 @@ import { ActorContext } from '../Game/ActorContext'
 import { ShellContext } from '../Game/ShellContext'
 import { Image } from '../Image'
 
-import { CardProps } from './Card'
+import { CardProps } from './types'
 
 export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'

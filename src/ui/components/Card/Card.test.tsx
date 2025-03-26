@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
-import { RulesService } from '../../../game/services/Rules'
+import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
 import { GameEvent, GameEventPayload, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import { stubCarrot, stubWater } from '../../../test-utils/stubs/cards'
@@ -11,7 +11,8 @@ import * as useGameStateModule from '../../hooks/useGameRules'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Game/ActorContext'
 
-import { Card, CardProps } from './Card'
+import { Card } from './Card'
+import { CardProps } from './types'
 import { cardFlipWrapperClassName } from './CardCore'
 
 const stubCardInstance = stubCarrot
@@ -100,8 +101,7 @@ describe('Card', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
         gameState,
         game,
-        selectedWaterCardInHandIdx:
-          RulesService.defaultSelectedWaterCardInHandIdx,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       })
 
       render(
@@ -133,8 +133,7 @@ describe('Card', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
         gameState,
         game: stubGame(),
-        selectedWaterCardInHandIdx:
-          RulesService.defaultSelectedWaterCardInHandIdx,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       })
 
       render(

@@ -6,7 +6,8 @@ import { InvalidCardError } from '../../../game/services/Rules/errors'
 import { IPlayedCrop, isCropCardInstance } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
-import { Card, CropCardProps } from '../Card'
+import { Card } from '../Card'
+import { CropCardProps } from '../Card/types'
 
 import { WaterIndicator } from './WaterIndicator'
 

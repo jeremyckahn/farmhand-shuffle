@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { updateGame } from '../../../game/reducers/update-game'
 import { updatePlayer } from '../../../game/reducers/update-player'
-import { RulesService } from '../../../game/services/Rules'
+import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
 import { GameEvent, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
@@ -38,8 +38,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     render(<StubTurnControl game={game} />)
@@ -58,8 +57,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     render(<StubTurnControl game={game} />)
@@ -80,8 +78,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     render(<StubTurnControl game={game} />)
@@ -106,8 +103,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     render(<StubTurnControl game={game} />)
@@ -133,8 +129,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     const send = mockSend()
@@ -158,8 +153,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     const send = mockSend()
@@ -185,8 +179,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     render(<StubTurnControl game={game} />)
@@ -213,8 +206,7 @@ describe('TurnControl Component', () => {
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
       gameState,
       game,
-      selectedWaterCardInHandIdx:
-        RulesService.defaultSelectedWaterCardInHandIdx,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     })
 
     render(<StubTurnControl game={game} />)
