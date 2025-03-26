@@ -105,8 +105,12 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
     }
 
     const handleHarvestCrop = () => {
-      // FIXME: Implement this
-      throw new Error('UNIMPLEMENTED')
+      // FIXME: Test this
+      actorRef.send({
+        type: GameEvent.HARVEST_CROP,
+        playerId,
+        cropIdxInFieldToHarvest: cardIdx,
+      })
     }
 
     const isSessionOwnersCard = playerId === game.sessionOwnerPlayerId

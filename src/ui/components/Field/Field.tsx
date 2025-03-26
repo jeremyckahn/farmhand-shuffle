@@ -83,6 +83,7 @@ export const Field = ({
     event: React.FocusEvent<HTMLDivElement, Element>,
     cardIdx: number
   ) => {
+    // FIXME: This is interfering with card harvesting
     // NOTE: This event handler interferes with the crop watering button on the
     // CardCore component. So, this handler needs to check to see if that would
     // happen and abort the operation if so.

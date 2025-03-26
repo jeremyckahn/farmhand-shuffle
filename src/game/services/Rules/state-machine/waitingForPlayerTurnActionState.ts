@@ -17,6 +17,13 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
       [GameEvent.PLAY_WATER]: GameState.PLAYER_WATERING_CROP,
 
       [GameEvent.START_TURN]: GameState.PERFORMING_BOT_TURN_ACTION,
+
+      [GameEvent.HARVEST_CROP]: {
+        actions: enqueueActions(({ event, enqueue, context }) => {
+          // FIXME: Implement this
+          console.log({ event, enqueue, context })
+        }),
+      },
     },
 
     entry: enqueueActions(({ event, context: { game }, enqueue }) => {
