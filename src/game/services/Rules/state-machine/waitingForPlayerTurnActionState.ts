@@ -1,5 +1,6 @@
 import { enqueueActions } from 'xstate'
 
+import { harvestCrop } from '../../../reducers/harvest-crop'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
 import { GameEvent, GameState } from '../../../types'
@@ -19,9 +20,14 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
       [GameEvent.START_TURN]: GameState.PERFORMING_BOT_TURN_ACTION,
 
       [GameEvent.HARVEST_CROP]: {
-        actions: enqueueActions(({ event, enqueue, context }) => {
-          // FIXME: Implement this
-          console.log({ event, enqueue, context })
+        actions: enqueueActions(({ event, enqueue, context: { game } }) => {
+          const { playerId, cropIdxInFieldToHarvest } = event
+
+          game = harvestCrop(game, playerId, cropIdxInFieldToHarvest)
+
+          // FIXME: Show notifications as necessary
+
+          enqueue.assign({ game })
         }),
       },
     },
