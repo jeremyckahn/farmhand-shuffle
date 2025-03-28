@@ -1,8 +1,11 @@
 /* c8 ignore start */
+import react from '@vitejs/plugin-react'
 import { defineConfig, mergeConfig } from 'vite'
 import { defineConfig as vitestDefineConfig } from 'vitest/config'
 
-const viteConfig = defineConfig({})
+const viteConfig = defineConfig({
+  plugins: [react()],
+})
 
 const vitestConfig = vitestDefineConfig({
   test: {
