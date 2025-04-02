@@ -28,6 +28,16 @@ export const machineConfig: RulesMachineConfig = {
         enqueue.assign(context)
       }),
     },
+
+    [GameEvent.SET_SHELL]: {
+      actions: enqueueActions(({ event, enqueue }) => {
+        assertEvent(event, GameEvent.SET_SHELL)
+
+        const { shell } = event
+
+        enqueue.assign({ shell })
+      }),
+    },
   },
 
   states: {

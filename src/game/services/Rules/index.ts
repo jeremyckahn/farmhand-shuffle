@@ -16,6 +16,9 @@ export class RulesService {
         selectedWaterCardInHandIdx:
           RulesService.defaultSelectedWaterCardInHandIdx,
         fieldCropIndicesToWaterDuringBotTurn: [],
+        shell: {
+          triggerNotification: () => {},
+        },
       },
       ...machineConfig,
     })

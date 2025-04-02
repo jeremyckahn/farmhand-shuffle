@@ -185,8 +185,10 @@ export enum GameEvent {
    * should only be used for test setup and debugging.
    */
   DANGEROUSLY_SET_CONTEXT = 'DANGEROUSLY_SET_CONTEXT',
+
+  HARVEST_CROP = 'HARVEST_CROP',
   INIT = 'INIT',
-  START_TURN = 'START_TURN',
+  OPERATION_ABORTED = 'OPERATION_ABORTED',
   PLAY_CARD = 'PLAY_CARD',
   PLAY_CROP = 'PLAY_CROP',
   PLAY_WATER = 'PLAY_WATER',
@@ -196,7 +198,8 @@ export enum GameEvent {
   PROMPT_PLAYER_FOR_SETUP_ACTION = 'PROMPT_PLAYER_FOR_SETUP_ACTION',
   PROMPT_PLAYER_FOR_TURN_ACTION = 'PROMPT_PLAYER_FOR_TURN_ACTION',
   SELECT_CROP_TO_WATER = 'SELECT_CROP_TO_WATER',
-  OPERATION_ABORTED = 'OPERATION_ABORTED',
+  SET_SHELL = 'SET_SHELL',
+  START_TURN = 'START_TURN',
 }
 
 interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
@@ -225,10 +228,33 @@ export enum GameStateGuard {
   HAVE_PLAYERS_COMPLETED_SETUP = 'HAVE_PLAYERS_COMPLETED_SETUP',
 }
 
+export enum ShellNotification {
+  CROP_HARVESTED = 'CROP_HARVESTED',
+}
+
+export interface ShellNotificationPayload {
+  [ShellNotification.CROP_HARVESTED]: {
+    cropHarvested: ICrop
+  }
+}
+
+export interface IShell {
+  triggerNotification: (
+    type: ShellNotification,
+    payload: ShellNotificationPayload[keyof ShellNotificationPayload]
+  ) => void
+}
+
 export interface GameEventPayload {
   [GameEvent.DANGEROUSLY_SET_CONTEXT]: {
     type: GameEvent.DANGEROUSLY_SET_CONTEXT
     game: IGame
+  }
+
+  [GameEvent.HARVEST_CROP]: {
+    type: GameEvent.HARVEST_CROP
+    playerId: IPlayer['id']
+    cropIdxInFieldToHarvest: number
   }
 
   [GameEvent.INIT]: {
@@ -239,6 +265,11 @@ export interface GameEventPayload {
 
   [GameEvent.START_TURN]: {
     type: GameEvent.START_TURN
+  }
+
+  [GameEvent.SET_SHELL]: {
+    type: GameEvent.SET_SHELL
+    shell: IShell
   }
 
   [GameEvent.PLAY_CARD]: PlayCardEventPayload

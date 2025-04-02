@@ -29,6 +29,23 @@ export class LookupService {
     return cropInstance
   }
 
+  getPlayedCropFromField = (
+    game: IGame,
+    playerId: IPlayer['id'],
+    cardIdx: number
+  ) => {
+    const { crops } = game.table.players[playerId].field
+    const cardInstance = crops[cardIdx]
+
+    if (!cardInstance) {
+      throw new Error(
+        `Card index ${cardIdx} is not in player ${playerId}'s field`
+      )
+    }
+
+    return cardInstance
+  }
+
   /**
    * Returns all the IDs for players that are not the current user's.
    */

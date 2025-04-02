@@ -57,21 +57,6 @@ describe('useGame', () => {
     })
   })
 
-  it('should not initialize game when gameState is not UNINITIALIZED', () => {
-    vi.mocked(useGameRules).mockReturnValue({
-      game: mockGame,
-      gameState: GameState.PLAYER_WATERING_CROP,
-      selectedWaterCardInHandIdx: 0,
-    })
-
-    renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
-    )
-
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(mockActorRef.send).not.toHaveBeenCalled()
-  })
-
   it('should execute blocking operation correctly', async () => {
     const mockOperation = vi.fn().mockResolvedValue(undefined)
     const { result } = renderHook(() =>

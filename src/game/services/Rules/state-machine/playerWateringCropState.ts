@@ -3,8 +3,7 @@ import { enqueueActions } from 'xstate'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { updatePlayedCrop } from '../../../reducers/update-played-crop'
 import { GameEvent, GameState, IPlayedCrop } from '../../../types'
-
-import { RulesService } from '..'
+import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
 import { RulesMachineConfig } from './types'
 
@@ -64,14 +63,12 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
                 waterCardInHandIdx
               )
 
-              selectedWaterCardInHandIdx =
-                RulesService.defaultSelectedWaterCardInHandIdx
+              selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
             } catch (e) {
               console.error(e)
 
               enqueue.assign({
-                selectedWaterCardInHandIdx:
-                  RulesService.defaultSelectedWaterCardInHandIdx,
+                selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
               })
 
               return
@@ -81,8 +78,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
           }
 
           case GameEvent.OPERATION_ABORTED: {
-            selectedWaterCardInHandIdx =
-              RulesService.defaultSelectedWaterCardInHandIdx
+            selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
             break
           }
 

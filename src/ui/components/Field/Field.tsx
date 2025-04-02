@@ -9,11 +9,10 @@ import {
   STANDARD_FIELD_SIZE,
 } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
-import { GameState, IGame, IPlayer } from '../../../game/types'
+import { IGame, IPlayer } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { useGameRules } from '../../hooks/useGameRules'
 import { CardSize } from '../../types'
-import { PlayedCrop } from '../PlayedCrop'
+import { PlayedCrop, playedCropClassName } from '../PlayedCrop'
 
 const deselectedIdx = -1
 const selectedCardYOffset = -25
@@ -34,7 +33,6 @@ export const Field = ({
   cardSize = CardSize.SMALL,
   ...rest
 }: FieldProps) => {
-  const { gameState } = useGameRules()
   const player = lookup.getPlayer(game, playerId)
   const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
 
@@ -83,17 +81,15 @@ export const Field = ({
     event: React.FocusEvent<HTMLDivElement, Element>,
     cardIdx: number
   ) => {
-    // NOTE: This event handler interferes with the crop watering button on the
-    // CardCore component. So, this handler needs to check to see if that would
-    // happen and abort the operation if so.
-    if (
-      gameState === GameState.PLAYER_WATERING_CROP &&
-      selectedCardIdx === cardIdx
-    ) {
+    const { target } = event
+
+    // NOTE: This event handler gets triggered by UI elements within the
+    // CardCore component (which is rendered by PlayedCrop). So, this handler
+    // needs to check to see if that would happen and abort its execution if
+    // so.
+    if (!target.classList.contains(playedCropClassName)) {
       return
     }
-
-    const { target } = event
 
     const boundingClientRect = target.getBoundingClientRect()
     const xDelta =

@@ -6,6 +6,7 @@ import {
   GameEventPayloadKey,
   GameStateGuard,
   GameEvent,
+  IShell,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
@@ -16,6 +17,7 @@ export const { createMachine } = setup({
       cropsToPlayDuringBotTurn: number
       selectedWaterCardInHandIdx: number
       fieldCropIndicesToWaterDuringBotTurn: number[]
+      shell: IShell
     },
     events: {} as GameEventPayload[GameEventPayloadKey],
   },
