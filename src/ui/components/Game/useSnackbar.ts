@@ -53,10 +53,13 @@ export const useSnackbar = ({
               } = payload
 
               if (isSessionOwner) {
-                showNotification(`You sold a ${cropName}`, 'success')
+                showNotification(
+                  `You harvested and sold a ${cropName}`,
+                  'success'
+                )
               } else {
                 showNotification(
-                  `${currentPlayerName} sold a ${cropName}`,
+                  `${currentPlayerName} harvested and sold a ${cropName}`,
                   'warning'
                 )
               }

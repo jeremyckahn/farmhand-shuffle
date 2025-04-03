@@ -16,6 +16,7 @@ export class RulesService {
         selectedWaterCardInHandIdx:
           RulesService.defaultSelectedWaterCardInHandIdx,
         fieldCropIndicesToWaterDuringBotTurn: [],
+        cropCardIndicesToHarvest: [],
         shell: {
           triggerNotification: () => {},
         },

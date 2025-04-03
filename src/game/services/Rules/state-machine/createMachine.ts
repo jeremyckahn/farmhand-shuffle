@@ -17,6 +17,7 @@ export const { createMachine } = setup({
       cropsToPlayDuringBotTurn: number
       selectedWaterCardInHandIdx: number
       fieldCropIndicesToWaterDuringBotTurn: number[]
+      cropCardIndicesToHarvest: number[]
       shell: IShell
     },
     events: {} as GameEventPayload[GameEventPayloadKey],

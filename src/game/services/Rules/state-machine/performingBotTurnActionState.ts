@@ -18,6 +18,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
       [GameEvent.PLAY_WATER]: GameState.PERFORMING_BOT_CROP_WATERING,
 
+      [GameEvent.HARVEST_CROP]: GameState.PERFORMING_BOT_CROP_HARVESTING,
+
       [GameEvent.START_TURN]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
@@ -28,6 +30,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           game,
           cropsToPlayDuringBotTurn,
           fieldCropIndicesToWaterDuringBotTurn,
+          cropCardIndicesToHarvest,
         },
         enqueue,
       }) => {
@@ -56,6 +59,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
           const areCropsToPlay = cropsToPlayDuringBotTurn > 0
           let areWaterCardsToPlay = false
+          let areCropsToHarvest = false
 
           if (areCropsToPlay) {
             const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
@@ -90,10 +94,30 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   delay: BOT_ACTION_DELAY,
                 }
               )
+            } else {
+              cropCardIndicesToHarvest = botLogic.getCropCardIndicesToHarvest(
+                game,
+                currentPlayerId
+              )
+
+              areCropsToHarvest = cropCardIndicesToHarvest.length > 0
+
+              if (areCropsToHarvest) {
+                enqueue.raise(
+                  {
+                    type: GameEvent.HARVEST_CROP,
+                    playerId: currentPlayerId,
+                    cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
+                  },
+                  {
+                    delay: BOT_ACTION_DELAY,
+                  }
+                )
+              }
             }
           }
 
-          if (!areCropsToPlay && !areWaterCardsToPlay) {
+          if (!areCropsToPlay && !areWaterCardsToPlay && !areCropsToHarvest) {
             // NOTE: Returns control back to the player
             enqueue.raise({
               type: GameEvent.START_TURN,
@@ -104,6 +128,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             game,
             cropsToPlayDuringBotTurn,
             fieldCropIndicesToWaterDuringBotTurn,
+            cropCardIndicesToHarvest,
           })
         }
       }

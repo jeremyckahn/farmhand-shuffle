@@ -64,6 +64,27 @@ export class BotLogicService {
 
     return fieldCropIdxsThatNeedWater
   }
+
+  getCropCardIndicesToHarvest(game: IGame, playerId: string) {
+    const {
+      field: { crops },
+    } = game.table.players[playerId]
+
+    let fieldCropIdxsToHarvest: number[] = []
+
+    for (let i = 0; i < crops.length; i++) {
+      const plantedCrop = crops[i]
+      assertIsCardId(plantedCrop.instance.id)
+
+      if (isCropCardInstance(plantedCrop.instance)) {
+        if (plantedCrop.waterCards >= plantedCrop.instance.waterToMature) {
+          fieldCropIdxsToHarvest = [...fieldCropIdxsToHarvest, i]
+        }
+      }
+    }
+
+    return fieldCropIdxsToHarvest
+  }
 }
 
 export const botLogic = new BotLogicService()
