@@ -25,10 +25,6 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         const { currentPlayerId } = game
         assertCurrentPlayer(currentPlayerId)
 
-        enqueue.raise({
-          type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION,
-        })
-
         const plantedCrop =
           game.table.players[currentPlayerId].field.crops[cropCardIdxToHarvest]
 
@@ -36,6 +32,10 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
 
         triggerNotification(ShellNotification.CROP_HARVESTED, {
           cropHarvested: plantedCrop.instance,
+        })
+
+        enqueue.raise({
+          type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION,
         })
 
         enqueue.assign({ game })

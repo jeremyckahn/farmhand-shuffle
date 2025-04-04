@@ -4,15 +4,14 @@ import { funAnimalName } from 'fun-animal-names'
 import { MockInstance } from 'vitest'
 import { assertEvent } from 'xstate'
 
+import { carrot } from '../../../game/cards'
+import { updateGame } from '../../../game/reducers/update-game'
 import {
   GameEvent,
   IGame,
   ShellNotification,
   ShellNotificationPayload,
 } from '../../../game/types'
-
-import { carrot } from '../../../game/cards'
-import { updateGame } from '../../../game/reducers/update-game'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 

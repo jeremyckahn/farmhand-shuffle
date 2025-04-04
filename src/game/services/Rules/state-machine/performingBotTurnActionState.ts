@@ -94,30 +94,35 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   delay: BOT_ACTION_DELAY,
                 }
               )
-            } else {
-              cropCardIndicesToHarvest = botLogic.getCropCardIndicesToHarvest(
-                game,
-                currentPlayerId
-              )
-
-              areCropsToHarvest = cropCardIndicesToHarvest.length > 0
-
-              if (areCropsToHarvest) {
-                enqueue.raise(
-                  {
-                    type: GameEvent.HARVEST_CROP,
-                    playerId: currentPlayerId,
-                    cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
-                  },
-                  {
-                    delay: BOT_ACTION_DELAY,
-                  }
-                )
-              }
             }
           }
 
-          if (!areCropsToPlay && !areWaterCardsToPlay && !areCropsToHarvest) {
+          if (!areCropsToPlay && !areWaterCardsToPlay) {
+            cropCardIndicesToHarvest = botLogic.getCropCardIndicesToHarvest(
+              game,
+              currentPlayerId
+            )
+
+            areCropsToHarvest = cropCardIndicesToHarvest.length > 0
+          }
+
+          if (!areCropsToPlay && !areWaterCardsToPlay && areCropsToHarvest) {
+            enqueue.raise(
+              {
+                type: GameEvent.HARVEST_CROP,
+                playerId: currentPlayerId,
+                cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
+              },
+              {
+                delay: BOT_ACTION_DELAY,
+              }
+            )
+          }
+
+          const doActionsRemain =
+            areCropsToPlay || areWaterCardsToPlay || areCropsToHarvest
+
+          if (!doActionsRemain) {
             // NOTE: Returns control back to the player
             enqueue.raise({
               type: GameEvent.START_TURN,

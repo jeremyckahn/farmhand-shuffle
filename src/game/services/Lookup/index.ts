@@ -1,6 +1,10 @@
 import { IGame, IPlayer, isCropCardInstance } from '../../types'
 import { isCrop } from '../../types/guards'
-import { InvalidCardError, InvalidIdError } from '../Rules/errors'
+import {
+  InvalidCardError,
+  InvalidCardIndexError,
+  InvalidIdError,
+} from '../Rules/errors'
 
 export class LookupService {
   getCardFromHand = (game: IGame, playerId: IPlayer['id'], cardIdx: number) => {
@@ -38,9 +42,7 @@ export class LookupService {
     const cardInstance = crops[cardIdx]
 
     if (!cardInstance) {
-      throw new Error(
-        `Card index ${cardIdx} is not in player ${playerId}'s field`
-      )
+      throw new InvalidCardIndexError(cardIdx, playerId)
     }
 
     return cardInstance
