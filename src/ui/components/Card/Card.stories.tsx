@@ -12,6 +12,7 @@ import {
   stubPumpkin,
   stubWater,
 } from '../../../test-utils/stubs/cards'
+import { stubSelectorState } from '../../../test-utils/stubs/selectorState'
 
 import { Card } from './Card'
 
@@ -48,10 +49,12 @@ export const PlayableCropCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },
@@ -69,10 +72,12 @@ export const PlayableWaterCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },
@@ -92,10 +97,12 @@ export const WaterableCropCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.PLAYER_WATERING_CROP,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.PLAYER_WATERING_CROP,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },
@@ -115,10 +122,12 @@ export const HarvestableSessionOwnerCropCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },
@@ -138,10 +147,12 @@ export const HarvestableOpponentCropCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },
