@@ -3,7 +3,7 @@ import { spyOn } from '@storybook/test'
 
 import { GameState } from '../../../game/types'
 import { stubGame } from '../../../test-utils/stubs/game'
-import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { CardSize } from '../../types'
 import { ActorContext } from '../Game/ActorContext'
 
@@ -12,6 +12,7 @@ import {
   stubPumpkin,
   stubWater,
 } from '../../../test-utils/stubs/cards'
+import { stubSelectorState } from '../../../test-utils/stubs/selectorState'
 
 import { Card } from './Card'
 
@@ -48,10 +49,12 @@ export const PlayableCropCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },
@@ -69,10 +72,12 @@ export const PlayableWaterCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },
@@ -92,10 +97,62 @@ export const WaterableCropCard: Story = {
   },
   decorators: [
     Story => {
-      spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState: GameState.PLAYER_WATERING_CROP,
-        game: stubGame(),
-      })
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.PLAYER_WATERING_CROP,
+          game: stubGame(),
+        })
+      )
+
+      return <Story />
+    },
+  ],
+}
+
+export const HarvestableSessionOwnerCropCard: Story = {
+  args: {
+    cardInstance: stubPumpkin,
+    cardIdx: 0,
+    playerId: stubPlayer1.id,
+    isFlipped: false,
+    isInField: true,
+    size: CardSize.MEDIUM,
+    isFocused: true,
+    canBeHarvested: true,
+  },
+  decorators: [
+    Story => {
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
+
+      return <Story />
+    },
+  ],
+}
+
+export const HarvestableOpponentCropCard: Story = {
+  args: {
+    cardInstance: stubPumpkin,
+    cardIdx: 0,
+    playerId: stubPlayer2.id,
+    isFlipped: false,
+    isInField: true,
+    size: CardSize.MEDIUM,
+    isFocused: true,
+    canBeHarvested: true,
+  },
+  decorators: [
+    Story => {
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
 
       return <Story />
     },

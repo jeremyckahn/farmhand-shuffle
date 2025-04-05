@@ -223,4 +223,72 @@ describe('BotLogicService', () => {
       }
     )
   })
+
+  describe('getCropCardIndicesToHarvest', () => {
+    it.each<{
+      fieldCrops: IField['crops']
+      expectedResult: number[]
+    }>([
+      { fieldCrops: [], expectedResult: [] },
+
+      {
+        fieldCrops: [
+          {
+            instance: instantiate(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: carrot.waterToMature,
+          },
+        ],
+        expectedResult: [0],
+      },
+      {
+        fieldCrops: [
+          {
+            instance: instantiate(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: carrot.waterToMature - 1,
+          },
+        ],
+        expectedResult: [],
+      },
+
+      {
+        fieldCrops: [
+          {
+            instance: instantiate(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: carrot.waterToMature,
+          },
+          {
+            instance: instantiate(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: carrot.waterToMature - 1,
+          },
+          {
+            instance: instantiate(carrot),
+            wasWateredTuringTurn: false,
+            waterCards: carrot.waterToMature,
+          },
+        ],
+        expectedResult: [0, 2],
+      },
+    ])(
+      'returns indices of crop cards that are ready to harvest for crops $fieldCrops',
+      ({ fieldCrops, expectedResult }) => {
+        let game = stubGame()
+        game = updatePlayer(game, stubPlayer1.id, {
+          field: {
+            crops: fieldCrops,
+          },
+        })
+
+        const result = botLogic.getCropCardIndicesToHarvest(
+          game,
+          stubPlayer1.id
+        )
+
+        expect(result).toEqual(expectedResult)
+      }
+    )
+  })
 })

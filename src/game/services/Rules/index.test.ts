@@ -1,9 +1,14 @@
 import { randomNumber } from '../../../services/RandomNumber'
-import { stubWater } from '../../../test-utils/stubs/cards'
+import {
+  stubCarrot,
+  stubPumpkin,
+  stubWater,
+} from '../../../test-utils/stubs/cards'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../config'
 import * as startTurnModule from '../../reducers/start-turn'
+import { updateField } from '../../reducers/update-field'
 import { updatePlayer } from '../../reducers/update-player'
 import {
   CardInstance,
@@ -595,6 +600,94 @@ describe('createGameStateMachine', () => {
         expect(gameResult.table.players[player2.id].hand).toEqual(resultingHand)
         expect(gameResult.table.players[player2.id].deck).toEqual(resultingDeck)
         expect(cropsToPlayDuringBotTurn).toEqual(0)
+      }
+    )
+
+    // NOTE: For each of these test cases, there was already a carrot in the
+    // field as a result of createSetUpGameActor.
+    test.each<{
+      startingFieldCrops: IField['crops']
+      startingDiscardPile: CardInstance[]
+      resultingFieldCrops: IField['crops']
+      resultingDiscardPile: CardInstance[]
+    }>([
+      {
+        startingDiscardPile: [],
+        startingFieldCrops: [],
+        resultingFieldCrops: [],
+        resultingDiscardPile: [],
+      },
+
+      {
+        startingDiscardPile: [],
+        startingFieldCrops: [
+          {
+            instance: stubCarrot,
+            wasWateredTuringTurn: true,
+            waterCards: carrot.waterToMature,
+          },
+        ],
+        resultingFieldCrops: [],
+        resultingDiscardPile: [stubCarrot],
+      },
+
+      {
+        startingDiscardPile: [],
+        startingFieldCrops: [
+          {
+            instance: stubPumpkin,
+            wasWateredTuringTurn: true,
+            waterCards: pumpkin.waterToMature,
+          },
+          {
+            instance: stubCarrot,
+            wasWateredTuringTurn: true,
+            waterCards: 0,
+          },
+        ],
+        // TODO: Support sparse arrays in IField['crops'] so unrelated cards
+        // aren't shifted
+        resultingFieldCrops: [
+          // NOTE: This is the previously unwatered, unharvestable crop
+          {
+            instance: stubCarrot,
+            wasWateredTuringTurn: true,
+            waterCards: 1,
+          },
+        ],
+        resultingDiscardPile: [stubPumpkin],
+      },
+    ])(
+      'harvests crops from starting field $startingFieldCrops',
+      ({ startingFieldCrops, resultingFieldCrops }) => {
+        const gameActor = createSetUpGameActor()
+
+        let {
+          context: { game },
+        } = gameActor.getSnapshot()
+
+        game = updateField(game, player2.id, {
+          crops: startingFieldCrops,
+        })
+
+        gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+
+        // NOTE: Prompts bot player
+        gameActor.send({ type: GameEvent.START_TURN })
+
+        // NOTE: Performs all bot turn logic
+        vi.runAllTimers()
+
+        const {
+          value,
+          context: { game: gameResult },
+        } = gameActor.getSnapshot()
+
+        expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+        expect(gameResult.currentPlayerId).toBe(player1.id)
+        expect(gameResult.table.players[player2.id].field.crops).toEqual<
+          IPlayedCrop[]
+        >(resultingFieldCrops)
       }
     )
   })

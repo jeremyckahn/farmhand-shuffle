@@ -1,5 +1,3 @@
-import { test } from 'vitest'
-
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
@@ -7,6 +5,7 @@ import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { updatePlayer } from '../../reducers/update-player'
 import { IGame, IPlayer } from '../../types'
 import { isPlayer } from '../../types/guards'
+import { factory } from '../Factory'
 import { InvalidIdError } from '../Rules/errors'
 
 import { lookup } from '.'
@@ -124,6 +123,38 @@ describe('Lookup', () => {
       )
 
       expect(cropIndexesInHand).toEqual(expected)
+    })
+  })
+
+  describe('getPlayedCropFromField', () => {
+    let mutatedGame: IGame
+
+    beforeEach(() => {
+      mutatedGame = stubGame()
+
+      // eslint-disable-next-line functional/immutable-data
+      mutatedGame.table.players[stubPlayer1.id].field.crops[0] =
+        factory.buildPlayedCrop(stubCarrot)
+    })
+
+    test('returns card from field', () => {
+      const playedCrop = lookup.getPlayedCropFromField(
+        mutatedGame,
+        stubPlayer1.id,
+        0
+      )
+
+      expect(playedCrop).toEqual(factory.buildPlayedCrop(stubCarrot))
+    })
+
+    test('throws an error when specified card is not in field', () => {
+      expect(() => {
+        lookup.getPlayedCropFromField(
+          mutatedGame,
+          stubPlayer1.id,
+          mutatedGame.table.players[stubPlayer1.id].field.crops.length
+        )
+      }).toThrow()
     })
   })
 })

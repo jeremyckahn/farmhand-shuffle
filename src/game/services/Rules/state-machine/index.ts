@@ -2,6 +2,7 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { GameEvent, GameState } from '../../../types'
 
+import { performingBotCropHarvestingState } from './performingBotCropHarvestingState'
 import { performingBotCropWateringState } from './performingBotCropWateringState'
 import { performingBotSetupActionState } from './performingBotSetupActionState'
 import { performingBotTurnActionState } from './performingBotTurnActionState'
@@ -28,12 +29,23 @@ export const machineConfig: RulesMachineConfig = {
         enqueue.assign(context)
       }),
     },
+
+    [GameEvent.SET_SHELL]: {
+      actions: enqueueActions(({ event, enqueue }) => {
+        assertEvent(event, GameEvent.SET_SHELL)
+
+        const { shell } = event
+
+        enqueue.assign({ shell })
+      }),
+    },
   },
 
   states: {
     ...uninitializedState,
 
     ...performingBotCropWateringState,
+    ...performingBotCropHarvestingState,
     ...performingBotSetupActionState,
     ...performingBotTurnActionState,
     ...plantingCropState,

@@ -2,13 +2,14 @@ import Box, { BoxProps } from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
 
-import { InvalidCardError } from '../../../game/services/Rules/errors'
-import { IPlayedCrop, isCropCardInstance } from '../../../game/types'
+import { IPlayedCrop } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
-import { Card, CropCardProps } from '../Card'
+import { Card } from '../Card'
+import { CropCardProps } from '../Card/types'
 
 import { WaterIndicator } from './WaterIndicator'
+import { usePlayedCropLogic } from './usePlayedCropLogic'
 
 export interface PlayedCropProps extends BoxProps {
   cropCardProps: CropCardProps & { playedCrop: IPlayedCrop }
@@ -17,29 +18,30 @@ export interface PlayedCropProps extends BoxProps {
 
 export const unfilledWaterIndicatorOpacity = 0.25
 
+export const playedCropClassName = 'PlayedCrop'
+
 export const PlayedCrop = ({
   isInBackground,
   cropCardProps: { ref, ...cropCardProps },
   ...props
 }: PlayedCropProps) => {
-  const {
-    cardInstance: card,
-    playedCrop,
-    size = CardSize.MEDIUM,
-  } = cropCardProps
   const theme = useTheme()
 
-  if (!isCropCardInstance(card)) {
-    throw new InvalidCardError(`${card.id} is not a crop card.`)
-  }
+  const { cardInstance, playedCrop, size = CardSize.MEDIUM } = cropCardProps
 
-  const waterIconsToRender = Math.max(playedCrop.waterCards, card.waterToMature)
+  const { canBeWatered, canBeHarvested, waterIconsToRender } =
+    usePlayedCropLogic({ card: cardInstance, playedCrop })
 
   return (
-    <Box maxWidth={CARD_DIMENSIONS[size].width} {...props}>
+    <Box
+      className={playedCropClassName}
+      maxWidth={CARD_DIMENSIONS[size].width}
+      {...props}
+    >
       <Card
         size={size}
-        canBeWatered={playedCrop.wasWateredTuringTurn === false}
+        canBeWatered={canBeWatered}
+        canBeHarvested={canBeHarvested}
         {...cropCardProps}
       />
       <Grid

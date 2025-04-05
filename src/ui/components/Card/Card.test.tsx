@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
-import { RulesService } from '../../../game/services/Rules'
+import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
 import { GameEvent, GameEventPayload, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import { stubCarrot, stubWater } from '../../../test-utils/stubs/cards'
@@ -11,8 +11,9 @@ import * as useGameStateModule from '../../hooks/useGameRules'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Game/ActorContext'
 
-import { Card, CardProps } from './Card'
-import { cardFlipWrapperClassName } from './CardTemplate'
+import { Card } from './Card'
+import { CardProps } from './types'
+import { cardFlipWrapperClassName } from './CardCore'
 
 const stubCardInstance = stubCarrot
 
@@ -100,8 +101,7 @@ describe('Card', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
         gameState,
         game,
-        selectedWaterCardInHandIdx:
-          RulesService.defaultSelectedWaterCardInHandIdx,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       })
 
       render(
@@ -133,8 +133,7 @@ describe('Card', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
         gameState,
         game: stubGame(),
-        selectedWaterCardInHandIdx:
-          RulesService.defaultSelectedWaterCardInHandIdx,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       })
 
       render(
@@ -190,6 +189,41 @@ describe('Card', () => {
       cropIdxInFieldToWater: 0,
       waterCardInHandIdx: selectedWaterCardInHandIdx,
       playerId: stubPlayer1.id,
+    })
+  })
+
+  test('allows player to harvest a crop card', () => {
+    const send = mockSend()
+
+    vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
+      gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      game: stubGame(),
+      selectedWaterCardInHandIdx: 0,
+    })
+
+    const cardIdx = 2
+
+    render(
+      <StubCard
+        canBeHarvested
+        cardIdx={cardIdx}
+        cardInstance={stubCarrot}
+        isFocused
+        isInField
+        playerId={stubPlayer1.id}
+      />
+    )
+
+    const playCardButton = screen.getByText('Harvest crop')
+
+    fireEvent.click(playCardButton)
+
+    expect(send).toHaveBeenCalledWith<
+      [GameEventPayload[GameEvent.HARVEST_CROP]]
+    >({
+      type: GameEvent.HARVEST_CROP,
+      playerId: stubPlayer1.id,
+      cropIdxInFieldToHarvest: cardIdx,
     })
   })
 })
