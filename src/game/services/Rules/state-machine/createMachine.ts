@@ -6,17 +6,22 @@ import {
   GameEventPayloadKey,
   GameStateGuard,
   GameEvent,
+  IShell,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
+export interface GameMachineContext {
+  game: IGame
+  cropsToPlayDuringBotTurn: number
+  selectedWaterCardInHandIdx: number
+  fieldCropIndicesToWaterDuringBotTurn: number[]
+  cropCardIndicesToHarvest: number[]
+  shell: IShell
+}
+
 export const { createMachine } = setup({
   types: {
-    context: {} as {
-      game: IGame
-      cropsToPlayDuringBotTurn: number
-      selectedWaterCardInHandIdx: number
-      fieldCropIndicesToWaterDuringBotTurn: number[]
-    },
+    context: {} as GameMachineContext,
     events: {} as GameEventPayload[GameEventPayloadKey],
   },
 

@@ -1,7 +1,6 @@
 import { randomNumber } from '../../../services/RandomNumber'
 import { STANDARD_FIELD_SIZE } from '../../config'
 import { IGame, isCropCardInstance, isWaterCardInstance } from '../../types'
-import { assertIsCardId } from '../../types/guards'
 import { lookup } from '../Lookup'
 
 export class BotLogicService {
@@ -50,7 +49,6 @@ export class BotLogicService {
       }
 
       const plantedCrop = crops[i]
-      assertIsCardId(plantedCrop.instance.id)
 
       if (isCropCardInstance(plantedCrop.instance)) {
         if (
@@ -63,6 +61,26 @@ export class BotLogicService {
     }
 
     return fieldCropIdxsThatNeedWater
+  }
+
+  getCropCardIndicesToHarvest(game: IGame, playerId: string) {
+    const {
+      field: { crops },
+    } = game.table.players[playerId]
+
+    let fieldCropIdxsToHarvest: number[] = []
+
+    for (let i = 0; i < crops.length; i++) {
+      const plantedCrop = crops[i]
+
+      if (isCropCardInstance(plantedCrop.instance)) {
+        if (plantedCrop.waterCards >= plantedCrop.instance.waterToMature) {
+          fieldCropIdxsToHarvest = [...fieldCropIdxsToHarvest, i]
+        }
+      }
+    }
+
+    return fieldCropIdxsToHarvest
   }
 }
 

@@ -1,9 +1,8 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
-import { GameEvent, GameState } from '../../../types'
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
-
-import { RulesService } from '..'
+import { GameEvent, GameState } from '../../../types'
+import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
 import { RulesMachineConfig } from './types'
 
@@ -54,8 +53,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
       ({ event, context: { selectedWaterCardInHandIdx }, enqueue }) => {
         switch (event.type) {
           case GameEvent.OPERATION_ABORTED: {
-            selectedWaterCardInHandIdx =
-              RulesService.defaultSelectedWaterCardInHandIdx
+            selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
             break
           }
 

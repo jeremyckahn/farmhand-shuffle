@@ -24,15 +24,22 @@ import { ActorContext } from '../Game/ActorContext'
 import { ShellContext } from '../Game/ShellContext'
 import { Image } from '../Image'
 
-import { CardProps } from './Card'
+import { CardProps } from './types'
 
 export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'
 
 const cropWaterIndicatorOutlineColor = '#0072ff'
+const cropHarvestIndicatorSessionOwnerOutlineColor = '#0fc400'
+const cropHarvestIndicatorOpponentOutlineColor = '#ff7510'
 
-export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
-  function CardTemplate(
+// TODO: Improve visual accessibility by showing visual indications for the
+// following idle states that do not rely on differentiation by color:
+//   - Waterable crops
+//   - Harvestable crops
+
+export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
+  function CardCore(
     {
       cardInstance: card,
       cardIdx,
@@ -40,6 +47,7 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       children,
       onBeforePlay,
       canBeWatered = false,
+      canBeHarvested = false,
       disableEnterAnimation = false,
       imageScale = 0.75,
       isFlipped = false,
@@ -97,10 +105,19 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
       })
     }
 
+    const handleHarvestCrop = () => {
+      actorRef.send({
+        type: GameEvent.HARVEST_CROP,
+        playerId,
+        cropIdxInFieldToHarvest: cardIdx,
+      })
+    }
+
     const isSessionOwnersCard = playerId === game.sessionOwnerPlayerId
 
     let showPlayCardButton = false
     let showWaterCropButton = false
+    let showHarvestCropButton = false
 
     switch (card.type) {
       case CardType.CROP: {
@@ -124,6 +141,16 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
           [GameState.PLAYER_WATERING_CROP].includes(gameState)
         ) {
           showWaterCropButton = true
+        }
+
+        if (
+          isSessionOwnersCard &&
+          isFocused &&
+          isInField &&
+          canBeHarvested &&
+          [GameState.WAITING_FOR_PLAYER_TURN_ACTION].includes(gameState)
+        ) {
+          showHarvestCropButton = true
         }
 
         break
@@ -205,6 +232,13 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                       isCropCardInstance(card) && {
                         filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
                       }),
+                    ...(isInField &&
+                      canBeHarvested &&
+                      isCropCardInstance(card) && {
+                        filter: isSessionOwnersCard
+                          ? `drop-shadow(0px 0px 24px ${cropHarvestIndicatorSessionOwnerOutlineColor})`
+                          : `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
+                      }),
                   },
                 ]}
               >
@@ -261,6 +295,19 @@ export const CardTemplate = React.forwardRef<HTMLDivElement, CardProps>(
                     <Typography>
                       <Button variant="contained" onClick={handleWaterCrop}>
                         Water crop
+                      </Button>
+                    </Typography>
+                  </Box>
+                )}
+                {showHarvestCropButton && (
+                  <Box position="absolute" right="-100%" width={1} px={1}>
+                    <Typography>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={handleHarvestCrop}
+                      >
+                        Harvest crop
                       </Button>
                     </Typography>
                   </Box>

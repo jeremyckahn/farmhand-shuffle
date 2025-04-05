@@ -1,5 +1,4 @@
-import { AlertColor } from '@mui/material'
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
@@ -7,7 +6,7 @@ import { useGameRules } from '../../hooks/useGameRules'
 
 import { ActorContext } from './ActorContext'
 import { ShellContextProps } from './ShellContext'
-import { emptyNotificationMessage, SnackbarProps } from './Snackbar'
+import { useSnackbar } from './useSnackbar'
 
 export const useGame = ({
   playerSeeds,
@@ -53,27 +52,7 @@ export const useGame = ({
     [setIsBlockingOperationExecuting]
   )
 
-  const [snackbarProps, setSnackbarProps] = useState<SnackbarProps>({
-    message: '',
-    severity: 'info',
-    onClose: () => {
-      setSnackbarProps(prev => ({
-        ...prev,
-        message: emptyNotificationMessage,
-      }))
-    },
-  })
-
-  const showNotification = useCallback(
-    (message: ReactNode, severity: AlertColor) => {
-      if (isDebugEnabled) {
-        console.debug(`Notification: ${String(message)}`)
-      }
-
-      setSnackbarProps(prev => ({ ...prev, message, severity }))
-    },
-    []
-  )
+  const { showNotification, snackbarProps } = useSnackbar({ actorRef, game })
 
   const shellContextValue: ShellContextProps = useMemo(
     () => ({
