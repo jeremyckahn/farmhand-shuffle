@@ -4,6 +4,12 @@ import { water } from '../../game/cards/water'
 import { DECK_SIZE } from '../../game/config'
 import { CardInstance } from '../../game/types'
 
+/**
+ * Creates a stub deck of cards for testing purposes. The deck is populated
+ * with a mixture of crops and water cards.
+ *
+ * @returns A deck of cards.
+ */
 export const stubDeck = () => {
   const deck = new Array<CardInstance>(DECK_SIZE)
 

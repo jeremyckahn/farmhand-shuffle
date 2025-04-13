@@ -71,7 +71,9 @@ describe('Factory', () => {
 
     test('sets up player hands', () => {
       // NOTE: Ensures that the first crop card in the deck is the one that's
-      // pulled in drawValidStartingHand to produce a predictable hand
+      // pulled in drawValidStartingHand to produce a predictable hand. This is
+      // helpful for keeping tests and Storybook stories aligned to a
+      // consistent game state that's easy to understand.
       vi.spyOn(randomNumber, 'generate').mockReturnValue(0)
 
       const game = factory.buildGameForSession([player1, player2])
