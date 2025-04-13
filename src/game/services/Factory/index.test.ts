@@ -1,6 +1,7 @@
 import shuffle from 'lodash.shuffle'
 import { MockInstance } from 'vitest'
 
+import { randomNumber } from '../../../services/RandomNumber'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
@@ -69,6 +70,12 @@ describe('Factory', () => {
     })
 
     test('sets up player hands', () => {
+      // NOTE: Ensures that the first crop card in the deck is the one that's
+      // pulled in drawValidStartingHand to produce a predictable hand. This is
+      // helpful for keeping tests and Storybook stories aligned to a
+      // consistent game state that's easy to understand.
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(0)
+
       const game = factory.buildGameForSession([player1, player2])
       const [player1Id, player2Id] = Object.keys(game.table.players)
 
