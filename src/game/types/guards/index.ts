@@ -2,6 +2,7 @@ import {
   CardInstance,
   CardType,
   GameState,
+  ICard,
   ICrop,
   IField,
   IGame,
@@ -97,6 +98,23 @@ export const isGame = (obj: unknown): obj is IGame => {
 }
 
 export const isCardId = (id: string): id is keyof typeof cards => id in cards
+
+export const isCard = (obj: unknown): obj is ICard => {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'id' in obj &&
+    typeof obj.id === 'string' &&
+    isCardId(obj.id) &&
+    'name' in obj &&
+    typeof obj.name === 'string' &&
+    'type' in obj &&
+    typeof obj.type === 'string' &&
+    obj.type in CardType &&
+    'onPlayFromHand' in obj &&
+    typeof obj.onPlayFromHand === 'function'
+  )
+}
 
 export function assertIsCardId(id: string): asserts id is keyof typeof cards {
   if (!isCardId(id)) {

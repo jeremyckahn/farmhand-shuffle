@@ -85,12 +85,12 @@ export class FactoryService {
     let game = this.buildGame({}, userPlayerId)
 
     for (const playerSeed of playerSeeds) {
+      validate.playerSeed(playerSeed)
+
       const player = this.buildPlayer({
         ...playerSeed,
         funds: Math.floor(game.table.communityFund / playerSeeds.length),
       })
-
-      validate.player(player)
 
       game = updateTable(game, {
         players: { ...game.table.players, [player.id]: player },
