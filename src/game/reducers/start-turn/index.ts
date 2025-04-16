@@ -14,7 +14,13 @@ export const startTurn = (game: IGame, playerId: IPlayer['id']): IGame => {
 
   game = drawCard(game, playerId)
 
-  for (let i = 0; i < game.table.players[playerId].field.crops.length; i++) {
+  const crops = game.table.players[playerId].field.crops
+
+  for (let i = 0; i < crops.length; i++) {
+    if (crops[i] === undefined) {
+      continue
+    }
+
     game = updatePlayedCrop(game, playerId, i, { wasWateredTuringTurn: false })
   }
 

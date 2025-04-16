@@ -1,3 +1,4 @@
+import { array } from '../../../services/Array'
 import { STANDARD_FIELD_SIZE } from '../../config'
 import { FieldFullError } from '../../services/Rules/errors'
 import { IGame, IPlayedCrop, IPlayer } from '../../types'
@@ -9,15 +10,23 @@ export const addCropToField = (
   newCrop: IPlayedCrop
 ) => {
   const { field } = game.table.players[playerId]
-  const { crops } = field
+  let { crops } = field
 
-  if (crops.length >= STANDARD_FIELD_SIZE) {
+  const fullPlots = crops.filter(Boolean)
+
+  if (fullPlots.length >= STANDARD_FIELD_SIZE) {
     throw new FieldFullError(playerId)
   }
 
-  const newCrops = [...crops, newCrop]
+  const emptyPlotIdx = crops.findIndex(crop => crop === undefined)
 
-  game = updateField(game, playerId, { crops: newCrops })
+  if (emptyPlotIdx === -1) {
+    crops = [...crops, newCrop]
+  } else {
+    crops = array.replaceAt(crops, emptyPlotIdx, newCrop)
+  }
+
+  game = updateField(game, playerId, { crops })
 
   return game
 }

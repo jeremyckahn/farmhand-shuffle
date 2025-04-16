@@ -27,6 +27,27 @@ export const rotationTransform = 'rotate(180deg)'
 export const selectedCardLabel = 'Selected field card'
 export const unselectedCardLabel = 'Unselected field card'
 
+const EmptyPlot = ({
+  cardSize = CardSize.SMALL,
+}: Pick<FieldProps, 'cardSize'>) => {
+  const theme = useTheme()
+  return (
+    <Grid item xs={6} sm={4} md={2}>
+      <Box
+        height={CARD_DIMENSIONS[cardSize].height}
+        width={CARD_DIMENSIONS[cardSize].width}
+        sx={{
+          mx: 'auto',
+          outlineStyle: 'solid',
+          outlineWidth: '2px',
+          outlineColor: theme.palette.divider,
+          borderRadius: theme.shape.borderRadius,
+        }}
+      />
+    </Grid>
+  )
+}
+
 export const Field = ({
   playerId,
   game,
@@ -129,21 +150,7 @@ export const Field = ({
   const emptyCardSlots = new Array(STANDARD_FIELD_SIZE - crops.length)
     .fill(null)
     .map((_, idx) => {
-      return (
-        <Grid key={`${idx}`} item xs={6} sm={4} md={2}>
-          <Box
-            height={CARD_DIMENSIONS[cardSize].height}
-            width={CARD_DIMENSIONS[cardSize].width}
-            sx={{
-              mx: 'auto',
-              outlineStyle: 'solid',
-              outlineWidth: '2px',
-              outlineColor: theme.palette.divider,
-              borderRadius: theme.shape.borderRadius,
-            }}
-          />
-        </Grid>
-      )
+      return <EmptyPlot key={idx} cardSize={cardSize} />
     })
 
   return (
@@ -162,6 +169,10 @@ export const Field = ({
       >
         {!isSessionOwnerPlayer && emptyCardSlots}
         {crops.map((playedCrop, idx) => {
+          if (!playedCrop) {
+            return <EmptyPlot key={idx} cardSize={cardSize} />
+          }
+
           const { instance: cardInstance } = playedCrop
 
           const isSelected = selectedCardIdx === idx

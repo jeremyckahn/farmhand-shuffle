@@ -3,6 +3,7 @@ import { enqueueActions } from 'xstate'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { updatePlayedCrop } from '../../../reducers/update-played-crop'
 import { GameEvent, GameState, IPlayedCrop } from '../../../types'
+import { assertIsPlayedCrop } from '../../../types/guards'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
 import { RulesMachineConfig } from './types'
@@ -43,6 +44,8 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
 
               const playedCrop =
                 game.table.players[playerId].field.crops[cropIdxInFieldToWater]
+
+              assertIsPlayedCrop(playedCrop)
 
               const newPlayedCrop: IPlayedCrop = {
                 ...playedCrop,
