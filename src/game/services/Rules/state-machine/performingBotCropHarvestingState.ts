@@ -28,7 +28,7 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         const plantedCrop =
           game.table.players[currentPlayerId].field.crops[cropCardIdxToHarvest]
 
-        assertIsPlayedCrop(plantedCrop)
+        assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
 
         game = harvestCrop(game, currentPlayerId, cropCardIdxToHarvest)
 

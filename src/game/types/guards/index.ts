@@ -119,9 +119,10 @@ export function assertStringIsGameState(str: string): asserts str is GameState {
 }
 
 export function assertIsPlayedCrop(
-  plotContents: IField['crops'][0]
+  plotContents: IField['crops'][0],
+  fieldCropIdx: number
 ): asserts plotContents is IPlayedCrop {
   if (plotContents === undefined) {
-    throw new TypeError(`plotContents is undefined`)
+    throw new TypeError(`Field plot at position ${fieldCropIdx} is undefined`)
   }
 }

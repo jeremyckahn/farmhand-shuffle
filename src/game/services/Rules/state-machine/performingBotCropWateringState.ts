@@ -45,7 +45,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         const playedCrop =
           game.table.players[currentPlayerId].field.crops[cropIdxInFieldToWater]
 
-        assertIsPlayedCrop(playedCrop)
+        assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 
         const updatedPlayedCrop: IPlayedCrop = {
           ...playedCrop,
