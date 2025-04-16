@@ -1,19 +1,37 @@
-import { IPlayer, isCropCardInstance } from '../../types'
+import { DECK_SIZE } from '../../config'
+import { IPlayerSeed, isCropCardInstance } from '../../types'
+import { isCard } from '../../types/guards'
 import { GameStateCorruptError } from '../Rules/errors'
 
 export class ValidationService {
   /**
-   * Asserts:
+   * Asserts that:
+   *   - The player deck contains the correct number of cards
+   *   - All cards in the player's deck are valid
    *   - That player deck contains at least one crop
    */
-  player = (player: IPlayer) => {
-    const deckContainsCrop = player.deck.some(cardInstance => {
-      return isCropCardInstance(cardInstance)
-    })
+  playerSeed = (player: IPlayerSeed) => {
+    const { deck, id } = player
+
+    if (deck.length !== DECK_SIZE) {
+      throw new GameStateCorruptError(
+        `Deck for player ${id} contains ${deck.length} cards but must contain ${DECK_SIZE} cards instead`
+      )
+    }
+
+    const areAllCardsValid = deck.every(isCard)
+
+    if (!areAllCardsValid) {
+      throw new GameStateCorruptError(
+        `Deck for player ${id} contain invalid cards`
+      )
+    }
+
+    const deckContainsCrop = deck.some(isCropCardInstance)
 
     if (!deckContainsCrop) {
       throw new GameStateCorruptError(
-        `Deck for player ${player.id} does not contain any crops`
+        `Deck for player ${id} does not contain any crops`
       )
     }
 
