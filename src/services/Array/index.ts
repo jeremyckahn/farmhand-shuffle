@@ -11,18 +11,10 @@ export class ArrayService {
   }
 
   /**
-   * Inserts an element into an array at the given index. Returns a new copy of the extended array.
-   */
-  insertAt<T>(array: T[], idx: number, element: T): T[] {
-    return [...array.slice(0, idx), element, ...array.slice(idx)]
-  }
-
-  /**
    * Replaces an element in an array at the given index. Returns a new copy of the modified array.
    */
   replaceAt<T>(array: T[], idx: number, element: T): T[] {
-    array = this.removeAt(array, idx)
-    return this.insertAt(array, idx, element)
+    return [...array.slice(0, idx), element, ...array.slice(idx + 1)]
   }
 }
 

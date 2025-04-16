@@ -15,14 +15,6 @@ describe('ArrayService', () => {
     })
   })
 
-  describe('insertAt', () => {
-    test('inserts an element into an array', () => {
-      const arr = array.insertAt([1, 2, 3], 1, 4)
-
-      expect(arr).toEqual([1, 4, 2, 3])
-    })
-  })
-
   describe('replaceAt', () => {
     test('replaces an element in an array', () => {
       const arr = array.replaceAt([1, 2, 3], 1, 4)
