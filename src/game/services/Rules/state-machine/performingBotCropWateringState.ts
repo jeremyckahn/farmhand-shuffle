@@ -8,7 +8,7 @@ import {
   IPlayedCrop,
   isWaterCardInstance,
 } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
+import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { GameStateCorruptError } from '../errors'
 
 import { RulesMachineConfig } from './types'
@@ -44,6 +44,8 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
 
         const playedCrop =
           game.table.players[currentPlayerId].field.crops[cropIdxInFieldToWater]
+
+        assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 
         const updatedPlayedCrop: IPlayedCrop = {
           ...playedCrop,

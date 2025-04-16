@@ -115,7 +115,7 @@ export const isWaterCardInstance = (
 }
 
 export interface IField {
-  readonly crops: IPlayedCrop[]
+  readonly crops: (IPlayedCrop | undefined)[]
 }
 
 export interface IPlayer {

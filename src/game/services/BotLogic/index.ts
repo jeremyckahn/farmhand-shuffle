@@ -50,7 +50,7 @@ export class BotLogicService {
 
       const plantedCrop = crops[i]
 
-      if (isCropCardInstance(plantedCrop.instance)) {
+      if (plantedCrop && isCropCardInstance(plantedCrop.instance)) {
         if (
           plantedCrop.waterCards < plantedCrop.instance.waterToMature &&
           plantedCrop.wasWateredTuringTurn === false
@@ -73,7 +73,7 @@ export class BotLogicService {
     for (let i = 0; i < crops.length; i++) {
       const plantedCrop = crops[i]
 
-      if (isCropCardInstance(plantedCrop.instance)) {
+      if (plantedCrop && isCropCardInstance(plantedCrop.instance)) {
         if (plantedCrop.waterCards >= plantedCrop.instance.waterToMature) {
           fieldCropIdxsToHarvest = [...fieldCropIdxsToHarvest, i]
         }

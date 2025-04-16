@@ -5,6 +5,7 @@ import {
   ICrop,
   IField,
   IGame,
+  IPlayedCrop,
   IPlayer,
   ITable,
 } from '../'
@@ -107,12 +108,21 @@ export function assertCurrentPlayer(
   currentPlayerId: string | null
 ): asserts currentPlayerId is string {
   if (currentPlayerId === null) {
-    throw new TypeError('[TypeError] currentPlayerId must not be null')
+    throw new TypeError('currentPlayerId must not be null')
   }
 }
 
 export function assertStringIsGameState(str: string): asserts str is GameState {
   if (!(str in GameState)) {
     throw new TypeError(`${str} is not a GameState`)
+  }
+}
+
+export function assertIsPlayedCrop(
+  plotContents: IField['crops'][0],
+  fieldCropIdx: number
+): asserts plotContents is IPlayedCrop {
+  if (plotContents === undefined) {
+    throw new TypeError(`Field plot at position ${fieldCropIdx} is undefined`)
   }
 }

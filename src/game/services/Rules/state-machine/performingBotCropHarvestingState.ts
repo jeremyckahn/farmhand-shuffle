@@ -1,7 +1,7 @@
 import { enqueueActions } from 'xstate'
 
 import { GameEvent, GameState, ShellNotification } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
+import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { harvestCrop } from '../../../reducers/harvest-crop'
 
 import { RulesMachineConfig } from './types'
@@ -27,6 +27,8 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
 
         const plantedCrop =
           game.table.players[currentPlayerId].field.crops[cropCardIdxToHarvest]
+
+        assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
 
         game = harvestCrop(game, currentPlayerId, cropCardIdxToHarvest)
 

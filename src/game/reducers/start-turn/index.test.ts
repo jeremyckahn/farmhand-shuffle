@@ -7,7 +7,7 @@ import { carrot, instantiate } from '../../cards'
 import { DECK_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
 import { updatePlayer } from '../../reducers/update-player'
 import { factory } from '../../services/Factory'
-import { ICard, IGame, IPlayedCrop, IPlayer } from '../../types'
+import { ICard, IField, IGame, IPlayedCrop, IPlayer } from '../../types'
 
 import { startTurn } from '.'
 
@@ -101,5 +101,30 @@ describe('startTurn', () => {
         { instance: carrot3, wasWateredTuringTurn: false, waterCards: 1 },
       ]
     )
+  })
+
+  test('skips over empty field plots', () => {
+    const carrot1 = instantiate(carrot)
+    const carrot2 = instantiate(carrot)
+
+    let newGame = updatePlayer(game, player1Id, {
+      field: {
+        crops: [
+          { instance: carrot1, wasWateredTuringTurn: true, waterCards: 1 },
+          undefined,
+          { instance: carrot2, wasWateredTuringTurn: true, waterCards: 1 },
+        ],
+      },
+    })
+
+    newGame = startTurn(newGame, player1Id)
+
+    expect(newGame.table.players[player1Id].field.crops).toEqual<
+      IField['crops']
+    >([
+      { instance: carrot1, wasWateredTuringTurn: false, waterCards: 1 },
+      undefined,
+      { instance: carrot2, wasWateredTuringTurn: false, waterCards: 1 },
+    ])
   })
 })

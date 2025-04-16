@@ -14,4 +14,12 @@ describe('ArrayService', () => {
       }).toThrow()
     })
   })
+
+  describe('replaceAt', () => {
+    test('replaces an element in an array', () => {
+      const arr = array.replaceAt([1, 2, 3], 1, 4)
+
+      expect(arr).toEqual([1, 4, 3])
+    })
+  })
 })

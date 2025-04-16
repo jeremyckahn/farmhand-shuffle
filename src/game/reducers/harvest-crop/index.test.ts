@@ -28,7 +28,7 @@ describe('harvestCrop', () => {
     game = harvestCrop(game, stubPlayer1.id, 0)
 
     expect(game.table.communityFund).toEqual(initialCommunityFund - saleValue)
-    expect(game.table.players[stubPlayer1.id].field.crops.length).toBe(0)
+    expect(game.table.players[stubPlayer1.id].field.crops).toEqual([undefined])
     expect(game.table.players[stubPlayer1.id].funds).toBe(
       initialPlayerFunds + saleValue
     )

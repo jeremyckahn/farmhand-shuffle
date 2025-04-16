@@ -25,9 +25,10 @@ export const moveFromFieldToDiscardPile = (
     throw new InvalidCardIndexError(cardIdx, playerId)
   }
 
-  const newCrops = array.removeAt(field.crops, cardIdx)
+  let { crops } = field
+  crops = array.replaceAt(crops, cardIdx, undefined)
 
-  game = updateField(game, playerId, { crops: newCrops })
+  game = updateField(game, playerId, { crops })
   game = addToDiscardPile(game, playerId, playedCrop.instance)
 
   return game

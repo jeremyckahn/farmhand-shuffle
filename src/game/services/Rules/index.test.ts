@@ -595,7 +595,7 @@ describe('createGameStateMachine', () => {
         expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
         expect(gameResult.currentPlayerId).toBe(player1.id)
         expect(gameResult.table.players[player2.id].field.crops).toEqual<
-          IPlayedCrop[]
+          IField['crops']
         >(resultingFieldCrops)
         expect(gameResult.table.players[player2.id].hand).toEqual(resultingHand)
         expect(gameResult.table.players[player2.id].deck).toEqual(resultingDeck)
@@ -627,7 +627,7 @@ describe('createGameStateMachine', () => {
             waterCards: carrot.waterToMature,
           },
         ],
-        resultingFieldCrops: [],
+        resultingFieldCrops: [undefined],
         resultingDiscardPile: [stubCarrot],
       },
 
@@ -645,9 +645,8 @@ describe('createGameStateMachine', () => {
             waterCards: 0,
           },
         ],
-        // TODO: Support sparse arrays in IField['crops'] so unrelated cards
-        // aren't shifted
         resultingFieldCrops: [
+          undefined,
           // NOTE: This is the previously unwatered, unharvestable crop
           {
             instance: stubCarrot,
@@ -686,7 +685,7 @@ describe('createGameStateMachine', () => {
         expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
         expect(gameResult.currentPlayerId).toBe(player1.id)
         expect(gameResult.table.players[player2.id].field.crops).toEqual<
-          IPlayedCrop[]
+          IField['crops']
         >(resultingFieldCrops)
       }
     )
