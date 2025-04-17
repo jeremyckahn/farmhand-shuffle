@@ -244,18 +244,22 @@ describe('Card', () => {
       expect(screen.getByLabelText('Needs water')).toBeInTheDocument()
     })
 
-    test('shows "Needs water" tooltip when canBeWatered is true', () => {
+    test('shows "Ready to be harvested" tooltip when canBeHarvested is true', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        gameState: GameState.PLAYER_WATERING_CROP,
+        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
         game,
         selectedWaterCardInHandIdx: 0,
       })
 
       render(
-        <StubCard isInField canBeWatered playerId={game.sessionOwnerPlayerId} />
+        <StubCard
+          isInField
+          canBeHarvested
+          playerId={game.sessionOwnerPlayerId}
+        />
       )
 
-      expect(screen.getByLabelText('Needs water')).toBeInTheDocument()
+      expect(screen.getByLabelText('Ready to be harvested')).toBeInTheDocument()
     })
 
     test('shows no tooltip when neither canBeWatered nor canBeHarvested is true', () => {
