@@ -226,4 +226,67 @@ describe('Card', () => {
       cropIdxInFieldToHarvest: cardIdx,
     })
   })
+
+  describe('Tooltip variations', () => {
+    const game = stubGame()
+
+    test('shows "Needs water" tooltip when canBeWatered is true', () => {
+      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
+        gameState: GameState.PLAYER_WATERING_CROP,
+        game,
+        selectedWaterCardInHandIdx: 0,
+      })
+
+      render(
+        <StubCard isInField canBeWatered playerId={game.sessionOwnerPlayerId} />
+      )
+
+      expect(screen.getByLabelText('Needs water')).toBeInTheDocument()
+    })
+
+    test('shows "Needs water" tooltip when canBeWatered is true', () => {
+      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
+        gameState: GameState.PLAYER_WATERING_CROP,
+        game,
+        selectedWaterCardInHandIdx: 0,
+      })
+
+      render(
+        <StubCard isInField canBeWatered playerId={game.sessionOwnerPlayerId} />
+      )
+
+      expect(screen.getByLabelText('Needs water')).toBeInTheDocument()
+    })
+
+    test('shows no tooltip when neither canBeWatered nor canBeHarvested is true', () => {
+      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
+        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+        game,
+        selectedWaterCardInHandIdx: 0,
+      })
+
+      render(<StubCard isInField playerId={game.sessionOwnerPlayerId} />)
+
+      expect(screen.queryByTitle('Needs water')).not.toBeInTheDocument()
+      expect(
+        screen.queryByLabelText('Ready to be harvested')
+      ).not.toBeInTheDocument()
+    })
+
+    test('tooltip does not show when isSessionOwnersCard is false', () => {
+      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
+        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+        game,
+        selectedWaterCardInHandIdx: 0,
+      })
+
+      render(
+        <StubCard isInField canBeHarvested playerId="some-other-player-id" />
+      )
+
+      expect(
+        screen.queryByLabelText('Ready to be harvested')
+      ).not.toBeInTheDocument()
+    })
+  })
 })
