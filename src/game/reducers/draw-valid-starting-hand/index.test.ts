@@ -9,6 +9,8 @@ import { updatePlayer } from '../update-player'
 
 import { drawValidStartingHand } from '.'
 
+vi.mock('lodash.shuffle')
+
 describe('drawValidStartingHand', () => {
   test('ensures a hand with at least one crop is pulled', () => {
     vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
@@ -28,7 +30,7 @@ describe('drawValidStartingHand', () => {
       deck,
     })
 
-    game = drawValidStartingHand(game, stubPlayer1)
+    game = drawValidStartingHand(game, stubPlayer1.id)
 
     expect(game.table.players[stubPlayer1.id].hand).toContain(stubCarrot)
   })

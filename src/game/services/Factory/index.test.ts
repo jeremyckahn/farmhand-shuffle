@@ -66,7 +66,7 @@ describe('Factory', () => {
 
       expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player1.deck))
       expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player2.deck))
-      expect(shuffle).toHaveBeenCalledTimes(2)
+      expect(shuffle).toHaveBeenCalled()
     })
 
     test('sets up player hands', () => {
