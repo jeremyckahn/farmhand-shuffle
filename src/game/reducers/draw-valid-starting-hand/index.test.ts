@@ -28,7 +28,7 @@ describe('drawValidStartingHand', () => {
       deck,
     })
 
-    game = drawValidStartingHand(game, stubPlayer1)
+    game = drawValidStartingHand(game, stubPlayer1.id)
 
     expect(game.table.players[stubPlayer1.id].hand).toContain(stubCarrot)
   })

@@ -97,7 +97,7 @@ export class FactoryService {
       })
 
       game = shuffleDeck(game, player.id)
-      game = drawValidStartingHand(game, player)
+      game = drawValidStartingHand(game, player.id)
     }
 
     game = updateTable(game, {
