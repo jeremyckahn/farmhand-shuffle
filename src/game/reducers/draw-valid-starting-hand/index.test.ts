@@ -9,8 +9,6 @@ import { updatePlayer } from '../update-player'
 
 import { drawValidStartingHand } from '.'
 
-vi.mock('lodash.shuffle')
-
 describe('drawValidStartingHand', () => {
   test('ensures a hand with at least one crop is pulled', () => {
     vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
