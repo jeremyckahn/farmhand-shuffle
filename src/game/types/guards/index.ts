@@ -38,14 +38,33 @@ export const isCrop = (obj: unknown): obj is ICrop => {
   )
 }
 
+export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
+  if (typeof obj !== 'object' || obj === null) {
+    return false
+  }
+
+  if (
+    !('instance' in obj) ||
+    typeof obj.instance !== 'object' ||
+    obj.instance === null ||
+    !('waterCards' in obj) ||
+    typeof obj.waterCards !== 'number' ||
+    !('wasWateredTuringTurn' in obj) ||
+    typeof obj.wasWateredTuringTurn !== 'boolean'
+  ) {
+    return false
+  }
+
+  return true
+}
+
 export const isField = (obj: unknown): obj is IField => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
     'crops' in obj &&
     Array.isArray(obj.crops) &&
-    // TODO: This should be verifying that the contents are IPlayedCrops
-    obj.crops.every(crop => isCrop(crop) || crop === undefined)
+    obj.crops.every(crop => isPlayedCrop(crop) || crop === undefined)
   )
 }
 
