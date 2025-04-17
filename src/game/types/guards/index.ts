@@ -39,23 +39,21 @@ export const isCrop = (obj: unknown): obj is ICrop => {
 }
 
 export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
-  if (typeof obj !== 'object' || obj === null) {
+  if (!obj || typeof obj !== 'object') {
     return false
   }
 
-  if (
-    !('instance' in obj) ||
-    typeof obj.instance !== 'object' ||
-    obj.instance === null ||
-    !('waterCards' in obj) ||
-    typeof obj.waterCards !== 'number' ||
-    !('wasWateredTuringTurn' in obj) ||
-    typeof obj.wasWateredTuringTurn !== 'boolean'
-  ) {
-    return false
-  }
+  const o = obj
 
-  return true
+  return (
+    'instance' in o &&
+    typeof o.instance === 'object' &&
+    o.instance !== null &&
+    'waterCards' in o &&
+    typeof o.waterCards === 'number' &&
+    'wasWateredTuringTurn' in o &&
+    typeof o.wasWateredTuringTurn === 'boolean'
+  )
 }
 
 export const isField = (obj: unknown): obj is IField => {
