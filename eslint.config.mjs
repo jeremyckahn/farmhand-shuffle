@@ -20,14 +20,7 @@ export default [
     },
   },
   pluginReact.configs.flat.recommended,
-  // TODO: Simplify when https://github.com/facebook/react/issues/28313 is
-  // resolved and released
-  {
-    plugins: {
-      'react-hooks': pluginReactHooks,
-    },
-    rules: { ...pluginReactHooks.configs.recommended.rules },
-  },
+  pluginReactHooks.configs['recommended-latest'],
   importPlugin.flatConfigs.typescript,
   functionalPlugin.configs.off,
   {
