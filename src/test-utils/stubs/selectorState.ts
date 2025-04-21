@@ -9,5 +9,6 @@ export const stubSelectorState = (
   game: stubGame(),
   gameState: GameState.UNINITIALIZED,
   selectedWaterCardInHandIdx: 0,
+  winner: null,
   ...overrides,
 })

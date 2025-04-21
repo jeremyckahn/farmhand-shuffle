@@ -102,6 +102,7 @@ describe('Card', () => {
         gameState,
         game,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
       })
 
       render(
@@ -134,6 +135,7 @@ describe('Card', () => {
         gameState,
         game: stubGame(),
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
       })
 
       render(
@@ -166,6 +168,7 @@ describe('Card', () => {
       gameState: GameState.PLAYER_WATERING_CROP,
       game: stubGame(),
       selectedWaterCardInHandIdx,
+      winner: null,
     })
 
     render(
@@ -199,6 +202,7 @@ describe('Card', () => {
       gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
       game: stubGame(),
       selectedWaterCardInHandIdx: 0,
+      winner: null,
     })
 
     const cardIdx = 2
@@ -235,6 +239,7 @@ describe('Card', () => {
         gameState: GameState.PLAYER_WATERING_CROP,
         game,
         selectedWaterCardInHandIdx: 0,
+        winner: null,
       })
 
       render(
@@ -249,6 +254,7 @@ describe('Card', () => {
         gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
         game,
         selectedWaterCardInHandIdx: 0,
+        winner: null,
       })
 
       render(
@@ -267,6 +273,7 @@ describe('Card', () => {
         gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
         game,
         selectedWaterCardInHandIdx: 0,
+        winner: null,
       })
 
       render(<StubCard isInField playerId={game.sessionOwnerPlayerId} />)
@@ -282,6 +289,7 @@ describe('Card', () => {
         gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
         game,
         selectedWaterCardInHandIdx: 0,
+        winner: null,
       })
 
       render(

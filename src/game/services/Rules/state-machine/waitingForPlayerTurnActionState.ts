@@ -6,12 +6,15 @@ import { startTurn } from '../../../reducers/start-turn'
 import { GameEvent, GameState, ShellNotification } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { lookup } from '../../Lookup'
+import { PlayerOutOfFundsError } from '../errors'
 
 import { RulesMachineConfig } from './types'
 
 export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
   [GameState.WAITING_FOR_PLAYER_TURN_ACTION]: {
     on: {
+      [GameEvent.PLAYER_RAN_OUT_OF_FUNDS]: GameState.GAME_OVER,
+
       [GameEvent.PLAY_CARD]: GameState.PLAYING_CARD,
 
       [GameEvent.PLAY_CROP]: GameState.PLANTING_CROP,
@@ -52,18 +55,32 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
 
     entry: enqueueActions(({ event, context: { game }, enqueue }) => {
       {
-        switch (event.type) {
-          case GameEvent.START_TURN: {
-            game = incrementPlayer(game)
+        try {
+          switch (event.type) {
+            case GameEvent.START_TURN: {
+              game = incrementPlayer(game)
+              const { currentPlayerId } = game
+              assertCurrentPlayer(currentPlayerId)
+
+              game = startTurn(game, currentPlayerId)
+
+              break
+            }
+
+            default:
+          }
+        } catch (error) {
+          if (error instanceof PlayerOutOfFundsError) {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
-            game = startTurn(game, currentPlayerId)
-
-            break
+            enqueue.raise({
+              type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS,
+              playerId: currentPlayerId,
+            })
+          } else {
+            console.error(error)
           }
-
-          default:
         }
 
         enqueue.assign({ game })
