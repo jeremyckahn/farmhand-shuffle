@@ -1,26 +1,13 @@
 import { createActor } from 'xstate'
 
-import { factory } from '../Factory'
-
 import { machineConfig } from './state-machine'
 import { createMachine } from './state-machine/createMachine'
+import { createGameStateMachineContext } from './createGameStateMachineContext'
 
 export class RulesService {
-  static readonly defaultSelectedWaterCardInHandIdx = -1
-
   createGameStateMachine = () => {
     const machine = createMachine({
-      context: {
-        game: factory.buildGame(),
-        cropsToPlayDuringBotTurn: 0,
-        selectedWaterCardInHandIdx:
-          RulesService.defaultSelectedWaterCardInHandIdx,
-        fieldCropIndicesToWaterDuringBotTurn: [],
-        cropCardIndicesToHarvest: [],
-        shell: {
-          triggerNotification: () => {},
-        },
-      },
+      context: createGameStateMachineContext(),
       ...machineConfig,
     })
 

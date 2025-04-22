@@ -41,12 +41,16 @@ describe('useGame', () => {
       game: mockGame,
       gameState: GameState.UNINITIALIZED,
       selectedWaterCardInHandIdx: 0,
+      winner: null,
     })
   })
 
   it('should initialize game when gameState is UNINITIALIZED', () => {
     renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -60,7 +64,10 @@ describe('useGame', () => {
   it('should execute blocking operation correctly', async () => {
     const mockOperation = vi.fn().mockResolvedValue(undefined)
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     await act(async () => {
@@ -73,7 +80,10 @@ describe('useGame', () => {
   it('should handle errors in blocking operation', async () => {
     const mockOperation = vi.fn().mockRejectedValue(new Error('Test error'))
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     await act(async () => {
@@ -92,7 +102,10 @@ describe('useGame', () => {
     })
 
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     expect(result.current.isInputBlocked).toBe(false)
@@ -115,10 +128,14 @@ describe('useGame', () => {
       game: { ...mockGame, currentPlayerId: 'player2' },
       gameState: GameState.UNINITIALIZED,
       selectedWaterCardInHandIdx: 0,
+      winner: null,
     })
 
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     expect(result.current.isInputBlocked).toBe(true)
@@ -126,7 +143,10 @@ describe('useGame', () => {
 
   it('should toggle hand visibility', () => {
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     expect(result.current.showHand).toBe(true)
@@ -143,10 +163,14 @@ describe('useGame', () => {
       game: mockGame,
       gameState: GameState.PLAYER_WATERING_CROP,
       selectedWaterCardInHandIdx: 0,
+      winner: null,
     })
 
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     expect(result.current.isHandDisabled).toBe(true)
@@ -154,7 +178,10 @@ describe('useGame', () => {
 
   it('should show hand when isHandInViewport is true', () => {
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     expect(result.current.showHand).toBe(true)
@@ -165,10 +192,14 @@ describe('useGame', () => {
       game: mockGame,
       gameState: GameState.PLAYER_WATERING_CROP,
       selectedWaterCardInHandIdx: 0,
+      winner: null,
     })
 
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     // First, hide the hand
@@ -182,7 +213,10 @@ describe('useGame', () => {
 
   it('should update snackbar props when showNotification is called', () => {
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     act(() => {
@@ -198,7 +232,10 @@ describe('useGame', () => {
 
   it('should clear snackbar message when onClose is called', () => {
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     act(() => {
@@ -219,7 +256,10 @@ describe('useGame', () => {
 
   it('should update isHandInViewport when setIsHandInViewport is called', () => {
     const { result } = renderHook(() =>
-      useGame({ playerSeeds: mockPlayerSeeds, userPlayerId: mockUserPlayerId })
+      useGame({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
     )
 
     expect(result.current.shellContextValue.isHandInViewport).toBe(true)

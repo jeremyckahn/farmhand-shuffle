@@ -66,6 +66,7 @@ describe('WaterIndicator', () => {
     }),
     gameState: GameState.PLAYER_WATERING_CROP,
     selectedWaterCardInHandIdx: 0,
+    winner: null,
   }
 
   beforeEach(() => {

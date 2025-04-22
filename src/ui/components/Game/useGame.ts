@@ -1,22 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { GameEvent, GameState, IPlayerSeed } from '../../../game/types'
+import { GameEvent, GameState } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
 import { useGameRules } from '../../hooks/useGameRules'
 
 import { ActorContext } from './ActorContext'
+import { GameProps } from './types'
 import { ShellContextProps } from './ShellContext'
 import { useSnackbar } from './useSnackbar'
 
 export const useGame = ({
   playerSeeds,
   userPlayerId,
-}: {
-  playerSeeds: IPlayerSeed[]
-  userPlayerId: string
-}) => {
+}: Pick<GameProps, 'playerSeeds' | 'userPlayerId'>) => {
   const actorRef = ActorContext.useActorRef()
-  const { game, gameState } = useGameRules()
+  const { game, gameState, winner } = useGameRules()
   const [isHandInViewport, setIsHandInViewport] = useState(true)
 
   useEffect(() => {
@@ -71,17 +69,24 @@ export const useGame = ({
     setIsHandInViewport(prev => !prev)
   }
 
-  const isHandDisabled = [GameState.PLAYER_WATERING_CROP].includes(gameState)
+  const handleClickPlayAgain = () => {
+    actorRef.send({ type: GameEvent.INIT, playerSeeds, userPlayerId })
+  }
 
+  const isHandDisabled = [GameState.PLAYER_WATERING_CROP].includes(gameState)
   const showHand = isHandInViewport || isHandDisabled
+  const showGameOver = gameState === GameState.GAME_OVER
 
   return {
     game,
     handleHandVisibilityToggle,
+    handleClickPlayAgain,
     isHandDisabled,
     isInputBlocked,
     shellContextValue,
+    showGameOver,
     showHand,
     snackbarProps,
+    winner,
   }
 }
