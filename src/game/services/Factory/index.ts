@@ -57,6 +57,8 @@ export class FactoryService {
       sessionOwnerPlayerId,
       table,
       currentPlayerId,
+      buffedCrop: null,
+      nerfedCrop: null,
       ...overrides,
     }
 

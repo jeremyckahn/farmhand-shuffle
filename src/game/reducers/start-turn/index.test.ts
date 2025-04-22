@@ -127,4 +127,11 @@ describe('startTurn', () => {
       { instance: carrot2, wasWateredTuringTurn: false, waterCards: 1 },
     ])
   })
+
+  test('updates prices', () => {
+    const newGame = startTurn(game, player1Id)
+
+    expect(newGame.buffedCrop).not.toBeNull()
+    expect(newGame.nerfedCrop).not.toBeNull()
+  })
 })

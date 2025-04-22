@@ -4,8 +4,8 @@ import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
 import { darken, lighten } from '@mui/material/styles'
 import useTheme from '@mui/material/styles/useTheme'
-import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { useContext, useRef } from 'react'
 
@@ -18,12 +18,12 @@ import {
 } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useGameRules } from '../../hooks/useGameRules'
-import { cards, isCardImageKey, ui } from '../../img'
+import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
 import { ActorContext } from '../Game/ActorContext'
 import { ShellContext } from '../Game/ShellContext'
-import { Image } from '../Image'
+import { getCardImageSrc, Image } from '../Image'
 
 import { CardProps } from './types'
 
@@ -62,12 +62,6 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
     const { setIsHandInViewport } = useContext(ShellContext)
-
-    const imageSrc = isCardImageKey(card.id) ? cards[card.id] : ui.pixel
-
-    if (imageSrc === ui.pixel) {
-      console.error(`Card ID ${card.id} does not have an image configured`)
-    }
 
     const handlePlayCard = async () => {
       if (onBeforePlay) {
@@ -276,7 +270,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                     }}
                   >
                     <Image
-                      src={imageSrc}
+                      src={getCardImageSrc(card)}
                       alt={card.name}
                       sx={{
                         height: `${100 * imageScale}%`,

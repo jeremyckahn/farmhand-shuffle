@@ -4,6 +4,7 @@ import { IGame, IPlayer } from '../../types'
 import { drawCard } from '../draw-card'
 import { payFromPlayerToCommunity } from '../pay-from-player-to-community'
 import { updatePlayedCrop } from '../update-played-crop'
+import { updatePrices } from '../update-prices'
 
 export const startTurn = (game: IGame, playerId: IPlayer['id']): IGame => {
   game = payFromPlayerToCommunity(game, STANDARD_TAX_AMOUNT, playerId)
@@ -23,6 +24,8 @@ export const startTurn = (game: IGame, playerId: IPlayer['id']): IGame => {
 
     game = updatePlayedCrop(game, playerId, i, { wasWateredTuringTurn: false })
   }
+
+  game = updatePrices(game)
 
   return game
 }
