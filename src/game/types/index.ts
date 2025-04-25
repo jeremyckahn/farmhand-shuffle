@@ -153,6 +153,11 @@ export interface IPlayer {
  */
 export type IPlayerSeed = Pick<IPlayer, 'id' | 'deck'>
 
+export interface ICropPriceFluctuation {
+  readonly crop: ICrop
+  readonly multiplier: number
+}
+
 export interface ITable {
   /**
    * Each players' card area at the table.
@@ -177,6 +182,16 @@ export interface IGame {
    * The IPlayer['id'] of the player whose turn it is.
    */
   readonly currentPlayerId: IPlayer['id'] | null
+
+  /**
+   * The crop that is currently selling for higher than normal.
+   */
+  readonly buffedCrop: ICropPriceFluctuation | null
+
+  /**
+   * The crop that is currently selling for lower than normal.
+   */
+  readonly nerfedCrop: ICropPriceFluctuation | null
 }
 
 export enum GameEvent {

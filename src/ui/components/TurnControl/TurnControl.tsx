@@ -1,9 +1,12 @@
 import AccountBalance from '@mui/icons-material/AccountBalance'
 import AttachMoney from '@mui/icons-material/AttachMoney'
+import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp'
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 import Accordion from '@mui/material/Accordion'
 import AccordionActions from '@mui/material/AccordionActions'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip'
@@ -18,6 +21,8 @@ import { useGameRules } from '../../hooks/useGameRules'
 import { ActorContext } from '../Game/ActorContext'
 import { ShellContext } from '../Game/ShellContext'
 import { STANDARD_TAX_AMOUNT } from '../../../game/config'
+import { Image } from '../Image'
+import { getCardImageSrc } from '../Image/Image'
 
 export interface TurnControlProps {
   game: IGame
@@ -148,6 +153,34 @@ export const TurnControl = ({ game }: TurnControlProps) => {
             <Typography>{formatNumber(sessionOwnerPlayerFunds)}</Typography>
           </Stack>
         </Tooltip>
+        {game.buffedCrop && (
+          <Tooltip
+            title={`Sell ${game.buffedCrop.crop.name} cards now for ${game.buffedCrop.multiplier}x value`}
+            arrow
+          >
+            <Stack direction="row" alignItems="center">
+              <Chip
+                color="success"
+                icon={<KeyboardArrowUp />}
+                label={
+                  <Image
+                    src={getCardImageSrc(game.buffedCrop.crop)}
+                    sx={{
+                      imageRendering: 'pixelated',
+                      filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
+                    }}
+                  />
+                }
+                sx={{
+                  backgroundColor: theme.palette.success.light,
+                  outlineColor: theme.palette.success.main,
+                  outlineWidth: 1,
+                  outlineStyle: 'solid',
+                }}
+              />
+            </Stack>
+          </Tooltip>
+        )}
         <Tooltip title="Community funds" arrow>
           <Stack
             direction="row"
@@ -164,6 +197,42 @@ export const TurnControl = ({ game }: TurnControlProps) => {
             <Typography>{formatNumber(game.table.communityFund)}</Typography>
           </Stack>
         </Tooltip>
+        {game.nerfedCrop && (
+          <Tooltip
+            title={`${game.nerfedCrop.crop.name} cards now sell for ${game.nerfedCrop.multiplier}x value`}
+            arrow
+          >
+            <Stack direction="row" alignItems="center">
+              <Chip
+                sx={{
+                  flexDirection: 'row-reverse',
+                  '& .MuiSvgIcon-root': {
+                    ml: -0.75,
+                    mr: 0.75,
+                  },
+                  '& .MuiChip-label': {
+                    pr: 1,
+                  },
+                  backgroundColor: theme.palette.error.light,
+                  outlineColor: theme.palette.error.dark,
+                  outlineWidth: 1,
+                  outlineStyle: 'solid',
+                }}
+                color="error"
+                icon={<KeyboardArrowDown />}
+                label={
+                  <Image
+                    src={getCardImageSrc(game.nerfedCrop.crop)}
+                    sx={{
+                      imageRendering: 'pixelated',
+                      filter: `drop-shadow(0 0 5px ${theme.palette.common.black})`,
+                    }}
+                  />
+                }
+              />
+            </Stack>
+          </Tooltip>
+        )}
         <Tooltip
           title={`${funAnimalName(currentPlayerId ?? '')}'s funds`}
           arrow

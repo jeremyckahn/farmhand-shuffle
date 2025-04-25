@@ -4,6 +4,7 @@ import {
   GameState,
   ICard,
   ICrop,
+  ICropPriceFluctuation,
   IField,
   IGame,
   IPlayedCrop,
@@ -101,6 +102,19 @@ export const isTable = (obj: unknown): obj is ITable => {
   )
 }
 
+export const isCropPriceFluctuation = (
+  obj: unknown
+): obj is ICropPriceFluctuation => {
+  if (typeof obj !== 'object' || obj === null) return false
+
+  return (
+    'crop' in obj &&
+    isCrop(obj.crop) &&
+    'multiplier' in obj &&
+    typeof obj.multiplier === 'number'
+  )
+}
+
 export const isGame = (obj: unknown): obj is IGame => {
   if (typeof obj !== 'object' || obj === null) return false
 
@@ -110,7 +124,11 @@ export const isGame = (obj: unknown): obj is IGame => {
     'currentPlayerId' in obj &&
     (typeof obj.currentPlayerId === 'string' || obj.currentPlayerId === null) &&
     'sessionOwnerPlayerId' in obj &&
-    typeof obj.sessionOwnerPlayerId === 'string'
+    typeof obj.sessionOwnerPlayerId === 'string' &&
+    'buffedCrop' in obj &&
+    (obj.buffedCrop === null || isCropPriceFluctuation(obj.buffedCrop)) &&
+    'nerfedCrop' in obj &&
+    (obj.nerfedCrop === null || isCropPriceFluctuation(obj.nerfedCrop))
   )
 }
 

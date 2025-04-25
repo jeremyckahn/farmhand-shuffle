@@ -23,12 +23,26 @@ export class PricingService {
    * @returns The sale value of the crop.
    */
   getCropSaleValue = (game: IGame, crop: ICrop) => {
-    const cropValue = Math.min(
-      this.getCropBaseValue(crop),
+    const cropBaseValue = this.getCropBaseValue(crop)
+
+    let cropAdjustedValue = cropBaseValue
+
+    if (crop.id === game.buffedCrop?.crop.id) {
+      cropAdjustedValue *= game.buffedCrop.multiplier
+    }
+
+    if (crop.id === game.nerfedCrop?.crop.id) {
+      cropAdjustedValue *= game.nerfedCrop.multiplier
+    }
+
+    cropAdjustedValue = Math.floor(cropAdjustedValue)
+
+    const cropValueReducedByAvailableCommunityFunds = Math.min(
+      cropAdjustedValue,
       game.table.communityFund
     )
 
-    return cropValue
+    return cropValueReducedByAvailableCommunityFunds
   }
 }
 
