@@ -15,7 +15,10 @@
     "check:lint": "eslint src --max-warnings=0",
     "check:types": "tsc",
     "prepare": "husky install",
-    "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes"
+    "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes",
+    "gitingest": "command -v gitingest >/dev/null 2>&1 || { echo \"gitingest not found. Please install it: https://github.com/cyclotruc/gitingest\"; exit 1; } && gitingest",
+    "gitingest:app": "npm run gitingest -- --exclude-pattern=\"coverage,storybook-static,.vercel,*.piskel,*.test.*,*.stories.*,.github,.storybook\"",
+    "gitingest:app-and-tests": "npm run gitingest -- --exclude-pattern=\"coverage,storybook-static,.vercel,*.piskel,*.stories.*,.github,.storybook\""
   },
   "repository": {
     "type": "git",
