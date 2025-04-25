@@ -15,7 +15,7 @@ won or lost, many things are still missing. Some planned features:
 
 - Tool cards
 - Event cards
-- More crops cards
+- More crop cards
 - Multiplayer
 - A single-player campaign
 
@@ -40,12 +40,15 @@ a more complete explanation of the game rules.
 
 ## Game Components
 
+🚧 = Not yet implemented
+
 - **Crop Cards**: Represent different types of crops that can be planted.
 - **Water Cards**: Used to water crops.
-- **Event Cards**: (Not yet implemented 🚧) These cards might introduce various
-  events that affect gameplay.
-- **Tool Cards**: (Not yet implemented 🚧) Cards that provide tools or actions
-  to the player.
+- 🚧 **Event Cards**: These cards might introduce various events that affect
+  gameplay.
+- 🚧 **Tool Cards**: Cards that provide tools or actions to the player.
+- 🚧 **Animal Cards**: Animals that can be placed in the Field to produce
+  things for their owner
 - **Community Fund**: A central pool of funds that players interact with.
 - **Player Funds**: Each player has their own supply of funds.
 - **Field**: The area where players plant their crops.
@@ -58,17 +61,17 @@ a more complete explanation of the game rules.
 The project is structured as follows:
 
 ```text
-└── farmhand-shuffle/
-    ├── src/              # Source code directory
-    │   ├── game/         # Game logic implementation
-    │   ├── lib/          # Utility libraries
-    │   ├── services/     # General services
-    │   ├── test-utils/   # Testing utilities
-    │   └── ui/           # User interface components
-    ├── package.json      # Project dependencies and scripts
-    ├── tsconfig.json     # TypeScript configuration
-    ├── vite.config.ts    # Vite build tool configuration
-    └── ...               # Other configuration files
+farmhand-shuffle/
+├── src/              # Source code directory
+│   ├── game/         # Game logic implementation
+│   ├── lib/          # Utility libraries
+│   ├── services/     # General services
+│   ├── test-utils/   # Testing utilities
+│   └── ui/           # User interface components
+├── package.json      # Project dependencies and scripts
+├── tsconfig.json     # TypeScript configuration
+├── vite.config.ts    # Vite build tool configuration
+└── ...               # Other configuration files
 ```
 
 ## Development
@@ -83,6 +86,6 @@ To get started with development:
 ### Additional development utility scripts
 
 - Check for type errors: `npm run check:types`
+- Start Storybook: `npm run start:storybook`
 - Code formatting: `npm run fix:style`
 - Code linting: `npm run fix:lint`
-- Start Storybook: `npm run start:storybook`
