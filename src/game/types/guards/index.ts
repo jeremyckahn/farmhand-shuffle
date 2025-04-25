@@ -105,8 +105,7 @@ export const isTable = (obj: unknown): obj is ITable => {
 export const isCropPriceFluctuation = (
   obj: unknown
 ): obj is ICropPriceFluctuation => {
-  if (typeof obj !== 'object') return false
-  if (obj === null) return true
+  if (typeof obj !== 'object' || obj === null) return false
 
   return (
     'crop' in obj &&
@@ -127,9 +126,9 @@ export const isGame = (obj: unknown): obj is IGame => {
     'sessionOwnerPlayerId' in obj &&
     typeof obj.sessionOwnerPlayerId === 'string' &&
     'buffedCrop' in obj &&
-    isCropPriceFluctuation(obj.buffedCrop) &&
+    (obj.buffedCrop === null || isCropPriceFluctuation(obj.buffedCrop)) &&
     'nerfedCrop' in obj &&
-    isCropPriceFluctuation(obj.nerfedCrop)
+    (obj.nerfedCrop === null || isCropPriceFluctuation(obj.nerfedCrop))
   )
 }
 
