@@ -24,6 +24,7 @@ import { useGame } from './useGame'
 const GameCore = ({
   playerSeeds,
   userPlayerId,
+  fullHeight = false,
   sx = [],
   ...rest
 }: GameProps) => {
@@ -63,6 +64,7 @@ const GameCore = ({
                 pointerEvents: 'none',
               },
             }),
+            height: fullHeight ? '100vh' : undefined,
           },
           ...(isSxArray(sx) ? sx : [sx]),
         ]}

@@ -5,4 +5,5 @@ import { IPlayerSeed } from '../../../game/types'
 export interface GameProps extends ContainerProps {
   playerSeeds: IPlayerSeed[]
   userPlayerId: string
+  fullHeight?: boolean
 }
