@@ -1,24 +1,25 @@
 import { KeyboardArrowDown } from '@mui/icons-material'
 import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
 import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import DialogActions from '@mui/material/DialogActions'
-import { funAnimalName } from 'fun-animal-names'
-import Container from '@mui/material/Container'
 import Fab from '@mui/material/Fab'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip'
+import { funAnimalName } from 'fun-animal-names'
 
 import { isSxArray } from '../../type-guards'
+import { ui } from '../../img'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 
 import { ActorContext } from './ActorContext'
 import { ShellContext } from './ShellContext'
 import { Snackbar } from './Snackbar'
-import { useGame } from './useGame'
 import { GameProps } from './types'
+import { useGame } from './useGame'
 
 const GameCore = ({
   playerSeeds,
@@ -48,7 +49,10 @@ const GameCore = ({
         data-testid="game"
         sx={[
           {
-            backgroundColor: theme.palette.grey['500'],
+            backgroundColor: '#ffba4d',
+            backgroundImage: `url(${ui.brownDotBackground})`,
+            backgroundSize: theme.spacing(10),
+            imageRendering: 'pixelated',
             pt: 1,
             // NOTE: This prevents the hide/show Hand button from obscuring
             // Field cards.
