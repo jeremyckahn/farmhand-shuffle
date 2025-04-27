@@ -234,6 +234,9 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                       display: 'flex',
                       flexDirection: 'column',
                       height: 1,
+                      outlineColor: theme.palette.background.default,
+                      outlineStyle: 'solid',
+                      outlineWidth: 2,
                       p: theme.spacing(1),
                       position: 'absolute',
                       width: 1,
@@ -323,7 +326,9 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                   {...paperProps}
                   sx={{
                     alignItems: 'center',
+                    backgroundColor: theme.palette.background.default,
                     backfaceVisibility: 'hidden',
+                    color: theme.palette.common.white,
                     display: 'flex',
                     height: 1,
                     position: 'absolute',
