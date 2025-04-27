@@ -173,7 +173,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
                 }
                 sx={{
                   backgroundColor: theme.palette.success.light,
-                  outlineColor: theme.palette.success.main,
+                  outlineColor: theme.palette.success.dark,
                   outlineWidth: 1,
                   outlineStyle: 'solid',
                 }}
