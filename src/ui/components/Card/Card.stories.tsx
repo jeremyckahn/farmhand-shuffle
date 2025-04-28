@@ -13,6 +13,7 @@ import {
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubSelectorState } from '../../../test-utils/stubs/selectorState'
+import { updateGame } from '../../../game/reducers/update-game'
 
 import { Card } from './Card'
 
@@ -126,6 +127,37 @@ export const HarvestableSessionOwnerCropCard: Story = {
         stubSelectorState({
           gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
           game: stubGame(),
+        })
+      )
+
+      return <Story />
+    },
+  ],
+}
+
+export const HarvestableBuffedSessionOwnerCropCard: Story = {
+  args: {
+    cardInstance: stubPumpkin,
+    cardIdx: 0,
+    playerId: stubPlayer1.id,
+    isFlipped: false,
+    isInField: true,
+    size: CardSize.MEDIUM,
+    isFocused: true,
+    canBeHarvested: true,
+  },
+  decorators: [
+    Story => {
+      let game = stubGame()
+
+      game = updateGame(game, {
+        buffedCrop: { crop: stubPumpkin, multiplier: 2 },
+      })
+
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game,
         })
       )
 

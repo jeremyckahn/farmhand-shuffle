@@ -3,12 +3,16 @@ import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
 import { darken, lighten } from '@mui/material/styles'
+import { Theme } from '@mui/material/styles/createTheme'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx'
+import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { useContext, useRef } from 'react'
 
+import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import {
   CardType,
   GameEvent,
@@ -33,6 +37,24 @@ export const cardFlipWrapperClassName = 'CardFlipWrapper'
 const cropWaterIndicatorOutlineColor = '#0072ff'
 const cropHarvestIndicatorSessionOwnerOutlineColor = '#0fc400'
 const cropHarvestIndicatorOpponentOutlineColor = '#ff7510'
+
+const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
+  theme,
+  isBuffedCrop,
+  prefersReducedMotion,
+}: {
+  theme: Theme
+  isBuffedCrop: boolean
+  prefersReducedMotion: boolean
+}): SystemStyleObject<Theme> => {
+  if (isBuffedCrop) {
+    return getRainbowBorderStyle({ theme, prefersReducedMotion, spread: 12 })
+  }
+
+  return {
+    filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorSessionOwnerOutlineColor})`,
+  }
+}
 
 export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
   function CardCore(
@@ -62,6 +84,9 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
     const { setIsHandInViewport } = useContext(ShellContext)
+    const prefersReducedMotion = useMediaQuery(
+      '(prefers-reduced-motion: reduce)'
+    )
 
     const handlePlayCard = async () => {
       if (onBeforePlay) {
@@ -108,9 +133,12 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
     let showPlayCardButton = false
     let showWaterCropButton = false
     let showHarvestCropButton = false
+    let isBuffedCrop = false
 
     switch (card.type) {
       case CardType.CROP: {
+        isBuffedCrop = card.id === game.buffedCrop?.crop.id
+
         if (
           isSessionOwnersCard &&
           isFocused &&
@@ -169,7 +197,12 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       isCropCardInstance(card)
 
     const showHarvestableState =
-      isInField && canBeHarvested && isCropCardInstance(card)
+      isInField &&
+      canBeHarvested &&
+      isCropCardInstance(card) &&
+      // NOTE: This is necessary to prevent interfering with waterable crop
+      // state presentation
+      gameState !== GameState.PLAYER_WATERING_CROP
 
     let tooltipTitle = ''
 
@@ -244,9 +277,15 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                         filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
                       }),
                       ...(showHarvestableState && {
-                        filter: isSessionOwnersCard
-                          ? `drop-shadow(0px 0px 24px ${cropHarvestIndicatorSessionOwnerOutlineColor})`
-                          : `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
+                        ...(isSessionOwnersCard &&
+                          getCropHarvestIndicatorSessionOwnerOutlineStyle({
+                            theme,
+                            isBuffedCrop,
+                            prefersReducedMotion,
+                          })),
+                        ...(!isSessionOwnersCard && {
+                          filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
+                        }),
                       }),
                     },
                   ]}
