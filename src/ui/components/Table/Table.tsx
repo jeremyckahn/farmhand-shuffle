@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box'
 import Grid, { GridProps } from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
+import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IGame } from '../../../game/types'
@@ -17,8 +18,9 @@ export interface TableProps extends GridProps {
 export const Table = ({ game, ...rest }: TableProps) => {
   const theme = useTheme()
   const { sessionOwnerPlayerId: userPlayerId } = game
-
   const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
+  const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
+  const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.SMALL
 
   return (
     <>
@@ -59,7 +61,7 @@ export const Table = ({ game, ...rest }: TableProps) => {
         </Grid>
       </Grid>
       <Box position="fixed" left="50%" right="50%" bottom={theme.spacing(-8)}>
-        <Hand game={game} playerId={userPlayerId} cardSize={CardSize.MEDIUM} />
+        <Hand game={game} playerId={userPlayerId} cardSize={handCardSize} />
       </Box>
     </>
   )
