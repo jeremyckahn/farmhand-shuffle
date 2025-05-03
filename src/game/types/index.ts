@@ -104,14 +104,29 @@ export interface IWater extends ICard {
   readonly type: CardType.WATER
 }
 
+/**
+ * Used up to once per turn to trigger a variety of events.
+ */
+export interface IEvent extends ICard {
+  readonly type: CardType.EVENT
+}
+
 export interface WaterInstance extends IWater, Instance {}
 
-export type CardInstance = CropInstance | WaterInstance
+export interface EventInstance extends IEvent, Instance {}
+
+export type CardInstance = CropInstance | WaterInstance | EventInstance
 
 export const isWaterCardInstance = (
   cardInstance: CardInstance
 ): cardInstance is WaterInstance => {
   return cardInstance.type === CardType.WATER
+}
+
+export const isEventCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is EventInstance => {
+  return cardInstance.type === CardType.EVENT
 }
 
 export interface IField {
@@ -206,6 +221,7 @@ export enum GameEvent {
   OPERATION_ABORTED = 'OPERATION_ABORTED',
   PLAY_CARD = 'PLAY_CARD',
   PLAY_CROP = 'PLAY_CROP',
+  PLAY_EVENT = 'PLAY_EVENT',
   PLAY_WATER = 'PLAY_WATER',
   PLAYER_RAN_OUT_OF_FUNDS = 'PLAYER_RAN_OUT_OF_FUNDS',
   PROMPT_BOT_FOR_SETUP_ACTION = 'PROMPT_BOT_FOR_SETUP_ACTION',
@@ -293,6 +309,8 @@ export interface GameEventPayload {
   [GameEvent.PLAY_CARD]: PlayCardEventPayload
 
   [GameEvent.PLAY_CROP]: PlayCardEventPayload<GameEvent.PLAY_CROP>
+
+  [GameEvent.PLAY_EVENT]: PlayCardEventPayload<GameEvent.PLAY_EVENT>
 
   [GameEvent.PLAY_WATER]: PlayCardEventPayload<GameEvent.PLAY_WATER>
 

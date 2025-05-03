@@ -1,6 +1,11 @@
 import { BoxProps, PaperProps } from '@mui/material'
 
-import { CardInstance, IPlayedCrop } from '../../../game/types'
+import {
+  CardInstance,
+  EventInstance,
+  IPlayedCrop,
+  WaterInstance,
+} from '../../../game/types'
 import { CardSize } from '../../types'
 
 export interface BaseCardProps extends BoxProps {
@@ -28,6 +33,12 @@ export interface CropCardProps extends BaseCardProps {
   playedCrop?: IPlayedCrop
 }
 
-export type WaterCardProps = BaseCardProps
+export interface WaterCardProps extends BaseCardProps {
+  cardInstance: WaterInstance
+}
 
-export type CardProps = CropCardProps | WaterCardProps
+export interface EventCardProps extends BaseCardProps {
+  cardInstance: EventInstance
+}
+
+export type CardProps = CropCardProps | WaterCardProps | EventCardProps

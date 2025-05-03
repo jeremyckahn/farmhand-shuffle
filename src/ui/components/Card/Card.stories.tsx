@@ -10,6 +10,7 @@ import { ActorContext } from '../Game/ActorContext'
 import {
   stubCarrot,
   stubPumpkin,
+  stubRain,
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubSelectorState } from '../../../test-utils/stubs/selectorState'
@@ -194,6 +195,15 @@ export const HarvestableOpponentCropCard: Story = {
 export const WaterCard: Story = {
   args: {
     cardInstance: stubWater,
+    cardIdx: 0,
+    playerId: '',
+    isFlipped: false,
+  },
+}
+
+export const RainCard: Story = {
+  args: {
+    cardInstance: stubRain,
     cardIdx: 0,
     playerId: '',
     isFlipped: false,
