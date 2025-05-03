@@ -1,7 +1,10 @@
 import { enqueueActions } from 'xstate'
 
 import { randomNumber } from '../../../../services/RandomNumber'
-import { BOT_ACTION_DELAY } from '../../../config'
+import {
+  BOT_ACTION_DELAY,
+  EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
+} from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
 import { GameEvent, GameState } from '../../../types'
@@ -30,10 +33,11 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       ({
         event,
         context: {
-          game,
-          cropsToPlayDuringBotTurn,
-          fieldCropIndicesToWaterDuringBotTurn,
           cropCardIndicesToHarvest,
+          cropsToPlayDuringBotTurn,
+          eventsCardsThatCanBePlayed,
+          fieldCropIndicesToWaterDuringBotTurn,
+          game,
         },
         enqueue,
       }) => {
@@ -44,6 +48,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 game = incrementPlayer(game)
                 assertCurrentPlayer(game.currentPlayerId)
 
+                eventsCardsThatCanBePlayed =
+                  EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN
                 game = startTurn(game, game.currentPlayerId)
                 assertCurrentPlayer(game.currentPlayerId)
 
@@ -147,10 +153,11 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           }
 
           enqueue.assign({
-            game,
-            cropsToPlayDuringBotTurn,
-            fieldCropIndicesToWaterDuringBotTurn,
             cropCardIndicesToHarvest,
+            cropsToPlayDuringBotTurn,
+            eventsCardsThatCanBePlayed,
+            fieldCropIndicesToWaterDuringBotTurn,
+            game,
           })
         }
       }

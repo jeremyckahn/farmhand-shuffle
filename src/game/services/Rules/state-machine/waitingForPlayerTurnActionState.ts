@@ -1,5 +1,6 @@
 import { enqueueActions } from 'xstate'
 
+import { EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN } from '../../../config'
 import { harvestCrop } from '../../../reducers/harvest-crop'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
@@ -53,38 +54,42 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
       },
     },
 
-    entry: enqueueActions(({ event, context: { game }, enqueue }) => {
-      {
-        try {
-          switch (event.type) {
-            case GameEvent.START_TURN: {
-              game = incrementPlayer(game)
+    entry: enqueueActions(
+      ({ event, context: { eventsCardsThatCanBePlayed, game }, enqueue }) => {
+        {
+          try {
+            switch (event.type) {
+              case GameEvent.START_TURN: {
+                game = incrementPlayer(game)
+                const { currentPlayerId } = game
+                assertCurrentPlayer(currentPlayerId)
+
+                eventsCardsThatCanBePlayed =
+                  EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN
+                game = startTurn(game, currentPlayerId)
+
+                break
+              }
+
+              default:
+            }
+          } catch (error) {
+            if (error instanceof PlayerOutOfFundsError) {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
 
-              game = startTurn(game, currentPlayerId)
-
-              break
+              enqueue.raise({
+                type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS,
+                playerId: currentPlayerId,
+              })
+            } else {
+              console.error(error)
             }
-
-            default:
           }
-        } catch (error) {
-          if (error instanceof PlayerOutOfFundsError) {
-            const { currentPlayerId } = game
-            assertCurrentPlayer(currentPlayerId)
 
-            enqueue.raise({
-              type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS,
-              playerId: currentPlayerId,
-            })
-          } else {
-            console.error(error)
-          }
+          enqueue.assign({ eventsCardsThatCanBePlayed, game })
         }
-
-        enqueue.assign({ game })
       }
-    }),
+    ),
   },
 }
