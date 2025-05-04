@@ -13,7 +13,6 @@ import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
 import { ShellContext } from '../Game/ShellContext'
-import { useGameRules } from '../../hooks/useGameRules'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -50,7 +49,6 @@ export const Hand = ({
 }: HandProps) => {
   const { blockingOperation, isHandInViewport, setIsHandInViewport } =
     useContext(ShellContext)
-  const { eventsCardsThatCanBePlayed } = useGameRules()
   const { setRejectingTimeout } = useRejectingTimeout()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
@@ -190,7 +188,6 @@ export const Hand = ({
             onFocus={() => handleCardFocus(idx)}
             tabIndex={isHandInViewport ? 0 : -1}
             isFocused={isSelected}
-            canEventCardsBePlayed={eventsCardsThatCanBePlayed > 0}
           />
         )
       })}

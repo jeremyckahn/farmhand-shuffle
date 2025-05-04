@@ -67,7 +67,6 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       onBeforePlay,
       canBeWatered = false,
       canBeHarvested = false,
-      canEventCardsBePlayed = false,
       disableEnterAnimation = false,
       imageScale = 0.75,
       isFlipped = false,
@@ -82,13 +81,20 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
   ) {
     const { useActorRef } = ActorContext
     const actorRef = useActorRef()
-    const { game, gameState, selectedWaterCardInHandIdx } = useGameRules()
+    const {
+      game,
+      gameState,
+      selectedWaterCardInHandIdx,
+      eventsCardsThatCanBePlayed,
+    } = useGameRules()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
     const { setIsHandInViewport } = useContext(ShellContext)
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
+
+    const canEventCardsBePlayed = eventsCardsThatCanBePlayed > 0
 
     const handlePlayCard = async () => {
       if (onBeforePlay) {
