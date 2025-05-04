@@ -11,6 +11,7 @@ import { CardSize } from '../../types'
 export interface BaseCardProps extends BoxProps {
   canBeHarvested?: boolean
   canBeWatered?: boolean
+  canEventCardsBePlayed?: boolean
   cardInstance: CardInstance
   cardIdx: number
   disableEnterAnimation?: boolean

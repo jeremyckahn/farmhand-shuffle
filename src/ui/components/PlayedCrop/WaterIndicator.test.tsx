@@ -60,6 +60,7 @@ const StubWaterfallIndicator = (overrides: Partial<WaterIndicatorProps>) => {
 
 describe('WaterIndicator', () => {
   const mockGameRules: ReturnType<typeof useGameRules> = {
+    eventsCardsThatCanBePlayed: 1,
     game: stubGame({
       currentPlayerId: stubPlayer1.id,
       sessionOwnerPlayerId: stubPlayer1.id,

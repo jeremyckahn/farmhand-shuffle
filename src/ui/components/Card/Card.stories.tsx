@@ -94,6 +94,7 @@ export const PlayableEventCard: Story = {
     isFlipped: false,
     size: CardSize.MEDIUM,
     isFocused: true,
+    canEventCardsBePlayed: true,
   },
   decorators: [
     Story => {

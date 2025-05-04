@@ -67,6 +67,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       onBeforePlay,
       canBeWatered = false,
       canBeHarvested = false,
+      canEventCardsBePlayed = false,
       disableEnterAnimation = false,
       imageScale = 0.75,
       isFlipped = false,
@@ -176,10 +177,10 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       }
 
       case CardType.EVENT: {
-        // FIXME: Check that event card play counter is not 0
         if (
           isSessionOwnersCard &&
           isFocused &&
+          canEventCardsBePlayed &&
           [GameState.WAITING_FOR_PLAYER_TURN_ACTION].includes(gameState)
         ) {
           showPlayCardButton = true
