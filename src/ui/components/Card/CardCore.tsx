@@ -115,6 +115,12 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
           break
         }
 
+        case CardType.EVENT: {
+          actorRef.send({ type: GameEvent.PLAY_EVENT, cardIdx, playerId })
+
+          break
+        }
+
         default:
       }
     }

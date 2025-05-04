@@ -14,6 +14,8 @@ export const playingCardState: RulesMachineConfig['states'] = {
       [GameEvent.PLAY_CROP]: GameState.PLANTING_CROP,
 
       [GameEvent.PLAY_WATER]: GameState.PLAYER_WATERING_CROP,
+
+      [GameEvent.PLAY_EVENT]: GameState.PLAYING_EVENT,
     },
 
     entry: enqueueActions(({ event, context: { game }, enqueue }) => {
