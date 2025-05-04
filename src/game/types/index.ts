@@ -86,6 +86,8 @@ export interface IPlayedCrop {
  */
 export interface IEvent extends ICard {
   readonly type: CardType.EVENT
+
+  readonly applyEffect: (game: IGame) => IGame
 }
 
 /**
@@ -102,13 +104,6 @@ export interface ITool extends ICard {
  */
 export interface IWater extends ICard {
   readonly type: CardType.WATER
-}
-
-/**
- * Used up to once per turn to trigger a variety of events.
- */
-export interface IEvent extends ICard {
-  readonly type: CardType.EVENT
 }
 
 export interface WaterInstance extends IWater, Instance {}

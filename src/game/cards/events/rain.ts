@@ -6,7 +6,7 @@ import {
   IGame,
 } from '../../types'
 
-export const rain: IEvent = Object.freeze({
+export const rain: IEvent = Object.freeze<IEvent>({
   type: CardType.EVENT,
   id: 'rain',
   name: 'Rain',
@@ -21,5 +21,11 @@ export const rain: IEvent = Object.freeze({
       playerId,
       cardIdx,
     }
+  },
+
+  applyEffect: game => {
+    // FIXME: Implement this
+
+    return game
   },
 })
