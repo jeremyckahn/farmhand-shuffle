@@ -18,6 +18,7 @@ import {
   GameEvent,
   GameState,
   isCropCardInstance,
+  isEventCardInstance,
   isWaterCardInstance,
 } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -169,6 +170,19 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
           [GameState.WAITING_FOR_PLAYER_TURN_ACTION].includes(gameState)
         ) {
           showHarvestCropButton = true
+        }
+
+        break
+      }
+
+      case CardType.EVENT: {
+        // FIXME: Check that event card play counter is not 0
+        if (
+          isSessionOwnersCard &&
+          isFocused &&
+          [GameState.WAITING_FOR_PLAYER_TURN_ACTION].includes(gameState)
+        ) {
+          showPlayCardButton = true
         }
 
         break
@@ -334,6 +348,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                         >
                           {isCropCardInstance(card) && 'Play crop'}
                           {isWaterCardInstance(card) && 'Water a crop'}
+                          {isEventCardInstance(card) && 'Play event'}
                         </Button>
                       </Typography>
                     </Box>
