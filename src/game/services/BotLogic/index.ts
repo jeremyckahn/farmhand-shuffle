@@ -31,6 +31,16 @@ export class BotLogicService {
     return safeNumberOfCropsToPlay
   }
 
+  // FIXME: Test this
+  getNumberOfEventCardsToPlay(game: IGame, playerId: string) {
+    const eventCardIdxsInPlayerHand = lookup.findEventIndexesInPlayerHand(
+      game,
+      playerId
+    )
+
+    return randomNumber.chooseNumber(0, eventCardIdxsInPlayerHand.length)
+  }
+
   getCropCardIndicesToWater(game: IGame, playerId: string) {
     const {
       field: { crops },

@@ -1,10 +1,7 @@
 import { enqueueActions } from 'xstate'
 
 import { randomNumber } from '../../../../services/RandomNumber'
-import {
-  BOT_ACTION_DELAY,
-  EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
-} from '../../../config'
+import { BOT_ACTION_DELAY } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
 import { GameEvent, GameState } from '../../../types'
@@ -29,7 +26,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [GameEvent.START_TURN]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
-    // FIXME: Handle playing event cards
+    // FIXME: Play event cards
     entry: enqueueActions(
       ({
         event,
@@ -50,7 +47,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 assertCurrentPlayer(game.currentPlayerId)
 
                 eventCardsThatCanBePlayed =
-                  EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN
+                  botLogic.getNumberOfEventCardsToPlay(
+                    game,
+                    game.currentPlayerId
+                  )
                 game = startTurn(game, game.currentPlayerId)
                 assertCurrentPlayer(game.currentPlayerId)
 

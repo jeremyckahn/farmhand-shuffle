@@ -12,6 +12,14 @@ export class RandomNumberService {
   chooseElement<T = any>(list: T[]) {
     return list[this.randomIndex(list)]
   }
+
+  // FIXME: Test this
+  chooseNumber(minimum: number, maximum: number) {
+    minimum = Math.ceil(minimum)
+    maximum = Math.floor(maximum)
+
+    return Math.floor(this.generate() * (maximum - minimum + 1)) + minimum
+  }
 }
 
 export const randomNumber = new RandomNumberService()
