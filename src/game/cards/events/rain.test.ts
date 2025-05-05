@@ -3,6 +3,7 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { updateGame } from '../../reducers/update-game'
 import { factory } from '../../services/Factory'
+import { IPlayedCrop } from '../../types'
 
 import { rain } from './rain'
 
@@ -53,15 +54,30 @@ describe('rain card', () => {
       const updatedGame = rain.applyEffect(game)
 
       expect(
-        updatedGame.table.players[stubPlayer1.id].field.crops.map(
-          crop => crop?.waterCards
-        )
-      ).toEqual([undefined, 2, 3])
+        updatedGame.table.players[stubPlayer1.id].field.crops[1]
+      ).toMatchObject<Partial<IPlayedCrop>>({
+        wasWateredTuringTurn: true,
+        waterCards: 2,
+      })
       expect(
-        updatedGame.table.players[stubPlayer2.id].field.crops.map(
-          crop => crop?.waterCards
-        )
-      ).toEqual([1, undefined, 4])
+        updatedGame.table.players[stubPlayer1.id].field.crops[2]
+      ).toMatchObject<Partial<IPlayedCrop>>({
+        wasWateredTuringTurn: true,
+        waterCards: 3,
+      })
+
+      expect(
+        updatedGame.table.players[stubPlayer2.id].field.crops[0]
+      ).toMatchObject<Partial<IPlayedCrop>>({
+        wasWateredTuringTurn: true,
+        waterCards: 1,
+      })
+      expect(
+        updatedGame.table.players[stubPlayer2.id].field.crops[2]
+      ).toMatchObject<Partial<IPlayedCrop>>({
+        wasWateredTuringTurn: true,
+        waterCards: 4,
+      })
     })
   })
 })
