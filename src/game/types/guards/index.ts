@@ -162,7 +162,7 @@ export function assertIsCardId(id: string): asserts id is keyof typeof cards {
 export function assertIsEventCard(
   card: CardInstance
 ): asserts card is EventInstance {
-  if (isEventCardInstance(card)) {
+  if (!isEventCardInstance(card)) {
     throw new GameStateCorruptError(`${card.id} is not an event card`)
   }
 }

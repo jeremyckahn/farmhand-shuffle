@@ -24,6 +24,7 @@ export const rain: IEvent = Object.freeze<IEvent>({
     }
   },
 
+  // FIXME: Set wasWateredToday to true
   /**
    *  Gives all players an additional water card to each of their crops.
    *

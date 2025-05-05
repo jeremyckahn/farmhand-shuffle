@@ -16,11 +16,14 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [GameEvent.PLAYER_RAN_OUT_OF_FUNDS]: GameState.GAME_OVER,
 
+      // FIXME: Determine if this needed
       [GameEvent.PLAY_CARD]: GameState.PLAYING_CARD,
 
       [GameEvent.PLAY_CROP]: GameState.PLANTING_CROP,
 
       [GameEvent.PLAY_WATER]: GameState.PLAYER_WATERING_CROP,
+
+      [GameEvent.PLAY_EVENT]: GameState.PLAYING_EVENT,
 
       [GameEvent.START_TURN]: GameState.PERFORMING_BOT_TURN_ACTION,
 
