@@ -18,7 +18,7 @@ export const playingEventCard: RulesMachineConfig['states'] = {
     },
 
     entry: enqueueActions(
-      ({ event, context: { eventsCardsThatCanBePlayed, game }, enqueue }) => {
+      ({ event, context: { eventCardsThatCanBePlayed, game }, enqueue }) => {
         assertEvent(event, GameEvent.PLAY_EVENT)
 
         const { currentPlayerId, sessionOwnerPlayerId } = game
@@ -36,7 +36,7 @@ export const playingEventCard: RulesMachineConfig['states'] = {
         }
 
         enqueue.assign({
-          eventsCardsThatCanBePlayed: eventsCardsThatCanBePlayed - 1,
+          eventCardsThatCanBePlayed: eventCardsThatCanBePlayed - 1,
           game,
         })
       }

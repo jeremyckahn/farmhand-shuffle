@@ -36,7 +36,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         context: {
           cropCardIndicesToHarvest,
           cropsToPlayDuringBotTurn,
-          eventsCardsThatCanBePlayed,
+          eventCardsThatCanBePlayed,
           fieldCropIndicesToWaterDuringBotTurn,
           game,
         },
@@ -49,7 +49,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 game = incrementPlayer(game)
                 assertCurrentPlayer(game.currentPlayerId)
 
-                eventsCardsThatCanBePlayed =
+                eventCardsThatCanBePlayed =
                   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN
                 game = startTurn(game, game.currentPlayerId)
                 assertCurrentPlayer(game.currentPlayerId)
@@ -156,7 +156,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           enqueue.assign({
             cropCardIndicesToHarvest,
             cropsToPlayDuringBotTurn,
-            eventsCardsThatCanBePlayed,
+            eventCardsThatCanBePlayed,
             fieldCropIndicesToWaterDuringBotTurn,
             game,
           })

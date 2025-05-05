@@ -85,7 +85,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       game,
       gameState,
       selectedWaterCardInHandIdx,
-      eventsCardsThatCanBePlayed,
+      eventCardsThatCanBePlayed,
     } = useGameRules()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
@@ -94,7 +94,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       '(prefers-reduced-motion: reduce)'
     )
 
-    const canEventCardsBePlayed = eventsCardsThatCanBePlayed > 0
+    const canEventCardsBePlayed = eventCardsThatCanBePlayed > 0
 
     const handlePlayCard = async () => {
       if (onBeforePlay) {

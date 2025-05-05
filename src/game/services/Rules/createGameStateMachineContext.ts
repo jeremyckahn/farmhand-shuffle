@@ -9,7 +9,7 @@ export const createGameStateMachineContext = (): GameMachineContext => {
   return {
     game: factory.buildGame(),
     cropsToPlayDuringBotTurn: 0,
-    eventsCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
+    eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
     selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     fieldCropIndicesToWaterDuringBotTurn: [],
     cropCardIndicesToHarvest: [],

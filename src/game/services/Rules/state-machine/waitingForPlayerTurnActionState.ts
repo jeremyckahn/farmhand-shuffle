@@ -58,7 +58,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
     },
 
     entry: enqueueActions(
-      ({ event, context: { eventsCardsThatCanBePlayed, game }, enqueue }) => {
+      ({ event, context: { eventCardsThatCanBePlayed, game }, enqueue }) => {
         {
           try {
             switch (event.type) {
@@ -67,7 +67,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
                 const { currentPlayerId } = game
                 assertCurrentPlayer(currentPlayerId)
 
-                eventsCardsThatCanBePlayed =
+                eventCardsThatCanBePlayed =
                   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN
                 game = startTurn(game, currentPlayerId)
 
@@ -90,7 +90,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
             }
           }
 
-          enqueue.assign({ eventsCardsThatCanBePlayed, game })
+          enqueue.assign({ eventCardsThatCanBePlayed, game })
         }
       }
     ),

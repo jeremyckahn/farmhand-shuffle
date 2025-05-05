@@ -14,7 +14,7 @@ import { assertCurrentPlayer } from '../../../types/guards'
 export interface GameMachineContext {
   cropCardIndicesToHarvest: number[]
   cropsToPlayDuringBotTurn: number
-  eventsCardsThatCanBePlayed: number
+  eventCardsThatCanBePlayed: number
   fieldCropIndicesToWaterDuringBotTurn: number[]
   game: IGame
   selectedWaterCardInHandIdx: number
