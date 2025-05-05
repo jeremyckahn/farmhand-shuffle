@@ -29,7 +29,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [GameEvent.START_TURN]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
-    // FIXME: Hand playing event cards
+    // FIXME: Handle playing event cards
     entry: enqueueActions(
       ({
         event,
