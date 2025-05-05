@@ -1,3 +1,4 @@
+import { updateField } from '../../reducers/update-field'
 import {
   CardType,
   GameEvent,
@@ -23,8 +24,29 @@ export const rain: IEvent = Object.freeze<IEvent>({
     }
   },
 
+  // FIXME: Test this
+  /**
+   *  Gives all players an additional water card to each of their crops.
+   *
+   *  @param game - The current game state.
+   *
+   *  @returns The updated game state.
+   */
   applyEffect: game => {
-    // FIXME: Implement this
+    for (const playerId in game.table.players) {
+      const player = game.table.players[playerId]
+
+      const crops = player.field.crops.map(crop => {
+        if (!crop) return crop
+
+        return {
+          ...crop,
+          waterCards: crop?.waterCards + 1,
+        }
+      })
+
+      game = updateField(game, playerId, { crops })
+    }
 
     return game
   },
