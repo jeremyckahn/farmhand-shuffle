@@ -18,7 +18,9 @@ export const drawValidStartingHand = (game: IGame, playerId: IPlayer['id']) => {
   const randomCropIdx = randomNumber.chooseElement(cropIdxs)
 
   if (randomCropIdx === undefined) {
-    throw new GameStateCorruptError('drawValidStartingHand: Drew an empty hand')
+    throw new GameStateCorruptError(
+      'Could not select a crop card for starting hand: No crop cards available in deck.'
+    )
   }
 
   game = pullCardFromDeck(game, playerId, randomCropIdx)
