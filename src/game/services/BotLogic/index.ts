@@ -31,6 +31,27 @@ export class BotLogicService {
     return safeNumberOfCropsToPlay
   }
 
+  getNumberOfEventCardsToPlay(game: IGame, playerId: string) {
+    const eventCardIdxsInPlayerHand = lookup.findEventIndexesInPlayerHand(
+      game,
+      playerId
+    )
+
+    return randomNumber.chooseIntegerBetween(
+      0,
+      eventCardIdxsInPlayerHand.length
+    )
+  }
+
+  getEventCardIndexToPlay(game: IGame, playerId: string) {
+    const eventCardIdxsInPlayerHand = lookup.findEventIndexesInPlayerHand(
+      game,
+      playerId
+    )
+
+    return randomNumber.chooseElement(eventCardIdxsInPlayerHand)
+  }
+
   getCropCardIndicesToWater(game: IGame, playerId: string) {
     const {
       field: { crops },
@@ -53,7 +74,7 @@ export class BotLogicService {
       if (plantedCrop && isCropCardInstance(plantedCrop.instance)) {
         if (
           plantedCrop.waterCards < plantedCrop.instance.waterToMature &&
-          plantedCrop.wasWateredTuringTurn === false
+          plantedCrop.wasWateredDuringTurn === false
         ) {
           fieldCropIdxsThatNeedWater = [...fieldCropIdxsThatNeedWater, i]
         }

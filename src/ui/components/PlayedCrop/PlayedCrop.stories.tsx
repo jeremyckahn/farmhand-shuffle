@@ -35,7 +35,7 @@ export const PlayedCropCard: Story = {
       playerId: '',
       playedCrop: {
         instance: stubCarrot,
-        wasWateredTuringTurn: false,
+        wasWateredDuringTurn: false,
         waterCards: 1,
       },
     },
@@ -51,7 +51,7 @@ export const PlayedCropCardWithExtraWater: Story = {
       playerId: '',
       playedCrop: {
         instance: stubCarrot,
-        wasWateredTuringTurn: false,
+        wasWateredDuringTurn: false,
         waterCards: 5,
       },
     },

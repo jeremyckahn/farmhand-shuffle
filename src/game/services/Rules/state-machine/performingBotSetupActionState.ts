@@ -8,6 +8,7 @@ import { GameEvent, GameState, GameStateGuard } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
+import { GameStateCorruptError } from '../errors'
 
 import { RulesMachineConfig } from './types'
 
@@ -52,6 +53,12 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
                 currentPlayerId
               )
               const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
+
+              if (cardIdx === undefined) {
+                throw new GameStateCorruptError(
+                  `Expected crops in hand but none were found for bot player ${currentPlayerId}`
+                )
+              }
 
               enqueue.raise(
                 {

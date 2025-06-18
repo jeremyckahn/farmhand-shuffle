@@ -3,6 +3,7 @@ import shuffle from 'lodash.shuffle'
 import { randomNumber } from '../../../services/RandomNumber'
 import { INITIAL_HAND_SIZE } from '../../config'
 import { lookup } from '../../services/Lookup'
+import { GameStateCorruptError } from '../../services/Rules/errors'
 import { IGame, IPlayer } from '../../types'
 import { drawCard } from '../draw-card'
 import { pullCardFromDeck } from '../pull-card-from-deck'
@@ -15,6 +16,10 @@ export const drawValidStartingHand = (game: IGame, playerId: IPlayer['id']) => {
     game.table.players[playerId].deck.length
   )
   const randomCropIdx = randomNumber.chooseElement(cropIdxs)
+
+  if (randomCropIdx === undefined) {
+    throw new GameStateCorruptError('drawValidStartingHand: Drew an empty hand')
+  }
 
   game = pullCardFromDeck(game, playerId, randomCropIdx)
   game = updatePlayer(game, playerId, {

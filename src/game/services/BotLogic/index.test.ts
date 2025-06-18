@@ -1,4 +1,9 @@
 import { randomNumber } from '../../../services/RandomNumber'
+import {
+  stubCarrot,
+  stubRain,
+  stubWater,
+} from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { carrot, instantiate, water } from '../../cards'
@@ -64,7 +69,7 @@ describe('BotLogicService', () => {
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE - 1).fill({
           instance: instantiate(carrot),
-          wasWateredTuringTurn: false,
+          wasWateredDuringTurn: false,
           waterCards: 0,
         }),
         minimumCropsToPlay: 1,
@@ -76,7 +81,7 @@ describe('BotLogicService', () => {
         hand: [instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill({
           instance: instantiate(carrot),
-          wasWateredTuringTurn: false,
+          wasWateredDuringTurn: false,
           waterCards: 0,
         }),
         minimumCropsToPlay: 1,
@@ -121,7 +126,7 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: 0,
           },
         ],
@@ -133,7 +138,7 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: 0,
           },
         ],
@@ -151,17 +156,17 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature,
           },
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature,
           },
         ],
@@ -173,17 +178,17 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature,
           },
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
         ],
@@ -195,12 +200,12 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: true,
+            wasWateredDuringTurn: true,
             waterCards: carrot.waterToMature - 1,
           },
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
         ],
@@ -235,7 +240,7 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature,
           },
         ],
@@ -245,7 +250,7 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
         ],
@@ -256,17 +261,17 @@ describe('BotLogicService', () => {
         fieldCrops: [
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature,
           },
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature - 1,
           },
           {
             instance: instantiate(carrot),
-            wasWateredTuringTurn: false,
+            wasWateredDuringTurn: false,
             waterCards: carrot.waterToMature,
           },
         ],
@@ -288,6 +293,66 @@ describe('BotLogicService', () => {
         )
 
         expect(result).toEqual(expectedResult)
+      }
+    )
+  })
+
+  describe('getNumberOfEventCardsToPlay', () => {
+    it.each([
+      { hand: [], rngStub: 0.1, expectedResult: 0 },
+      { hand: [stubRain], rngStub: 0.4, expectedResult: 0 },
+      { hand: [stubRain], rngStub: 0.5, expectedResult: 1 },
+      { hand: [stubRain, stubRain], rngStub: 0, expectedResult: 0 },
+      { hand: [stubRain, stubRain], rngStub: 0.5, expectedResult: 1 },
+      { hand: [stubRain, stubRain], rngStub: 1, expectedResult: 2 },
+    ])(
+      'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
+      ({ hand, rngStub, expectedResult }) => {
+        vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
+
+        let game = stubGame()
+        game = updatePlayer(game, stubPlayer1.id, {
+          hand,
+        })
+
+        const result = botLogic.getNumberOfEventCardsToPlay(
+          game,
+          stubPlayer1.id
+        )
+
+        expect(result).toBe(expectedResult)
+      }
+    )
+  })
+
+  describe('getEventCardIndexToPlay', () => {
+    it.each([
+      { hand: [], rngStub: 0, expectedResult: undefined },
+      { hand: [], rngStub: 1, expectedResult: undefined },
+      { hand: [stubRain], rngStub: 0, expectedResult: 0 },
+      {
+        hand: [stubCarrot, stubRain, stubWater, stubRain],
+        rngStub: 0,
+        expectedResult: 1,
+      },
+      {
+        hand: [stubCarrot, stubRain, stubWater, stubRain],
+        rngStub: 1,
+        expectedResult: 3,
+      },
+    ])(
+      'chooses an event card index to play for hand $hand and rngStub $rngStub',
+      ({ hand, rngStub, expectedResult }) => {
+        vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
+
+        let game = stubGame()
+        game = updatePlayer(game, stubPlayer1.id, {
+          hand,
+        })
+
+        const result = botLogic.getEventCardIndexToPlay(game, stubPlayer1.id)
+
+        expect(result).toBe(expectedResult)
       }
     )
   })

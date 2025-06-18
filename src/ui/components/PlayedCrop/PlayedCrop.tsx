@@ -4,11 +4,12 @@ import useTheme from '@mui/material/styles/useTheme'
 
 import { IPlayedCrop } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { cards as cardImages } from '../../img'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
 import { CropCardProps } from '../Card/types'
+import { Image } from '../Image'
 
-import { WaterIndicator } from './WaterIndicator'
 import { usePlayedCropLogic } from './usePlayedCropLogic'
 
 export interface PlayedCropProps extends BoxProps {
@@ -64,11 +65,14 @@ export const PlayedCrop = ({
 
           return (
             <Grid key={idx} item sx={{ pt: `${theme.spacing(0)} !important` }}>
-              <WaterIndicator
-                cardInstance={playedCrop.instance}
-                isFilled={isFilled}
-                opacity={opacity}
-                playerId={cropCardProps.playerId}
+              <Image
+                src={cardImages.water}
+                alt="Water card indicator"
+                sx={{
+                  imageRendering: 'pixelated',
+                  opacity,
+                  transition: theme.transitions.create(['opacity']),
+                }}
               />
             </Grid>
           )

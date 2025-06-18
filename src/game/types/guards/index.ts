@@ -1,6 +1,7 @@
 import {
   CardInstance,
   CardType,
+  EventInstance,
   GameState,
   ICard,
   ICrop,
@@ -9,6 +10,7 @@ import {
   IGame,
   IPlayedCrop,
   IPlayer,
+  isEventCardInstance,
   ITable,
 } from '../'
 import * as cards from '../../cards'
@@ -52,8 +54,8 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
     o.instance !== null &&
     'waterCards' in o &&
     typeof o.waterCards === 'number' &&
-    'wasWateredTuringTurn' in o &&
-    typeof o.wasWateredTuringTurn === 'boolean'
+    'wasWateredDuringTurn' in o &&
+    typeof o.wasWateredDuringTurn === 'boolean'
   )
 }
 
@@ -154,6 +156,14 @@ export const isCard = (obj: unknown): obj is ICard => {
 export function assertIsCardId(id: string): asserts id is keyof typeof cards {
   if (!isCardId(id)) {
     throw new GameStateCorruptError(`${id} is not a valid card ID`)
+  }
+}
+
+export function assertIsEventCard(
+  card: CardInstance
+): asserts card is EventInstance {
+  if (!isEventCardInstance(card)) {
+    throw new GameStateCorruptError(`${card.id} is not an event card`)
   }
 }
 

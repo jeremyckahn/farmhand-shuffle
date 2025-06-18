@@ -114,7 +114,7 @@ export class FactoryService {
   buildPlayedCrop(cropInstance: CropInstance): IPlayedCrop {
     return {
       instance: cropInstance,
-      wasWateredTuringTurn: false,
+      wasWateredDuringTurn: false,
       waterCards: 0,
     }
   }

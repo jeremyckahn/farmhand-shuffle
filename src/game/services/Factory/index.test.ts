@@ -110,7 +110,7 @@ describe('Factory', () => {
 
       expect(playedCard).toEqual<IPlayedCrop>({
         instance: stubCarrot,
-        wasWateredTuringTurn: false,
+        wasWateredDuringTurn: false,
         waterCards: 0,
       })
     })

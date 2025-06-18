@@ -39,10 +39,15 @@ const meta = {
       )
 
       const handleClickAdd = () => {
-        setHand([
-          ...hand,
-          randomNumber.chooseElement([stubCarrot, stubWater, stubPumpkin]),
+        const randomCard = randomNumber.chooseElement([
+          stubCarrot,
+          stubWater,
+          stubPumpkin,
         ])
+
+        if (randomCard) {
+          setHand([...hand, randomCard])
+        }
       }
 
       const handleClickRemove = () => {

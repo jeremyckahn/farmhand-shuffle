@@ -11,3 +11,5 @@ export const STANDARD_FIELD_SIZE = 6
 export const SELECTED_CARD_ELEVATION = 10
 
 export const BOT_ACTION_DELAY = 750
+
+export const EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN = 1

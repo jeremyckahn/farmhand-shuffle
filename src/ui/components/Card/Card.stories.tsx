@@ -10,6 +10,7 @@ import { ActorContext } from '../Game/ActorContext'
 import {
   stubCarrot,
   stubPumpkin,
+  stubRain,
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubSelectorState } from '../../../test-utils/stubs/selectorState'
@@ -65,6 +66,29 @@ export const PlayableCropCard: Story = {
 export const PlayableWaterCard: Story = {
   args: {
     cardInstance: stubWater,
+    cardIdx: 0,
+    playerId: stubPlayer1.id,
+    isFlipped: false,
+    size: CardSize.MEDIUM,
+    isFocused: true,
+  },
+  decorators: [
+    Story => {
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
+
+      return <Story />
+    },
+  ],
+}
+
+export const PlayableEventCard: Story = {
+  args: {
+    cardInstance: stubRain,
     cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
@@ -194,6 +218,17 @@ export const HarvestableOpponentCropCard: Story = {
 export const WaterCard: Story = {
   args: {
     cardInstance: stubWater,
+    cardIdx: 0,
+    playerId: '',
+    isFlipped: false,
+  },
+}
+
+// TODO: Add a story for a small event card variant (and also improve the
+// layout)
+export const RainCard: Story = {
+  args: {
+    cardInstance: stubRain,
     cardIdx: 0,
     playerId: '',
     isFlipped: false,

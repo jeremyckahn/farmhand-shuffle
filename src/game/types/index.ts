@@ -77,7 +77,7 @@ export interface IPlayedCrop {
   /**
    * Whether or not the crop has been watered during the current turn.
    */
-  wasWateredTuringTurn: boolean
+  wasWateredDuringTurn: boolean
 }
 
 /**
@@ -86,6 +86,10 @@ export interface IPlayedCrop {
  */
 export interface IEvent extends ICard {
   readonly type: CardType.EVENT
+
+  readonly description: string
+
+  readonly applyEffect: (game: IGame) => IGame
 }
 
 /**
@@ -106,12 +110,20 @@ export interface IWater extends ICard {
 
 export interface WaterInstance extends IWater, Instance {}
 
-export type CardInstance = CropInstance | WaterInstance
+export interface EventInstance extends IEvent, Instance {}
+
+export type CardInstance = CropInstance | WaterInstance | EventInstance
 
 export const isWaterCardInstance = (
   cardInstance: CardInstance
 ): cardInstance is WaterInstance => {
   return cardInstance.type === CardType.WATER
+}
+
+export const isEventCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is EventInstance => {
+  return cardInstance.type === CardType.EVENT
 }
 
 export interface IField {
@@ -206,6 +218,7 @@ export enum GameEvent {
   OPERATION_ABORTED = 'OPERATION_ABORTED',
   PLAY_CARD = 'PLAY_CARD',
   PLAY_CROP = 'PLAY_CROP',
+  PLAY_EVENT = 'PLAY_EVENT',
   PLAY_WATER = 'PLAY_WATER',
   PLAYER_RAN_OUT_OF_FUNDS = 'PLAYER_RAN_OUT_OF_FUNDS',
   PROMPT_BOT_FOR_SETUP_ACTION = 'PROMPT_BOT_FOR_SETUP_ACTION',
@@ -238,6 +251,7 @@ export enum GameState {
   PLANTING_CROP = 'PLANTING_CROP',
   PLAYER_WATERING_CROP = 'PLAYER_WATERING_CROP',
   PLAYING_CARD = 'PLAYING_CARD',
+  PLAYING_EVENT = 'PLAYING_EVENT',
   WAITING_FOR_PLAYER_SETUP_ACTION = 'WAITING_FOR_PLAYER_SETUP_ACTION',
   WAITING_FOR_PLAYER_TURN_ACTION = 'WAITING_FOR_PLAYER_TURN_ACTION',
 }
@@ -246,21 +260,41 @@ export enum GameStateGuard {
   HAVE_PLAYERS_COMPLETED_SETUP = 'HAVE_PLAYERS_COMPLETED_SETUP',
 }
 
-export enum ShellNotification {
+export enum ShellNotificationType {
   CROP_HARVESTED = 'CROP_HARVESTED',
+  CROP_WATERED = 'CROP_WATERED',
+  EVENT_CARD_PLAYED = 'EVENT_CARD_PLAYED',
 }
 
 export interface ShellNotificationPayload {
-  [ShellNotification.CROP_HARVESTED]: {
+  [ShellNotificationType.CROP_HARVESTED]: {
     cropHarvested: ICrop
+  }
+
+  [ShellNotificationType.CROP_WATERED]: {
+    cropWatered: ICrop
+  }
+
+  [ShellNotificationType.EVENT_CARD_PLAYED]: {
+    eventCard: EventInstance
   }
 }
 
+/**
+ * A union type that represents all possible shell notifications.
+ * It's created by mapping over the `ShellNotificationType` enum
+ * to create a distinct object type for each notification type,
+ * including its specific payload.
+ */
+export type ShellNotification = {
+  [K in ShellNotificationType]: {
+    type: K
+    payload: ShellNotificationPayload[K]
+  }
+}[ShellNotificationType]
+
 export interface IShell {
-  triggerNotification: (
-    type: ShellNotification,
-    payload: ShellNotificationPayload[keyof ShellNotificationPayload]
-  ) => void
+  triggerNotification: (notfication: ShellNotification) => void
 }
 
 export interface GameEventPayload {
@@ -290,9 +324,9 @@ export interface GameEventPayload {
     shell: IShell
   }
 
-  [GameEvent.PLAY_CARD]: PlayCardEventPayload
-
   [GameEvent.PLAY_CROP]: PlayCardEventPayload<GameEvent.PLAY_CROP>
+
+  [GameEvent.PLAY_EVENT]: PlayCardEventPayload<GameEvent.PLAY_EVENT>
 
   [GameEvent.PLAY_WATER]: PlayCardEventPayload<GameEvent.PLAY_WATER>
 

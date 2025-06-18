@@ -1,6 +1,6 @@
 import { enqueueActions } from 'xstate'
 
-import { GameEvent, GameState, ShellNotification } from '../../../types'
+import { GameEvent, GameState, ShellNotificationType } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { harvestCrop } from '../../../reducers/harvest-crop'
 
@@ -32,8 +32,11 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
 
         game = harvestCrop(game, currentPlayerId, cropCardIdxToHarvest)
 
-        triggerNotification(ShellNotification.CROP_HARVESTED, {
-          cropHarvested: plantedCrop.instance,
+        triggerNotification({
+          type: ShellNotificationType.CROP_HARVESTED,
+          payload: {
+            cropHarvested: plantedCrop.instance,
+          },
         })
 
         enqueue.raise({

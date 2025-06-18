@@ -17,7 +17,7 @@ export const usePlayedCropLogic = ({
   }
 
   const waterIconsToRender = Math.max(playedCrop.waterCards, card.waterToMature)
-  const canBeWatered = playedCrop.wasWateredTuringTurn === false
+  const canBeWatered = playedCrop.wasWateredDuringTurn === false
   const canBeHarvested = playedCrop.waterCards >= card.waterToMature
 
   return { canBeWatered, canBeHarvested, waterIconsToRender }

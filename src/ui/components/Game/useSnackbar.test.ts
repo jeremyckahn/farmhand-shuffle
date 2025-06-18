@@ -9,9 +9,10 @@ import { updateGame } from '../../../game/reducers/update-game'
 import {
   GameEvent,
   IGame,
-  ShellNotification,
   ShellNotificationPayload,
+  ShellNotificationType,
 } from '../../../game/types'
+import { stubRain } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
@@ -86,7 +87,7 @@ describe('useSnackbar Hook', () => {
         })
       )
 
-      const payload: ShellNotificationPayload[ShellNotification.CROP_HARVESTED] =
+      const payload: ShellNotificationPayload[ShellNotificationType.CROP_HARVESTED] =
         {
           cropHarvested: carrot,
         }
@@ -98,10 +99,10 @@ describe('useSnackbar Hook', () => {
       assertEvent(gameEventPayload, GameEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification(
-          ShellNotification.CROP_HARVESTED,
-          payload
-        )
+        gameEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.CROP_HARVESTED,
+          payload,
+        })
       })
 
       expect(result.current.snackbarProps.message).toEqual(
@@ -124,7 +125,7 @@ describe('useSnackbar Hook', () => {
         showNotification
       )
 
-      const payload: ShellNotificationPayload[ShellNotification.CROP_HARVESTED] =
+      const payload: ShellNotificationPayload[ShellNotificationType.CROP_HARVESTED] =
         {
           cropHarvested: carrot,
         }
@@ -136,16 +137,156 @@ describe('useSnackbar Hook', () => {
       assertEvent(gameEventPayload, GameEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification(
-          ShellNotification.CROP_HARVESTED,
-          payload
-        )
+        gameEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.CROP_HARVESTED,
+          payload,
+        })
       })
 
       expect(result.current.snackbarProps.message).toEqual(
         `Fun Animal harvested and sold a ${carrot.name}`
       )
       expect(result.current.snackbarProps.severity).toEqual('warning')
+    })
+
+    it('should show the correct CROP_WATERED notification message when session owner', () => {
+      const { result } = renderHook(() =>
+        useSnackbar({
+          actorRef,
+          game,
+        })
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.CROP_WATERED] =
+        {
+          cropWatered: carrot,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        typeof actorRef.send
+      >
+      const gameEventPayload = send.mock.calls[0][0]
+      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+
+      act(() => {
+        gameEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.CROP_WATERED,
+          payload,
+        })
+      })
+
+      expect(result.current.snackbarProps.message).toEqual(
+        `You watered your ${carrot.name}`
+      )
+      expect(result.current.snackbarProps.severity).toEqual('info')
+    })
+
+    it('should show the correct CROP_WATERED notification message when not session owner', () => {
+      game = updateGame(game, { sessionOwnerPlayerId: stubPlayer2.id })
+      const { result } = renderHook(() =>
+        useSnackbar({
+          actorRef,
+          game,
+        })
+      )
+
+      const showNotification = vi.fn()
+      vi.spyOn(result.current, 'showNotification').mockImplementation(
+        showNotification
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.CROP_WATERED] =
+        {
+          cropWatered: carrot,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        typeof actorRef.send
+      >
+      const gameEventPayload = send.mock.calls[0][0]
+      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+
+      act(() => {
+        gameEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.CROP_WATERED,
+          payload,
+        })
+      })
+
+      expect(result.current.snackbarProps.message).toEqual(
+        `Fun Animal watered their ${carrot.name}`
+      )
+      expect(result.current.snackbarProps.severity).toEqual('info')
+    })
+
+    it('should show the correct EVENT_CARD_PLAYED notification message when session owner', () => {
+      const { result } = renderHook(() =>
+        useSnackbar({
+          actorRef,
+          game,
+        })
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.EVENT_CARD_PLAYED] =
+        {
+          eventCard: stubRain,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        typeof actorRef.send
+      >
+      const gameEventPayload = send.mock.calls[0][0]
+      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+
+      act(() => {
+        gameEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.EVENT_CARD_PLAYED,
+          payload,
+        })
+      })
+
+      expect(result.current.snackbarProps.message).toEqual(
+        `You played ${payload.eventCard.name}`
+      )
+      expect(result.current.snackbarProps.severity).toEqual('info')
+    })
+
+    it('should show the correct EVENT_CARD_PLAYED notification message when not session owner', () => {
+      game = updateGame(game, { sessionOwnerPlayerId: stubPlayer2.id })
+      const { result } = renderHook(() =>
+        useSnackbar({
+          actorRef,
+          game,
+        })
+      )
+
+      const showNotification = vi.fn()
+      vi.spyOn(result.current, 'showNotification').mockImplementation(
+        showNotification
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.EVENT_CARD_PLAYED] =
+        {
+          eventCard: stubRain,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        typeof actorRef.send
+      >
+      const gameEventPayload = send.mock.calls[0][0]
+      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+
+      act(() => {
+        gameEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.EVENT_CARD_PLAYED,
+          payload,
+        })
+      })
+
+      expect(result.current.snackbarProps.message).toEqual(
+        `Fun Animal played ${payload.eventCard.name}`
+      )
+      expect(result.current.snackbarProps.severity).toEqual('info')
     })
   })
 

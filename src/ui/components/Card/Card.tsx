@@ -1,12 +1,22 @@
 import { forwardRef } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import { UnimplementedError } from '../../../game/services/Rules/errors'
-import { isCropCardInstance, isWaterCardInstance } from '../../../game/types'
+import {
+  isCropCardInstance,
+  isEventCardInstance,
+  isWaterCardInstance,
+} from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
 
-import { CardCropText } from './CardCropText'
 import { CardCore } from './CardCore'
-import { CardProps, CropCardProps, WaterCardProps } from './types'
+import { CardCropText } from './CardCropText'
+import {
+  CardProps,
+  CropCardProps,
+  EventCardProps,
+  WaterCardProps,
+} from './types'
 
 const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {
   return isCropCardInstance(props.cardInstance)
@@ -14,6 +24,10 @@ const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {
 
 const isPropsWaterCardProps = (props: CardProps): props is WaterCardProps => {
   return isWaterCardInstance(props.cardInstance)
+}
+
+const isPropsEventCardProps = (props: CardProps): props is EventCardProps => {
+  return isEventCardInstance(props.cardInstance)
 }
 
 export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
@@ -34,6 +48,16 @@ export const WaterCard = forwardRef<HTMLDivElement, WaterCardProps>(
   }
 )
 
+export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(
+  function EventCard(props, ref) {
+    return (
+      <CardCore {...props} ref={ref}>
+        <ReactMarkdown>{props.cardInstance.description}</ReactMarkdown>
+      </CardCore>
+    )
+  }
+)
+
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
   props,
   ref
@@ -44,6 +68,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
 
   if (isPropsWaterCardProps(props)) {
     return <WaterCard {...props} ref={ref} />
+  }
+
+  if (isPropsEventCardProps(props)) {
+    return <EventCard {...props} ref={ref} />
   }
 
   throw new UnimplementedError('Unexpected CardType')

@@ -7,24 +7,38 @@ import { ActorContext } from '../components/Game/ActorContext'
 export interface GameRuleMachineContextSelectorDerivation
   extends Pick<
     GameMachineContext,
-    'game' | 'selectedWaterCardInHandIdx' | 'winner'
+    | 'eventCardsThatCanBePlayed'
+    | 'game'
+    | 'selectedWaterCardInHandIdx'
+    | 'winner'
   > {
   gameState: StateValue
 }
 
 export const useGameRules = () => {
-  const { game, gameState, selectedWaterCardInHandIdx, winner } =
-    ActorContext.useSelector(
-      ({
-        context: { game, selectedWaterCardInHandIdx, winner },
-        value,
-      }): GameRuleMachineContextSelectorDerivation => ({
+  const {
+    eventCardsThatCanBePlayed,
+    game,
+    gameState,
+    selectedWaterCardInHandIdx,
+    winner,
+  } = ActorContext.useSelector(
+    ({
+      context: {
+        eventCardsThatCanBePlayed,
         game,
-        gameState: value,
         selectedWaterCardInHandIdx,
         winner,
-      })
-    )
+      },
+      value,
+    }): GameRuleMachineContextSelectorDerivation => ({
+      eventCardsThatCanBePlayed,
+      game,
+      gameState: value,
+      selectedWaterCardInHandIdx,
+      winner,
+    })
+  )
 
   if (typeof gameState !== 'string') {
     throw new TypeError(`Actor state is not a string`)
@@ -32,5 +46,11 @@ export const useGameRules = () => {
 
   assertStringIsGameState(gameState)
 
-  return { game, gameState, selectedWaterCardInHandIdx, winner }
+  return {
+    eventCardsThatCanBePlayed,
+    game,
+    gameState,
+    selectedWaterCardInHandIdx,
+    winner,
+  }
 }

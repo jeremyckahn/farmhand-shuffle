@@ -2,7 +2,12 @@ import { enqueueActions } from 'xstate'
 
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { updatePlayedCrop } from '../../../reducers/update-played-crop'
-import { GameEvent, GameState, IPlayedCrop } from '../../../types'
+import {
+  GameEvent,
+  GameState,
+  IPlayedCrop,
+  ShellNotificationType,
+} from '../../../types'
 import { assertIsPlayedCrop } from '../../../types/guards'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
@@ -35,7 +40,15 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
     ),
 
     exit: enqueueActions(
-      ({ event, context: { game, selectedWaterCardInHandIdx }, enqueue }) => {
+      ({
+        event,
+        context: {
+          game,
+          selectedWaterCardInHandIdx,
+          shell: { triggerNotification },
+        },
+        enqueue,
+      }) => {
         switch (event.type) {
           case GameEvent.SELECT_CROP_TO_WATER: {
             try {
@@ -49,7 +62,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
 
               const newPlayedCrop: IPlayedCrop = {
                 ...playedCrop,
-                wasWateredTuringTurn: true,
+                wasWateredDuringTurn: true,
                 waterCards: playedCrop.waterCards + 1,
               }
 
@@ -67,6 +80,13 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
               )
 
               selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
+
+              triggerNotification({
+                type: ShellNotificationType.CROP_WATERED,
+                payload: {
+                  cropWatered: playedCrop.instance,
+                },
+              })
             } catch (e) {
               console.error(e)
 
