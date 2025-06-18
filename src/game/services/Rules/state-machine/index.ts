@@ -9,7 +9,7 @@ import { performingBotSetupActionState } from './performingBotSetupActionState'
 import { performingBotTurnActionState } from './performingBotTurnActionState'
 import { plantingCropState } from './plantingCropState'
 import { playerWateringCropState } from './playerWateringCropState'
-import { playingCardState } from './playingCardState'
+import { playingEventCard } from './playingEventCard'
 import { RulesMachineConfig } from './types'
 import { uninitializedState } from './uninitializedState'
 import { waitingForPlayerSetupActionState } from './waitingForPlayerSetupActionState'
@@ -52,7 +52,7 @@ export const machineConfig: RulesMachineConfig = {
     ...performingBotTurnActionState,
     ...plantingCropState,
     ...playerWateringCropState,
-    ...playingCardState,
+    ...playingEventCard,
     ...waitingForPlayerSetupActionState,
     ...waitingForPlayerTurnActionState,
   },

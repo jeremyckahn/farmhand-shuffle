@@ -2,7 +2,7 @@ import { AlertColor } from '@mui/material'
 import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 
-import { GameEvent, IGame, ShellNotification } from '../../../game/types'
+import { GameEvent, IGame, ShellNotificationType } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
 
 import { ActorContext } from './ActorContext'
@@ -45,9 +45,9 @@ export const useSnackbar = ({
     actorRef.send({
       type: GameEvent.SET_SHELL,
       shell: {
-        triggerNotification: (type, payload) => {
+        triggerNotification: ({ type, payload }) => {
           switch (type) {
-            case ShellNotification.CROP_HARVESTED: {
+            case ShellNotificationType.CROP_HARVESTED: {
               const {
                 cropHarvested: { name: cropName },
               } = payload
@@ -66,6 +66,39 @@ export const useSnackbar = ({
 
               break
             }
+
+            case ShellNotificationType.CROP_WATERED: {
+              const {
+                cropWatered: { name: cropName },
+              } = payload
+
+              if (isSessionOwner) {
+                showNotification(`You watered your ${cropName}`, 'info')
+              } else {
+                showNotification(
+                  `${currentPlayerName} watered their ${cropName}`,
+                  'info'
+                )
+              }
+
+              break
+            }
+
+            case ShellNotificationType.EVENT_CARD_PLAYED: {
+              const { eventCard } = payload
+
+              if (isSessionOwner) {
+                showNotification(`You played ${eventCard.name}`, 'info')
+              } else {
+                showNotification(
+                  `${currentPlayerName} played ${eventCard.name}`,
+                  'info'
+                )
+              }
+
+              break
+            }
+
             default:
           }
         },

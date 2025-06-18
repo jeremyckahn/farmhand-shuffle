@@ -16,7 +16,7 @@ const stubCardInstance = stubCarrot
 const stubWaterCards = 1
 const stubPlayedCrop: IPlayedCrop = {
   instance: stubCardInstance,
-  wasWateredTuringTurn: false,
+  wasWateredDuringTurn: false,
   waterCards: stubWaterCards,
 }
 const stubCropCardProps: PlayedCropProps['cropCardProps'] = {

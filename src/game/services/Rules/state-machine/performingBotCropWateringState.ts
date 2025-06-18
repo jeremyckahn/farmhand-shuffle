@@ -7,6 +7,7 @@ import {
   GameState,
   IPlayedCrop,
   isWaterCardInstance,
+  ShellNotificationType,
 } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { GameStateCorruptError } from '../errors'
@@ -22,7 +23,11 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
 
     entry: enqueueActions(
       ({
-        context: { game, fieldCropIndicesToWaterDuringBotTurn },
+        context: {
+          game,
+          fieldCropIndicesToWaterDuringBotTurn,
+          shell: { triggerNotification },
+        },
         enqueue,
       }) => {
         const { currentPlayerId } = game
@@ -49,7 +54,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
 
         const updatedPlayedCrop: IPlayedCrop = {
           ...playedCrop,
-          wasWateredTuringTurn: true,
+          wasWateredDuringTurn: true,
           waterCards: playedCrop.waterCards + 1,
         }
 
@@ -65,6 +70,13 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
           currentPlayerId,
           waterCardInHandIdx
         )
+
+        triggerNotification({
+          type: ShellNotificationType.CROP_WATERED,
+          payload: {
+            cropWatered: playedCrop.instance,
+          },
+        })
 
         enqueue.raise({
           type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION,

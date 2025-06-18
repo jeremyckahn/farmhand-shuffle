@@ -77,7 +77,7 @@ describe('startTurn', () => {
     )
   })
 
-  test('resets wasWateredTuringTurn for each crop in the field', () => {
+  test('resets wasWateredDuringTurn for each crop in the field', () => {
     const carrot1 = instantiate(carrot)
     const carrot2 = instantiate(carrot)
     const carrot3 = instantiate(carrot)
@@ -85,9 +85,9 @@ describe('startTurn', () => {
     let newGame = updatePlayer(game, player1Id, {
       field: {
         crops: [
-          { instance: carrot1, wasWateredTuringTurn: true, waterCards: 1 },
-          { instance: carrot2, wasWateredTuringTurn: false, waterCards: 0 },
-          { instance: carrot3, wasWateredTuringTurn: true, waterCards: 1 },
+          { instance: carrot1, wasWateredDuringTurn: true, waterCards: 1 },
+          { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
+          { instance: carrot3, wasWateredDuringTurn: true, waterCards: 1 },
         ],
       },
     })
@@ -96,9 +96,9 @@ describe('startTurn', () => {
 
     expect(newGame.table.players[player1Id].field.crops).toEqual<IPlayedCrop[]>(
       [
-        { instance: carrot1, wasWateredTuringTurn: false, waterCards: 1 },
-        { instance: carrot2, wasWateredTuringTurn: false, waterCards: 0 },
-        { instance: carrot3, wasWateredTuringTurn: false, waterCards: 1 },
+        { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
+        { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
+        { instance: carrot3, wasWateredDuringTurn: false, waterCards: 1 },
       ]
     )
   })
@@ -110,9 +110,9 @@ describe('startTurn', () => {
     let newGame = updatePlayer(game, player1Id, {
       field: {
         crops: [
-          { instance: carrot1, wasWateredTuringTurn: true, waterCards: 1 },
+          { instance: carrot1, wasWateredDuringTurn: true, waterCards: 1 },
           undefined,
-          { instance: carrot2, wasWateredTuringTurn: true, waterCards: 1 },
+          { instance: carrot2, wasWateredDuringTurn: true, waterCards: 1 },
         ],
       },
     })
@@ -122,9 +122,9 @@ describe('startTurn', () => {
     expect(newGame.table.players[player1Id].field.crops).toEqual<
       IField['crops']
     >([
-      { instance: carrot1, wasWateredTuringTurn: false, waterCards: 1 },
+      { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
       undefined,
-      { instance: carrot2, wasWateredTuringTurn: false, waterCards: 1 },
+      { instance: carrot2, wasWateredDuringTurn: false, waterCards: 1 },
     ])
   })
 

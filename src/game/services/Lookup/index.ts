@@ -1,4 +1,9 @@
-import { IGame, IPlayer, isCropCardInstance } from '../../types'
+import {
+  IGame,
+  IPlayer,
+  isCropCardInstance,
+  isEventCardInstance,
+} from '../../types'
 import { isCrop } from '../../types/guards'
 import {
   InvalidCardError,
@@ -111,6 +116,21 @@ export class LookupService {
     )
 
     return cropCardIdxsInPlayerHand
+  }
+
+  findEventIndexesInPlayerHand = (game: IGame, playerId: IPlayer['id']) => {
+    const eventCardIdxsInPlayerHand = game.table.players[playerId].hand.reduce(
+      (acc: number[], cardInstance, idx) => {
+        if (isEventCardInstance(cardInstance)) {
+          acc = [...acc, idx]
+        }
+
+        return acc
+      },
+      []
+    )
+
+    return eventCardIdxsInPlayerHand
   }
 }
 

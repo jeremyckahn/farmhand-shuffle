@@ -37,7 +37,7 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
           crops: [
             {
               instance: stubCarrot,
-              wasWateredTuringTurn: false,
+              wasWateredDuringTurn: false,
               waterCards: 0,
             },
           ],

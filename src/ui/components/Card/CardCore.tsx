@@ -18,6 +18,7 @@ import {
   GameEvent,
   GameState,
   isCropCardInstance,
+  isEventCardInstance,
   isWaterCardInstance,
 } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -80,13 +81,20 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
   ) {
     const { useActorRef } = ActorContext
     const actorRef = useActorRef()
-    const { game, gameState, selectedWaterCardInHandIdx } = useGameRules()
+    const {
+      game,
+      gameState,
+      selectedWaterCardInHandIdx,
+      eventCardsThatCanBePlayed,
+    } = useGameRules()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
     const { setIsHandInViewport } = useContext(ShellContext)
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
+
+    const canEventCardsBePlayed = eventCardsThatCanBePlayed > 0
 
     const handlePlayCard = async () => {
       if (onBeforePlay) {
@@ -103,6 +111,12 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
         case CardType.WATER: {
           actorRef.send({ type: GameEvent.PLAY_WATER, cardIdx, playerId })
           setIsHandInViewport(false)
+
+          break
+        }
+
+        case CardType.EVENT: {
+          actorRef.send({ type: GameEvent.PLAY_EVENT, cardIdx, playerId })
 
           break
         }
@@ -174,11 +188,24 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
         break
       }
 
+      case CardType.EVENT: {
+        if (
+          isSessionOwnersCard &&
+          isFocused &&
+          canEventCardsBePlayed &&
+          gameState === GameState.WAITING_FOR_PLAYER_TURN_ACTION
+        ) {
+          showPlayCardButton = true
+        }
+
+        break
+      }
+
       case CardType.WATER: {
         if (
           isSessionOwnersCard &&
           isFocused &&
-          [GameState.WAITING_FOR_PLAYER_TURN_ACTION].includes(gameState)
+          gameState === GameState.WAITING_FOR_PLAYER_TURN_ACTION
         ) {
           showPlayCardButton = true
         }
@@ -253,6 +280,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                   },
                 ]}
               >
+                {/* Front of the card */}
                 <Paper
                   ref={cardRef}
                   {...paperProps}
@@ -324,6 +352,8 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                     />
                   </Box>
                   <Divider sx={{ my: theme.spacing(1) }} />
+
+                  {/* Card actions */}
                   <Box sx={{ height: '50%' }}>{children}</Box>
                   {showPlayCardButton && (
                     <Box position="absolute" right="-100%" width={1} px={1}>
@@ -334,6 +364,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                         >
                           {isCropCardInstance(card) && 'Play crop'}
                           {isWaterCardInstance(card) && 'Water a crop'}
+                          {isEventCardInstance(card) && 'Play event'}
                         </Button>
                       </Typography>
                     </Box>
@@ -361,6 +392,8 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                     </Box>
                   )}
                 </Paper>
+
+                {/* Back of the card */}
                 <Paper
                   {...paperProps}
                   sx={{

@@ -22,7 +22,7 @@ describe('moveCropFromHandToField', () => {
     )
 
     expect(newGame.table.players[player1Id].field.crops).toEqual<IPlayedCrop[]>(
-      [{ instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 }]
+      [{ instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 }]
     )
   })
 

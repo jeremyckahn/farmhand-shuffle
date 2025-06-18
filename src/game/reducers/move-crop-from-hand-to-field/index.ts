@@ -22,7 +22,7 @@ export const moveCropFromHandToField = (
 
   const playedCropCard: IPlayedCrop = {
     instance: cropInstance,
-    wasWateredTuringTurn: false,
+    wasWateredDuringTurn: false,
     waterCards: 0,
   }
 

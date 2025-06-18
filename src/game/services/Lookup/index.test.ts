@@ -1,4 +1,8 @@
-import { stubCarrot } from '../../../test-utils/stubs/cards'
+import {
+  stubCarrot,
+  stubRain,
+  stubWater,
+} from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { carrot, instantiate, pumpkin, water } from '../../cards'
@@ -156,5 +160,35 @@ describe('Lookup', () => {
         )
       }).toThrow()
     })
+  })
+
+  describe('findEventIndexesInPlayerHand', () => {
+    test.each([
+      { hand: [], expected: [] },
+      {
+        hand: [stubRain],
+        expected: [0],
+      },
+      {
+        hand: [stubCarrot, stubRain, stubWater, stubRain],
+        expected: [1, 3],
+      },
+    ])(
+      'retrieves event indices $expected in hand (%s)',
+      ({ hand, expected }) => {
+        let game = stubGame()
+
+        game = updatePlayer(game, stubPlayer1.id, {
+          hand,
+        })
+
+        const eventIndexesInHand = lookup.findEventIndexesInPlayerHand(
+          game,
+          stubPlayer1.id
+        )
+
+        expect(eventIndexesInHand).toEqual(expected)
+      }
+    )
   })
 })

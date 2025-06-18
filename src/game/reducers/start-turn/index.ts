@@ -22,7 +22,7 @@ export const startTurn = (game: IGame, playerId: IPlayer['id']): IGame => {
       continue
     }
 
-    game = updatePlayedCrop(game, playerId, i, { wasWateredTuringTurn: false })
+    game = updatePlayedCrop(game, playerId, i, { wasWateredDuringTurn: false })
   }
 
   game = updatePrices(game)

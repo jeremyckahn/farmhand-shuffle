@@ -30,12 +30,13 @@ describe('TurnControl Component', () => {
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
         crops: [
-          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+          { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
@@ -56,6 +57,7 @@ describe('TurnControl Component', () => {
     game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
@@ -78,6 +80,7 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
@@ -98,12 +101,13 @@ describe('TurnControl Component', () => {
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
         crops: [
-          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+          { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
@@ -125,12 +129,13 @@ describe('TurnControl Component', () => {
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
         crops: [
-          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+          { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
@@ -156,6 +161,7 @@ describe('TurnControl Component', () => {
     game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
@@ -183,6 +189,7 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
@@ -205,12 +212,13 @@ describe('TurnControl Component', () => {
     game = updatePlayer(game, stubPlayer1.id, {
       field: {
         crops: [
-          { instance: stubCarrot, wasWateredTuringTurn: false, waterCards: 0 },
+          { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
+      eventCardsThatCanBePlayed: 1,
       gameState,
       game,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
