@@ -5,8 +5,10 @@ import { updateField } from '../../../game/reducers/update-field'
 import { factory } from '../../../game/services/Factory'
 import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
-import { ActorContext } from '../Game/ActorContext'
 import { StubShellContext } from '../../test-utils/StubShellContext'
+import { isSxArray } from '../../type-guards'
+import { CardProps } from '../Card/types'
+import { ActorContext } from '../Game/ActorContext'
 
 import {
   Field,
@@ -15,6 +17,34 @@ import {
   selectedCardLabel,
   unselectedCardLabel,
 } from '.'
+
+// NOTE: Mocking out the Card component improves test execution speed
+vi.mock('../Card', () => ({
+  Card: ({
+    cardInstance,
+    cardIdx,
+    playerId,
+    isFlipped,
+    canBeWatered,
+    canBeHarvested,
+    isInField,
+    isFocused,
+    paperProps,
+    sx,
+    ...rest
+  }: CardProps) => {
+    const style = sx && isSxArray(sx) ? sx?.[0] || {} : {}
+
+    if ('playedCrop' in rest) {
+      // HACK: Prevents a harmless warning in the tests
+      // eslint-disable-next-line functional/immutable-data
+      delete rest.playedCrop
+    }
+
+    // @ts-expect-error Type error is acceptable for tests
+    return <div {...rest} style={style} />
+  },
+}))
 
 let gameStub = stubGame()
 const opponentPlayerId = Object.keys(gameStub.table.players)[1]

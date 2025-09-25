@@ -3,18 +3,65 @@ import userEvent from '@testing-library/user-event'
 
 import { instantiate, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
-import { stubGame } from '../../../test-utils/stubs/game'
-import { StubShellContext } from '../../test-utils/StubShellContext'
-import { cardClassName } from '../Card/CardCore'
-import { ActorContext } from '../Game/ActorContext'
-
 import {
   stubCarrot,
   stubPumpkin,
   stubWater,
 } from '../../../test-utils/stubs/cards'
+import { stubGame } from '../../../test-utils/stubs/game'
+import { StubShellContext } from '../../test-utils/StubShellContext'
+import { isSxArray } from '../../type-guards'
+import { cardClassName } from '../Card/CardCore'
+import { CardProps } from '../Card/types'
+import { ActorContext } from '../Game/ActorContext'
 
 import { getGapPixelWidth, Hand, HandProps } from './Hand'
+
+// NOTE: Mocking out the Card component improves test execution speed
+vi.mock('../Card/Card', async () => {
+  const { cardClassName } = await vi.importActual<
+    typeof import('../Card/CardCore')
+  >('../Card/CardCore')
+
+  return {
+    Card: vi.fn(
+      ({
+        cardInstance,
+        sx,
+        // Destructure and ignore props that are not valid for a div
+        disableEnterAnimation,
+        cardIdx,
+        playerId,
+        paperProps,
+        onBeforePlay,
+        isFocused,
+        ...props
+      }: CardProps) => {
+        const style: React.CSSProperties = {}
+        if (sx) {
+          const sxObject = isSxArray(sx)
+            ? // @ts-expect-error This is enough for the mock
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+              sx.reduce((acc, curr) => ({ ...acc, ...curr }), {})
+            : sx
+          // @ts-expect-error This is enough for the mock
+          if (sxObject?.transform) {
+            // @ts-expect-error This is enough for the mock
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, functional/immutable-data
+            style.transform = sxObject.transform
+          }
+        }
+
+        return (
+          // @ts-expect-error This is enough for the mock
+          <div {...props} className={cardClassName} style={style}>
+            {cardInstance.name}
+          </div>
+        )
+      }
+    ),
+  }
+})
 
 const baseGame = stubGame()
 

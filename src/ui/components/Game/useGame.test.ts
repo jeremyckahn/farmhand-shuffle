@@ -44,6 +44,8 @@ describe('useGame', () => {
       selectedWaterCardInHandIdx: 0,
       winner: null,
     })
+
+    vi.spyOn(console, 'debug').mockImplementationOnce(vi.fn())
   })
 
   it('should initialize game when gameState is UNINITIALIZED', () => {

@@ -4,6 +4,11 @@ import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
 import { Game } from './Game'
 
+// NOTE: Mocking out the Card component improves test execution speed
+vi.mock('../Card', () => ({
+  Card: () => <div data-testid="mock-card" />,
+}))
+
 describe('Game', () => {
   test('renders table', () => {
     vi.spyOn(console, 'debug').mockImplementation(() => {})

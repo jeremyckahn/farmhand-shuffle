@@ -2,13 +2,12 @@ import Typography from '@mui/material/Typography'
 
 import { ICrop, IPlayedCrop } from '../../../game/types'
 
-export const CardCropText = ({
-  crop,
-  playedCrop,
-}: {
+interface CropCardTextProps {
   crop: ICrop
   playedCrop?: IPlayedCrop
-}) => {
+}
+
+export const CardCropText = ({ crop, playedCrop }: CropCardTextProps) => {
   if (playedCrop) {
     return (
       <Typography>
