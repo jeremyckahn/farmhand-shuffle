@@ -3,6 +3,7 @@ import {
   CropInstance,
   GameEvent,
   GameState,
+  IField,
   IPlayedCrop,
   ShellNotification,
   ShellNotificationType,
@@ -48,7 +49,7 @@ describe('player turn action handling', () => {
     expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
     expect(gameResult.table.players[player1.id].hand).toEqual([])
     expect(gameResult.table.players[player1.id].field.crops).toEqual<
-      IPlayedCrop[]
+      IField['crops']
     >([
       {
         instance: expectInstance(carrot),
@@ -57,6 +58,53 @@ describe('player turn action handling', () => {
       },
       { instance: pumpkin1, wasWateredDuringTurn: false, waterCards: 0 },
     ])
+  })
+
+  test('player can harvest a crop card', () => {
+    const gameActor = createSetUpGameActor()
+
+    let {
+      context: { game },
+    } = gameActor.getSnapshot()
+
+    game = updatePlayer(game, player1.id, {
+      hand: [pumpkin1],
+    })
+
+    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+
+    const {
+      context: { shell },
+    } = gameActor.getSnapshot()
+
+    vi.spyOn(shell, 'triggerNotification')
+
+    gameActor.send({
+      type: GameEvent.HARVEST_CROP,
+      playerId: player1.id,
+      cropIdxInFieldToHarvest: 0,
+    })
+
+    const {
+      value,
+      context: { game: gameResult },
+    } = gameActor.getSnapshot()
+
+    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(gameResult.table.players[player1.id].field.crops).toEqual<
+      IField['crops']
+    >([undefined])
+    expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
+      {
+        type: ShellNotificationType.CROP_HARVESTED,
+        payload: {
+          cropHarvested: {
+            ...stubCarrot,
+            instanceId: expect.any(String) as string,
+          } as CropInstance,
+        },
+      }
+    )
   })
 
   test('player cannot play crop card if field is full', () => {
@@ -134,7 +182,7 @@ describe('player turn action handling', () => {
     expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
     expect(gameResult.table.players[player1.id].hand).toEqual([])
     expect(gameResult.table.players[player1.id].field.crops).toEqual<
-      IPlayedCrop[]
+      IField['crops']
     >([
       {
         instance: expectInstance(carrot),
