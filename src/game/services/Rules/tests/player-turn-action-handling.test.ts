@@ -63,16 +63,6 @@ describe('player turn action handling', () => {
   test('player can harvest a crop card', () => {
     const gameActor = createSetUpGameActor()
 
-    let {
-      context: { game },
-    } = gameActor.getSnapshot()
-
-    game = updatePlayer(game, player1.id, {
-      hand: [pumpkin1],
-    })
-
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
-
     const {
       context: { shell },
     } = gameActor.getSnapshot()
