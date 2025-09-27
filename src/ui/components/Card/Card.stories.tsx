@@ -224,8 +224,16 @@ export const WaterCard: Story = {
   },
 }
 
-// TODO: Add a story for a small event card variant (and also improve the
-// layout)
+export const SmallRainCard: Story = {
+  args: {
+    cardInstance: stubRain,
+    cardIdx: 0,
+    playerId: '',
+    size: CardSize.SMALL,
+    isFlipped: false,
+  },
+}
+
 export const RainCard: Story = {
   args: {
     cardInstance: stubRain,

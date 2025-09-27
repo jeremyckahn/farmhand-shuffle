@@ -319,8 +319,11 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                   ]}
                 >
                   <Typography
-                    variant="overline"
-                    sx={{ fontWeight: theme.typography.fontWeightBold }}
+                    variant={size === CardSize.SMALL ? 'caption' : 'overline'}
+                    sx={{
+                      fontWeight: theme.typography.fontWeightBold,
+                      textTransform: 'uppercase',
+                    }}
                   >
                     {card.name}
                   </Typography>
@@ -354,7 +357,21 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                   <Divider sx={{ my: theme.spacing(1) }} />
 
                   {/* Card actions */}
-                  <Box sx={{ height: '50%' }}>{children}</Box>
+                  <Box
+                    sx={{
+                      height: '50%',
+                      overflow: 'auto',
+                      ...(size === CardSize.SMALL && {
+                        fontSize: theme.typography.caption.fontSize,
+                        lineHeight: theme.typography.caption.lineHeight,
+                        '> p': {
+                          my: 0,
+                        },
+                      }),
+                    }}
+                  >
+                    {children}
+                  </Box>
                   {showPlayCardButton && (
                     <Box position="absolute" right="-100%" width={1} px={1}>
                       <Typography>
