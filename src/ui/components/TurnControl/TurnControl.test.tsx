@@ -1,5 +1,7 @@
+import { ButtonProps } from '@mui/material'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { ReactNode } from 'react'
+import { describe, expect, it } from 'vitest'
 
 import { updateGame } from '../../../game/reducers/update-game'
 import { updatePlayer } from '../../../game/reducers/update-player'
@@ -13,6 +15,103 @@ import * as useGameRulesModule from '../../hooks/useGameRules'
 import { ActorContext } from '../Game/ActorContext'
 
 import { TurnControl, TurnControlProps } from './TurnControl'
+
+// NOTE: Mocking out the Card component improves test execution speed
+vi.mock('../Card', () => ({
+  Card: () => <div data-testid="mock-card" />,
+}))
+
+// NOTE: Mocking out MUI components improves test execution speed
+vi.mock('@mui/material/Accordion', () => ({
+  default: ({
+    children,
+    expanded,
+  }: {
+    children: ReactNode
+    expanded: boolean
+  }) => (
+    <div data-testid="mock-accordion" data-expanded={String(expanded)}>
+      {children}
+    </div>
+  ),
+}))
+
+vi.mock('@mui/material/AccordionActions', () => ({
+  default: ({ children }: { children: ReactNode }) => (
+    <div data-testid="mock-accordion-actions">{children}</div>
+  ),
+}))
+
+vi.mock('@mui/material/AccordionSummary', () => ({
+  default: ({ children }: { children: ReactNode }) => (
+    <div data-testid="mock-accordion-summary">{children}</div>
+  ),
+}))
+
+vi.mock('@mui/material/Button', () => ({
+  default: ({ children, onClick, color }: ButtonProps) => (
+    <button onClick={onClick} data-color={color}>
+      {children}
+    </button>
+  ),
+}))
+
+vi.mock('@mui/material/Chip', () => ({
+  default: ({ label }: { label: string }) => (
+    <div data-testid="mock-chip">{label}</div>
+  ),
+}))
+
+vi.mock('@mui/material/Stack', () => ({
+  default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+}))
+
+vi.mock('@mui/material/Tooltip', () => ({
+  default: ({ children }: { children: ReactNode }) => <>{children}</>,
+}))
+
+vi.mock('@mui/material/Typography', () => ({
+  default: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+}))
+
+vi.mock('@mui/material/styles/useTheme', () => ({
+  default: () => ({
+    palette: {
+      common: { white: '#fff', black: '#000' },
+      error: { dark: 'red', light: 'red' },
+      success: { light: 'green', dark: 'green' },
+    },
+    shape: {
+      borderRadius: 4,
+    },
+    typography: {
+      body1: {
+        fontSize: '1rem',
+        lineHeight: 1.5,
+      },
+    },
+  }),
+}))
+
+vi.mock('@mui/icons-material/AccountBalance', () => ({
+  default: () => <div data-testid="mock-icon-account-balance" />,
+}))
+
+vi.mock('@mui/icons-material/AttachMoney', () => ({
+  default: () => <div data-testid="mock-icon-attach-money" />,
+}))
+
+vi.mock('@mui/icons-material/KeyboardArrowUp', () => ({
+  default: () => <div data-testid="mock-icon-keyboard-arrow-up" />,
+}))
+
+vi.mock('@mui/icons-material/KeyboardArrowDown', () => ({
+  default: () => <div data-testid="mock-icon-keyboard-arrow-down" />,
+}))
+
+vi.mock('fun-animal-names', () => ({
+  funAnimalName: (id: string) => `fun-animal-${id}`,
+}))
 
 const StubTurnControl = (overrides: Partial<TurnControlProps>) => {
   return (
@@ -199,8 +298,8 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl game={game} />)
 
     // Assert that the accordion is not expanded
-    expect(screen.getAllByRole('button')[0]).toHaveAttribute(
-      'aria-expanded',
+    expect(screen.getByTestId('mock-accordion')).toHaveAttribute(
+      'data-expanded',
       'false'
     )
   })
@@ -228,8 +327,8 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl game={game} />)
 
     // Assert that the accordion is expanded
-    expect(screen.getAllByRole('button')[0]).toHaveAttribute(
-      'aria-expanded',
+    expect(screen.getByTestId('mock-accordion')).toHaveAttribute(
+      'data-expanded',
       'true'
     )
   })

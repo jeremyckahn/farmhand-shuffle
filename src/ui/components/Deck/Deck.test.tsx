@@ -6,6 +6,14 @@ import { ActorContext } from '../Game/ActorContext'
 
 import { Deck, DeckProps } from './Deck'
 
+// NOTE: Mocking out the Card component improves test execution speed
+vi.mock('../Card', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Card: ({ cardInstance, cardIdx, playerId, isFlipped, ...rest }: any) => (
+    <div {...rest} />
+  ),
+}))
+
 const game = stubGame()
 
 const [player1Id, player2Id] = Object.keys(game.table.players)

@@ -4,8 +4,21 @@ import { lookup } from '../../../game/services/Lookup'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Game/ActorContext'
+import { CardProps } from '../Card/types'
 
 import { Table, TableProps } from './Table'
+
+// NOTE: Mocking out the Card component improves test execution speed
+vi.mock('../Card', () => ({
+  Card: ({
+    cardInstance,
+    cardIdx,
+    playerId,
+    isFlipped,
+    ...rest
+  }: // @ts-expect-error Type errors are irrelevant for the tests
+  CardProps) => <div {...rest} />,
+}))
 
 const game = stubGame()
 const opponentPlayerIds = lookup.getOpponentPlayerIds(game)

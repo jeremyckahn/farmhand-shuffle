@@ -44,7 +44,6 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
 
             game = harvestCrop(game, playerId, cropIdxInFieldToHarvest)
 
-            // TODO: Test this
             triggerNotification({
               type: ShellNotificationType.CROP_HARVESTED,
               payload: {
