@@ -32,6 +32,7 @@ export class FactoryService {
       hand: [],
       discardPile: [],
       field: this.buildField(overrides?.field),
+      cardsPlayedDuringTurn: [],
       ...overrides,
     }
   }

@@ -4,7 +4,12 @@ import { render } from '@testing-library/react'
 import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
 import { GameEvent, GameEventPayload, GameState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
-import { stubCarrot, stubWater } from '../../../test-utils/stubs/cards'
+import {
+  stubCarrot,
+  stubRain,
+  stubShovel,
+  stubWater,
+} from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import * as useGameStateModule from '../../hooks/useGameRules'
@@ -232,6 +237,58 @@ describe('Card', () => {
       type: GameEvent.HARVEST_CROP,
       playerId: stubPlayer1.id,
       cropIdxInFieldToHarvest: cardIdx,
+    })
+  })
+
+  test('allows player to play event card', () => {
+    const send = mockSend()
+    vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
+      eventCardsThatCanBePlayed: 1,
+      gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      game: stubGame(),
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      winner: null,
+    })
+
+    render(
+      <StubCard cardInstance={stubRain} playerId={stubPlayer1.id} isFocused />
+    )
+
+    const playCardButton = screen.getByText('Play event')
+
+    fireEvent.click(playCardButton)
+
+    expect(send).toHaveBeenCalledWith<[GameEventPayload[GameEvent.PLAY_EVENT]]>(
+      {
+        type: GameEvent.PLAY_EVENT,
+        cardIdx: 0,
+        playerId: stubPlayer1.id,
+      }
+    )
+  })
+
+  test('allows player to play tool card', () => {
+    const send = mockSend()
+    vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
+      eventCardsThatCanBePlayed: 1,
+      gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      game: stubGame(),
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      winner: null,
+    })
+
+    render(
+      <StubCard cardInstance={stubShovel} playerId={stubPlayer1.id} isFocused />
+    )
+
+    const playCardButton = screen.getByText('Play tool')
+
+    fireEvent.click(playCardButton)
+
+    expect(send).toHaveBeenCalledWith<[GameEventPayload[GameEvent.PLAY_TOOL]]>({
+      type: GameEvent.PLAY_TOOL,
+      cardIdx: 0,
+      playerId: stubPlayer1.id,
     })
   })
 

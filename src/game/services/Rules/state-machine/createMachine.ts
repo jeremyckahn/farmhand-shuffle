@@ -11,10 +11,13 @@ import {
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
+// TODO: Consolidate GameMachineContext and IGame
 export interface GameMachineContext {
+  cardsToDrawAtTurnStart: number
   cropCardIndicesToHarvest: number[]
   cropsToPlayDuringBotTurn: number
   eventCardsThatCanBePlayed: number
+  toolCardsThatCanBePlayed: number
   fieldCropIndicesToWaterDuringBotTurn: number[]
   game: IGame
   selectedWaterCardInHandIdx: number
@@ -29,16 +32,34 @@ export const { createMachine } = setup({
   },
 
   guards: {
-    [GameStateGuard.HAVE_PLAYERS_COMPLETED_SETUP]({
+    [GameStateGuard.HAVE_PLAYERS_COMPLETED_SETUP]: ({
       event,
       context: { game },
-    }) {
+    }) => {
       assertEvent(event, GameEvent.START_TURN)
       assertCurrentPlayer(game.currentPlayerId)
 
       return Object.values(game.table.players).every(
         player => player.field.crops.length > 0
       )
+    },
+
+    [GameStateGuard.IS_SELECTED_IDX_VALID]: ({ event, context: { game } }) => {
+      const { currentPlayerId } = game
+      assertCurrentPlayer(currentPlayerId)
+
+      switch (event.type) {
+        case GameEvent.SELECT_CROP_TO_WATER: {
+          const { crops } = game.table.players[currentPlayerId].field
+          const playedCrop = crops[event.cropIdxInFieldToWater]
+
+          return playedCrop !== undefined
+        }
+
+        default:
+      }
+
+      return true
     },
   },
 })

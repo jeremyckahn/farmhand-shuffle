@@ -5,6 +5,7 @@ import { updatePlayedCrop } from '../../../reducers/update-played-crop'
 import {
   GameEvent,
   GameState,
+  GameStateGuard,
   IPlayedCrop,
   ShellNotificationType,
 } from '../../../types'
@@ -16,8 +17,10 @@ import { RulesMachineConfig } from './types'
 export const playerWateringCropState: RulesMachineConfig['states'] = {
   [GameState.PLAYER_WATERING_CROP]: {
     on: {
-      [GameEvent.SELECT_CROP_TO_WATER]:
-        GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      [GameEvent.SELECT_CROP_TO_WATER]: {
+        target: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+        guard: GameStateGuard.IS_SELECTED_IDX_VALID,
+      },
 
       [GameEvent.OPERATION_ABORTED]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
@@ -51,51 +54,37 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
       }) => {
         switch (event.type) {
           case GameEvent.SELECT_CROP_TO_WATER: {
-            try {
-              const { playerId, waterCardInHandIdx, cropIdxInFieldToWater } =
-                event
+            const { playerId, waterCardInHandIdx, cropIdxInFieldToWater } =
+              event
 
-              const playedCrop =
-                game.table.players[playerId].field.crops[cropIdxInFieldToWater]
+            const playedCrop =
+              game.table.players[playerId].field.crops[cropIdxInFieldToWater]
 
-              assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
+            assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 
-              const newPlayedCrop: IPlayedCrop = {
-                ...playedCrop,
-                wasWateredDuringTurn: true,
-                waterCards: playedCrop.waterCards + 1,
-              }
-
-              game = updatePlayedCrop(
-                game,
-                playerId,
-                cropIdxInFieldToWater,
-                newPlayedCrop
-              )
-
-              game = moveFromHandToDiscardPile(
-                game,
-                playerId,
-                waterCardInHandIdx
-              )
-
-              selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
-
-              triggerNotification({
-                type: ShellNotificationType.CROP_WATERED,
-                payload: {
-                  cropWatered: playedCrop.instance,
-                },
-              })
-            } catch (e) {
-              console.error(e)
-
-              enqueue.assign({
-                selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
-              })
-
-              return
+            const newPlayedCrop: IPlayedCrop = {
+              ...playedCrop,
+              wasWateredDuringTurn: true,
+              waterCards: playedCrop.waterCards + 1,
             }
+
+            game = updatePlayedCrop(
+              game,
+              playerId,
+              cropIdxInFieldToWater,
+              newPlayedCrop
+            )
+
+            game = moveFromHandToDiscardPile(game, playerId, waterCardInHandIdx)
+
+            selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
+
+            triggerNotification({
+              type: ShellNotificationType.CROP_WATERED,
+              payload: {
+                cropWatered: playedCrop.instance,
+              },
+            })
 
             break
           }

@@ -1,10 +1,11 @@
 import {
   stubCarrot,
   stubRain,
+  stubShovel,
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
-import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { updatePlayer } from '../../reducers/update-player'
 import { IGame, IPlayer } from '../../types'
@@ -130,6 +131,35 @@ describe('Lookup', () => {
     })
   })
 
+  describe('findWaterIndexesInPlayerHand', () => {
+    test.each([
+      { hand: [], expected: [] },
+      { hand: [instantiate(water)], expected: [0] },
+      {
+        hand: [
+          instantiate(carrot),
+          instantiate(water),
+          instantiate(water),
+          instantiate(pumpkin),
+        ],
+        expected: [1, 2],
+      },
+    ])('retrieves water indices in hand ($hand)', ({ hand, expected }) => {
+      let game = stubGame()
+
+      game = updatePlayer(game, stubPlayer1.id, {
+        hand,
+      })
+
+      const waterIndexesInHand = lookup.findWaterIndexesInPlayerHand(
+        game,
+        stubPlayer1.id
+      )
+
+      expect(waterIndexesInHand).toEqual(expected)
+    })
+  })
+
   describe('getPlayedCropFromField', () => {
     let mutatedGame: IGame
 
@@ -190,5 +220,51 @@ describe('Lookup', () => {
         expect(eventIndexesInHand).toEqual(expected)
       }
     )
+  })
+
+  describe('findToolIndexesInPlayerHand', () => {
+    test.each([
+      { hand: [], expected: [] },
+      {
+        hand: [stubShovel],
+        expected: [0],
+      },
+      {
+        hand: [stubCarrot, stubShovel, stubWater, stubShovel],
+        expected: [1, 3],
+      },
+    ])(
+      'retrieves tool indices $expected in hand (%s)',
+      ({ hand, expected }) => {
+        let game = stubGame()
+
+        game = updatePlayer(game, stubPlayer1.id, {
+          hand,
+        })
+
+        const eventIndexesInHand = lookup.findToolIndexesInPlayerHand(
+          game,
+          stubPlayer1.id
+        )
+
+        expect(eventIndexesInHand).toEqual(expected)
+      }
+    )
+  })
+
+  describe('playerIds', () => {
+    test('retrieves player IDs', () => {
+      const playerIds = lookup.playerIds(game)
+
+      expect(playerIds).toEqual([stubPlayer1.id, stubPlayer2.id])
+    })
+  })
+
+  describe('nextPlayerIndex', () => {
+    test('determines the next player ID', () => {
+      const nextPlayer = lookup.nextPlayerIndex(game)
+
+      expect(nextPlayer).toEqual(1)
+    })
   })
 })

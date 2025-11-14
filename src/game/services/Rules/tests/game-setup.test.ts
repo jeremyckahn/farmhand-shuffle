@@ -57,9 +57,13 @@ describe('game setup', () => {
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
     ])
+    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual([
+      carrot2,
+      carrot1,
+    ])
   })
 
-  test('completes the setup sequence', () => {
+  test('completes the bot setup sequence', () => {
     const gameActor = rules.startGame()
 
     gameActor.send({
@@ -104,6 +108,9 @@ describe('game setup', () => {
     expect(gameResult.table.players[player2.id].field.crops).toEqual<
       IPlayedCrop[]
     >([{ instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 }])
+    expect(gameResult.table.players[player2.id].cardsPlayedDuringTurn).toEqual([
+      carrot2,
+    ])
   })
 
   test('does not let game start until all players have set up', () => {

@@ -1,7 +1,7 @@
 import shuffle from 'lodash.shuffle'
 import { MockInstance } from 'vitest'
 
-import { stubPumpkin } from '../../../test-utils/stubs/cards'
+import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { carrot, instantiate } from '../../cards'
 import { DECK_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
@@ -64,18 +64,25 @@ describe('startTurn', () => {
     }).toThrow(`[PlayerOutOfFundsError] Player ${player1Id} is out of funds.`)
   })
 
-  test('draws a card from the deck', () => {
-    const newGame = startTurn(game, player1Id)
+  test.each([
+    { numberOfCardsToDraw: 0 },
+    { numberOfCardsToDraw: 1 },
+    { numberOfCardsToDraw: 2 },
+  ])(
+    'draws $numberOfCardsToDraw card(s) from deck',
+    ({ numberOfCardsToDraw }) => {
+      const newGame = startTurn(game, player1Id, numberOfCardsToDraw)
 
-    expect(newGame.table.players[player1Id].hand).toEqual([
-      ...game.table.players[player1Id].hand,
-      game.table.players[player1Id].deck[0],
-    ])
+      expect(newGame.table.players[player1Id].hand).toEqual([
+        ...game.table.players[player1Id].hand,
+        ...game.table.players[player1Id].deck.slice(0, numberOfCardsToDraw),
+      ])
 
-    expect(newGame.table.players[player1Id].deck).toEqual(
-      game.table.players[player1Id].deck.slice(1)
-    )
-  })
+      expect(newGame.table.players[player1Id].deck).toEqual(
+        game.table.players[player1Id].deck.slice(numberOfCardsToDraw)
+      )
+    }
+  )
 
   test('resets wasWateredDuringTurn for each crop in the field', () => {
     const carrot1 = instantiate(carrot)
@@ -133,5 +140,15 @@ describe('startTurn', () => {
 
     expect(newGame.buffedCrop).not.toBeNull()
     expect(newGame.nerfedCrop).not.toBeNull()
+  })
+
+  test('resets record of cards played during turn', () => {
+    let newGame = updatePlayer(game, player1Id, {
+      cardsPlayedDuringTurn: [stubCarrot],
+    })
+
+    newGame = startTurn(newGame, player1Id)
+
+    expect(newGame.table.players[player1Id].cardsPlayedDuringTurn).toEqual([])
   })
 })

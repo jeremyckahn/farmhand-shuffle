@@ -5,6 +5,7 @@ import { ICard, Instance } from '../types'
 export * from './crops'
 export * from './events'
 export * from './water'
+export * from './tools'
 
 export const instantiate = <T = ICard>(card: T): T & Instance => {
   return { ...card, instanceId: uuid() }
