@@ -15,3 +15,5 @@ export const SELECTED_CARD_ELEVATION = 10
 export const BOT_ACTION_DELAY = 750
 
 export const EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN = 1
+
+export const SHOVEL_CARDS_TO_DRAW = 2

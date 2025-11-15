@@ -1,8 +1,7 @@
+import { SHOVEL_CARDS_TO_DRAW } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { CardType, ITool, ShellNotificationType } from '../../types'
 import { assertCurrentPlayer } from '../../types/guards'
-
-const cardsToDraw = 2
 
 export const shovel: ITool = Object.freeze<ITool>({
   type: CardType.TOOL,
@@ -22,12 +21,12 @@ export const shovel: ITool = Object.freeze<ITool>({
     const { currentPlayerId } = game
     assertCurrentPlayer(currentPlayerId)
 
-    game = drawCard(game, currentPlayerId, cardsToDraw)
+    game = drawCard(game, currentPlayerId, SHOVEL_CARDS_TO_DRAW)
 
     context.shell.triggerNotification({
       type: ShellNotificationType.CARDS_DRAWN,
       payload: {
-        howMany: cardsToDraw,
+        howMany: SHOVEL_CARDS_TO_DRAW,
         playerId: currentPlayerId,
       },
     })
