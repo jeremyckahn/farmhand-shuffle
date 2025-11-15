@@ -5,8 +5,8 @@ import { isDebugEnabled } from '../../config/constants'
 import { useGameRules } from '../../hooks/useGameRules'
 
 import { ActorContext } from './ActorContext'
-import { GameProps } from './types'
 import { ShellContextProps } from './ShellContext'
+import { GameProps } from './types'
 import { useSnackbar } from './useSnackbar'
 
 export const useGame = ({
@@ -21,7 +21,7 @@ export const useGame = ({
     if (isDebugEnabled) {
       actorRef.subscribe(snapshot => {
         if (typeof snapshot.value === 'string') {
-          console.debug(`State: ${snapshot.value}`)
+          console.debug(`State: ${snapshot.value}`, snapshot.context.game)
         }
       })
     }

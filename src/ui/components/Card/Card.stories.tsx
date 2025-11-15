@@ -11,6 +11,7 @@ import {
   stubCarrot,
   stubPumpkin,
   stubRain,
+  stubShovel,
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubSelectorState } from '../../../test-utils/stubs/selectorState'
@@ -89,6 +90,29 @@ export const PlayableWaterCard: Story = {
 export const PlayableEventCard: Story = {
   args: {
     cardInstance: stubRain,
+    cardIdx: 0,
+    playerId: stubPlayer1.id,
+    isFlipped: false,
+    size: CardSize.MEDIUM,
+    isFocused: true,
+  },
+  decorators: [
+    Story => {
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+          game: stubGame(),
+        })
+      )
+
+      return <Story />
+    },
+  ],
+}
+
+export const PlayableToolCard: Story = {
+  args: {
+    cardInstance: stubShovel,
     cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
@@ -237,6 +261,25 @@ export const SmallRainCard: Story = {
 export const RainCard: Story = {
   args: {
     cardInstance: stubRain,
+    cardIdx: 0,
+    playerId: '',
+    isFlipped: false,
+  },
+}
+
+export const SmallShovelCard: Story = {
+  args: {
+    cardInstance: stubShovel,
+    cardIdx: 0,
+    playerId: '',
+    size: CardSize.SMALL,
+    isFlipped: false,
+  },
+}
+
+export const ShovelCard: Story = {
+  args: {
+    cardInstance: stubShovel,
     cardIdx: 0,
     playerId: '',
     isFlipped: false,

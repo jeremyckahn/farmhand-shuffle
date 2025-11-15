@@ -47,6 +47,30 @@ export const useSnackbar = ({
       shell: {
         triggerNotification: ({ type, payload }) => {
           switch (type) {
+            case ShellNotificationType.CARDS_DRAWN: {
+              const { howMany, playerId } = payload
+
+              if (isSessionOwner) {
+                showNotification(
+                  howMany === 1
+                    ? 'You drew 1 card'
+                    : `You drew ${howMany} cards`,
+                  'success'
+                )
+              } else {
+                const playerName = funAnimalName(playerId)
+
+                showNotification(
+                  howMany === 1
+                    ? `${playerName} drew 1 card`
+                    : `${playerName} drew ${howMany} cards`,
+                  'warning'
+                )
+              }
+
+              break
+            }
+
             case ShellNotificationType.CROP_HARVESTED: {
               const {
                 cropHarvested: { name: cropName },
@@ -92,6 +116,21 @@ export const useSnackbar = ({
               } else {
                 showNotification(
                   `${currentPlayerName} played ${eventCard.name}`,
+                  'info'
+                )
+              }
+
+              break
+            }
+
+            case ShellNotificationType.TOOL_CARD_PLAYED: {
+              const { toolCard } = payload
+
+              if (isSessionOwner) {
+                showNotification(`You played ${toolCard.name}`, 'info')
+              } else {
+                showNotification(
+                  `${currentPlayerName} played ${toolCard.name}`,
                   'info'
                 )
               }

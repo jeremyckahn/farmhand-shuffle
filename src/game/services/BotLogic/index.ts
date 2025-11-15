@@ -1,5 +1,8 @@
 import { randomNumber } from '../../../services/RandomNumber'
-import { STANDARD_FIELD_SIZE } from '../../config'
+import {
+  EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
+  STANDARD_FIELD_SIZE,
+} from '../../config'
 import { IGame, isCropCardInstance, isWaterCardInstance } from '../../types'
 import { lookup } from '../Lookup'
 
@@ -31,16 +34,24 @@ export class BotLogicService {
     return safeNumberOfCropsToPlay
   }
 
-  getNumberOfEventCardsToPlay(game: IGame, playerId: string) {
+  getNumberOfEventCardsToPlay(game: IGame, playerId: string): number {
     const eventCardIdxsInPlayerHand = lookup.findEventIndexesInPlayerHand(
       game,
       playerId
     )
 
-    return randomNumber.chooseIntegerBetween(
-      0,
-      eventCardIdxsInPlayerHand.length
+    return eventCardIdxsInPlayerHand.length > 0
+      ? EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN
+      : 0
+  }
+
+  getNumberOfToolCardsToPlay(game: IGame, playerId: string) {
+    const toolCardIdxsInPlayerHand = lookup.findToolIndexesInPlayerHand(
+      game,
+      playerId
     )
+
+    return randomNumber.chooseIntegerBetween(0, toolCardIdxsInPlayerHand.length)
   }
 
   getEventCardIndexToPlay(game: IGame, playerId: string) {
@@ -50,6 +61,15 @@ export class BotLogicService {
     )
 
     return randomNumber.chooseElement(eventCardIdxsInPlayerHand)
+  }
+
+  getToolCardIndexToPlay(game: IGame, playerId: string) {
+    const toolCardIdxsInPlayerHand = lookup.findToolIndexesInPlayerHand(
+      game,
+      playerId
+    )
+
+    return randomNumber.chooseElement(toolCardIdxsInPlayerHand)
   }
 
   getCropCardIndicesToWater(game: IGame, playerId: string) {

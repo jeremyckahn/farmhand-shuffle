@@ -1,12 +1,12 @@
 /* eslint-disable functional/immutable-data */
-import { carrot, instantiate, pumpkin, rain } from '../../game/cards'
+import { carrot, instantiate, pumpkin, rain, shovel } from '../../game/cards'
 import { water } from '../../game/cards/water'
 import { DECK_SIZE } from '../../game/config'
 import { CardInstance } from '../../game/types'
 
 /**
  * Creates a stub deck of cards for testing purposes. The deck is populated
- * with a mixture of crops, water, and event cards.
+ * with a mixture of crops, water, event, and tool cards.
  *
  * @returns A deck of cards.
  */
@@ -27,6 +27,10 @@ export const stubDeck = () => {
 
   for (let i = deck.length / 2 - 1; i < deck.length; i += 2) {
     deck[i] = instantiate(rain)
+  }
+
+  for (let i = deck.length / 2; i < deck.length; i += 2) {
+    deck[i] = instantiate(shovel)
   }
 
   return deck

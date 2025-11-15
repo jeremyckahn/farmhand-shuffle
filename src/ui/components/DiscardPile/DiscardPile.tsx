@@ -48,7 +48,7 @@ export const DiscardPile = ({
       }}
       {...rest}
     >
-      {player.discardPile.map((cardInstance, idx) => {
+      {[...player.discardPile].reverse().map((cardInstance, idx) => {
         const offset =
           (discardPileThicknessPx / player.discardPile.length) * idx
 

@@ -3,6 +3,7 @@ import { stubGame } from '../../../test-utils/stubs/game'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { updateGame } from '../../reducers/update-game'
 import { factory } from '../../services/Factory'
+import { createGameStateMachineContext } from '../../services/Rules/createGameStateMachineContext'
 import { IPlayedCrop } from '../../types'
 
 import { rain } from './rain'
@@ -60,7 +61,10 @@ describe('rain card', () => {
         },
       })
 
-      const updatedGame = rain.applyEffect(game)
+      const { game: updatedGame } = rain.applyEffect({
+        ...createGameStateMachineContext(),
+        game,
+      })
 
       expect(
         updatedGame.table.players[stubPlayer1.id].field.crops[1]

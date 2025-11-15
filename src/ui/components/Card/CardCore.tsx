@@ -7,20 +7,21 @@ import { Theme } from '@mui/material/styles/createTheme'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx'
 import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
+import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { useContext, useRef } from 'react'
 
-import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import {
   CardType,
   GameEvent,
   GameState,
   isCropCardInstance,
   isEventCardInstance,
+  isToolCardInstance,
   isWaterCardInstance,
 } from '../../../game/types'
+import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useGameRules } from '../../hooks/useGameRules'
 import { ui } from '../../img'
@@ -121,6 +122,12 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
           break
         }
 
+        case CardType.TOOL: {
+          actorRef.send({ type: GameEvent.PLAY_TOOL, cardIdx, playerId })
+
+          break
+        }
+
         default:
       }
     }
@@ -193,6 +200,18 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
           isSessionOwnersCard &&
           isFocused &&
           canEventCardsBePlayed &&
+          gameState === GameState.WAITING_FOR_PLAYER_TURN_ACTION
+        ) {
+          showPlayCardButton = true
+        }
+
+        break
+      }
+
+      case CardType.TOOL: {
+        if (
+          isSessionOwnersCard &&
+          isFocused &&
           gameState === GameState.WAITING_FOR_PLAYER_TURN_ACTION
         ) {
           showPlayCardButton = true
@@ -382,6 +401,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                           {isCropCardInstance(card) && 'Play crop'}
                           {isWaterCardInstance(card) && 'Water a crop'}
                           {isEventCardInstance(card) && 'Play event'}
+                          {isToolCardInstance(card) && 'Play tool'}
                         </Button>
                       </Typography>
                     </Box>

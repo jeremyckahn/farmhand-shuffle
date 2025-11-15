@@ -2,6 +2,7 @@ import { randomNumber } from '../../../services/RandomNumber'
 import {
   stubCarrot,
   stubRain,
+  stubShovel,
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubGame } from '../../../test-utils/stubs/game'
@@ -299,12 +300,35 @@ describe('BotLogicService', () => {
 
   describe('getNumberOfEventCardsToPlay', () => {
     it.each([
+      { hand: [], expectedResult: 0 },
+      { hand: [stubRain], expectedResult: 1 },
+      { hand: [stubRain, stubRain], expectedResult: 1 },
+    ])(
+      'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
+      ({ hand, expectedResult }) => {
+        let game = stubGame()
+        game = updatePlayer(game, stubPlayer1.id, {
+          hand,
+        })
+
+        const result = botLogic.getNumberOfEventCardsToPlay(
+          game,
+          stubPlayer1.id
+        )
+
+        expect(result).toBe(expectedResult)
+      }
+    )
+  })
+
+  describe('getNumberOfToolCardsToPlay', () => {
+    it.each([
       { hand: [], rngStub: 0.1, expectedResult: 0 },
-      { hand: [stubRain], rngStub: 0.4, expectedResult: 0 },
-      { hand: [stubRain], rngStub: 0.5, expectedResult: 1 },
-      { hand: [stubRain, stubRain], rngStub: 0, expectedResult: 0 },
-      { hand: [stubRain, stubRain], rngStub: 0.5, expectedResult: 1 },
-      { hand: [stubRain, stubRain], rngStub: 1, expectedResult: 2 },
+      { hand: [stubShovel], rngStub: 0.4, expectedResult: 0 },
+      { hand: [stubShovel], rngStub: 0.5, expectedResult: 1 },
+      { hand: [stubShovel, stubShovel], rngStub: 0, expectedResult: 0 },
+      { hand: [stubShovel, stubShovel], rngStub: 0.5, expectedResult: 1 },
+      { hand: [stubShovel, stubShovel], rngStub: 1, expectedResult: 2 },
     ])(
       'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
       ({ hand, rngStub, expectedResult }) => {
@@ -315,10 +339,7 @@ describe('BotLogicService', () => {
           hand,
         })
 
-        const result = botLogic.getNumberOfEventCardsToPlay(
-          game,
-          stubPlayer1.id
-        )
+        const result = botLogic.getNumberOfToolCardsToPlay(game, stubPlayer1.id)
 
         expect(result).toBe(expectedResult)
       }
@@ -351,6 +372,38 @@ describe('BotLogicService', () => {
         })
 
         const result = botLogic.getEventCardIndexToPlay(game, stubPlayer1.id)
+
+        expect(result).toBe(expectedResult)
+      }
+    )
+  })
+
+  describe('getToolCardIndexToPlay', () => {
+    it.each([
+      { hand: [], rngStub: 0, expectedResult: undefined },
+      { hand: [], rngStub: 1, expectedResult: undefined },
+      { hand: [stubShovel], rngStub: 0, expectedResult: 0 },
+      {
+        hand: [stubCarrot, stubShovel, stubWater, stubShovel],
+        rngStub: 0,
+        expectedResult: 1,
+      },
+      {
+        hand: [stubCarrot, stubRain, stubWater, stubShovel],
+        rngStub: 1,
+        expectedResult: 3,
+      },
+    ])(
+      'chooses a tool card index to play for hand $hand and rngStub $rngStub',
+      ({ hand, rngStub, expectedResult }) => {
+        vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
+
+        let game = stubGame()
+        game = updatePlayer(game, stubPlayer1.id, {
+          hand,
+        })
+
+        const result = botLogic.getToolCardIndexToPlay(game, stubPlayer1.id)
 
         expect(result).toBe(expectedResult)
       }

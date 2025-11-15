@@ -4,12 +4,13 @@ import { updatePlayer } from '../update-player'
 export const addToDiscardPile = (
   game: IGame,
   playerId: IPlayer['id'],
-  cardInstancestance: CardInstance
+  cardInstance: CardInstance
 ) => {
   const discardPile = [
-    cardInstancestance,
+    cardInstance,
     ...game.table.players[playerId].discardPile,
   ]
+
   game = updatePlayer(game, playerId, { discardPile })
 
   return game

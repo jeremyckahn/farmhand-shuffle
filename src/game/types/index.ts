@@ -1,4 +1,5 @@
 import { uuidString } from '../../services/types'
+import { GameMachineContext } from '../services/Rules/state-machine/createMachine'
 
 // NOTE: Most of the game's interface properties are readonly to enforce
 // immutability.
@@ -18,24 +19,6 @@ export interface ICard {
   readonly name: string
 
   readonly type: CardType
-
-  /**
-   * @throws A custom error that describes why the card could not be played. If
-   * this happens, the card must not be discarded from the player's hand.
-   */
-  readonly onPlayFromHand: (
-    game: IGame,
-
-    /**
-     * The ID of the player playing the card
-     */
-    playerId: IPlayer['id'],
-
-    /**
-     * The index of the card within the player's hand
-     */
-    cardIdx: number
-  ) => GameEventPayload[GameEventPayloadKey]
 }
 
 export interface Instance {
@@ -47,7 +30,7 @@ export interface ICrop extends ICard {
 
   /**
    * How much water that needs to be attached to this Crop card in order to
-   * mature from from a seed to a sellable crop.
+   * mature from a seed to a sellable crop.
    */
   readonly waterToMature: number
 }
@@ -80,16 +63,30 @@ export interface IPlayedCrop {
   wasWateredDuringTurn: boolean
 }
 
+interface IEffect extends ICard {
+  readonly description: string
+
+  readonly applyEffect: (context: GameMachineContext) => GameMachineContext
+
+  readonly onStartFollowingTurn?: (
+    context: GameMachineContext
+  ) => GameMachineContext
+}
+
 /**
  * Players can play up to one Event card per turn. Has some sort of effect on
  * one or both players simultaneously, defined per card.
  */
-export interface IEvent extends ICard {
+export interface IEvent extends IEffect {
   readonly type: CardType.EVENT
+}
 
-  readonly description: string
-
-  readonly applyEffect: (game: IGame) => IGame
+/**
+ * Players can play as many tool cards per turn as they wish. Has some sort of
+ * effect on one or both players simultaneously, defined per card.
+ */
+export interface ITool extends IEffect {
+  readonly type: CardType.TOOL
 }
 
 /**
@@ -112,7 +109,13 @@ export interface WaterInstance extends IWater, Instance {}
 
 export interface EventInstance extends IEvent, Instance {}
 
-export type CardInstance = CropInstance | WaterInstance | EventInstance
+export interface ToolInstance extends ITool, Instance {}
+
+export type CardInstance =
+  | CropInstance
+  | WaterInstance
+  | EventInstance
+  | ToolInstance
 
 export const isWaterCardInstance = (
   cardInstance: CardInstance
@@ -124,6 +127,12 @@ export const isEventCardInstance = (
   cardInstance: CardInstance
 ): cardInstance is EventInstance => {
   return cardInstance.type === CardType.EVENT
+}
+
+export const isToolCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is ToolInstance => {
+  return cardInstance.type === CardType.TOOL
 }
 
 export interface IField {
@@ -157,6 +166,12 @@ export interface IPlayer {
    * Cards in the player's Field.
    */
   readonly field: IField
+
+  /**
+   * The cards played during the current turn. This array is emptied at the
+   * start of the player's turn.
+   */
+  readonly cardsPlayedDuringTurn: CardInstance[]
 }
 
 /**
@@ -219,6 +234,7 @@ export enum GameEvent {
   PLAY_CARD = 'PLAY_CARD',
   PLAY_CROP = 'PLAY_CROP',
   PLAY_EVENT = 'PLAY_EVENT',
+  PLAY_TOOL = 'PLAY_TOOL', // Spiral out
   PLAY_WATER = 'PLAY_WATER',
   PLAYER_RAN_OUT_OF_FUNDS = 'PLAYER_RAN_OUT_OF_FUNDS',
   PROMPT_BOT_FOR_SETUP_ACTION = 'PROMPT_BOT_FOR_SETUP_ACTION',
@@ -252,21 +268,30 @@ export enum GameState {
   PLAYER_WATERING_CROP = 'PLAYER_WATERING_CROP',
   PLAYING_CARD = 'PLAYING_CARD',
   PLAYING_EVENT = 'PLAYING_EVENT',
+  PLAYING_TOOL = 'PLAYING_TOOL',
   WAITING_FOR_PLAYER_SETUP_ACTION = 'WAITING_FOR_PLAYER_SETUP_ACTION',
   WAITING_FOR_PLAYER_TURN_ACTION = 'WAITING_FOR_PLAYER_TURN_ACTION',
 }
 
 export enum GameStateGuard {
   HAVE_PLAYERS_COMPLETED_SETUP = 'HAVE_PLAYERS_COMPLETED_SETUP',
+  IS_SELECTED_IDX_VALID = 'IS_SELECTED_IDX_VALID',
 }
 
 export enum ShellNotificationType {
+  CARDS_DRAWN = 'CARDS_DRAWN',
   CROP_HARVESTED = 'CROP_HARVESTED',
   CROP_WATERED = 'CROP_WATERED',
   EVENT_CARD_PLAYED = 'EVENT_CARD_PLAYED',
+  TOOL_CARD_PLAYED = 'TOOL_CARD_PLAYED',
 }
 
 export interface ShellNotificationPayload {
+  [ShellNotificationType.CARDS_DRAWN]: {
+    howMany: number
+    playerId: IPlayer['id']
+  }
+
   [ShellNotificationType.CROP_HARVESTED]: {
     cropHarvested: ICrop
   }
@@ -277,6 +302,10 @@ export interface ShellNotificationPayload {
 
   [ShellNotificationType.EVENT_CARD_PLAYED]: {
     eventCard: EventInstance
+  }
+
+  [ShellNotificationType.TOOL_CARD_PLAYED]: {
+    toolCard: ToolInstance
   }
 }
 
@@ -327,6 +356,8 @@ export interface GameEventPayload {
   [GameEvent.PLAY_CROP]: PlayCardEventPayload<GameEvent.PLAY_CROP>
 
   [GameEvent.PLAY_EVENT]: PlayCardEventPayload<GameEvent.PLAY_EVENT>
+
+  [GameEvent.PLAY_TOOL]: PlayCardEventPayload<GameEvent.PLAY_TOOL>
 
   [GameEvent.PLAY_WATER]: PlayCardEventPayload<GameEvent.PLAY_WATER>
 

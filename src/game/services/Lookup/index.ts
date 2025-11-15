@@ -3,8 +3,10 @@ import {
   IPlayer,
   isCropCardInstance,
   isEventCardInstance,
+  isToolCardInstance,
+  isWaterCardInstance,
 } from '../../types'
-import { isCrop } from '../../types/guards'
+import { assertCurrentPlayer, isCrop } from '../../types/guards'
 import {
   InvalidCardError,
   InvalidCardIndexError,
@@ -118,6 +120,21 @@ export class LookupService {
     return cropCardIdxsInPlayerHand
   }
 
+  findWaterIndexesInPlayerHand = (game: IGame, playerId: IPlayer['id']) => {
+    const waterIdxsInPlayerHand = game.table.players[playerId].hand.reduce(
+      (acc: number[], cardInstance, idx) => {
+        if (isWaterCardInstance(cardInstance)) {
+          acc = [...acc, idx]
+        }
+
+        return acc
+      },
+      []
+    )
+
+    return waterIdxsInPlayerHand
+  }
+
   findEventIndexesInPlayerHand = (game: IGame, playerId: IPlayer['id']) => {
     const eventCardIdxsInPlayerHand = game.table.players[playerId].hand.reduce(
       (acc: number[], cardInstance, idx) => {
@@ -131,6 +148,39 @@ export class LookupService {
     )
 
     return eventCardIdxsInPlayerHand
+  }
+
+  findToolIndexesInPlayerHand = (game: IGame, playerId: IPlayer['id']) => {
+    const toolIdxsInPlayerHand = game.table.players[playerId].hand.reduce(
+      (acc: number[], cardInstance, idx) => {
+        if (isToolCardInstance(cardInstance)) {
+          acc = [...acc, idx]
+        }
+
+        return acc
+      },
+      []
+    )
+
+    return toolIdxsInPlayerHand
+  }
+
+  playerIds = (game: IGame) => {
+    const playerIds = Object.keys(game.table.players).sort()
+
+    return playerIds
+  }
+
+  nextPlayerIndex = (game: IGame) => {
+    const { currentPlayerId } = game
+
+    assertCurrentPlayer(currentPlayerId)
+
+    const playerIds = Object.keys(game.table.players).sort()
+    const currentPlayerIdx = playerIds.indexOf(currentPlayerId)
+    const nextPlayerIdx = (currentPlayerIdx + 1) % playerIds.length
+
+    return nextPlayerIdx
   }
 }
 

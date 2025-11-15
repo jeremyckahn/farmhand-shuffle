@@ -4,6 +4,7 @@ import {
   CardInstance,
   EventInstance,
   IPlayedCrop,
+  ToolInstance,
   WaterInstance,
 } from '../../../game/types'
 import { CardSize } from '../../types'
@@ -33,12 +34,20 @@ export interface CropCardProps extends BaseCardProps {
   playedCrop?: IPlayedCrop
 }
 
-export interface WaterCardProps extends BaseCardProps {
-  cardInstance: WaterInstance
-}
-
 export interface EventCardProps extends BaseCardProps {
   cardInstance: EventInstance
 }
 
-export type CardProps = CropCardProps | WaterCardProps | EventCardProps
+export interface ToolCardProps extends BaseCardProps {
+  cardInstance: ToolInstance
+}
+
+export interface WaterCardProps extends BaseCardProps {
+  cardInstance: WaterInstance
+}
+
+export type CardProps =
+  | CropCardProps
+  | EventCardProps
+  | ToolCardProps
+  | WaterCardProps

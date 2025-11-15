@@ -1,29 +1,11 @@
 import { updateField } from '../../reducers/update-field'
-import {
-  CardType,
-  GameEvent,
-  GameEventPayload,
-  IEvent,
-  IGame,
-} from '../../types'
+import { CardType, IEvent } from '../../types'
 
 export const rain: IEvent = Object.freeze<IEvent>({
   type: CardType.EVENT,
   id: 'rain',
   name: 'Rain',
   description: `Waters all unwatered, planted crops for **all** players.`,
-
-  onPlayFromHand(
-    _game: IGame,
-    playerId: string,
-    cardIdx: number
-  ): GameEventPayload[GameEvent.PLAY_EVENT] {
-    return {
-      type: GameEvent.PLAY_EVENT,
-      playerId,
-      cardIdx,
-    }
-  },
 
   /**
    *  Gives all players an additional water card to each of their crops.
@@ -32,7 +14,9 @@ export const rain: IEvent = Object.freeze<IEvent>({
    *
    *  @returns The updated game state.
    */
-  applyEffect: game => {
+  applyEffect: context => {
+    let { game } = context
+
     for (const playerId in game.table.players) {
       const player = game.table.players[playerId]
 
@@ -53,9 +37,11 @@ export const rain: IEvent = Object.freeze<IEvent>({
         }
       })
 
+      // TODO: Show a notification indicating that all crops were watered
+
       game = updateField(game, playerId, { crops })
     }
 
-    return game
+    return { ...context, game }
   },
 })

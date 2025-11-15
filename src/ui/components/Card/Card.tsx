@@ -5,6 +5,7 @@ import { UnimplementedError } from '../../../game/services/Rules/errors'
 import {
   isCropCardInstance,
   isEventCardInstance,
+  isToolCardInstance,
   isWaterCardInstance,
 } from '../../../game/types'
 import { isCrop } from '../../../game/types/guards'
@@ -15,6 +16,7 @@ import {
   CardProps,
   CropCardProps,
   EventCardProps,
+  ToolCardProps,
   WaterCardProps,
 } from './types'
 
@@ -28,6 +30,10 @@ const isPropsWaterCardProps = (props: CardProps): props is WaterCardProps => {
 
 const isPropsEventCardProps = (props: CardProps): props is EventCardProps => {
   return isEventCardInstance(props.cardInstance)
+}
+
+const isPropsToolCardProps = (props: CardProps): props is ToolCardProps => {
+  return isToolCardInstance(props.cardInstance)
 }
 
 export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
@@ -58,6 +64,16 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(
   }
 )
 
+export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
+  function ToolCard(props, ref) {
+    return (
+      <CardCore {...props} ref={ref}>
+        <ReactMarkdown>{props.cardInstance.description}</ReactMarkdown>
+      </CardCore>
+    )
+  }
+)
+
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
   props,
   ref
@@ -72,6 +88,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
 
   if (isPropsEventCardProps(props)) {
     return <EventCard {...props} ref={ref} />
+  }
+
+  if (isPropsToolCardProps(props)) {
+    return <ToolCard {...props} ref={ref} />
   }
 
   throw new UnimplementedError('Unexpected CardType')

@@ -10,6 +10,7 @@ import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
 import { GameStateCorruptError } from '../errors'
 
+import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
 
 export const performingBotSetupActionState: RulesMachineConfig['states'] = {
@@ -84,6 +85,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
+            game = recordCardPlayEvents(game, event)
             game = moveCropFromHandToField(game, playerId, cardIdx)
             cropsToPlayDuringBotTurn--
 

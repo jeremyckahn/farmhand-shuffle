@@ -11,7 +11,9 @@ import {
   IPlayedCrop,
   IPlayer,
   isEventCardInstance,
+  isToolCardInstance,
   ITable,
+  ToolInstance,
 } from '../'
 import * as cards from '../../cards'
 import { GameStateCorruptError } from '../../services/Rules/errors'
@@ -86,6 +88,9 @@ export const isPlayer = (obj: unknown): obj is IPlayer => {
     'discardPile' in obj &&
     Array.isArray(obj.discardPile) &&
     obj.discardPile.every(isCardInstance) &&
+    'cardsPlayedDuringTurn' in obj &&
+    Array.isArray(obj.cardsPlayedDuringTurn) &&
+    obj.cardsPlayedDuringTurn.every(isCardInstance) &&
     'field' in obj &&
     isField(obj.field)
   )
@@ -147,9 +152,7 @@ export const isCard = (obj: unknown): obj is ICard => {
     typeof obj.name === 'string' &&
     'type' in obj &&
     typeof obj.type === 'string' &&
-    obj.type in CardType &&
-    'onPlayFromHand' in obj &&
-    typeof obj.onPlayFromHand === 'function'
+    obj.type in CardType
   )
 }
 
@@ -164,6 +167,14 @@ export function assertIsEventCard(
 ): asserts card is EventInstance {
   if (!isEventCardInstance(card)) {
     throw new GameStateCorruptError(`${card.id} is not an event card`)
+  }
+}
+
+export function assertIsToolCard(
+  card: CardInstance
+): asserts card is ToolInstance {
+  if (!isToolCardInstance(card)) {
+    throw new GameStateCorruptError(`${card.id} is not a tool card`)
   }
 }
 

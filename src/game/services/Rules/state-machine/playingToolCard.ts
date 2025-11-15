@@ -2,13 +2,13 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { GameEvent, GameState, ShellNotificationType } from '../../../types'
-import { assertCurrentPlayer, assertIsEventCard } from '../../../types/guards'
+import { assertCurrentPlayer, assertIsToolCard } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
 
-export const playingEventCard: RulesMachineConfig['states'] = {
-  [GameState.PLAYING_EVENT]: {
+export const playingToolCard: RulesMachineConfig['states'] = {
+  [GameState.PLAYING_TOOL]: {
     on: {
       [GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION]:
         GameState.WAITING_FOR_PLAYER_TURN_ACTION,
@@ -27,19 +27,19 @@ export const playingEventCard: RulesMachineConfig['states'] = {
         },
         enqueue,
       }) => {
-        assertEvent(event, GameEvent.PLAY_EVENT)
+        assertEvent(event, GameEvent.PLAY_TOOL)
 
         const { currentPlayerId, sessionOwnerPlayerId } = game
         const { playerId, cardIdx } = event
         const card = lookup.getCardFromHand(game, playerId, cardIdx)
 
-        assertIsEventCard(card)
+        assertIsToolCard(card)
         assertCurrentPlayer(currentPlayerId)
 
         triggerNotification({
-          type: ShellNotificationType.EVENT_CARD_PLAYED,
+          type: ShellNotificationType.TOOL_CARD_PLAYED,
           payload: {
-            eventCard: card,
+            toolCard: card,
           },
         })
 
@@ -54,7 +54,7 @@ export const playingEventCard: RulesMachineConfig['states'] = {
 
         context = {
           ...context,
-          eventCardsThatCanBePlayed: context.eventCardsThatCanBePlayed - 1,
+          toolCardsThatCanBePlayed: context.toolCardsThatCanBePlayed - 1,
         }
 
         enqueue.assign({
