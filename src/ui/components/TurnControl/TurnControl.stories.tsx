@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { spyOn } from '@storybook/test'
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { spyOn } from 'storybook/test'
 
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { GameState } from '../../../game/types'

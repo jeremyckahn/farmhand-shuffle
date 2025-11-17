@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { StubShellContext } from '../../test-utils/StubShellContext'

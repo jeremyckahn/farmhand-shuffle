@@ -1,9 +1,7 @@
 import React, { useMemo } from 'react'
-import type { Preview, ReactRenderer } from '@storybook/react'
+import type { Preview, ReactRenderer } from '@storybook/react-vite'
 import { DecoratorFunction } from '@storybook/types'
-import { themes } from '@storybook/theming'
-import '@storybook/addon-console'
-import { fn, spyOn } from '@storybook/test'
+import { fn, spyOn } from 'storybook/test'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 
 import '@fontsource/roboto/300.css'
@@ -92,12 +90,14 @@ const preview: Preview = {
 
 export default preview
 
-export const parameters = {
-  darkMode: {
-    stylePreview: true,
-    // Override the default dark theme
-    dark: { ...themes.dark, appBg: 'black' },
-    // Override the default light theme
-    light: { ...themes.normal, appBg: 'red' },
-  },
+export const beforeEach = function beforeEach() {
+  spyOn(console, 'log').mockName('console.log')
+  spyOn(console, 'warn').mockName('console.warn')
+  spyOn(console, 'error').mockName('console.error')
+  spyOn(console, 'info').mockName('console.info')
+  spyOn(console, 'debug').mockName('console.debug')
+  spyOn(console, 'trace').mockName('console.trace')
+  spyOn(console, 'count').mockName('console.count')
+  spyOn(console, 'dir').mockName('console.dir')
+  spyOn(console, 'assert').mockName('console.assert')
 }

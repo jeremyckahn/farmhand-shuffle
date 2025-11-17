@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { carrot, instantiate, pumpkin, water } from '../../../game/cards'
 import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'

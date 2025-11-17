@@ -3,7 +3,7 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
 import Tooltip from '@mui/material/Tooltip'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
 import { carrot, instantiate, pumpkin, water } from '../../../game/cards'
