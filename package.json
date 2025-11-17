@@ -37,6 +37,7 @@
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@eslint/js": "^9.13.0",
+    "@storybook/addon-docs": "^10.0.7",
     "@storybook/addon-links": "^10.0.7",
     "@storybook/addon-onboarding": "^10.0.7",
     "@storybook/addon-themes": "^10.0.7",
@@ -60,6 +61,7 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-storybook": "10.0.7",
     "globals": "^15.11.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
@@ -68,11 +70,9 @@
     "storybook": "^10.0.7",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.12.2",
-    "vite": "^5.4.21",
+    "vite": "^7.2.2",
     "vitest": "^2.0.5",
-    "vitest-mock-extended": "^2.0.2",
-    "eslint-plugin-storybook": "10.0.7",
-    "@storybook/addon-docs": "^10.0.7"
+    "vitest-mock-extended": "^2.0.2"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {
