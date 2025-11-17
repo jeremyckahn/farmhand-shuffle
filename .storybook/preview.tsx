@@ -1,16 +1,15 @@
-import React, { useMemo } from 'react'
-import type { Preview, ReactRenderer } from '@storybook/react-vite'
-import { DecoratorFunction } from '@storybook/types'
-import { fn, spyOn } from 'storybook/test'
-import { ThemeProvider, CssBaseline } from '@mui/material'
-
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
+import { CssBaseline, Theme, ThemeProvider } from '@mui/material'
+import type { Preview, ReactRenderer } from '@storybook/react-vite'
+import { useMemo } from 'react'
+import { DecoratorFunction } from 'storybook/internal/csf'
+import { fn, spyOn } from 'storybook/test'
 
-import { lightTheme, darkTheme } from '../src/ui/theme'
 import { ActorContext } from '../src/ui/components/Game/ActorContext'
+import { darkTheme, lightTheme } from '../src/ui/theme'
 
 const THEMES = {
   light: lightTheme,
@@ -21,6 +20,7 @@ type ThemeParameters = Parameters<
   DecoratorFunction<
     ReactRenderer,
     {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       [x: string]: any
     }
   >
@@ -31,10 +31,14 @@ const withMuiTheme = (
   context: ThemeParameters[1]
 ) => {
   // The theme global we just declared
-  const { theme: themeKey } = context.globals
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const themeKey: keyof typeof THEMES = context.globals.theme
 
   // Only recompute the theme if the themeKey changes
-  const theme = useMemo(() => THEMES[themeKey] || THEMES['light'], [themeKey])
+  const theme: Theme = useMemo(
+    () => THEMES[themeKey] || THEMES['light'],
+    [themeKey]
+  )
 
   return (
     <ThemeProvider theme={theme}>
@@ -89,15 +93,3 @@ const preview: Preview = {
 }
 
 export default preview
-
-export const beforeEach = function beforeEach() {
-  spyOn(console, 'log').mockName('console.log')
-  spyOn(console, 'warn').mockName('console.warn')
-  spyOn(console, 'error').mockName('console.error')
-  spyOn(console, 'info').mockName('console.info')
-  spyOn(console, 'debug').mockName('console.debug')
-  spyOn(console, 'trace').mockName('console.trace')
-  spyOn(console, 'count').mockName('console.count')
-  spyOn(console, 'dir').mockName('console.dir')
-  spyOn(console, 'assert').mockName('console.assert')
-}
