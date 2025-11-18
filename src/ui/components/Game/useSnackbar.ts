@@ -1,6 +1,7 @@
 import { AlertColor } from '@mui/material'
 import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
+import reactNodeToString from 'react-node-to-string'
 
 import { GameEvent, IGame, ShellNotificationType } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
@@ -29,7 +30,7 @@ export const useSnackbar = ({
   const showNotification = useCallback(
     (message: ReactNode, severity: AlertColor) => {
       if (isDebugEnabled) {
-        console.debug(`Notification: ${String(message)}`)
+        console.debug(`Notification: ${reactNodeToString(message)}`)
       }
 
       setSnackbarProps(prev => ({ ...prev, message, severity }))

@@ -32,6 +32,7 @@ export const Snackbar = ({ message, severity, onClose }: SnackbarProps) => {
 
   useEffect(() => {
     if (message !== emptyNotificationMessage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviousMessage(message)
       setIsOpen(true)
 

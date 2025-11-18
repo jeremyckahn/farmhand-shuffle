@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Mock } from 'vitest'
 
 import { stubDeck } from '../../../test-utils/stubs/deck'
@@ -24,7 +24,7 @@ const meta = {
   },
   decorators: [
     Story => {
-      ;(ActorContext.useActorRef as Mock).mockRestore()
+      ;(ActorContext.useActorRef as Mock).mockRestore?.()
 
       return (
         <Box height="100vh" width="100vw">

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { carrot, instantiate, pumpkin } from '../../../game/cards'
 import { updateField } from '../../../game/reducers/update-field'

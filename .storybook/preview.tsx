@@ -1,18 +1,15 @@
-import React, { useMemo } from 'react'
-import type { Preview, ReactRenderer } from '@storybook/react'
-import { DecoratorFunction } from '@storybook/types'
-import { themes } from '@storybook/theming'
-import '@storybook/addon-console'
-import { fn, spyOn } from '@storybook/test'
-import { ThemeProvider, CssBaseline } from '@mui/material'
-
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
+import { CssBaseline, Theme, ThemeProvider } from '@mui/material'
+import type { Preview, ReactRenderer } from '@storybook/react-vite'
+import { useMemo } from 'react'
+import { DecoratorFunction } from 'storybook/internal/csf'
+import { fn, spyOn } from 'storybook/test'
 
-import { lightTheme, darkTheme } from '../src/ui/theme'
 import { ActorContext } from '../src/ui/components/Game/ActorContext'
+import { darkTheme, lightTheme } from '../src/ui/theme'
 
 const THEMES = {
   light: lightTheme,
@@ -23,6 +20,7 @@ type ThemeParameters = Parameters<
   DecoratorFunction<
     ReactRenderer,
     {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       [x: string]: any
     }
   >
@@ -33,10 +31,14 @@ const withMuiTheme = (
   context: ThemeParameters[1]
 ) => {
   // The theme global we just declared
-  const { theme: themeKey } = context.globals
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const themeKey: keyof typeof THEMES = context.globals.theme
 
   // Only recompute the theme if the themeKey changes
-  const theme = useMemo(() => THEMES[themeKey] || THEMES['light'], [themeKey])
+  const theme: Theme = useMemo(
+    () => THEMES[themeKey] || THEMES['light'],
+    [themeKey]
+  )
 
   return (
     <ThemeProvider theme={theme}>
@@ -91,13 +93,3 @@ const preview: Preview = {
 }
 
 export default preview
-
-export const parameters = {
-  darkMode: {
-    stylePreview: true,
-    // Override the default dark theme
-    dark: { ...themes.dark, appBg: 'black' },
-    // Override the default light theme
-    light: { ...themes.normal, appBg: 'red' },
-  },
-}

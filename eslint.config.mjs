@@ -1,10 +1,13 @@
-import globals from 'globals'
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook'
+
 import pluginJs from '@eslint/js'
-import tseslint from 'typescript-eslint'
+import functionalPlugin from 'eslint-plugin-functional'
+import importPlugin from 'eslint-plugin-import'
 import pluginReact from 'eslint-plugin-react'
 import pluginReactHooks from 'eslint-plugin-react-hooks'
-import importPlugin from 'eslint-plugin-import'
-import functionalPlugin from 'eslint-plugin-functional'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 export default [
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
@@ -20,12 +23,11 @@ export default [
     },
   },
   pluginReact.configs.flat.recommended,
-  pluginReactHooks.configs['recommended-latest'],
   importPlugin.flatConfigs.typescript,
   functionalPlugin.configs.off,
   {
     plugins: {
-      import: importPlugin,
+      'react-hooks': pluginReactHooks,
     },
     settings: {
       react: {
@@ -33,6 +35,7 @@ export default [
       },
     },
     rules: {
+      ...pluginReactHooks.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
       'react/jsx-curly-brace-presence': ['error', { props: 'never' }],
       'react/jsx-no-constructed-context-values': ['error'],
@@ -67,5 +70,15 @@ export default [
       'functional/immutable-data': ['error'],
     },
     ignores: ['dist'],
+  },
+  ...storybook.configs['flat/recommended'],
+  {
+    files: ['**/*.stories.{js,jsx,ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+    },
   },
 ]

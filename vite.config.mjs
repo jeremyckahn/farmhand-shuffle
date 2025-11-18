@@ -4,6 +4,7 @@ import { defineConfig, mergeConfig } from 'vite'
 import { defineConfig as vitestDefineConfig } from 'vitest/config'
 
 const viteConfig = defineConfig({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   plugins: [react()],
 })
 

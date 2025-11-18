@@ -18,11 +18,13 @@ export const useRejectingTimeout = () => {
   const setRejectingTimeout = (delay: number) => {
     return new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
+        // eslint-disable-next-line functional/immutable-data
         timeoutPool.current.delete(timeout)
 
         resolve()
       }, delay)
 
+      // eslint-disable-next-line functional/immutable-data
       timeoutPool.current.set(timeout, reject)
     })
   }
