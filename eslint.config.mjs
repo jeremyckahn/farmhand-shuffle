@@ -35,6 +35,7 @@ export default [
       },
     },
     rules: {
+      ...pluginReactHooks.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
       'react/jsx-curly-brace-presence': ['error', { props: 'never' }],
       'react/jsx-no-constructed-context-values': ['error'],

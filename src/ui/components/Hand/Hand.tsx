@@ -103,6 +103,7 @@ export const Hand = ({
   const gapWidthPx = getGapPixelWidth(player.hand.length)
 
   const { width: containerWidth } =
+    // eslint-disable-next-line react-hooks/refs
     containerRef.current?.getBoundingClientRect() ?? {
       width: 0,
     }

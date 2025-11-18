@@ -94,7 +94,9 @@ export const Field = ({
     }
   }, [handleWindowResize])
 
+  // NOTE: When the player.field data is changed, reset the selected card state
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedCardIdx(deselectedIdx)
   }, [player.field])
 
