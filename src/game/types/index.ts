@@ -247,6 +247,10 @@ export enum GameEvent {
   START_TURN = 'START_TURN',
 }
 
+export enum BotTurnActionEvent {
+  PHASE_COMPLETE = 'PHASE_COMPLETE',
+}
+
 interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
   type: T
   playerId: IPlayer['id']
@@ -271,6 +275,15 @@ export enum GameState {
   PLAYING_TOOL = 'PLAYING_TOOL',
   WAITING_FOR_PLAYER_SETUP_ACTION = 'WAITING_FOR_PLAYER_SETUP_ACTION',
   WAITING_FOR_PLAYER_TURN_ACTION = 'WAITING_FOR_PLAYER_TURN_ACTION',
+}
+
+export enum BotTurnActionState {
+  PLANT_CROPS = 'PLANT_CROPS',
+  WATER_CROPS = 'WATER_CROPS',
+  PLAY_EVENTS = 'PLAY_EVENTS',
+  PLAY_TOOLS = 'PLAY_TOOLS',
+  HARVEST_CROPS = 'HARVEST_CROPS',
+  DONE = 'DONE',
 }
 
 export enum GameStateGuard {
@@ -397,6 +410,10 @@ export interface GameEventPayload {
 
   [GameEvent.PROMPT_BOT_FOR_TURN_ACTION]: {
     type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION
+  }
+
+  [BotTurnActionEvent.PHASE_COMPLETE]: {
+    type: BotTurnActionEvent.PHASE_COMPLETE
   }
 }
 

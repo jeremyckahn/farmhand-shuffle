@@ -4,7 +4,13 @@ import { randomNumber } from '../../../../services/RandomNumber'
 import { BOT_ACTION_DELAY } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
-import { GameEvent, GameState, isToolCardInstance } from '../../../types'
+import {
+  BotTurnActionEvent,
+  BotTurnActionState,
+  GameEvent,
+  GameState,
+  isToolCardInstance,
+} from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
@@ -29,6 +35,15 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [GameEvent.HARVEST_CROP]: GameState.PERFORMING_BOT_CROP_HARVESTING,
 
       [GameEvent.START_TURN]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+    },
+
+    states: {
+      // FIXME: Finish this mapping
+      [BotTurnActionState.PLANT_CROPS]: {
+        on: {
+          [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.WATER_CROPS,
+        },
+      },
     },
 
     // TODO: Reimplement this as a child state machine: https://stately.ai/docs/parent-states#child-final-states
