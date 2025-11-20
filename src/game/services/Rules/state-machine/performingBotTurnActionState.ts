@@ -44,6 +44,29 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.WATER_CROPS,
         },
       },
+      [BotTurnActionState.WATER_CROPS]: {
+        on: {
+          [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.PLAY_EVENTS,
+        },
+      },
+      [BotTurnActionState.PLAY_EVENTS]: {
+        on: {
+          [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.PLAY_TOOLS,
+        },
+      },
+      [BotTurnActionState.PLAY_TOOLS]: {
+        on: {
+          [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.HARVEST_CROPS,
+        },
+      },
+      [BotTurnActionState.HARVEST_CROPS]: {
+        on: {
+          [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.DONE,
+        },
+      },
+      [BotTurnActionState.DONE]: {
+        type: 'final',
+      },
     },
 
     // TODO: Reimplement this as a child state machine: https://stately.ai/docs/parent-states#child-final-states
