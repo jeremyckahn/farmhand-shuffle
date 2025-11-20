@@ -40,6 +40,9 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
     states: {
       initializing: {
+        on: {
+          'BOT_TURN_INITIALIZED': 'checkingCropsToPlay'
+        },
         entry: enqueueActions(({ event, context, context: { game }, enqueue }) => {
           if (event.type === GameEvent.START_TURN) {
             try {
@@ -83,6 +86,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               }
 
               enqueue.assign({ ...context, game })
+              enqueue.raise({ type: 'BOT_TURN_INITIALIZED' } as any)
             } catch (error) {
               if (error instanceof PlayerOutOfFundsError) {
                 const { currentPlayerId } = game
@@ -97,9 +101,22 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 throw new GameStateCorruptError('Unexpected bot logic error')
               }
             }
+          } else {
+             // If we re-enter initializing without START_TURN (shouldn't happen due to parent transition, but just in case)
+             // We should probably proceed if initialized, or wait.
+             // But given the parent state transitions on START_TURN to here, event.type should be START_TURN.
+             // If we come back from a child state (like after planting crop), we re-enter performingBotTurnActionState?
+             // No, PLANTING_CROP transitions to PERFORMING_BOT_TURN_ACTION (parent state).
+             // So it re-enters parent. Parent initial state is initializing.
+             // But the event triggering re-entry is PROMPT_BOT_FOR_TURN_ACTION.
+             // So event.type is NOT START_TURN.
+             // In that case, we should skip initialization logic and go straight to checking?
+             // Ah! The original logic handled START_TURN specifically for initialization.
+             // But for subsequent phases (after playing a card), it just fell through to checks.
+             // So if event is NOT START_TURN, we should immediately transition to checkingCropsToPlay.
+             enqueue.raise({ type: 'BOT_TURN_INITIALIZED' } as any)
           }
         }),
-        always: 'checkingCropsToPlay',
       },
 
       checkingCropsToPlay: {
