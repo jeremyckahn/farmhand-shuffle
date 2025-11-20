@@ -1,4 +1,4 @@
-import { enqueueActions } from 'xstate'
+import { assertEvent, enqueueActions } from 'xstate'
 
 import { randomNumber } from '../../../../services/RandomNumber'
 import { BOT_ACTION_DELAY } from '../../../config'
@@ -38,31 +38,81 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     },
 
     states: {
-      // FIXME: Finish this mapping
+      // FIXME: Finish this conversion
       [BotTurnActionState.PLANT_CROPS]: {
         on: {
           [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.WATER_CROPS,
         },
+        entry: enqueueActions(
+          ({ event, context, context: { game }, enqueue }) => {
+            assertEvent(event, GameEvent.START_TURN)
+
+            enqueue.assign({
+              ...context,
+              game,
+            })
+          }
+        ),
       },
       [BotTurnActionState.WATER_CROPS]: {
         on: {
           [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.PLAY_EVENTS,
         },
+        entry: enqueueActions(
+          ({ event, context, context: { game }, enqueue }) => {
+            assertEvent(event, BotTurnActionEvent.PHASE_COMPLETE)
+
+            enqueue.assign({
+              ...context,
+              game,
+            })
+          }
+        ),
       },
       [BotTurnActionState.PLAY_EVENTS]: {
         on: {
           [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.PLAY_TOOLS,
         },
+        entry: enqueueActions(
+          ({ event, context, context: { game }, enqueue }) => {
+            assertEvent(event, BotTurnActionEvent.PHASE_COMPLETE)
+
+            enqueue.assign({
+              ...context,
+              game,
+            })
+          }
+        ),
       },
       [BotTurnActionState.PLAY_TOOLS]: {
         on: {
           [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.HARVEST_CROPS,
         },
+        entry: enqueueActions(
+          ({ event, context, context: { game }, enqueue }) => {
+            assertEvent(event, BotTurnActionEvent.PHASE_COMPLETE)
+
+            enqueue.assign({
+              ...context,
+              game,
+            })
+          }
+        ),
       },
       [BotTurnActionState.HARVEST_CROPS]: {
         on: {
           [BotTurnActionEvent.PHASE_COMPLETE]: BotTurnActionState.DONE,
         },
+        entry: enqueueActions(
+          ({ event, context, context: { game }, enqueue }) => {
+            assertEvent(event, BotTurnActionEvent.PHASE_COMPLETE)
+
+            enqueue.assign({
+              ...context,
+              game,
+            })
+          }
+        ),
       },
       [BotTurnActionState.DONE]: {
         type: 'final',
