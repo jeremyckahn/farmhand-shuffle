@@ -15,6 +15,8 @@ import { RulesMachineConfig } from './types'
 
 export const performingBotTurnActionState: RulesMachineConfig['states'] = {
   [GameState.PERFORMING_BOT_TURN_ACTION]: {
+    initial: 'initializing',
+
     on: {
       [GameEvent.PLAYER_RAN_OUT_OF_FUNDS]: GameState.GAME_OVER,
 
@@ -31,12 +33,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [GameEvent.START_TURN]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
-    // TODO: Reimplement this as a child state machine: https://stately.ai/docs/parent-states#child-final-states
-    entry: enqueueActions(({ event, context, context: { game }, enqueue }) => {
-      {
-        try {
-          switch (event.type) {
-            case GameEvent.START_TURN: {
+    exit: enqueueActions(({ event, context: { game }, enqueue }) => {
+      game = recordCardPlayEvents(game, event)
+      enqueue.assign({ game })
+    }),
+
+    states: {
+      initializing: {
+        entry: enqueueActions(({ event, context, context: { game }, enqueue }) => {
+          if (event.type === GameEvent.START_TURN) {
+            try {
               const previousTurnGameState = game
               game = incrementPlayer(game)
 
@@ -76,230 +82,233 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 ),
               }
 
-              break
-            }
+              enqueue.assign({ ...context, game })
+            } catch (error) {
+              if (error instanceof PlayerOutOfFundsError) {
+                const { currentPlayerId } = game
+                assertCurrentPlayer(currentPlayerId)
 
-            /* c8 ignore start */
-            case GameEvent.OPERATION_ABORTED: {
-              // const { currentPlayerId } = game
-              // assertCurrentPlayer(currentPlayerId)
-              //
-              // game = removeTurnCardsPlayed(game, currentPlayerId, 1)
-              //
-              // break
-
-              // NOTE: It is the responsibility of card implementations to,
-              // when played by a bot, avoid initiating actions that might need
-              // to be aborted. This may not be possible as card designs and
-              // implementations evolve. In that case, the logic above should
-              // be uncommented and tested. It is currently commented out
-              // because there is no way to test the code path.
-              throw new GameStateCorruptError(
-                `Unhandled OPERATION_ABORTED event thrown by bot player ${game.currentPlayerId}`
-              )
-            }
-            /* c8 ignore stop */
-
-            default:
-          }
-
-          const { currentPlayerId } = game
-          assertCurrentPlayer(currentPlayerId)
-
-          const areCropsToPlay = context.cropsToPlayDuringBotTurn > 0
-          let areWaterCardsToPlay = false
-          let areCropsToHarvest = false
-          let areEventCardsToPlay = false
-          let areToolsToPlay = false
-
-          // PHASE 1: Plant crops
-          if (areCropsToPlay) {
-            const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
-              game,
-              currentPlayerId
-            )
-            const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
-
-            /* c8 ignore start */
-            if (cardIdx === undefined) {
-              throw new GameStateCorruptError(
-                `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
-              )
-            }
-            /* c8 ignore stop */
-
-            enqueue.raise(
-              {
-                type: GameEvent.PLAY_CROP,
-                playerId: currentPlayerId,
-                cardIdx,
-              },
-              { delay: BOT_ACTION_DELAY }
-            )
-          } else {
-            context = {
-              ...context,
-              fieldCropIndicesToWaterDuringBotTurn:
-                botLogic.getCropCardIndicesToWater(game, currentPlayerId),
-            }
-
-            areWaterCardsToPlay =
-              context.fieldCropIndicesToWaterDuringBotTurn.length > 0
-          }
-
-          // PHASE 2: Water crops
-          if (areWaterCardsToPlay) {
-            const waterCardIdxsInPlayerHand =
-              lookup.findWaterIndexesInPlayerHand(game, currentPlayerId)
-
-            enqueue.raise(
-              {
-                type: GameEvent.PLAY_WATER,
-                cardIdx: waterCardIdxsInPlayerHand[0],
-                playerId: currentPlayerId,
-              },
-              {
-                delay: BOT_ACTION_DELAY,
+                enqueue.raise({
+                  type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS,
+                  playerId: currentPlayerId,
+                })
+              } else {
+                console.error(error)
+                throw new GameStateCorruptError('Unexpected bot logic error')
               }
-            )
+            }
           }
+        }),
+        always: 'checkingCropsToPlay',
+      },
 
-          // PHASE 3: Play events
-          if (!areCropsToPlay && !areWaterCardsToPlay) {
-            if (context.eventCardsThatCanBePlayed > 0) {
-              areEventCardsToPlay = true
+      checkingCropsToPlay: {
+        always: [
+          {
+            guard: ({ context }) => context.cropsToPlayDuringBotTurn > 0,
+            target: 'waitingForActionCompletion',
+            actions: enqueueActions(({ context: { game }, enqueue }) => {
+              const { currentPlayerId } = game
+              assertCurrentPlayer(currentPlayerId)
 
-              const eventCardIdxToPlay = botLogic.getEventCardIndexToPlay(
+              const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
                 game,
                 currentPlayerId
               )
+              const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
 
-              /* c8 ignore start */
-              if (eventCardIdxToPlay === undefined) {
+              if (cardIdx === undefined) {
                 throw new GameStateCorruptError(
-                  `areEventCardsToPlay is true but there are no events in the hand of bot player ${currentPlayerId}`
+                  `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
                 )
               }
-              /* c8 ignore stop */
 
               enqueue.raise(
                 {
-                  type: GameEvent.PLAY_EVENT,
-                  cardIdx: eventCardIdxToPlay,
+                  type: GameEvent.PLAY_CROP,
                   playerId: currentPlayerId,
+                  cardIdx,
                 },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
+                { delay: BOT_ACTION_DELAY }
               )
-            }
-          }
+            }),
+          },
+          {
+            target: 'checkingWaterToPlay',
+          },
+        ],
+      },
 
-          // PHASE 4: Play tools
-          if (!areCropsToPlay && !areWaterCardsToPlay && !areEventCardsToPlay) {
-            if (context.toolCardsThatCanBePlayed > 0) {
-              areToolsToPlay = true
-              const toolCardIdxToPlay = botLogic.getToolCardIndexToPlay(
-                game,
-                currentPlayerId
-              )
-
-              /* c8 ignore start */
-              if (toolCardIdxToPlay === undefined) {
-                throw new GameStateCorruptError(
-                  `areToolsToPlay is true but there are no tool in the hand of bot player ${currentPlayerId}`
-                )
-              }
-              /* c8 ignore stop */
-
-              enqueue.raise(
-                {
-                  type: GameEvent.PLAY_TOOL,
-                  cardIdx: toolCardIdxToPlay,
-                  playerId: currentPlayerId,
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
-              )
-            }
-          }
-
-          // PHASE 5: Harvest any mature crops
-          if (
-            !areCropsToPlay &&
-            !areWaterCardsToPlay &&
-            !areEventCardsToPlay &&
-            !areToolsToPlay
-          ) {
-            context = {
-              ...context,
-              cropCardIndicesToHarvest: botLogic.getCropCardIndicesToHarvest(
-                game,
-                currentPlayerId
-              ),
-            }
-
-            areCropsToHarvest = context.cropCardIndicesToHarvest.length > 0
-          }
-
-          if (areCropsToHarvest) {
-            enqueue.raise(
-              {
-                type: GameEvent.HARVEST_CROP,
-                playerId: currentPlayerId,
-                cropIdxInFieldToHarvest: context.cropCardIndicesToHarvest[0],
-              },
-              {
-                delay: BOT_ACTION_DELAY,
-              }
-            )
-          }
-
-          // PHASE 6: If nothing left to do, end the turn
-          const doActionsRemain =
-            areCropsToPlay ||
-            areWaterCardsToPlay ||
-            areEventCardsToPlay ||
-            areToolsToPlay ||
-            areCropsToHarvest
-
-          if (!doActionsRemain) {
-            // NOTE: Returns control back to the player
-            enqueue.raise({
-              type: GameEvent.START_TURN,
-            })
-          }
-        } catch (error) {
-          if (error instanceof PlayerOutOfFundsError) {
+      checkingWaterToPlay: {
+        entry: enqueueActions(({ context, context: { game }, enqueue }) => {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
-            enqueue.raise({
-              type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS,
-              playerId: currentPlayerId,
+            const fieldCropIndicesToWaterDuringBotTurn = botLogic.getCropCardIndicesToWater(game, currentPlayerId)
+
+            enqueue.assign({
+                ...context,
+                fieldCropIndicesToWaterDuringBotTurn
             })
-            /* c8 ignore start */
-          } else {
-            console.error(error)
-            throw new GameStateCorruptError('Unexpected bot logic error')
+        }),
+        always: [
+          {
+            guard: ({ context }) => context.fieldCropIndicesToWaterDuringBotTurn.length > 0,
+            target: 'waitingForActionCompletion',
+            actions: enqueueActions(({ context: { game }, enqueue }) => {
+                const { currentPlayerId } = game
+                assertCurrentPlayer(currentPlayerId)
+
+                const waterCardIdxsInPlayerHand =
+                  lookup.findWaterIndexesInPlayerHand(game, currentPlayerId)
+
+                enqueue.raise(
+                  {
+                    type: GameEvent.PLAY_WATER,
+                    cardIdx: waterCardIdxsInPlayerHand[0],
+                    playerId: currentPlayerId,
+                  },
+                  {
+                    delay: BOT_ACTION_DELAY,
+                  }
+                )
+            })
+          },
+          {
+            target: 'checkingEventsToPlay'
           }
-          /* c8 ignore stop */
-        }
+        ]
+      },
 
-        enqueue.assign({
-          ...context,
-          game,
-        })
+      checkingEventsToPlay: {
+        always: [
+            {
+                guard: ({ context }) => context.eventCardsThatCanBePlayed > 0,
+                target: 'waitingForActionCompletion',
+                actions: enqueueActions(({ context: { game }, enqueue }) => {
+                    const { currentPlayerId } = game
+                    assertCurrentPlayer(currentPlayerId)
+
+                    const eventCardIdxToPlay = botLogic.getEventCardIndexToPlay(
+                        game,
+                        currentPlayerId
+                    )
+
+                    if (eventCardIdxToPlay === undefined) {
+                        throw new GameStateCorruptError(
+                          `areEventCardsToPlay is true but there are no events in the hand of bot player ${currentPlayerId}`
+                        )
+                    }
+
+                    enqueue.raise(
+                        {
+                          type: GameEvent.PLAY_EVENT,
+                          cardIdx: eventCardIdxToPlay,
+                          playerId: currentPlayerId,
+                        },
+                        {
+                          delay: BOT_ACTION_DELAY,
+                        }
+                    )
+                })
+            },
+            {
+                target: 'checkingToolsToPlay'
+            }
+        ]
+      },
+
+      checkingToolsToPlay: {
+          always: [
+              {
+                  guard: ({ context }) => context.toolCardsThatCanBePlayed > 0,
+                  target: 'waitingForActionCompletion',
+                  actions: enqueueActions(({ context: { game }, enqueue }) => {
+                      const { currentPlayerId } = game
+                      assertCurrentPlayer(currentPlayerId)
+
+                      const toolCardIdxToPlay = botLogic.getToolCardIndexToPlay(
+                        game,
+                        currentPlayerId
+                      )
+
+                      if (toolCardIdxToPlay === undefined) {
+                        throw new GameStateCorruptError(
+                          `areToolsToPlay is true but there are no tool in the hand of bot player ${currentPlayerId}`
+                        )
+                      }
+
+                      enqueue.raise(
+                        {
+                          type: GameEvent.PLAY_TOOL,
+                          cardIdx: toolCardIdxToPlay,
+                          playerId: currentPlayerId,
+                        },
+                        {
+                          delay: BOT_ACTION_DELAY,
+                        }
+                      )
+                  })
+              },
+              {
+                  target: 'checkingCropsToHarvest'
+              }
+          ]
+      },
+
+      checkingCropsToHarvest: {
+          entry: enqueueActions(({ context, context: { game }, enqueue }) => {
+              const { currentPlayerId } = game
+              assertCurrentPlayer(currentPlayerId)
+
+              const cropCardIndicesToHarvest = botLogic.getCropCardIndicesToHarvest(
+                game,
+                currentPlayerId
+              )
+
+              enqueue.assign({
+                  ...context,
+                  cropCardIndicesToHarvest
+              })
+          }),
+          always: [
+              {
+                  guard: ({ context }) => context.cropCardIndicesToHarvest.length > 0,
+                  target: 'waitingForActionCompletion',
+                  actions: enqueueActions(({ context, context: { game }, enqueue }) => {
+                      const { currentPlayerId } = game
+                      assertCurrentPlayer(currentPlayerId)
+
+                      enqueue.raise(
+                        {
+                          type: GameEvent.HARVEST_CROP,
+                          playerId: currentPlayerId,
+                          cropIdxInFieldToHarvest: context.cropCardIndicesToHarvest[0],
+                        },
+                        {
+                          delay: BOT_ACTION_DELAY,
+                        }
+                      )
+                  })
+              },
+              {
+                  target: 'endingTurn'
+              }
+          ]
+      },
+
+      endingTurn: {
+          entry: enqueueActions(({ enqueue }) => {
+             enqueue.raise({
+                 type: GameEvent.START_TURN
+             })
+          }),
+          type: 'final'
+      },
+
+      waitingForActionCompletion: {
+          // Just wait for the raised event to trigger parent transition
       }
-    }),
-
-    exit: enqueueActions(({ event, context: { game }, enqueue }) => {
-      {
-        game = recordCardPlayEvents(game, event)
-
-        enqueue.assign({ game })
-      }
-    }),
+    },
   },
 }
