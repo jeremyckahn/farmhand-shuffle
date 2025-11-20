@@ -41,7 +41,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     states: {
       initializing: {
         on: {
-          'BOT_TURN_INITIALIZED': 'checkingCropsToPlay'
+          [GameEvent.BOT_TURN_INITIALIZED]: 'checkingCropsToPlay',
         },
         entry: enqueueActions(({ event, context, context: { game }, enqueue }) => {
           if (event.type === GameEvent.START_TURN) {
@@ -86,7 +86,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               }
 
               enqueue.assign({ ...context, game })
-              enqueue.raise({ type: 'BOT_TURN_INITIALIZED' } as any)
+              enqueue.raise({ type: GameEvent.BOT_TURN_INITIALIZED })
             } catch (error) {
               if (error instanceof PlayerOutOfFundsError) {
                 const { currentPlayerId } = game
@@ -114,7 +114,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
              // Ah! The original logic handled START_TURN specifically for initialization.
              // But for subsequent phases (after playing a card), it just fell through to checks.
              // So if event is NOT START_TURN, we should immediately transition to checkingCropsToPlay.
-             enqueue.raise({ type: 'BOT_TURN_INITIALIZED' } as any)
+             enqueue.raise({ type: GameEvent.BOT_TURN_INITIALIZED })
           }
         }),
       },

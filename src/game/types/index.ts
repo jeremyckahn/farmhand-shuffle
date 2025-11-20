@@ -245,6 +245,7 @@ export enum GameEvent {
   SELECT_CROP_TO_WATER = 'SELECT_CROP_TO_WATER',
   SET_SHELL = 'SET_SHELL',
   START_TURN = 'START_TURN',
+  BOT_TURN_INITIALIZED = 'BOT_TURN_INITIALIZED',
 }
 
 interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
@@ -397,6 +398,10 @@ export interface GameEventPayload {
 
   [GameEvent.PROMPT_BOT_FOR_TURN_ACTION]: {
     type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION
+  }
+
+  [GameEvent.BOT_TURN_INITIALIZED]: {
+    type: GameEvent.BOT_TURN_INITIALIZED
   }
 }
 
