@@ -1,6 +1,7 @@
 import { StateValue } from 'xstate'
 
 import { GameMachineContext } from '../../game/services/Rules/state-machine/createMachine'
+import { GameState } from '../../game/types'
 import { assertStringIsGameState } from '../../game/types/guards'
 import { ActorContext } from '../components/Game/ActorContext'
 
@@ -40,16 +41,26 @@ export const useGameRules = () => {
     })
   )
 
-  if (typeof gameState !== 'string') {
+  let resolvedGameState = gameState
+
+  if (typeof gameState === 'object') {
+    if (GameState.PERFORMING_BOT_TURN_ACTION in gameState) {
+      resolvedGameState = GameState.PERFORMING_BOT_TURN_ACTION
+    } else {
+      throw new TypeError(`Unexpected gameState shape`)
+    }
+  }
+
+  if (typeof resolvedGameState !== 'string') {
     throw new TypeError(`Actor state is not a string`)
   }
 
-  assertStringIsGameState(gameState)
+  assertStringIsGameState(resolvedGameState)
 
   return {
     eventCardsThatCanBePlayed,
     game,
-    gameState,
+    gameState: resolvedGameState,
     selectedWaterCardInHandIdx,
     winner,
   }
