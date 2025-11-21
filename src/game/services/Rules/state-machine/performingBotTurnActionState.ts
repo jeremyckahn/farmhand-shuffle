@@ -4,7 +4,12 @@ import { randomNumber } from '../../../../services/RandomNumber'
 import { BOT_ACTION_DELAY } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
-import { GameEvent, GameState, isToolCardInstance } from '../../../types'
+import {
+  BotTurnActionState,
+  GameEvent,
+  GameState,
+  isToolCardInstance,
+} from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
@@ -41,7 +46,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     states: {
       initializing: {
         on: {
-          [GameEvent.BOT_TURN_INITIALIZED]: 'checkingCropsToPlay',
+          [GameEvent.BOT_TURN_INITIALIZED]:
+            BotTurnActionState.checkingCropsToPlay,
         },
         entry: enqueueActions(
           ({ event, context, context: { game }, enqueue }) => {
@@ -112,18 +118,19 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               // In that case, we should skip initialization logic and go straight to checking?
               // Ah! The original logic handled START_TURN specifically for initialization.
               // But for subsequent phases (after playing a card), it just fell through to checks.
-              // So if event is NOT START_TURN, we should immediately transition to checkingCropsToPlay.
+              // So if event is NOT START_TURN, we should immediately
+              // transition to BotTurnActionEvent.checkingCropsToPlay.
               enqueue.raise({ type: GameEvent.BOT_TURN_INITIALIZED })
             }
           }
         ),
       },
 
-      checkingCropsToPlay: {
+      [BotTurnActionState.checkingCropsToPlay]: {
         always: [
           {
             guard: ({ context }) => context.cropsToPlayDuringBotTurn > 0,
-            target: 'waitingForActionCompletion',
+            target: BotTurnActionState.waitingForActionCompletion,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -151,12 +158,12 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: 'checkingWaterToPlay',
+            target: BotTurnActionState.checkingWaterToPlay,
           },
         ],
       },
 
-      checkingWaterToPlay: {
+      [BotTurnActionState.checkingWaterToPlay]: {
         entry: enqueueActions(({ context, context: { game }, enqueue }) => {
           const { currentPlayerId } = game
           assertCurrentPlayer(currentPlayerId)
@@ -173,7 +180,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           {
             guard: ({ context }) =>
               context.fieldCropIndicesToWaterDuringBotTurn.length > 0,
-            target: 'waitingForActionCompletion',
+            target: BotTurnActionState.waitingForActionCompletion,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -194,16 +201,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: 'checkingEventsToPlay',
+            target: BotTurnActionState.checkingEventsToPlay,
           },
         ],
       },
 
-      checkingEventsToPlay: {
+      [BotTurnActionState.checkingEventsToPlay]: {
         always: [
           {
             guard: ({ context }) => context.eventCardsThatCanBePlayed > 0,
-            target: 'waitingForActionCompletion',
+            target: BotTurnActionState.waitingForActionCompletion,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -232,16 +239,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: 'checkingToolsToPlay',
+            target: BotTurnActionState.checkingToolsToPlay,
           },
         ],
       },
 
-      checkingToolsToPlay: {
+      [BotTurnActionState.checkingToolsToPlay]: {
         always: [
           {
             guard: ({ context }) => context.toolCardsThatCanBePlayed > 0,
-            target: 'waitingForActionCompletion',
+            target: BotTurnActionState.waitingForActionCompletion,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -270,12 +277,12 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: 'checkingCropsToHarvest',
+            target: BotTurnActionState.checkingCropsToHarvest,
           },
         ],
       },
 
-      checkingCropsToHarvest: {
+      [BotTurnActionState.checkingCropsToHarvest]: {
         entry: enqueueActions(({ context, context: { game }, enqueue }) => {
           const { currentPlayerId } = game
           assertCurrentPlayer(currentPlayerId)
@@ -293,7 +300,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         always: [
           {
             guard: ({ context }) => context.cropCardIndicesToHarvest.length > 0,
-            target: 'waitingForActionCompletion',
+            target: BotTurnActionState.waitingForActionCompletion,
             actions: enqueueActions(
               ({ context, context: { game }, enqueue }) => {
                 const { currentPlayerId } = game
@@ -314,12 +321,12 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             ),
           },
           {
-            target: 'endingTurn',
+            target: BotTurnActionState.endingTurn,
           },
         ],
       },
 
-      endingTurn: {
+      [BotTurnActionState.endingTurn]: {
         entry: enqueueActions(({ enqueue }) => {
           enqueue.raise({
             type: GameEvent.START_TURN,
@@ -328,7 +335,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         type: 'final',
       },
 
-      waitingForActionCompletion: {
+      [BotTurnActionState.waitingForActionCompletion]: {
         // Just wait for the raised event to trigger parent transition
       },
     },

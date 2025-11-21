@@ -248,6 +248,16 @@ export enum GameEvent {
   BOT_TURN_INITIALIZED = 'BOT_TURN_INITIALIZED',
 }
 
+export enum BotTurnActionState {
+  checkingCropsToPlay = 'checkingCropsToPlay',
+  checkingWaterToPlay = 'checkingWaterToPlay',
+  waitingForActionCompletion = 'waitingForActionCompletion',
+  checkingEventsToPlay = 'checkingEventsToPlay',
+  checkingToolsToPlay = 'checkingToolsToPlay',
+  checkingCropsToHarvest = 'checkingCropsToHarvest',
+  endingTurn = 'endingTurn',
+}
+
 interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
   type: T
   playerId: IPlayer['id']
