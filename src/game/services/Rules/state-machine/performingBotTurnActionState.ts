@@ -126,37 +126,36 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       },
 
       [BotTurnActionState.PLAYING_CROPS]: {
+        entry: enqueueActions(({ context, context: { game }, enqueue }) => {
+          if (context.cropsToPlayDuringBotTurn > 0) {
+            const { currentPlayerId } = game
+            assertCurrentPlayer(currentPlayerId)
+
+            const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
+              game,
+              currentPlayerId
+            )
+            const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
+
+            if (cardIdx === undefined) {
+              throw new GameStateCorruptError(
+                `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
+              )
+            }
+
+            enqueue.raise(
+              {
+                type: GameEvent.PLAY_CROP,
+                playerId: currentPlayerId,
+                cardIdx,
+              },
+              { delay: BOT_ACTION_DELAY }
+            )
+          }
+        }),
         always: [
           {
-            guard: ({ context }) => context.cropsToPlayDuringBotTurn > 0,
-            target: BotTurnActionState.WAITING_FOR_COMPLETION,
-            actions: enqueueActions(({ context: { game }, enqueue }) => {
-              const { currentPlayerId } = game
-              assertCurrentPlayer(currentPlayerId)
-
-              const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
-                game,
-                currentPlayerId
-              )
-              const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
-
-              if (cardIdx === undefined) {
-                throw new GameStateCorruptError(
-                  `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
-                )
-              }
-
-              enqueue.raise(
-                {
-                  type: GameEvent.PLAY_CROP,
-                  playerId: currentPlayerId,
-                  cardIdx,
-                },
-                { delay: BOT_ACTION_DELAY }
-              )
-            }),
-          },
-          {
+            guard: ({ context }) => context.cropsToPlayDuringBotTurn <= 0,
             target: BotTurnActionState.PLAYING_WATER,
           },
         ],
@@ -170,6 +169,22 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           const fieldCropIndicesToWaterDuringBotTurn =
             botLogic.getCropCardIndicesToWater(game, currentPlayerId)
 
+          if (fieldCropIndicesToWaterDuringBotTurn.length > 0) {
+            const waterCardIdxsInPlayerHand =
+              lookup.findWaterIndexesInPlayerHand(game, currentPlayerId)
+
+            enqueue.raise(
+              {
+                type: GameEvent.PLAY_WATER,
+                cardIdx: waterCardIdxsInPlayerHand[0],
+                playerId: currentPlayerId,
+              },
+              {
+                delay: BOT_ACTION_DELAY,
+              }
+            )
+          }
+
           enqueue.assign({
             ...context,
             fieldCropIndicesToWaterDuringBotTurn,
@@ -178,104 +193,81 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         always: [
           {
             guard: ({ context }) =>
-              context.fieldCropIndicesToWaterDuringBotTurn.length > 0,
-            target: BotTurnActionState.WAITING_FOR_COMPLETION,
-            actions: enqueueActions(({ context: { game }, enqueue }) => {
-              const { currentPlayerId } = game
-              assertCurrentPlayer(currentPlayerId)
-
-              const waterCardIdxsInPlayerHand =
-                lookup.findWaterIndexesInPlayerHand(game, currentPlayerId)
-
-              enqueue.raise(
-                {
-                  type: GameEvent.PLAY_WATER,
-                  cardIdx: waterCardIdxsInPlayerHand[0],
-                  playerId: currentPlayerId,
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
-              )
-            }),
-          },
-          {
+              context.fieldCropIndicesToWaterDuringBotTurn.length <= 0,
             target: BotTurnActionState.PLAYING_EVENTS,
           },
         ],
       },
 
       [BotTurnActionState.PLAYING_EVENTS]: {
+        entry: enqueueActions(({ context, context: { game }, enqueue }) => {
+          if (context.eventCardsThatCanBePlayed > 0) {
+            const { currentPlayerId } = game
+            assertCurrentPlayer(currentPlayerId)
+
+            const eventCardIdxToPlay = botLogic.getEventCardIndexToPlay(
+              game,
+              currentPlayerId
+            )
+
+            if (eventCardIdxToPlay === undefined) {
+              throw new GameStateCorruptError(
+                `areEventCardsToPlay is true but there are no events in the hand of bot player ${currentPlayerId}`
+              )
+            }
+
+            enqueue.raise(
+              {
+                type: GameEvent.PLAY_EVENT,
+                cardIdx: eventCardIdxToPlay,
+                playerId: currentPlayerId,
+              },
+              {
+                delay: BOT_ACTION_DELAY,
+              }
+            )
+          }
+        }),
         always: [
           {
-            guard: ({ context }) => context.eventCardsThatCanBePlayed > 0,
-            target: BotTurnActionState.WAITING_FOR_COMPLETION,
-            actions: enqueueActions(({ context: { game }, enqueue }) => {
-              const { currentPlayerId } = game
-              assertCurrentPlayer(currentPlayerId)
-
-              const eventCardIdxToPlay = botLogic.getEventCardIndexToPlay(
-                game,
-                currentPlayerId
-              )
-
-              if (eventCardIdxToPlay === undefined) {
-                throw new GameStateCorruptError(
-                  `areEventCardsToPlay is true but there are no events in the hand of bot player ${currentPlayerId}`
-                )
-              }
-
-              enqueue.raise(
-                {
-                  type: GameEvent.PLAY_EVENT,
-                  cardIdx: eventCardIdxToPlay,
-                  playerId: currentPlayerId,
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
-              )
-            }),
-          },
-          {
+            guard: ({ context }) => context.eventCardsThatCanBePlayed <= 0,
             target: BotTurnActionState.PLAYING_TOOLS,
           },
         ],
       },
 
       [BotTurnActionState.PLAYING_TOOLS]: {
+        entry: enqueueActions(({ context, context: { game }, enqueue }) => {
+          if (context.toolCardsThatCanBePlayed > 0) {
+            const { currentPlayerId } = game
+            assertCurrentPlayer(currentPlayerId)
+
+            const toolCardIdxToPlay = botLogic.getToolCardIndexToPlay(
+              game,
+              currentPlayerId
+            )
+
+            if (toolCardIdxToPlay === undefined) {
+              throw new GameStateCorruptError(
+                `areToolsToPlay is true but there are no tool in the hand of bot player ${currentPlayerId}`
+              )
+            }
+
+            enqueue.raise(
+              {
+                type: GameEvent.PLAY_TOOL,
+                cardIdx: toolCardIdxToPlay,
+                playerId: currentPlayerId,
+              },
+              {
+                delay: BOT_ACTION_DELAY,
+              }
+            )
+          }
+        }),
         always: [
           {
-            guard: ({ context }) => context.toolCardsThatCanBePlayed > 0,
-            target: BotTurnActionState.WAITING_FOR_COMPLETION,
-            actions: enqueueActions(({ context: { game }, enqueue }) => {
-              const { currentPlayerId } = game
-              assertCurrentPlayer(currentPlayerId)
-
-              const toolCardIdxToPlay = botLogic.getToolCardIndexToPlay(
-                game,
-                currentPlayerId
-              )
-
-              if (toolCardIdxToPlay === undefined) {
-                throw new GameStateCorruptError(
-                  `areToolsToPlay is true but there are no tool in the hand of bot player ${currentPlayerId}`
-                )
-              }
-
-              enqueue.raise(
-                {
-                  type: GameEvent.PLAY_TOOL,
-                  cardIdx: toolCardIdxToPlay,
-                  playerId: currentPlayerId,
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
-              )
-            }),
-          },
-          {
+            guard: ({ context }) => context.toolCardsThatCanBePlayed <= 0,
             target: BotTurnActionState.HARVESTING_CROPS,
           },
         ],
@@ -291,6 +283,19 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             currentPlayerId
           )
 
+          if (cropCardIndicesToHarvest.length > 0) {
+            enqueue.raise(
+              {
+                type: GameEvent.HARVEST_CROP,
+                playerId: currentPlayerId,
+                cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
+              },
+              {
+                delay: BOT_ACTION_DELAY,
+              }
+            )
+          }
+
           enqueue.assign({
             ...context,
             cropCardIndicesToHarvest,
@@ -298,28 +303,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         }),
         always: [
           {
-            guard: ({ context }) => context.cropCardIndicesToHarvest.length > 0,
-            target: BotTurnActionState.WAITING_FOR_COMPLETION,
-            actions: enqueueActions(
-              ({ context, context: { game }, enqueue }) => {
-                const { currentPlayerId } = game
-                assertCurrentPlayer(currentPlayerId)
-
-                enqueue.raise(
-                  {
-                    type: GameEvent.HARVEST_CROP,
-                    playerId: currentPlayerId,
-                    cropIdxInFieldToHarvest:
-                      context.cropCardIndicesToHarvest[0],
-                  },
-                  {
-                    delay: BOT_ACTION_DELAY,
-                  }
-                )
-              }
-            ),
-          },
-          {
+            guard: ({ context }) =>
+              context.cropCardIndicesToHarvest.length <= 0,
             target: BotTurnActionState.DONE,
           },
         ],
@@ -332,10 +317,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           })
         }),
         type: 'final',
-      },
-
-      [BotTurnActionState.WAITING_FOR_COMPLETION]: {
-        // Just wait for the raised event to trigger parent transition
       },
     },
   },
