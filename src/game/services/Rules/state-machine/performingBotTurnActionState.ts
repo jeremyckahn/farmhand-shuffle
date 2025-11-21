@@ -46,8 +46,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     states: {
       initializing: {
         on: {
-          [GameEvent.BOT_TURN_INITIALIZED]:
-            BotTurnActionState.checkingCropsToPlay,
+          [GameEvent.BOT_TURN_INITIALIZED]: BotTurnActionState.PLAYING_CROPS,
         },
         entry: enqueueActions(
           ({ event, context, context: { game }, enqueue }) => {
@@ -126,11 +125,11 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         ),
       },
 
-      [BotTurnActionState.checkingCropsToPlay]: {
+      [BotTurnActionState.PLAYING_CROPS]: {
         always: [
           {
             guard: ({ context }) => context.cropsToPlayDuringBotTurn > 0,
-            target: BotTurnActionState.waitingForActionCompletion,
+            target: BotTurnActionState.WAITING_FOR_COMPLETION,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -158,12 +157,12 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: BotTurnActionState.checkingWaterToPlay,
+            target: BotTurnActionState.PLAYING_WATER,
           },
         ],
       },
 
-      [BotTurnActionState.checkingWaterToPlay]: {
+      [BotTurnActionState.PLAYING_WATER]: {
         entry: enqueueActions(({ context, context: { game }, enqueue }) => {
           const { currentPlayerId } = game
           assertCurrentPlayer(currentPlayerId)
@@ -180,7 +179,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           {
             guard: ({ context }) =>
               context.fieldCropIndicesToWaterDuringBotTurn.length > 0,
-            target: BotTurnActionState.waitingForActionCompletion,
+            target: BotTurnActionState.WAITING_FOR_COMPLETION,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -201,16 +200,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: BotTurnActionState.checkingEventsToPlay,
+            target: BotTurnActionState.PLAYING_EVENTS,
           },
         ],
       },
 
-      [BotTurnActionState.checkingEventsToPlay]: {
+      [BotTurnActionState.PLAYING_EVENTS]: {
         always: [
           {
             guard: ({ context }) => context.eventCardsThatCanBePlayed > 0,
-            target: BotTurnActionState.waitingForActionCompletion,
+            target: BotTurnActionState.WAITING_FOR_COMPLETION,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -239,16 +238,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: BotTurnActionState.checkingToolsToPlay,
+            target: BotTurnActionState.PLAYING_TOOLS,
           },
         ],
       },
 
-      [BotTurnActionState.checkingToolsToPlay]: {
+      [BotTurnActionState.PLAYING_TOOLS]: {
         always: [
           {
             guard: ({ context }) => context.toolCardsThatCanBePlayed > 0,
-            target: BotTurnActionState.waitingForActionCompletion,
+            target: BotTurnActionState.WAITING_FOR_COMPLETION,
             actions: enqueueActions(({ context: { game }, enqueue }) => {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
@@ -277,12 +276,12 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }),
           },
           {
-            target: BotTurnActionState.checkingCropsToHarvest,
+            target: BotTurnActionState.HARVESTING_CROPS,
           },
         ],
       },
 
-      [BotTurnActionState.checkingCropsToHarvest]: {
+      [BotTurnActionState.HARVESTING_CROPS]: {
         entry: enqueueActions(({ context, context: { game }, enqueue }) => {
           const { currentPlayerId } = game
           assertCurrentPlayer(currentPlayerId)
@@ -300,7 +299,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         always: [
           {
             guard: ({ context }) => context.cropCardIndicesToHarvest.length > 0,
-            target: BotTurnActionState.waitingForActionCompletion,
+            target: BotTurnActionState.WAITING_FOR_COMPLETION,
             actions: enqueueActions(
               ({ context, context: { game }, enqueue }) => {
                 const { currentPlayerId } = game
@@ -321,12 +320,12 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             ),
           },
           {
-            target: BotTurnActionState.endingTurn,
+            target: BotTurnActionState.DONE,
           },
         ],
       },
 
-      [BotTurnActionState.endingTurn]: {
+      [BotTurnActionState.DONE]: {
         entry: enqueueActions(({ enqueue }) => {
           enqueue.raise({
             type: GameEvent.START_TURN,
@@ -335,7 +334,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         type: 'final',
       },
 
-      [BotTurnActionState.waitingForActionCompletion]: {
+      [BotTurnActionState.WAITING_FOR_COMPLETION]: {
         // Just wait for the raised event to trigger parent transition
       },
     },

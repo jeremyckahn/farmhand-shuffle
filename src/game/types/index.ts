@@ -249,13 +249,13 @@ export enum GameEvent {
 }
 
 export enum BotTurnActionState {
-  checkingCropsToPlay = 'checkingCropsToPlay',
-  checkingWaterToPlay = 'checkingWaterToPlay',
-  waitingForActionCompletion = 'waitingForActionCompletion',
-  checkingEventsToPlay = 'checkingEventsToPlay',
-  checkingToolsToPlay = 'checkingToolsToPlay',
-  checkingCropsToHarvest = 'checkingCropsToHarvest',
-  endingTurn = 'endingTurn',
+  DONE = 'DONE',
+  HARVESTING_CROPS = 'HARVESTING_CROPS',
+  PLAYING_CROPS = 'PLAYING_CROPS',
+  PLAYING_EVENTS = 'PLAYING_EVENTS',
+  PLAYING_TOOLS = 'PLAYING_TOOLS',
+  PLAYING_WATER = 'PLAYING_WATER',
+  WAITING_FOR_COMPLETION = 'WAITING_FOR_COMPLETION',
 }
 
 interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
