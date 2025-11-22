@@ -106,19 +106,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 }
               }
             } else {
-              // If we re-enter initializing without START_TURN (shouldn't happen due to parent transition, but just in case)
-              // We should probably proceed if initialized, or wait.
-              // But given the parent state transitions on START_TURN to here, event.type should be START_TURN.
-              // If we come back from a child state (like after planting crop), we re-enter performingBotTurnActionState?
-              // No, PLANTING_CROP transitions to PERFORMING_BOT_TURN_ACTION (parent state).
-              // So it re-enters parent. Parent initial state is initializing.
-              // But the event triggering re-entry is PROMPT_BOT_FOR_TURN_ACTION.
-              // So event.type is NOT START_TURN.
-              // In that case, we should skip initialization logic and go straight to checking?
-              // Ah! The original logic handled START_TURN specifically for initialization.
-              // But for subsequent phases (after playing a card), it just fell through to checks.
-              // So if event is NOT START_TURN, we should immediately
-              // transition to BotTurnActionEvent.checkingCropsToPlay.
+              // When re-entering this state after performing an action (e.g.
+              // planting a crop), the turn has already been initialized. We
+              // skip the setup logic and proceed directly to the next action
+              // phase.
               enqueue.raise({ type: GameEvent.BOT_TURN_INITIALIZED })
             }
           }
