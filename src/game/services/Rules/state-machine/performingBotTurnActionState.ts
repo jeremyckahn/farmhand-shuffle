@@ -115,7 +115,9 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         },
         entry: enqueueActions(
           withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            if (context.cropsToPlayDuringBotTurn > 0) {
+            const areCropsToPlay = context.cropsToPlayDuringBotTurn > 0
+
+            if (areCropsToPlay) {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
 
@@ -193,7 +195,9 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         },
         entry: enqueueActions(
           withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            if (context.eventCardsThatCanBePlayed > 0) {
+            const areEventCardsToPlay = context.eventCardsThatCanBePlayed > 0
+
+            if (areEventCardsToPlay) {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
 
@@ -232,7 +236,9 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         },
         entry: enqueueActions(
           withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            if (context.toolCardsThatCanBePlayed > 0) {
+            const areToolsToPlay = context.toolCardsThatCanBePlayed > 0
+
+            if (areToolsToPlay) {
               const { currentPlayerId } = game
               assertCurrentPlayer(currentPlayerId)
 

@@ -26,7 +26,7 @@ describe('bot turn action error handling', () => {
     gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
 
     vi.spyOn(botLogic, 'getCropCardIndicesToWater').mockImplementation(() => {
-      throw new PlayerOutOfFundsError('Mocked out of funds')
+      throw new PlayerOutOfFundsError(player2.id)
     })
 
     gameActor.send({ type: GameEvent.START_TURN })
