@@ -2,9 +2,11 @@
 import { IPlayer } from '../../types'
 
 export class PlayerOutOfFundsError extends Error {
+  readonly playerId: IPlayer['id']
+
   constructor(playerId: IPlayer['id']) {
-    super(...arguments)
-    this.message = `[PlayerOutOfFundsError] Player ${playerId} is out of funds.`
+    super(`[PlayerOutOfFundsError] Player ${playerId} is out of funds.`)
+    this.playerId = playerId
   }
 }
 
