@@ -8,13 +8,12 @@ Farmhand Shuffle is a part of the [Farmhand](https://www.farmhand.life/) game se
 
 ## 🟡 Project status
 
-Farmhand Shuffle is **stable** but **incomplete** and **under development**.
+Farmhand Shuffle is **stable** and **playable** but **incomplete** and **under
+development**.
 
 While a game of Farmhand Shuffle can be played from start to finish and either
 won or lost, many things are still missing. Some planned features:
 
-- Tool cards
-- Event cards
 - More crop cards
 - Multiplayer
 - A single-player campaign
@@ -44,9 +43,9 @@ a more complete explanation of the game rules.
 
 - **Crop Cards**: Represent different types of crops that can be planted.
 - **Water Cards**: Used to water crops.
-- 🚧 **Event Cards**: These cards might introduce various events that affect
+- **Event Cards**: These cards might introduce various events that affect
   gameplay.
-- 🚧 **Tool Cards**: Cards that provide tools or actions to the player.
+- **Tool Cards**: Cards that provide tools or actions to the player.
 - 🚧 **Animal Cards**: Animals that can be placed in the Field to produce
   things for their owner
 - **Community Fund**: A central pool of funds that players interact with.
