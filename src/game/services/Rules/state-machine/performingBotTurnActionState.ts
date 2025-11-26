@@ -158,10 +158,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
-            const fieldCropIndicesToWaterDuringBotTurn =
+            const botFieldCropIndicesToWaterDuringTurn =
               botLogic.getCropCardIndicesToWater(game, currentPlayerId)
             const areWaterCardsToPlay =
-              fieldCropIndicesToWaterDuringBotTurn.length > 0
+              botFieldCropIndicesToWaterDuringTurn.length > 0
 
             if (areWaterCardsToPlay) {
               const waterCardIdxsInPlayerHand =
@@ -183,7 +183,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
             enqueue.assign({
               ...context,
-              fieldCropIndicesToWaterDuringBotTurn,
+              botFieldCropIndicesToWaterDuringTurn,
             })
           })
         ),

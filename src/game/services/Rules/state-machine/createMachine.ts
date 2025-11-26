@@ -18,7 +18,7 @@ export interface GameMachineContext {
   botCropsToPlayDuringTurn: number
   eventCardsThatCanBePlayed: number
   toolCardsThatCanBePlayed: number
-  fieldCropIndicesToWaterDuringBotTurn: number[]
+  botFieldCropIndicesToWaterDuringTurn: number[]
   game: IGame
   selectedWaterCardInHandIdx: number
   shell: IShell
