@@ -11,18 +11,27 @@ import {
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
-// TODO: Consolidate GameMachineContext and IGame
+// TODO: Some of the properties of GameMachineContext need to be moved into the
+// IGame interface. They are individually marked with TODO comments on their
+// respective lines. This will be a wide-ranging change. The work can be
+// validated by running the type checker (npm run check:types`) and the unit
+// tests (`npm run test`). It is recommended to do this in an iterative
+// fashion. Ensure that the relevant type guards in
+// src/game/types/guards/index.ts are updated and expanded as necessary to
+// ensure there are no type safety regressions. This will require updating test
+// and UI code. This is strictly a refactor, there should be no functional
+// changes whatsoever.
 export interface GameMachineContext {
   botCropCardIndicesToHarvest: number[]
   botCropsToPlayDuringTurn: number
   botFieldCropIndicesToWaterDuringTurn: number[]
-  cardsToDrawAtTurnStart: number
-  eventCardsThatCanBePlayed: number
+  cardsToDrawAtTurnStart: number // TODO: Move this into IGame
+  eventCardsThatCanBePlayed: number // TODO: Move this into IGame
   game: IGame
-  selectedWaterCardInHandIdx: number
+  selectedWaterCardInHandIdx: number // TODO: Move this into IGame
   shell: IShell
-  toolCardsThatCanBePlayed: number
-  winner: IPlayer['id'] | null
+  toolCardsThatCanBePlayed: number // TODO: Move this into IGame
+  winner: IPlayer['id'] | null // TODO: Move this into IGame
 }
 
 export const { createMachine } = setup({
