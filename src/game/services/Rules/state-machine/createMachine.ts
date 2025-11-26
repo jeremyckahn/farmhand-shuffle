@@ -13,15 +13,15 @@ import { assertCurrentPlayer } from '../../../types/guards'
 
 // TODO: Consolidate GameMachineContext and IGame
 export interface GameMachineContext {
-  cardsToDrawAtTurnStart: number
   botCropCardIndicesToHarvest: number[]
   botCropsToPlayDuringTurn: number
-  eventCardsThatCanBePlayed: number
-  toolCardsThatCanBePlayed: number
   botFieldCropIndicesToWaterDuringTurn: number[]
+  cardsToDrawAtTurnStart: number
+  eventCardsThatCanBePlayed: number
   game: IGame
   selectedWaterCardInHandIdx: number
   shell: IShell
+  toolCardsThatCanBePlayed: number
   winner: IPlayer['id'] | null
 }
 
