@@ -279,16 +279,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
-            const cropCardIndicesToHarvest =
+            const botCropCardIndicesToHarvest =
               botLogic.getCropCardIndicesToHarvest(game, currentPlayerId)
-            const areCropsToHarvest = cropCardIndicesToHarvest.length > 0
+            const areCropsToHarvest = botCropCardIndicesToHarvest.length > 0
 
             if (areCropsToHarvest) {
               enqueue.raise(
                 {
                   type: GameEvent.HARVEST_CROP,
                   playerId: currentPlayerId,
-                  cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
+                  cropIdxInFieldToHarvest: botCropCardIndicesToHarvest[0],
                 },
                 {
                   delay: BOT_ACTION_DELAY,
@@ -300,7 +300,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
             enqueue.assign({
               ...context,
-              cropCardIndicesToHarvest,
+              botCropCardIndicesToHarvest,
             })
           })
         ),

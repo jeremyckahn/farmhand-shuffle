@@ -17,7 +17,7 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
       ({
         context: {
           game,
-          cropCardIndicesToHarvest: [cropCardIdxToHarvest],
+          botCropCardIndicesToHarvest: [cropCardIdxToHarvest],
           shell: { triggerNotification },
         },
         enqueue,

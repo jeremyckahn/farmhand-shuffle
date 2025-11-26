@@ -14,7 +14,7 @@ import { assertCurrentPlayer } from '../../../types/guards'
 // TODO: Consolidate GameMachineContext and IGame
 export interface GameMachineContext {
   cardsToDrawAtTurnStart: number
-  cropCardIndicesToHarvest: number[]
+  botCropCardIndicesToHarvest: number[]
   cropsToPlayDuringBotTurn: number
   eventCardsThatCanBePlayed: number
   toolCardsThatCanBePlayed: number

@@ -16,7 +16,7 @@ export const createGameStateMachineContext = (): GameMachineContext => {
     toolCardsThatCanBePlayed: 0,
     selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
     fieldCropIndicesToWaterDuringBotTurn: [],
-    cropCardIndicesToHarvest: [],
+    botCropCardIndicesToHarvest: [],
     shell: {
       triggerNotification: () => {},
     },
