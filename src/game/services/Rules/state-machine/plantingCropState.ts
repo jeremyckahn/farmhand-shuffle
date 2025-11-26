@@ -19,7 +19,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
     },
 
     entry: enqueueActions(
-      ({ event, context: { game, cropsToPlayDuringBotTurn }, enqueue }) => {
+      ({ event, context: { game, botCropsToPlayDuringTurn }, enqueue }) => {
         assertEvent(event, GameEvent.PLAY_CROP)
 
         const { playerId, cardIdx } = event
@@ -29,8 +29,8 @@ export const plantingCropState: RulesMachineConfig['states'] = {
 
           const { currentPlayerId, sessionOwnerPlayerId } = game
 
-          if (cropsToPlayDuringBotTurn > 0) {
-            cropsToPlayDuringBotTurn--
+          if (botCropsToPlayDuringTurn > 0) {
+            botCropsToPlayDuringTurn--
           }
 
           if (currentPlayerId === sessionOwnerPlayerId) {
@@ -45,7 +45,10 @@ export const plantingCropState: RulesMachineConfig['states'] = {
           return
         }
 
-        enqueue.assign({ game, cropsToPlayDuringBotTurn })
+        enqueue.assign({
+          game,
+          botCropsToPlayDuringTurn,
+        })
       }
     ),
 

@@ -79,7 +79,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
                   context = {
                     ...context,
-                    cropsToPlayDuringBotTurn:
+                    botCropsToPlayDuringTurn:
                       botLogic.getNumberOfCropCardsToPlay(
                         game,
                         currentPlayerId
@@ -115,7 +115,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         },
         entry: enqueueActions(
           withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            const areCropsToPlay = context.cropsToPlayDuringBotTurn > 0
+            const areCropsToPlay = context.botCropsToPlayDuringTurn > 0
 
             if (areCropsToPlay) {
               const { currentPlayerId } = game
