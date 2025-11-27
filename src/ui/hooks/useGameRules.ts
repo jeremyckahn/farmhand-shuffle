@@ -8,16 +8,18 @@ import { ActorContext } from '../components/Game/ActorContext'
 export interface GameRuleMachineContextSelectorDerivation
   extends Pick<GameMachineContext, 'game'> {
   gameState: StateValue
+  winner: GameMachineContext['game']['winner']
 }
 
 export const useGameRules = () => {
-  const { game, gameState } = ActorContext.useSelector(
+  const { game, gameState, winner } = ActorContext.useSelector(
     ({
       context: { game },
       value,
     }): GameRuleMachineContextSelectorDerivation => ({
       game,
       gameState: value,
+      winner: game.winner,
     })
   )
 
@@ -40,6 +42,6 @@ export const useGameRules = () => {
   return {
     game,
     gameState: resolvedGameState,
-    winner: game.winner,
+    winner,
   }
 }

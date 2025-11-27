@@ -141,6 +141,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     render(<StubTurnControl game={game} />)
@@ -163,6 +164,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     render(<StubTurnControl game={game} />)
@@ -187,6 +189,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     render(<StubTurnControl game={game} />)
@@ -215,6 +218,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     render(<StubTurnControl game={game} />)
@@ -244,6 +248,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     const send = mockSend()
@@ -271,6 +276,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     const send = mockSend()
@@ -300,6 +306,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     render(<StubTurnControl game={game} />)
@@ -330,6 +337,7 @@ describe('TurnControl Component', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       },
+      winner: null,
     })
 
     render(<StubTurnControl game={game} />)

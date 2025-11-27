@@ -44,6 +44,7 @@ describe('useGame', () => {
         winner: null,
       },
       gameState: GameState.UNINITIALIZED,
+      winner: null,
     })
 
     vi.spyOn(console, 'debug').mockImplementationOnce(vi.fn())
@@ -136,6 +137,7 @@ describe('useGame', () => {
         winner: null,
       },
       gameState: GameState.UNINITIALIZED,
+      winner: null,
     })
 
     const { result } = renderHook(() =>
@@ -173,6 +175,7 @@ describe('useGame', () => {
         winner: null,
       },
       gameState: GameState.PLAYER_WATERING_CROP,
+      winner: null,
     })
 
     const { result } = renderHook(() =>
@@ -204,6 +207,7 @@ describe('useGame', () => {
         winner: null,
       },
       gameState: GameState.PLAYER_WATERING_CROP,
+      winner: null,
     })
 
     const { result } = renderHook(() =>
