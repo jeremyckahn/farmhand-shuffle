@@ -202,7 +202,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [GameEvent.BOT_TURN_PHASE_COMPLETE]: BotTurnActionState.PLAYING_TOOLS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
+          withBotErrorHandling(({ context: { game }, enqueue }) => {
             const areEventCardsToPlay = game.eventCardsThatCanBePlayed > 0
 
             if (areEventCardsToPlay) {
