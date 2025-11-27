@@ -41,7 +41,7 @@ const GameCore = ({
     showHand,
     snackbarProps,
     winner,
-  } = useGame({ playerSeeds, userPlayerId })
+  } = useGame({ playerSeeds, userPlayerId }) as ReturnType<typeof useGame>
 
   return (
     <ShellContext.Provider value={shellContextValue}>
@@ -94,7 +94,8 @@ const GameCore = ({
         <Dialog open={showGameOver}>
           <DialogTitle>Game Over</DialogTitle>
           <DialogContent>
-            Winner: <strong>{funAnimalName(winner ?? '')}</strong>
+            Winner:{' '}
+            <strong>{winner ? funAnimalName(winner) : 'No one'}</strong>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClickPlayAgain}>Play again</Button>
