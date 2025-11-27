@@ -86,19 +86,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                         game,
                         currentPlayerId
                       ),
+                    toolCardsThatCanBePlayed:
+                      botLogic.getNumberOfToolCardsToPlay(
+                        game,
+                        currentPlayerId
+                      ),
                   }
                   context = {
                     ...context,
                     botCropsToPlayDuringTurn:
                       botLogic.getNumberOfCropCardsToPlay(
-                        game,
-                        currentPlayerId
-                      ),
-                  }
-                  game = {
-                    ...game,
-                    toolCardsThatCanBePlayed:
-                      botLogic.getNumberOfToolCardsToPlay(
                         game,
                         currentPlayerId
                       ),
