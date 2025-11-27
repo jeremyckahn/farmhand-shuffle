@@ -35,8 +35,12 @@ export const shovel: ITool = Object.freeze<ITool>({
   },
 
   onStartFollowingTurn: context => {
-    context = { ...context, cardsToDrawAtTurnStart: 0 }
-
-    return context
+    return {
+      ...context,
+      game: {
+        ...context.game,
+        cardsToDrawAtTurnStart: 0,
+      },
+    }
   },
 })

@@ -52,19 +52,15 @@ export const plantingCropState: RulesMachineConfig['states'] = {
       }
     ),
 
-    exit: enqueueActions(
-      ({ event, context: { selectedWaterCardInHandIdx }, enqueue }) => {
-        switch (event.type) {
-          case GameEvent.OPERATION_ABORTED: {
-            selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
-            break
-          }
-
-          default:
-        }
-
-        enqueue.assign({ selectedWaterCardInHandIdx })
+    exit: enqueueActions(({ event, context: { game }, enqueue }) => {
+      if (event.type === GameEvent.OPERATION_ABORTED) {
+        enqueue.assign({
+          game: {
+            ...game,
+            selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+          },
+        })
       }
-    ),
+    }),
   },
 }

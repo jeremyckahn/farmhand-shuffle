@@ -74,8 +74,8 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
         try {
           switch (event.type) {
             case GameEvent.START_TURN: {
-              context = {
-                ...context,
+              game = {
+                ...game,
                 cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
               }
               const previousTurnGameState = game
@@ -89,13 +89,14 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
 
               for (const turnCardPlayed of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
                 if (isToolCardInstance(turnCardPlayed)) {
-                  context =
+                  const newContext =
                     turnCardPlayed.onStartFollowingTurn?.(context) ?? context
+                  game = newContext.game
                 }
               }
 
-              context = {
-                ...context,
+              game = {
+                ...game,
                 eventCardsThatCanBePlayed:
                   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
               }
@@ -103,7 +104,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
               game = startTurn(
                 game,
                 currentPlayerId,
-                context.cardsToDrawAtTurnStart
+                game.cardsToDrawAtTurnStart
               )
 
               break

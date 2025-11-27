@@ -104,10 +104,12 @@ describe('Card', () => {
       const send = mockSend()
       const game = stubGame()
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        eventCardsThatCanBePlayed: 1,
         gameState,
-        game,
-        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        game: {
+          ...game,
+          selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+          winner: null,
+        },
         winner: null,
       })
 
@@ -138,10 +140,11 @@ describe('Card', () => {
     ({ gameState }) => {
       const send = mockSend()
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        eventCardsThatCanBePlayed: 1,
         gameState,
-        game: stubGame(),
-        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        game: stubGame({
+          selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+          winner: null,
+        }),
         winner: null,
       })
 
@@ -172,10 +175,8 @@ describe('Card', () => {
     const selectedWaterCardInHandIdx = 2
 
     vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      eventCardsThatCanBePlayed: 1,
       gameState: GameState.PLAYER_WATERING_CROP,
-      game: stubGame(),
-      selectedWaterCardInHandIdx,
+      game: stubGame({ selectedWaterCardInHandIdx, winner: null }),
       winner: null,
     })
 
@@ -207,10 +208,8 @@ describe('Card', () => {
     const send = mockSend()
 
     vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      eventCardsThatCanBePlayed: 1,
       gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-      game: stubGame(),
-      selectedWaterCardInHandIdx: 0,
+      game: stubGame({ selectedWaterCardInHandIdx: 0, winner: null }),
       winner: null,
     })
 
@@ -243,10 +242,12 @@ describe('Card', () => {
   test('allows player to play event card', () => {
     const send = mockSend()
     vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      eventCardsThatCanBePlayed: 1,
       gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-      game: stubGame(),
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: stubGame({
+        eventCardsThatCanBePlayed: 1,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      }),
       winner: null,
     })
 
@@ -270,10 +271,11 @@ describe('Card', () => {
   test('allows player to play tool card', () => {
     const send = mockSend()
     vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      eventCardsThatCanBePlayed: 1,
       gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-      game: stubGame(),
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: stubGame({
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      }),
       winner: null,
     })
 
@@ -297,10 +299,12 @@ describe('Card', () => {
 
     test('shows "Needs water" tooltip when canBeWatered is true', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        eventCardsThatCanBePlayed: 1,
         gameState: GameState.PLAYER_WATERING_CROP,
-        game,
-        selectedWaterCardInHandIdx: 0,
+        game: {
+          ...game,
+          selectedWaterCardInHandIdx: 0,
+          winner: null,
+        },
         winner: null,
       })
 
@@ -313,10 +317,12 @@ describe('Card', () => {
 
     test('shows "Ready to be harvested" tooltip when canBeHarvested is true', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        eventCardsThatCanBePlayed: 1,
         gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game,
-        selectedWaterCardInHandIdx: 0,
+        game: {
+          ...game,
+          selectedWaterCardInHandIdx: 0,
+          winner: null,
+        },
         winner: null,
       })
 
@@ -333,10 +339,12 @@ describe('Card', () => {
 
     test('shows no tooltip when neither canBeWatered nor canBeHarvested is true', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        eventCardsThatCanBePlayed: 1,
         gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game,
-        selectedWaterCardInHandIdx: 0,
+        game: {
+          ...game,
+          selectedWaterCardInHandIdx: 0,
+          winner: null,
+        },
         winner: null,
       })
 
@@ -350,10 +358,12 @@ describe('Card', () => {
 
     test('tooltip does not show when isSessionOwnersCard is false', () => {
       vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        eventCardsThatCanBePlayed: 1,
         gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game,
-        selectedWaterCardInHandIdx: 0,
+        game: {
+          ...game,
+          selectedWaterCardInHandIdx: 0,
+          winner: null,
+        },
         winner: null,
       })
 

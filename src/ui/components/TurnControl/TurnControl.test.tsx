@@ -135,10 +135,12 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
@@ -156,10 +158,12 @@ describe('TurnControl Component', () => {
     game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
@@ -179,10 +183,12 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
@@ -206,10 +212,12 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
@@ -234,10 +242,12 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
@@ -260,10 +270,12 @@ describe('TurnControl Component', () => {
     game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
@@ -288,10 +300,12 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
@@ -317,10 +331,12 @@ describe('TurnControl Component', () => {
     })
 
     vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
       gameState,
-      game,
-      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      game: {
+        ...game,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        winner: null,
+      },
       winner: null,
     })
 
