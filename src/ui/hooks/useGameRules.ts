@@ -40,6 +40,5 @@ export const useGameRules = () => {
   return {
     game,
     gameState: resolvedGameState,
-    winner: game.winner,
   }
 }
