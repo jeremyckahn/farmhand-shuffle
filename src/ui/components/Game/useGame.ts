@@ -14,9 +14,7 @@ export const useGame = ({
   userPlayerId,
 }: Pick<GameProps, 'playerSeeds' | 'userPlayerId'>) => {
   const actorRef = ActorContext.useActorRef()
-  const { game, gameState, winner } = useGameRules() as ReturnType<
-    typeof useGameRules
-  >
+  const { game, gameState, winner } = useGameRules()
   const [isHandInViewport, setIsHandInViewport] = useState(true)
 
   useEffect(() => {

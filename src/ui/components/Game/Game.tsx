@@ -41,7 +41,7 @@ const GameCore = ({
     showHand,
     snackbarProps,
     winner,
-  } = useGame({ playerSeeds, userPlayerId }) as ReturnType<typeof useGame>
+  } = useGame({ playerSeeds, userPlayerId })
 
   return (
     <ShellContext.Provider value={shellContextValue}>
