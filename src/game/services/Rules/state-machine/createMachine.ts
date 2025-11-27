@@ -7,7 +7,6 @@ import {
   GameStateGuard,
   GameEvent,
   IShell,
-  IPlayer,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
