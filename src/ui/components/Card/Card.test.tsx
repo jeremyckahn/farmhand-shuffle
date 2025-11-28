@@ -110,7 +110,6 @@ describe('Card', () => {
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
           winner: null,
         },
-        winner: null,
       })
 
       render(
@@ -145,7 +144,6 @@ describe('Card', () => {
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
           winner: null,
         }),
-        winner: null,
       })
 
       render(
@@ -177,7 +175,6 @@ describe('Card', () => {
     vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
       gameState: GameState.PLAYER_WATERING_CROP,
       game: stubGame({ selectedWaterCardInHandIdx, winner: null }),
-      winner: null,
     })
 
     render(
@@ -210,7 +207,6 @@ describe('Card', () => {
     vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
       gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
       game: stubGame({ selectedWaterCardInHandIdx: 0, winner: null }),
-      winner: null,
     })
 
     const cardIdx = 2
@@ -248,7 +244,6 @@ describe('Card', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       }),
-      winner: null,
     })
 
     render(
@@ -276,7 +271,6 @@ describe('Card', () => {
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         winner: null,
       }),
-      winner: null,
     })
 
     render(
@@ -305,7 +299,6 @@ describe('Card', () => {
           selectedWaterCardInHandIdx: 0,
           winner: null,
         },
-        winner: null,
       })
 
       render(
@@ -323,7 +316,6 @@ describe('Card', () => {
           selectedWaterCardInHandIdx: 0,
           winner: null,
         },
-        winner: null,
       })
 
       render(
@@ -345,7 +337,6 @@ describe('Card', () => {
           selectedWaterCardInHandIdx: 0,
           winner: null,
         },
-        winner: null,
       })
 
       render(<StubCard isInField playerId={game.sessionOwnerPlayerId} />)
@@ -364,7 +355,6 @@ describe('Card', () => {
           selectedWaterCardInHandIdx: 0,
           winner: null,
         },
-        winner: null,
       })
 
       render(

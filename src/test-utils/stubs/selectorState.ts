@@ -8,6 +8,5 @@ export const stubSelectorState = (
 ): GameRuleMachineContextSelectorDerivation => ({
   game: stubGame({ winner: null }),
   gameState: GameState.UNINITIALIZED,
-  winner: null,
   ...overrides,
 })

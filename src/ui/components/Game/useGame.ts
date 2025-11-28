@@ -14,7 +14,7 @@ export const useGame = ({
   userPlayerId,
 }: Pick<GameProps, 'playerSeeds' | 'userPlayerId'>) => {
   const actorRef = ActorContext.useActorRef()
-  const { game, gameState, winner } = useGameRules()
+  const { game, gameState } = useGameRules()
   const [isHandInViewport, setIsHandInViewport] = useState(true)
 
   useEffect(() => {
@@ -87,6 +87,6 @@ export const useGame = ({
     showGameOver,
     showHand,
     snackbarProps,
-    winner,
+    winner: game.winner,
   }
 }
