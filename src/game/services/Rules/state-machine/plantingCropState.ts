@@ -54,17 +54,11 @@ export const plantingCropState: RulesMachineConfig['states'] = {
 
     exit: enqueueActions(({ event, context, enqueue }) => {
       let { game } = context
-
-      switch (event.type) {
-        case GameEvent.OPERATION_ABORTED: {
-          game = {
-            ...game,
-            selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
-          }
-          break
+      if (event.type === GameEvent.OPERATION_ABORTED) {
+        game = {
+          ...game,
+          selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         }
-
-        default:
       }
 
       enqueue.assign({ game })

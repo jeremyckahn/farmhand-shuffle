@@ -79,8 +79,6 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
 
             game = moveFromHandToDiscardPile(game, playerId, waterCardInHandIdx)
 
-            selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
-
             triggerNotification({
               type: ShellNotificationType.CROP_WATERED,
               payload: {
