@@ -219,6 +219,16 @@ export interface IGame {
    * The crop that is currently selling for lower than normal.
    */
   readonly nerfedCrop: ICropPriceFluctuation | null
+
+  readonly cardsToDrawAtTurnStart: number
+
+  readonly eventCardsThatCanBePlayed: number
+
+  readonly selectedWaterCardInHandIdx: number
+
+  readonly toolCardsThatCanBePlayed: number
+
+  readonly winner: IPlayer['id'] | null
 }
 
 export enum GameEvent {

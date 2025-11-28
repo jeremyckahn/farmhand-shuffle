@@ -25,7 +25,9 @@ describe('win conditions', () => {
 
     const {
       value,
-      context: { winner },
+      context: {
+        game: { winner },
+      },
     } = gameActor.getSnapshot()
 
     expect(value).toBe(GameState.GAME_OVER)
@@ -52,7 +54,9 @@ describe('win conditions', () => {
 
     const {
       value,
-      context: { winner },
+      context: {
+        game: { winner },
+      },
     } = gameActor.getSnapshot()
 
     expect(value).toBe(GameState.GAME_OVER)

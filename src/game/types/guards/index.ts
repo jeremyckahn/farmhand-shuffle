@@ -135,7 +135,17 @@ export const isGame = (obj: unknown): obj is IGame => {
     'buffedCrop' in obj &&
     (obj.buffedCrop === null || isCropPriceFluctuation(obj.buffedCrop)) &&
     'nerfedCrop' in obj &&
-    (obj.nerfedCrop === null || isCropPriceFluctuation(obj.nerfedCrop))
+    (obj.nerfedCrop === null || isCropPriceFluctuation(obj.nerfedCrop)) &&
+    'cardsToDrawAtTurnStart' in obj &&
+    typeof obj.cardsToDrawAtTurnStart === 'number' &&
+    'eventCardsThatCanBePlayed' in obj &&
+    typeof obj.eventCardsThatCanBePlayed === 'number' &&
+    'selectedWaterCardInHandIdx' in obj &&
+    typeof obj.selectedWaterCardInHandIdx === 'number' &&
+    'toolCardsThatCanBePlayed' in obj &&
+    typeof obj.toolCardsThatCanBePlayed === 'number' &&
+    'winner' in obj &&
+    (typeof obj.winner === 'string' || obj.winner === null)
   )
 }
 

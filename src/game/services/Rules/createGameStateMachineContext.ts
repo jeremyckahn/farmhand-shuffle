@@ -12,14 +12,15 @@ export const createGameStateMachineContext = (): GameMachineContext => {
     botCropCardIndicesToHarvest: [],
     botCropsToPlayDuringTurn: 0,
     botFieldCropIndicesToWaterDuringTurn: [],
-    cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
-    eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
-    game: factory.buildGame(),
-    selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+    game: factory.buildGame({
+      cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
+      eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      toolCardsThatCanBePlayed: 0,
+      winner: null,
+    }),
     shell: {
       triggerNotification: () => {},
     },
-    toolCardsThatCanBePlayed: 0,
-    winner: null,
   }
 }

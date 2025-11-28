@@ -94,7 +94,8 @@ const GameCore = ({
         <Dialog open={showGameOver}>
           <DialogTitle>Game Over</DialogTitle>
           <DialogContent>
-            Winner: <strong>{funAnimalName(winner ?? '')}</strong>
+            Winner:{' '}
+            <strong>{winner ? funAnimalName(winner) : 'No one'}</strong>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClickPlayAgain}>Play again</Button>

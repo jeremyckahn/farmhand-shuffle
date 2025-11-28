@@ -7,7 +7,6 @@ import {
   GameStateGuard,
   GameEvent,
   IShell,
-  IPlayer,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
@@ -25,13 +24,8 @@ export interface GameMachineContext {
   botCropCardIndicesToHarvest: number[]
   botCropsToPlayDuringTurn: number
   botFieldCropIndicesToWaterDuringTurn: number[]
-  cardsToDrawAtTurnStart: number // TODO: Move this into IGame
-  eventCardsThatCanBePlayed: number // TODO: Move this into IGame
   game: IGame
-  selectedWaterCardInHandIdx: number // TODO: Move this into IGame
   shell: IShell
-  toolCardsThatCanBePlayed: number // TODO: Move this into IGame
-  winner: IPlayer['id'] | null // TODO: Move this into IGame
 }
 
 export const { createMachine } = setup({

@@ -64,26 +64,31 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                     previousTurnGameState.table.players[currentPlayerId]
 
                   for (const cardPlayedDuringTurn of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
-                    if (isToolCardInstance(cardPlayedDuringTurn)) {
-                      context =
-                        cardPlayedDuringTurn.onStartFollowingTurn?.(context) ??
-                        context
+                    if (
+                      isToolCardInstance(cardPlayedDuringTurn) &&
+                      cardPlayedDuringTurn.onStartFollowingTurn
+                    ) {
+                      const newContext =
+                        cardPlayedDuringTurn.onStartFollowingTurn({
+                          ...context,
+                          // NOTE: Updated game instance is passed explicitly
+                          // here so that the stale context.game reference is not
+                          // used.
+                          game,
+                        })
+
+                      game = newContext.game
                     }
                   }
 
                   game = startTurn(
                     game,
                     currentPlayerId,
-                    context.cardsToDrawAtTurnStart
+                    game.cardsToDrawAtTurnStart
                   )
 
-                  context = {
-                    ...context,
-                    botCropsToPlayDuringTurn:
-                      botLogic.getNumberOfCropCardsToPlay(
-                        game,
-                        currentPlayerId
-                      ),
+                  game = {
+                    ...game,
                     eventCardsThatCanBePlayed:
                       botLogic.getNumberOfEventCardsToPlay(
                         game,
@@ -91,6 +96,14 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                       ),
                     toolCardsThatCanBePlayed:
                       botLogic.getNumberOfToolCardsToPlay(
+                        game,
+                        currentPlayerId
+                      ),
+                  }
+                  context = {
+                    ...context,
+                    botCropsToPlayDuringTurn:
+                      botLogic.getNumberOfCropCardsToPlay(
                         game,
                         currentPlayerId
                       ),
@@ -194,8 +207,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [GameEvent.BOT_TURN_PHASE_COMPLETE]: BotTurnActionState.PLAYING_TOOLS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            const areEventCardsToPlay = context.eventCardsThatCanBePlayed > 0
+          withBotErrorHandling(({ context: { game }, enqueue }) => {
+            const areEventCardsToPlay = game.eventCardsThatCanBePlayed > 0
 
             if (areEventCardsToPlay) {
               const { currentPlayerId } = game
@@ -235,8 +248,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             BotTurnActionState.HARVESTING_CROPS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            const areToolsToPlay = context.toolCardsThatCanBePlayed > 0
+          withBotErrorHandling(({ context: { game }, enqueue }) => {
+            const areToolsToPlay = game.toolCardsThatCanBePlayed > 0
 
             if (areToolsToPlay) {
               const { currentPlayerId } = game

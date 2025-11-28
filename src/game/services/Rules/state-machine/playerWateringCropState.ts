@@ -25,33 +25,35 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
       [GameEvent.OPERATION_ABORTED]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
-    entry: enqueueActions(
-      ({ event, context: { selectedWaterCardInHandIdx }, enqueue }) => {
-        switch (event.type) {
-          case GameEvent.PLAY_WATER: {
-            const { cardIdx } = event
-            selectedWaterCardInHandIdx = cardIdx
-
-            break
+    entry: enqueueActions(({ event, context: { game }, enqueue }) => {
+      switch (event.type) {
+        case GameEvent.PLAY_WATER: {
+          const { cardIdx } = event
+          game = {
+            ...game,
+            selectedWaterCardInHandIdx: cardIdx,
           }
 
-          default:
+          break
         }
 
-        enqueue.assign({ selectedWaterCardInHandIdx })
+        default:
       }
-    ),
+
+      enqueue.assign({ game })
+    }),
 
     exit: enqueueActions(
       ({
         event,
         context: {
           game,
-          selectedWaterCardInHandIdx,
           shell: { triggerNotification },
         },
         enqueue,
       }) => {
+        let { selectedWaterCardInHandIdx } = game
+
         switch (event.type) {
           case GameEvent.SELECT_CROP_TO_WATER: {
             const { playerId, waterCardInHandIdx, cropIdxInFieldToWater } =
@@ -97,7 +99,12 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
           default:
         }
 
-        enqueue.assign({ game, selectedWaterCardInHandIdx })
+        enqueue.assign({
+          game: {
+            ...game,
+            selectedWaterCardInHandIdx,
+          },
+        })
       }
     ),
   },

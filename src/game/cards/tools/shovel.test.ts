@@ -51,7 +51,7 @@ describe('shovel', () => {
   })
 
   describe('onStartFollowingTurn', () => {
-    test('sets context.cardsToDrawAtTurnStart to 0', () => {
+    test('sets game.cardsToDrawAtTurnStart to 0', () => {
       let game = stubGame()
       const { currentPlayerId } = game
       assertCurrentPlayer(currentPlayerId)
@@ -61,9 +61,9 @@ describe('shovel', () => {
         hand: [],
       })
 
-      const context = shovel.onStartFollowingTurn!(stubContext)
+      const { game: newGame } = shovel.onStartFollowingTurn!({ ...stubContext, game })
 
-      expect(context).toEqual({ ...stubContext, cardsToDrawAtTurnStart: 0 })
+      expect(newGame.cardsToDrawAtTurnStart).toBe(0)
     })
   })
 })
