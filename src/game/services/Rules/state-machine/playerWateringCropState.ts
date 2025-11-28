@@ -52,6 +52,8 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
         },
         enqueue,
       }) => {
+        let { selectedWaterCardInHandIdx } = game
+
         switch (event.type) {
           case GameEvent.SELECT_CROP_TO_WATER: {
             const { playerId, waterCardInHandIdx, cropIdxInFieldToWater } =
@@ -88,6 +90,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
           }
 
           case GameEvent.OPERATION_ABORTED: {
+            selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
             break
           }
 
@@ -97,7 +100,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
         enqueue.assign({
           game: {
             ...game,
-            selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+            selectedWaterCardInHandIdx,
           },
         })
       }
