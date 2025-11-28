@@ -64,10 +64,18 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                     previousTurnGameState.table.players[currentPlayerId]
 
                   for (const cardPlayedDuringTurn of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
-                    if (isToolCardInstance(cardPlayedDuringTurn)) {
+                    if (
+                      isToolCardInstance(cardPlayedDuringTurn) &&
+                      cardPlayedDuringTurn.onStartFollowingTurn
+                    ) {
                       const newContext =
-                        cardPlayedDuringTurn.onStartFollowingTurn?.(context) ??
-                        context
+                        cardPlayedDuringTurn.onStartFollowingTurn({
+                          ...context,
+                          // NOTE: Updated game instance is passed explicitly
+                          // here so that the stale context.game reference is not
+                          // used.
+                          game,
+                        })
 
                       game = newContext.game
                     }
