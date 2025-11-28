@@ -88,9 +88,16 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
                 previousTurnGameState.table.players[currentPlayerId]
 
               for (const turnCardPlayed of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
-                if (isToolCardInstance(turnCardPlayed)) {
-                  const newContext =
-                    turnCardPlayed.onStartFollowingTurn?.(context) ?? context
+                if (
+                  isToolCardInstance(turnCardPlayed) &&
+                  turnCardPlayed.onStartFollowingTurn
+                ) {
+                  const newContext = turnCardPlayed.onStartFollowingTurn({
+                    ...context,
+                    // NOTE: Updated game instance is passed explicitly here so
+                    // that the stale context.game reference is not used.
+                    game,
+                  })
                   game = newContext.game
                 }
               }
