@@ -25,7 +25,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
       ({
         context: {
           game,
-          botFieldCropIndicesToWaterDuringTurn,
+          botState: { botFieldCropIndicesToWaterDuringTurn },
           shell: { triggerNotification },
         },
         enqueue,

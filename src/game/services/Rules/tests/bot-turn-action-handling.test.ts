@@ -204,7 +204,10 @@ describe('bot turn action handling', () => {
 
         const {
           value,
-          context: { game: gameResult, botCropsToPlayDuringTurn },
+          context: {
+            game: gameResult,
+            botState: { botCropsToPlayDuringTurn },
+          },
         } = gameActor.getSnapshot()
 
         expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
@@ -411,7 +414,10 @@ describe('bot turn action handling', () => {
 
       const {
         value,
-        context: { game: gameResult, botCropsToPlayDuringTurn },
+        context: {
+          game: gameResult,
+          botState: { botCropsToPlayDuringTurn },
+        },
       } = gameActor.getSnapshot()
 
       expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)

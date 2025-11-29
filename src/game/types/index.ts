@@ -433,3 +433,9 @@ export interface GameEventPayload {
 export type GameEventPayloadKey = keyof GameEventPayload
 
 export type GameEvents = GameEventPayload[GameEventPayloadKey]
+
+export interface BotState {
+  botCropCardIndicesToHarvest: number[]
+  botCropsToPlayDuringTurn: number
+  botFieldCropIndicesToWaterDuringTurn: number[]
+}
