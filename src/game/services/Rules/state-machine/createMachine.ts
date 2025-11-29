@@ -10,22 +10,26 @@ import {
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
-// TODO: Some of the properties of GameMachineContext need to be moved into the
-// IGame interface. They are individually marked with TODO comments on their
-// respective lines. This will be a wide-ranging change. The work can be
-// validated by running the type checker (npm run check:types`) and the unit
-// tests (`npm run test`). It is recommended to do this in an iterative
-// fashion. Ensure that the relevant type guards in
-// src/game/types/guards/index.ts are updated and expanded as necessary to
-// ensure there are no type safety regressions. This will require updating test
-// and UI code. This is strictly a refactor, there should be no functional
-// changes whatsoever.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface BotState {}
+
+// FIXME: Some of the properties of GameMachineContext need to be moved into
+// the BotState interface. So, they should be nested under
+// GameMachineContext['botState']. They are individually marked with FIXME comments
+// on their respective lines. This will be a wide-ranging change. The work can
+// be validated by running the type checker, unit tests, and linter (via
+// `npm run check`). It is recommended to do this in an iterative fashion, one
+// property at a time. Ensure that there are no type safety regressions. This
+// will require updating test and state machine code especially but it may
+// touch other parts of the code base as well, including UI code. This is
+// strictly a refactor, there should be no behavioral changes whatsoever.
 export interface GameMachineContext {
-  botCropCardIndicesToHarvest: number[]
-  botCropsToPlayDuringTurn: number
-  botFieldCropIndicesToWaterDuringTurn: number[]
+  botCropCardIndicesToHarvest: number[] // FIXME: Move this to GameMachineContext['botState']
+  botCropsToPlayDuringTurn: number // FIXME: Move this to GameMachineContext['botState']
+  botFieldCropIndicesToWaterDuringTurn: number[] // FIXME: Move this to GameMachineContext['botState']
   game: IGame
   shell: IShell
+  botState: BotState
 }
 
 export const { createMachine } = setup({

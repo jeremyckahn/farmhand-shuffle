@@ -12,6 +12,7 @@ export const createGameStateMachineContext = (): GameMachineContext => {
     botCropCardIndicesToHarvest: [],
     botCropsToPlayDuringTurn: 0,
     botFieldCropIndicesToWaterDuringTurn: [],
+    botState: {},
     game: factory.buildGame({
       cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
       eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
