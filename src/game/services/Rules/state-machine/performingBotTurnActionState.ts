@@ -126,37 +126,45 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [GameEvent.BOT_TURN_PHASE_COMPLETE]: BotTurnActionState.PLAYING_WATER,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context: { botState, game }, enqueue }) => {
-            const areCropsToPlay = botState.cropsToPlayDuringTurn > 0
-
-            if (areCropsToPlay) {
-              const { currentPlayerId } = game
-              assertCurrentPlayer(currentPlayerId)
-
-              const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
+          withBotErrorHandling(
+            ({
+              context: {
+                botState: { cropsToPlayDuringTurn },
                 game,
-                currentPlayerId
-              )
-              const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
+              },
+              enqueue,
+            }) => {
+              const areCropsToPlay = cropsToPlayDuringTurn > 0
 
-              if (cardIdx === undefined) {
-                throw new GameStateCorruptError(
-                  `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
+              if (areCropsToPlay) {
+                const { currentPlayerId } = game
+                assertCurrentPlayer(currentPlayerId)
+
+                const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
+                  game,
+                  currentPlayerId
                 )
-              }
+                const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
 
-              enqueue.raise(
-                {
-                  type: GameEvent.PLAY_CROP,
-                  playerId: currentPlayerId,
-                  cardIdx,
-                },
-                { delay: BOT_ACTION_DELAY }
-              )
-            } else {
-              enqueue.raise({ type: GameEvent.BOT_TURN_PHASE_COMPLETE })
+                if (cardIdx === undefined) {
+                  throw new GameStateCorruptError(
+                    `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
+                  )
+                }
+
+                enqueue.raise(
+                  {
+                    type: GameEvent.PLAY_CROP,
+                    playerId: currentPlayerId,
+                    cardIdx,
+                  },
+                  { delay: BOT_ACTION_DELAY }
+                )
+              } else {
+                enqueue.raise({ type: GameEvent.BOT_TURN_PHASE_COMPLETE })
+              }
             }
-          })
+          )
         ),
       },
 

@@ -220,14 +220,29 @@ export interface IGame {
    */
   readonly nerfedCrop: ICropPriceFluctuation | null
 
+  /**
+   * How many cards the current player should draw when their turn starts.
+   */
   readonly cardsToDrawAtTurnStart: number
 
+  /**
+   * The maximum amount of event cards the current player can play during the
+   * current turn. This is typically 1.
+   */
   readonly eventCardsThatCanBePlayed: number
 
+  /**
+   * The index in the hand of the selected water card for the current player. A
+   * value of -1 means no water cards are selected.
+   */
   readonly selectedWaterCardInHandIdx: number
 
+  // FIXME: Move this to BotState. Ensure thre are no test, lint, or type errors by running `npm run check`
   readonly toolCardsThatCanBePlayed: number
 
+  /**
+   * The winner of the current game, if any.
+   */
   readonly winner: IPlayer['id'] | null
 }
 
