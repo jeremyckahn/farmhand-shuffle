@@ -21,7 +21,7 @@ export const useGame = ({
     if (isDebugEnabled) {
       actorRef.subscribe(snapshot => {
         if (typeof snapshot.value === 'string') {
-          console.debug(`State: ${snapshot.value}`, snapshot.context.game)
+          console.debug(`State: ${snapshot.value}`, snapshot.context)
         }
       })
     }
