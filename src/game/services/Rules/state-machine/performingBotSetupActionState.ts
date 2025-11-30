@@ -25,9 +25,9 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
         actions: enqueueActions(
           ({
             event,
-            context,
             context: {
               game,
+              botState,
               botState: { botCropsToPlayDuringTurn },
             },
             enqueue,
@@ -82,7 +82,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             enqueue.assign({
               game,
               botState: {
-                ...context.botState,
+                ...botState,
                 botCropsToPlayDuringTurn,
               },
             })
@@ -94,9 +94,9 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
         actions: enqueueActions(
           ({
             event,
-            context,
             context: {
               game,
+              botState,
               botState: { botCropsToPlayDuringTurn },
             },
             enqueue,
@@ -117,7 +117,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             enqueue.assign({
               game,
               botState: {
-                ...context.botState,
+                ...botState,
                 botCropsToPlayDuringTurn,
               },
             })

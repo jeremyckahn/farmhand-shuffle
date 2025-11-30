@@ -21,10 +21,10 @@ export const plantingCropState: RulesMachineConfig['states'] = {
     entry: enqueueActions(
       ({
         event,
-        context,
         context: {
-          game,
+          botState,
           botState: { botCropsToPlayDuringTurn },
+          game,
         },
         enqueue,
       }) => {
@@ -56,7 +56,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         enqueue.assign({
           game,
           botState: {
-            ...context.botState,
+            ...botState,
             botCropsToPlayDuringTurn,
           },
         })
