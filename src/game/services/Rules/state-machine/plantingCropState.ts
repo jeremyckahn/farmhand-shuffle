@@ -37,13 +37,13 @@ export const plantingCropState: RulesMachineConfig['states'] = {
 
           const { currentPlayerId, sessionOwnerPlayerId } = game
 
-          if (cropsToPlayDuringTurn > 0) {
-            cropsToPlayDuringTurn--
-          }
-
           if (currentPlayerId === sessionOwnerPlayerId) {
             enqueue.raise({ type: GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
           } else {
+            if (cropsToPlayDuringTurn > 0) {
+              cropsToPlayDuringTurn--
+            }
+
             enqueue.raise({ type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION })
           }
         } catch (e) {
