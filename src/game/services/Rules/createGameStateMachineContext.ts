@@ -13,12 +13,12 @@ export const createGameStateMachineContext = (): GameMachineContext => {
       cropCardIndicesToHarvest: [],
       cropsToPlayDuringTurn: 0,
       fieldCropIndicesToWaterDuringTurn: [],
+      toolCardsThatCanBePlayed: 0,
     },
     game: factory.buildGame({
       cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
       eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
-      toolCardsThatCanBePlayed: 0,
       winner: null,
     }),
     shell: {

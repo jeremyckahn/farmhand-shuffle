@@ -237,9 +237,6 @@ export interface IGame {
    */
   readonly selectedWaterCardInHandIdx: number
 
-  // FIXME: Move this to BotState. Ensure thre are no test, lint, or type errors by running `npm run check`
-  readonly toolCardsThatCanBePlayed: number
-
   /**
    * The winner of the current game, if any.
    */
@@ -453,4 +450,5 @@ export interface BotState {
   cropCardIndicesToHarvest: number[]
   cropsToPlayDuringTurn: number
   fieldCropIndicesToWaterDuringTurn: number[]
+  toolCardsThatCanBePlayed: number
 }

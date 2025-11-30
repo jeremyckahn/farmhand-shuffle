@@ -94,11 +94,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                         game,
                         currentPlayerId
                       ),
-                    toolCardsThatCanBePlayed:
-                      botLogic.getNumberOfToolCardsToPlay(
-                        game,
-                        currentPlayerId
-                      ),
                   }
                   botState = {
                     ...botState,
@@ -106,6 +101,11 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                       game,
                       currentPlayerId
                     ),
+                    toolCardsThatCanBePlayed:
+                      botLogic.getNumberOfToolCardsToPlay(
+                        game,
+                        currentPlayerId
+                      ),
                   }
 
                   break
@@ -257,8 +257,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             BotTurnActionState.HARVESTING_CROPS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context: { game }, enqueue }) => {
-            const areToolsToPlay = game.toolCardsThatCanBePlayed > 0
+          withBotErrorHandling(({ context: { botState, game }, enqueue }) => {
+            const areToolsToPlay = botState.toolCardsThatCanBePlayed > 0
 
             if (areToolsToPlay) {
               const { currentPlayerId } = game

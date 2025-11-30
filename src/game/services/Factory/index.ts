@@ -62,7 +62,6 @@ export class FactoryService {
       nerfedCrop: null,
       cardsToDrawAtTurnStart: 0,
       eventCardsThatCanBePlayed: 0,
-      toolCardsThatCanBePlayed: 0,
       winner: null,
       ...overrides,
       selectedWaterCardInHandIdx: overrides.selectedWaterCardInHandIdx ?? -1,

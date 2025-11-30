@@ -142,8 +142,6 @@ export const isGame = (obj: unknown): obj is IGame => {
     typeof obj.eventCardsThatCanBePlayed === 'number' &&
     'selectedWaterCardInHandIdx' in obj &&
     typeof obj.selectedWaterCardInHandIdx === 'number' &&
-    'toolCardsThatCanBePlayed' in obj &&
-    typeof obj.toolCardsThatCanBePlayed === 'number' &&
     'winner' in obj &&
     (typeof obj.winner === 'string' || obj.winner === null)
   )
