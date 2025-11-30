@@ -25,7 +25,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
       ({
         context: {
           game,
-          botState: { botFieldCropIndicesToWaterDuringTurn },
+          botState: { fieldCropIndicesToWaterDuringTurn },
           shell: { triggerNotification },
         },
         enqueue,
@@ -39,11 +39,11 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
           return isWaterCardInstance(cardInstance)
         })
 
-        const [cropIdxInFieldToWater] = botFieldCropIndicesToWaterDuringTurn
+        const [cropIdxInFieldToWater] = fieldCropIndicesToWaterDuringTurn
 
         if (cropIdxInFieldToWater === undefined) {
           throw new GameStateCorruptError(
-            `botFieldCropIndicesToWaterDuringTurn is empty in ${GameState.PERFORMING_BOT_CROP_WATERING}`
+            `fieldCropIndicesToWaterDuringTurn is empty in ${GameState.PERFORMING_BOT_CROP_WATERING}`
           )
         }
 

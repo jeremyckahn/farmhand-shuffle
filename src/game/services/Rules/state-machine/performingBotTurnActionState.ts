@@ -102,11 +102,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   }
                   botState = {
                     ...botState,
-                    botCropsToPlayDuringTurn:
-                      botLogic.getNumberOfCropCardsToPlay(
-                        game,
-                        currentPlayerId
-                      ),
+                    cropsToPlayDuringTurn: botLogic.getNumberOfCropCardsToPlay(
+                      game,
+                      currentPlayerId
+                    ),
                   }
 
                   break
@@ -128,7 +127,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         },
         entry: enqueueActions(
           withBotErrorHandling(({ context: { botState, game }, enqueue }) => {
-            const areCropsToPlay = botState.botCropsToPlayDuringTurn > 0
+            const areCropsToPlay = botState.cropsToPlayDuringTurn > 0
 
             if (areCropsToPlay) {
               const { currentPlayerId } = game
@@ -171,10 +170,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
-            const botFieldCropIndicesToWaterDuringTurn =
+            const fieldCropIndicesToWaterDuringTurn =
               botLogic.getCropCardIndicesToWater(game, currentPlayerId)
             const areWaterCardsToPlay =
-              botFieldCropIndicesToWaterDuringTurn.length > 0
+              fieldCropIndicesToWaterDuringTurn.length > 0
 
             if (areWaterCardsToPlay) {
               const waterCardIdxsInPlayerHand =
@@ -197,7 +196,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             enqueue.assign({
               botState: {
                 ...botState,
-                botFieldCropIndicesToWaterDuringTurn,
+                fieldCropIndicesToWaterDuringTurn,
               },
             })
           })
@@ -294,16 +293,16 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
-            const botCropCardIndicesToHarvest =
+            const cropCardIndicesToHarvest =
               botLogic.getCropCardIndicesToHarvest(game, currentPlayerId)
-            const areCropsToHarvest = botCropCardIndicesToHarvest.length > 0
+            const areCropsToHarvest = cropCardIndicesToHarvest.length > 0
 
             if (areCropsToHarvest) {
               enqueue.raise(
                 {
                   type: GameEvent.HARVEST_CROP,
                   playerId: currentPlayerId,
-                  cropIdxInFieldToHarvest: botCropCardIndicesToHarvest[0],
+                  cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
                 },
                 {
                   delay: BOT_ACTION_DELAY,
@@ -316,7 +315,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             enqueue.assign({
               botState: {
                 ...botState,
-                botCropCardIndicesToHarvest,
+                cropCardIndicesToHarvest,
               },
             })
           })

@@ -23,7 +23,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         event,
         context: {
           botState,
-          botState: { botCropsToPlayDuringTurn },
+          botState: { cropsToPlayDuringTurn },
           game,
         },
         enqueue,
@@ -37,8 +37,8 @@ export const plantingCropState: RulesMachineConfig['states'] = {
 
           const { currentPlayerId, sessionOwnerPlayerId } = game
 
-          if (botCropsToPlayDuringTurn > 0) {
-            botCropsToPlayDuringTurn--
+          if (cropsToPlayDuringTurn > 0) {
+            cropsToPlayDuringTurn--
           }
 
           if (currentPlayerId === sessionOwnerPlayerId) {
@@ -57,7 +57,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
           game,
           botState: {
             ...botState,
-            botCropsToPlayDuringTurn,
+            cropsToPlayDuringTurn,
           },
         })
       }

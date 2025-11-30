@@ -10,9 +10,9 @@ import { defaultSelectedWaterCardInHandIdx } from './constants'
 export const createGameStateMachineContext = (): GameMachineContext => {
   return {
     botState: {
-      botCropCardIndicesToHarvest: [],
-      botCropsToPlayDuringTurn: 0,
-      botFieldCropIndicesToWaterDuringTurn: [],
+      cropCardIndicesToHarvest: [],
+      cropsToPlayDuringTurn: 0,
+      fieldCropIndicesToWaterDuringTurn: [],
     },
     game: factory.buildGame({
       cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
