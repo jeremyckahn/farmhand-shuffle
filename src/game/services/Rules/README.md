@@ -98,6 +98,17 @@ The bot acts quickly, so keep an eye on the notification log to see what moves i
 
 ---
 
+## 📈 Market Fluctuations
+
+The agricultural market is volatile! At the start of every turn, crop prices are adjusted:
+
+*   **Buffed Crop:** One random crop type is selected to be in high demand. Its value increases (e.g., x2 multiplier), making it highly profitable to harvest this turn.
+*   **Nerfed Crop:** One random crop type crashes in value (e.g., x0.5 multiplier). Harvesting this crop during this turn will yield significantly fewer coins.
+
+Players must check the current market prices before deciding whether to harvest now or wait for better conditions.
+
+---
+
 ## 🏆 Winning & Losing
 
 The economy is unforgiving. Throughout the game, various effects or costs may deplete a player's funds.
