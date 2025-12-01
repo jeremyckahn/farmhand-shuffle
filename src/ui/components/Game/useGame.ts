@@ -14,14 +14,14 @@ export const useGame = ({
   userPlayerId,
 }: Pick<GameProps, 'playerSeeds' | 'userPlayerId'>) => {
   const actorRef = ActorContext.useActorRef()
-  const { game, gameState, winner } = useGameRules()
+  const { game, gameState } = useGameRules()
   const [isHandInViewport, setIsHandInViewport] = useState(true)
 
   useEffect(() => {
     if (isDebugEnabled) {
       actorRef.subscribe(snapshot => {
         if (typeof snapshot.value === 'string') {
-          console.debug(`State: ${snapshot.value}`, snapshot.context.game)
+          console.debug(`State: ${snapshot.value}`, snapshot.context)
         }
       })
     }
@@ -87,6 +87,5 @@ export const useGame = ({
     showGameOver,
     showHand,
     snackbarProps,
-    winner,
   }
 }

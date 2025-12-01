@@ -14,21 +14,19 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
         GameState.PERFORMING_BOT_SETUP_ACTION,
 
       [GameEvent.PLAY_CROP]: {
-        actions: enqueueActions(
-          ({ event, context: { game, cropsToPlayDuringBotTurn }, enqueue }) => {
-            // TODO: Ensure scenario where field is full is handled
-            assertEvent(event, GameEvent.PLAY_CROP)
-            const { cardIdx, playerId } = event
+        actions: enqueueActions(({ event, context: { game }, enqueue }) => {
+          // TODO: Ensure scenario where field is full is handled
+          assertEvent(event, GameEvent.PLAY_CROP)
+          const { cardIdx, playerId } = event
 
-            const { currentPlayerId } = game
-            assertCurrentPlayer(currentPlayerId)
+          const { currentPlayerId } = game
+          assertCurrentPlayer(currentPlayerId)
 
-            game = recordCardPlayEvents(game, event)
+          game = recordCardPlayEvents(game, event)
+          game = moveCropFromHandToField(game, playerId, cardIdx)
 
-            game = moveCropFromHandToField(game, playerId, cardIdx)
-            enqueue.assign({ game, cropsToPlayDuringBotTurn })
-          }
-        ),
+          enqueue.assign({ game })
+        }),
       },
     },
   },

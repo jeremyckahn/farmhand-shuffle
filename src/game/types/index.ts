@@ -219,6 +219,28 @@ export interface IGame {
    * The crop that is currently selling for lower than normal.
    */
   readonly nerfedCrop: ICropPriceFluctuation | null
+
+  /**
+   * How many cards the current player should draw when their turn starts.
+   */
+  readonly cardsToDrawAtTurnStart: number
+
+  /**
+   * The amount of event cards the current player can play during the current
+   * turn. This typically is set to 1 at the beginning of every turn.
+   */
+  readonly eventCardsThatCanBePlayed: number
+
+  /**
+   * The index in the hand of the selected water card for the current player. A
+   * value of -1 means no water cards are selected.
+   */
+  readonly selectedWaterCardInHandIdx: number
+
+  /**
+   * The winner of the current game, if any.
+   */
+  readonly winner: IPlayer['id'] | null
 }
 
 export enum GameEvent {
@@ -423,3 +445,10 @@ export interface GameEventPayload {
 export type GameEventPayloadKey = keyof GameEventPayload
 
 export type GameEvents = GameEventPayload[GameEventPayloadKey]
+
+export interface BotState {
+  cropCardIndicesToHarvest: number[]
+  cropsToPlayDuringTurn: number
+  fieldCropIndicesToWaterDuringTurn: number[]
+  toolCardsThatCanBePlayed: number
+}

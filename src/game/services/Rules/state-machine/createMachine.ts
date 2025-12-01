@@ -7,22 +7,14 @@ import {
   GameStateGuard,
   GameEvent,
   IShell,
-  IPlayer,
+  BotState,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
-// TODO: Consolidate GameMachineContext and IGame
 export interface GameMachineContext {
-  cardsToDrawAtTurnStart: number
-  cropCardIndicesToHarvest: number[]
-  cropsToPlayDuringBotTurn: number
-  eventCardsThatCanBePlayed: number
-  toolCardsThatCanBePlayed: number
-  fieldCropIndicesToWaterDuringBotTurn: number[]
   game: IGame
-  selectedWaterCardInHandIdx: number
   shell: IShell
-  winner: IPlayer['id'] | null
+  botState: BotState
 }
 
 export const { createMachine } = setup({

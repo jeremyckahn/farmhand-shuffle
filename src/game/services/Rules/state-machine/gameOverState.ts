@@ -38,7 +38,7 @@ export const gameOverState: RulesMachineConfig['states'] = {
         throw new GameStateCorruptError('Winner could not be determined')
       }
 
-      enqueue.assign({ winner })
+      enqueue.assign({ game: { ...game, winner } })
     }),
   },
 }

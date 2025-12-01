@@ -204,7 +204,10 @@ describe('bot turn action handling', () => {
 
         const {
           value,
-          context: { game: gameResult, cropsToPlayDuringBotTurn },
+          context: {
+            game: gameResult,
+            botState: { cropsToPlayDuringTurn },
+          },
         } = gameActor.getSnapshot()
 
         expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
@@ -214,7 +217,7 @@ describe('bot turn action handling', () => {
         >(resultingFieldCrops)
         expect(gameResult.table.players[player2.id].hand).toEqual(resultingHand)
         expect(gameResult.table.players[player2.id].deck).toEqual(resultingDeck)
-        expect(cropsToPlayDuringBotTurn).toEqual(0)
+        expect(cropsToPlayDuringTurn).toEqual(0)
         expect(
           gameResult.table.players[player2.id].cardsPlayedDuringTurn
         ).toEqual(playedCards)
@@ -411,7 +414,10 @@ describe('bot turn action handling', () => {
 
       const {
         value,
-        context: { game: gameResult, cropsToPlayDuringBotTurn },
+        context: {
+          game: gameResult,
+          botState: { cropsToPlayDuringTurn },
+        },
       } = gameActor.getSnapshot()
 
       expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
@@ -420,7 +426,7 @@ describe('bot turn action handling', () => {
       expect(gameResult.table.players[player2.id].field.crops).toEqual<
         IField['crops']
       >(resultingFieldCrops)
-      expect(cropsToPlayDuringBotTurn).toEqual(0)
+      expect(cropsToPlayDuringTurn).toEqual(0)
       expect(
         gameResult.table.players[player2.id].cardsPlayedDuringTurn
       ).toEqual(playedCards)

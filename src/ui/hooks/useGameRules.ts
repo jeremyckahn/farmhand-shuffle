@@ -6,38 +6,18 @@ import { assertStringIsGameState } from '../../game/types/guards'
 import { ActorContext } from '../components/Game/ActorContext'
 
 export interface GameRuleMachineContextSelectorDerivation
-  extends Pick<
-    GameMachineContext,
-    | 'eventCardsThatCanBePlayed'
-    | 'game'
-    | 'selectedWaterCardInHandIdx'
-    | 'winner'
-  > {
+  extends Pick<GameMachineContext, 'game'> {
   gameState: StateValue
 }
 
 export const useGameRules = () => {
-  const {
-    eventCardsThatCanBePlayed,
-    game,
-    gameState,
-    selectedWaterCardInHandIdx,
-    winner,
-  } = ActorContext.useSelector(
+  const { game, gameState } = ActorContext.useSelector(
     ({
-      context: {
-        eventCardsThatCanBePlayed,
-        game,
-        selectedWaterCardInHandIdx,
-        winner,
-      },
+      context: { game },
       value,
     }): GameRuleMachineContextSelectorDerivation => ({
-      eventCardsThatCanBePlayed,
       game,
       gameState: value,
-      selectedWaterCardInHandIdx,
-      winner,
     })
   )
 
@@ -58,10 +38,7 @@ export const useGameRules = () => {
   assertStringIsGameState(resolvedGameState)
 
   return {
-    eventCardsThatCanBePlayed,
     game,
     gameState: resolvedGameState,
-    selectedWaterCardInHandIdx,
-    winner,
   }
 }
