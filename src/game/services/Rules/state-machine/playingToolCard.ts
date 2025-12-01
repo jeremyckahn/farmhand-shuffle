@@ -22,6 +22,7 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         event,
         context,
         context: {
+          botState,
           game,
           shell: { triggerNotification },
         },
@@ -46,12 +47,11 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         game = card.applyEffect(context).game
         game = moveFromHandToDiscardPile(game, currentPlayerId, cardIdx)
 
-        let { botState } = context
-
         if (currentPlayerId === sessionOwnerPlayerId) {
           enqueue.raise({ type: GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
         } else {
           enqueue.raise({ type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION })
+
           botState = {
             ...botState,
             toolCardsThatCanBePlayed: botState.toolCardsThatCanBePlayed - 1,
@@ -59,7 +59,6 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         }
 
         enqueue.assign({
-          ...context,
           game,
           botState,
         })
