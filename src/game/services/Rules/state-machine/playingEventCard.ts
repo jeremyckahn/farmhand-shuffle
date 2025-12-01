@@ -52,9 +52,9 @@ export const playingEventCard: RulesMachineConfig['states'] = {
           enqueue.raise({ type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION })
         }
 
-        context = {
-          ...context,
-          eventCardsThatCanBePlayed: context.eventCardsThatCanBePlayed - 1,
+        game = {
+          ...game,
+          eventCardsThatCanBePlayed: game.eventCardsThatCanBePlayed - 1,
         }
 
         enqueue.assign({

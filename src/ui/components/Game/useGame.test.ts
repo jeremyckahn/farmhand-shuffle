@@ -38,11 +38,11 @@ describe('useGame', () => {
     // Setup mocks
     vi.mocked(ActorContext.useActorRef).mockReturnValue(mockActorRef)
     vi.mocked(useGameRules).mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
-      game: mockGame,
+      game: {
+        ...mockGame,
+        selectedWaterCardInHandIdx: 0,
+      },
       gameState: GameState.UNINITIALIZED,
-      selectedWaterCardInHandIdx: 0,
-      winner: null,
     })
 
     vi.spyOn(console, 'debug').mockImplementationOnce(vi.fn())
@@ -128,11 +128,12 @@ describe('useGame', () => {
 
   it('should set isInputBlocked when not session owner turn', () => {
     vi.mocked(useGameRules).mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
-      game: { ...mockGame, currentPlayerId: 'player2' },
+      game: {
+        ...mockGame,
+        currentPlayerId: 'player2',
+        selectedWaterCardInHandIdx: 0,
+      },
       gameState: GameState.UNINITIALIZED,
-      selectedWaterCardInHandIdx: 0,
-      winner: null,
     })
 
     const { result } = renderHook(() =>
@@ -164,11 +165,11 @@ describe('useGame', () => {
 
   it('should set isHandDisabled when in PLAYER_WATERING_CROP state', () => {
     vi.mocked(useGameRules).mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
-      game: mockGame,
+      game: {
+        ...mockGame,
+        selectedWaterCardInHandIdx: 0,
+      },
       gameState: GameState.PLAYER_WATERING_CROP,
-      selectedWaterCardInHandIdx: 0,
-      winner: null,
     })
 
     const { result } = renderHook(() =>
@@ -194,11 +195,11 @@ describe('useGame', () => {
 
   it('should always show hand when isHandDisabled is true, regardless of isHandInViewport', () => {
     vi.mocked(useGameRules).mockReturnValue({
-      eventCardsThatCanBePlayed: 1,
-      game: mockGame,
+      game: {
+        ...mockGame,
+        selectedWaterCardInHandIdx: 0,
+      },
       gameState: GameState.PLAYER_WATERING_CROP,
-      selectedWaterCardInHandIdx: 0,
-      winner: null,
     })
 
     const { result } = renderHook(() =>

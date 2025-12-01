@@ -9,17 +9,20 @@ import { defaultSelectedWaterCardInHandIdx } from './constants'
 
 export const createGameStateMachineContext = (): GameMachineContext => {
   return {
-    game: factory.buildGame(),
-    cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
-    cropsToPlayDuringBotTurn: 0,
-    eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
-    toolCardsThatCanBePlayed: 0,
-    selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
-    fieldCropIndicesToWaterDuringBotTurn: [],
-    cropCardIndicesToHarvest: [],
+    botState: {
+      cropCardIndicesToHarvest: [],
+      cropsToPlayDuringTurn: 0,
+      fieldCropIndicesToWaterDuringTurn: [],
+      toolCardsThatCanBePlayed: 0,
+    },
+    game: factory.buildGame({
+      cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
+      eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
+      selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      winner: null,
+    }),
     shell: {
       triggerNotification: () => {},
     },
-    winner: null,
   }
 }

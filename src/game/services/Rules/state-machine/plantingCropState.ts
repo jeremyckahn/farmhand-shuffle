@@ -19,7 +19,15 @@ export const plantingCropState: RulesMachineConfig['states'] = {
     },
 
     entry: enqueueActions(
-      ({ event, context: { game, cropsToPlayDuringBotTurn }, enqueue }) => {
+      ({
+        event,
+        context: {
+          botState,
+          botState: { cropsToPlayDuringTurn },
+          game,
+        },
+        enqueue,
+      }) => {
         assertEvent(event, GameEvent.PLAY_CROP)
 
         const { playerId, cardIdx } = event
@@ -29,13 +37,13 @@ export const plantingCropState: RulesMachineConfig['states'] = {
 
           const { currentPlayerId, sessionOwnerPlayerId } = game
 
-          if (cropsToPlayDuringBotTurn > 0) {
-            cropsToPlayDuringBotTurn--
-          }
-
           if (currentPlayerId === sessionOwnerPlayerId) {
             enqueue.raise({ type: GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
           } else {
+            if (cropsToPlayDuringTurn > 0) {
+              cropsToPlayDuringTurn--
+            }
+
             enqueue.raise({ type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION })
           }
         } catch (e) {
@@ -45,23 +53,32 @@ export const plantingCropState: RulesMachineConfig['states'] = {
           return
         }
 
-        enqueue.assign({ game, cropsToPlayDuringBotTurn })
+        enqueue.assign({
+          game,
+          botState: {
+            ...botState,
+            cropsToPlayDuringTurn,
+          },
+        })
       }
     ),
 
-    exit: enqueueActions(
-      ({ event, context: { selectedWaterCardInHandIdx }, enqueue }) => {
-        switch (event.type) {
-          case GameEvent.OPERATION_ABORTED: {
-            selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
-            break
-          }
+    exit: enqueueActions(({ event, context, enqueue }) => {
+      let { game } = context
 
-          default:
+      switch (event.type) {
+        case GameEvent.OPERATION_ABORTED: {
+          game = {
+            ...game,
+            selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+          }
+          break
         }
 
-        enqueue.assign({ selectedWaterCardInHandIdx })
+        default:
       }
-    ),
+
+      enqueue.assign({ game })
+    }),
   },
 }

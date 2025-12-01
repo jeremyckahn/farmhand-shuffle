@@ -23,7 +23,15 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
       [GameEvent.PROMPT_BOT_FOR_SETUP_ACTION]: {
         actions: enqueueActions(
-          ({ event, context: { game, cropsToPlayDuringBotTurn }, enqueue }) => {
+          ({
+            event,
+            context: {
+              game,
+              botState,
+              botState: { cropsToPlayDuringTurn },
+            },
+            enqueue,
+          }) => {
             assertEvent(event, GameEvent.PROMPT_BOT_FOR_SETUP_ACTION)
 
             const { currentPlayerId } = game
@@ -31,7 +39,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
             const hasBotCompletedSetup =
               game.table.players[currentPlayerId].field.crops.length > 0 &&
-              cropsToPlayDuringBotTurn === 0
+              cropsToPlayDuringTurn === 0
 
             if (hasBotCompletedSetup) {
               // NOTE: Returns control to the player
@@ -39,8 +47,8 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
                 type: GameEvent.START_TURN,
               })
             } else {
-              if (cropsToPlayDuringBotTurn === 0) {
-                cropsToPlayDuringBotTurn = botLogic.getNumberOfCropCardsToPlay(
+              if (cropsToPlayDuringTurn === 0) {
+                cropsToPlayDuringTurn = botLogic.getNumberOfCropCardsToPlay(
                   game,
                   currentPlayerId,
                   {
@@ -71,14 +79,28 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
               )
             }
 
-            enqueue.assign({ game, cropsToPlayDuringBotTurn })
+            enqueue.assign({
+              game,
+              botState: {
+                ...botState,
+                cropsToPlayDuringTurn,
+              },
+            })
           }
         ),
       },
 
       [GameEvent.PLAY_CROP]: {
         actions: enqueueActions(
-          ({ event, context: { game, cropsToPlayDuringBotTurn }, enqueue }) => {
+          ({
+            event,
+            context: {
+              game,
+              botState,
+              botState: { cropsToPlayDuringTurn },
+            },
+            enqueue,
+          }) => {
             assertEvent(event, GameEvent.PLAY_CROP)
             const { cardIdx, playerId } = event
 
@@ -87,12 +109,18 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
             game = recordCardPlayEvents(game, event)
             game = moveCropFromHandToField(game, playerId, cardIdx)
-            cropsToPlayDuringBotTurn--
+            cropsToPlayDuringTurn--
 
             enqueue.raise({
               type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION,
             })
-            enqueue.assign({ game, cropsToPlayDuringBotTurn })
+            enqueue.assign({
+              game,
+              botState: {
+                ...botState,
+                cropsToPlayDuringTurn,
+              },
+            })
           }
         ),
       },

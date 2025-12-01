@@ -51,7 +51,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         },
         entry: enqueueActions(
           withBotErrorHandling(
-            ({ event, context, context: { game }, enqueue }) => {
+            ({ event, context, context: { botState, game }, enqueue }) => {
               switch (event.type) {
                 case GameEvent.START_TURN: {
                   const previousTurnGameState = game
@@ -64,31 +64,43 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                     previousTurnGameState.table.players[currentPlayerId]
 
                   for (const cardPlayedDuringTurn of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
-                    if (isToolCardInstance(cardPlayedDuringTurn)) {
-                      context =
-                        cardPlayedDuringTurn.onStartFollowingTurn?.(context) ??
-                        context
+                    if (
+                      isToolCardInstance(cardPlayedDuringTurn) &&
+                      cardPlayedDuringTurn.onStartFollowingTurn
+                    ) {
+                      const newContext =
+                        cardPlayedDuringTurn.onStartFollowingTurn({
+                          ...context,
+                          // NOTE: Updated game instance is passed explicitly
+                          // here so that the stale context.game reference is not
+                          // used.
+                          game,
+                        })
+
+                      game = newContext.game
                     }
                   }
 
                   game = startTurn(
                     game,
                     currentPlayerId,
-                    context.cardsToDrawAtTurnStart
+                    game.cardsToDrawAtTurnStart
                   )
 
-                  context = {
-                    ...context,
-                    cropsToPlayDuringBotTurn:
-                      botLogic.getNumberOfCropCardsToPlay(
-                        game,
-                        currentPlayerId
-                      ),
+                  game = {
+                    ...game,
                     eventCardsThatCanBePlayed:
                       botLogic.getNumberOfEventCardsToPlay(
                         game,
                         currentPlayerId
                       ),
+                  }
+                  botState = {
+                    ...botState,
+                    cropsToPlayDuringTurn: botLogic.getNumberOfCropCardsToPlay(
+                      game,
+                      currentPlayerId
+                    ),
                     toolCardsThatCanBePlayed:
                       botLogic.getNumberOfToolCardsToPlay(
                         game,
@@ -102,7 +114,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 default:
               }
 
-              enqueue.assign({ ...context, game })
+              enqueue.assign({ botState, game })
               enqueue.raise({ type: GameEvent.BOT_TURN_INITIALIZED })
             }
           )
@@ -114,37 +126,45 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [GameEvent.BOT_TURN_PHASE_COMPLETE]: BotTurnActionState.PLAYING_WATER,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            const areCropsToPlay = context.cropsToPlayDuringBotTurn > 0
-
-            if (areCropsToPlay) {
-              const { currentPlayerId } = game
-              assertCurrentPlayer(currentPlayerId)
-
-              const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
+          withBotErrorHandling(
+            ({
+              context: {
+                botState: { cropsToPlayDuringTurn },
                 game,
-                currentPlayerId
-              )
-              const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
+              },
+              enqueue,
+            }) => {
+              const areCropsToPlay = cropsToPlayDuringTurn > 0
 
-              if (cardIdx === undefined) {
-                throw new GameStateCorruptError(
-                  `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
+              if (areCropsToPlay) {
+                const { currentPlayerId } = game
+                assertCurrentPlayer(currentPlayerId)
+
+                const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
+                  game,
+                  currentPlayerId
                 )
-              }
+                const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
 
-              enqueue.raise(
-                {
-                  type: GameEvent.PLAY_CROP,
-                  playerId: currentPlayerId,
-                  cardIdx,
-                },
-                { delay: BOT_ACTION_DELAY }
-              )
-            } else {
-              enqueue.raise({ type: GameEvent.BOT_TURN_PHASE_COMPLETE })
+                if (cardIdx === undefined) {
+                  throw new GameStateCorruptError(
+                    `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
+                  )
+                }
+
+                enqueue.raise(
+                  {
+                    type: GameEvent.PLAY_CROP,
+                    playerId: currentPlayerId,
+                    cardIdx,
+                  },
+                  { delay: BOT_ACTION_DELAY }
+                )
+              } else {
+                enqueue.raise({ type: GameEvent.BOT_TURN_PHASE_COMPLETE })
+              }
             }
-          })
+          )
         ),
       },
 
@@ -154,14 +174,14 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             BotTurnActionState.PLAYING_EVENTS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
+          withBotErrorHandling(({ context: { botState, game }, enqueue }) => {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
-            const fieldCropIndicesToWaterDuringBotTurn =
+            const fieldCropIndicesToWaterDuringTurn =
               botLogic.getCropCardIndicesToWater(game, currentPlayerId)
             const areWaterCardsToPlay =
-              fieldCropIndicesToWaterDuringBotTurn.length > 0
+              fieldCropIndicesToWaterDuringTurn.length > 0
 
             if (areWaterCardsToPlay) {
               const waterCardIdxsInPlayerHand =
@@ -182,8 +202,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }
 
             enqueue.assign({
-              ...context,
-              fieldCropIndicesToWaterDuringBotTurn,
+              botState: {
+                ...botState,
+                fieldCropIndicesToWaterDuringTurn,
+              },
             })
           })
         ),
@@ -194,8 +216,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [GameEvent.BOT_TURN_PHASE_COMPLETE]: BotTurnActionState.PLAYING_TOOLS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            const areEventCardsToPlay = context.eventCardsThatCanBePlayed > 0
+          withBotErrorHandling(({ context: { game }, enqueue }) => {
+            const areEventCardsToPlay = game.eventCardsThatCanBePlayed > 0
 
             if (areEventCardsToPlay) {
               const { currentPlayerId } = game
@@ -235,8 +257,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             BotTurnActionState.HARVESTING_CROPS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
-            const areToolsToPlay = context.toolCardsThatCanBePlayed > 0
+          withBotErrorHandling(({ context: { botState, game }, enqueue }) => {
+            const areToolsToPlay = botState.toolCardsThatCanBePlayed > 0
 
             if (areToolsToPlay) {
               const { currentPlayerId } = game
@@ -275,7 +297,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [GameEvent.BOT_TURN_PHASE_COMPLETE]: BotTurnActionState.DONE,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context, context: { game }, enqueue }) => {
+          withBotErrorHandling(({ context: { botState, game }, enqueue }) => {
             const { currentPlayerId } = game
             assertCurrentPlayer(currentPlayerId)
 
@@ -299,8 +321,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }
 
             enqueue.assign({
-              ...context,
-              cropCardIndicesToHarvest,
+              botState: {
+                ...botState,
+                cropCardIndicesToHarvest,
+              },
             })
           })
         ),

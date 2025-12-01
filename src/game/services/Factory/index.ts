@@ -60,7 +60,11 @@ export class FactoryService {
       currentPlayerId,
       buffedCrop: null,
       nerfedCrop: null,
+      cardsToDrawAtTurnStart: 0,
+      eventCardsThatCanBePlayed: 0,
+      winner: null,
       ...overrides,
+      selectedWaterCardInHandIdx: overrides.selectedWaterCardInHandIdx ?? -1,
     }
 
     if (Object.keys(players).length === 0) {

@@ -82,12 +82,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
   ) {
     const { useActorRef } = ActorContext
     const actorRef = useActorRef()
-    const {
-      game,
-      gameState,
-      selectedWaterCardInHandIdx,
-      eventCardsThatCanBePlayed,
-    } = useGameRules()
+    const { game, gameState } = useGameRules()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
     const { setIsHandInViewport } = useContext(ShellContext)
@@ -95,6 +90,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       '(prefers-reduced-motion: reduce)'
     )
 
+    const { eventCardsThatCanBePlayed, selectedWaterCardInHandIdx } = game
     const canEventCardsBePlayed = eventCardsThatCanBePlayed > 0
 
     const handlePlayCard = async () => {

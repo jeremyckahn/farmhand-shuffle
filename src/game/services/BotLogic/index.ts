@@ -19,6 +19,8 @@ export class BotLogicService {
 
     const unboundedNumberOfCropsToPlay = Math.max(
       minimumCropsToPlay,
+      // TODO: Consider using Math.ceil or Math.round here to cause more crop
+      // cards to be played
       Math.floor(randomNumber.generate() * cropCardIdxsInPlayerHand.length)
     )
 
