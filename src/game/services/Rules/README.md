@@ -1,10 +1,10 @@
 # Farmhand Shuffle: Game Rules & Design
 
-Welcome to **Farmhand Shuffle**, a strategic card game where you compete to build the most profitable farm while sabotaging your rival! This document outlines the high-level game rules, card types, and flow of play.
+Welcome to **Farmhand Shuffle**, a strategic card game where players compete to build the most profitable farm while sabotaging their rivals! This document outlines the high-level game rules, card types, and flow of play.
 
 ## 🎯 Objective
 
-The goal of Farmhand Shuffle is simple: **Bankrupt your opponent.**
+The goal of Farmhand Shuffle is simple: **Bankrupt the opponent.**
 
 Players take turns managing their farms, harvesting crops for money, and paying taxes/fees. If a player runs out of funds (Coins), the game ends immediately, and the surviving player is declared the winner.
 
@@ -15,25 +15,27 @@ Players take turns managing their farms, harvesting crops for money, and paying 
 There are four distinct types of cards in the deck:
 
 ### 🌱 Crops
-These are the foundation of your farm.
-- **Action:** You plant these into your **Field** (maximum 6 slots).
+These are the foundation of the farm.
+- **Action:** Players plant these into their **Field** (maximum 6 slots).
 - **Growth:** Each crop requires a specific amount of **Water** to mature.
 - **Harvest:** Once fully watered, a crop can be harvested to earn Coins.
 
 ### 💧 Water
-Essential for growing your crops.
-- **Action:** You play a Water card directly onto a planted Crop in your field.
-- **Effect:** Increases the crop's water level. When the water level meets the crop's requirement, it becomes ready for harvest.
+Essential for growing crops.
+- **Action:** Players play a Water card directly onto a planted Crop in the field.
+- **Effect:** Increases the crop's water level. When the water level meets the crop's requirement, it becomes ready for harvest. **Note:** The Water card is discarded after being applied to the crop.
 
 ### ⚡ Events
 Powerful, one-time effects that can turn the tide of the game.
-- **Limit:** You can only play **1 Event card per turn**.
+- **Limit:** Players can only play **1 Event card per turn**.
 - **Effect:** Varied effects, such as stealing funds, destroying opponent crops, or drawing extra cards.
+- **Strategy:** Many Event cards are designed with a trade-off, applying both a beneficial effect (buff) and a detrimental effect (nerf) to the player. This requires careful strategic planning.
 
 ### 🛠️ Tools
 Utility cards that provide bonuses or special actions.
-- **Limit:** You can play as many Tool cards as you want during your turn.
-- **Effect:** Can be immediate bonuses or lasting effects that help you manage your farm more efficiently.
+- **Limit:** Players can play as many Tool cards as they want during their turn.
+- **Effect:** Can be immediate bonuses or lasting effects that help manage the farm more efficiently.
+- **Strategy:** Like Events, Tools often involve a cost or penalty alongside their benefit, forcing players to weigh the long-term value of playing them.
 
 ---
 
@@ -50,7 +52,7 @@ Before the first turn begins:
 
 ### 2. Turn Structure
 
-On your turn, you are free to perform actions in any order until you decide to end your turn.
+On a turn, the player is free to perform actions in any order until deciding to end the turn.
 
 ```mermaid
 graph TD
@@ -73,17 +75,17 @@ graph TD
 ```
 
 #### Key Actions
-*   **Draw:** You automatically draw 1 card at the start of your turn.
-*   **Plant:** Move a Crop card from your hand to an empty slot in your field.
-*   **Water:** Select a Water card from your hand, then choose a Crop to water.
-*   **Harvest:** If a crop has enough water, you can harvest it to add its value to your funds. The crop is then discarded.
-*   **Pass:** When you are done, you pass play to the opponent.
+*   **Draw:** The player automatically draws 1 card at the start of the turn.
+*   **Plant:** Move a Crop card from hand to an empty slot in the field.
+*   **Water:** Select a Water card from hand, then choose a Crop to water. The Water card is then discarded.
+*   **Harvest:** If a crop has enough water, it can be harvested to add its value to the player's funds. The crop is then discarded.
+*   **Pass:** When done, the player passes play to the opponent.
 
 ---
 
 ## 🤖 The Automated Opponent (Bot)
 
-You play against an automated bot that follows the same rules as you. However, the bot is efficient and follows a strict routine every turn:
+Players compete against an automated bot that follows the same rules. However, the bot is efficient and follows a strict routine every turn:
 
 1.  **Analyze:** It assesses the board state.
 2.  **Plant:** It plays as many crops as it deems necessary.
@@ -101,4 +103,4 @@ The bot acts quickly, so keep an eye on the notification log to see what moves i
 The economy is unforgiving. Throughout the game, various effects or costs may deplete a player's funds.
 
 *   **Game Over:** The moment a player's funds drop below zero (or they cannot pay a required cost), they lose.
-*   **Victory:** If your opponent goes bankrupt, you win!
+*   **Victory:** If the opponent goes bankrupt, the remaining player wins!
