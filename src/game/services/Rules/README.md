@@ -54,7 +54,7 @@ On your turn, you are free to perform actions in any order until you decide to e
 
 ```mermaid
 graph TD
-    Start[Start Turn] --> Draw[Draw Card(s)]
+    Start[Start Turn] --> Draw[Draw Cards]
     Draw --> ActionPhase{Action Phase}
 
     ActionPhase -->|Plant Crop| Plant[Add Crop to Field]
