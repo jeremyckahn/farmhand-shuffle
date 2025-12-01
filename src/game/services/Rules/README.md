@@ -113,5 +113,5 @@ Players must check the current market prices before deciding whether to harvest 
 
 The economy is unforgiving. Throughout the game, various effects or costs may deplete a player's funds.
 
-*   **Game Over:** The moment a player's funds drop below zero (or they cannot pay a required cost), they lose.
+*   **Game Over:** If a player has 0 coins after paying the mandatory Community Fund cost at the start of their turn, they lose. Funds cannot drop below zero.
 *   **Victory:** If the opponent goes bankrupt, the remaining player wins!
