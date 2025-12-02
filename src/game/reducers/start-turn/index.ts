@@ -1,6 +1,6 @@
 import { STANDARD_TAX_AMOUNT } from '../../config'
 import { PlayerOutOfFundsError } from '../../services/Rules/errors'
-import { IGame, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { drawCard } from '../draw-card'
 import { payFromPlayerToCommunity } from '../pay-from-player-to-community'
 import { updatePlayedCrop } from '../update-played-crop'
@@ -8,30 +8,32 @@ import { updatePlayer } from '../update-player'
 import { updatePrices } from '../update-prices'
 
 export const startTurn = (
-  game: IGame,
+  match: IMatch,
   playerId: IPlayer['id'],
   cardsToDraw = 1
-): IGame => {
-  game = updatePlayer(game, playerId, { cardsPlayedDuringTurn: [] })
-  game = payFromPlayerToCommunity(game, STANDARD_TAX_AMOUNT, playerId)
+): IMatch => {
+  match = updatePlayer(match, playerId, { cardsPlayedDuringTurn: [] })
+  match = payFromPlayerToCommunity(match, STANDARD_TAX_AMOUNT, playerId)
 
-  if (game.table.players[playerId].funds === 0) {
+  if (match.table.players[playerId].funds === 0) {
     throw new PlayerOutOfFundsError(playerId)
   }
 
-  game = drawCard(game, playerId, cardsToDraw)
+  match = drawCard(match, playerId, cardsToDraw)
 
-  const crops = game.table.players[playerId].field.crops
+  const crops = match.table.players[playerId].field.crops
 
   for (let i = 0; i < crops.length; i++) {
     if (crops[i] === undefined) {
       continue
     }
 
-    game = updatePlayedCrop(game, playerId, i, { wasWateredDuringTurn: false })
+    match = updatePlayedCrop(match, playerId, i, {
+      wasWateredDuringTurn: false,
+    })
   }
 
-  game = updatePrices(game)
+  match = updatePrices(match)
 
-  return game
+  return match
 }

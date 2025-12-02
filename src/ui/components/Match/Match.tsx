@@ -18,20 +18,20 @@ import { TurnControl } from '../TurnControl'
 import { ActorContext } from './ActorContext'
 import { ShellContext } from './ShellContext'
 import { Snackbar } from './Snackbar'
-import { GameProps } from './types'
-import { useGame } from './useGame'
+import { MatchProps } from './types'
+import { useMatch } from './useMatch'
 
-const GameCore = ({
+const MatchCore = ({
   playerSeeds,
   userPlayerId,
   fullHeight = false,
   sx = [],
   ...rest
-}: GameProps) => {
+}: MatchProps) => {
   const theme = useTheme()
 
   const {
-    game,
+    match,
     handleHandVisibilityToggle,
     handleClickPlayAgain,
     isHandDisabled,
@@ -40,15 +40,15 @@ const GameCore = ({
     showGameOver,
     showHand,
     snackbarProps,
-  } = useGame({ playerSeeds, userPlayerId })
+  } = useMatch({ playerSeeds, userPlayerId })
 
-  const { winner } = game
+  const { winner } = match
 
   return (
     <ShellContext.Provider value={shellContextValue}>
       <Container
         maxWidth={false}
-        data-testid="game"
+        data-testid="match"
         sx={[
           {
             backgroundColor: '#ffba4d',
@@ -71,8 +71,8 @@ const GameCore = ({
         ]}
         {...rest}
       >
-        <TurnControl game={game} />
-        <Table sx={{ pt: 4 }} game={game} />
+        <TurnControl match={match} />
+        <Table sx={{ pt: 4 }} match={match} />
         <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
           <Fab
             color="secondary"
@@ -107,10 +107,10 @@ const GameCore = ({
   )
 }
 
-export const Game = ({ ...rest }: GameProps) => {
+export const Match = ({ ...rest }: MatchProps) => {
   return (
     <ActorContext.Provider>
-      <GameCore {...rest} />
+      <MatchCore {...rest} />
     </ActorContext.Provider>
   )
 }

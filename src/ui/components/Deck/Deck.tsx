@@ -3,7 +3,7 @@ import useTheme from '@mui/material/styles/useTheme'
 import { MouseEventHandler } from 'react'
 
 import { lookup } from '../../../game/services/Lookup'
-import { IGame, IPlayer } from '../../../game/types'
+import { IMatch, IPlayer } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { isSxArray } from '../../type-guards'
@@ -11,7 +11,7 @@ import { CardSize } from '../../types'
 import { Card } from '../Card'
 
 export interface DeckProps extends BoxProps {
-  game: IGame
+  match: IMatch
   handleClickTopCard?: MouseEventHandler<HTMLDivElement>
   isTopCardSelected?: boolean
   playerId: IPlayer['id']
@@ -23,7 +23,7 @@ export const defaultDeckThicknessPx = 30
 export const defaultDeckCardSize = CardSize.MEDIUM
 
 export const Deck = ({
-  game,
+  match,
   handleClickTopCard,
   isTopCardSelected,
   playerId,
@@ -37,9 +37,9 @@ export const Deck = ({
   })
 
   const theme = useTheme()
-  const player = lookup.getPlayer(game, playerId)
+  const player = lookup.getPlayer(match, playerId)
 
-  const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
+  const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
 
   return (
     <Box

@@ -14,8 +14,8 @@ import React, { useContext, useRef } from 'react'
 
 import {
   CardType,
-  GameEvent,
-  GameState,
+  MatchEvent,
+  MatchState,
   isCropCardInstance,
   isEventCardInstance,
   isToolCardInstance,
@@ -23,12 +23,12 @@ import {
 } from '../../../game/types'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { useGameRules } from '../../hooks/useGameRules'
+import { useMatchRules } from '../../hooks/useMatchRules'
 import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
-import { ActorContext } from '../Game/ActorContext'
-import { ShellContext } from '../Game/ShellContext'
+import { ActorContext } from '../Match/ActorContext'
+import { ShellContext } from '../Match/ShellContext'
 import { getCardImageSrc, Image } from '../Image'
 
 import { CardProps } from './types'
@@ -82,7 +82,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
   ) {
     const { useActorRef } = ActorContext
     const actorRef = useActorRef()
-    const { game, gameState } = useGameRules()
+    const { match, matchState } = useMatchRules()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
     const { setIsHandInViewport } = useContext(ShellContext)
@@ -90,7 +90,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       '(prefers-reduced-motion: reduce)'
     )
 
-    const { eventCardsThatCanBePlayed, selectedWaterCardInHandIdx } = game
+    const { eventCardsThatCanBePlayed, selectedWaterCardInHandIdx } = match
     const canEventCardsBePlayed = eventCardsThatCanBePlayed > 0
 
     const handlePlayCard = async () => {
@@ -100,26 +100,26 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
 
       switch (card.type) {
         case CardType.CROP: {
-          actorRef.send({ type: GameEvent.PLAY_CROP, cardIdx, playerId })
+          actorRef.send({ type: MatchEvent.PLAY_CROP, cardIdx, playerId })
 
           break
         }
 
         case CardType.WATER: {
-          actorRef.send({ type: GameEvent.PLAY_WATER, cardIdx, playerId })
+          actorRef.send({ type: MatchEvent.PLAY_WATER, cardIdx, playerId })
           setIsHandInViewport(false)
 
           break
         }
 
         case CardType.EVENT: {
-          actorRef.send({ type: GameEvent.PLAY_EVENT, cardIdx, playerId })
+          actorRef.send({ type: MatchEvent.PLAY_EVENT, cardIdx, playerId })
 
           break
         }
 
         case CardType.TOOL: {
-          actorRef.send({ type: GameEvent.PLAY_TOOL, cardIdx, playerId })
+          actorRef.send({ type: MatchEvent.PLAY_TOOL, cardIdx, playerId })
 
           break
         }
@@ -130,7 +130,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
 
     const handleWaterCrop = () => {
       actorRef.send({
-        type: GameEvent.SELECT_CROP_TO_WATER,
+        type: MatchEvent.SELECT_CROP_TO_WATER,
         playerId,
         cropIdxInFieldToWater: cardIdx,
         waterCardInHandIdx: selectedWaterCardInHandIdx,
@@ -139,13 +139,13 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
 
     const handleHarvestCrop = () => {
       actorRef.send({
-        type: GameEvent.HARVEST_CROP,
+        type: MatchEvent.HARVEST_CROP,
         playerId,
         cropIdxInFieldToHarvest: cardIdx,
       })
     }
 
-    const isSessionOwnersCard = playerId === game.sessionOwnerPlayerId
+    const isSessionOwnersCard = playerId === match.sessionOwnerPlayerId
 
     let showPlayCardButton = false
     let showWaterCropButton = false
@@ -154,16 +154,16 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
 
     switch (card.type) {
       case CardType.CROP: {
-        isBuffedCrop = card.id === game.buffedCrop?.crop.id
+        isBuffedCrop = card.id === match.buffedCrop?.crop.id
 
         if (
           isSessionOwnersCard &&
           isFocused &&
           !isInField &&
           [
-            GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-            GameState.WAITING_FOR_PLAYER_SETUP_ACTION,
-          ].includes(gameState)
+            MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+            MatchState.WAITING_FOR_PLAYER_SETUP_ACTION,
+          ].includes(matchState)
         ) {
           showPlayCardButton = true
         }
@@ -173,7 +173,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
           isFocused &&
           isInField &&
           canBeWatered &&
-          [GameState.PLAYER_WATERING_CROP].includes(gameState)
+          [MatchState.PLAYER_WATERING_CROP].includes(matchState)
         ) {
           showWaterCropButton = true
         }
@@ -183,7 +183,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
           isFocused &&
           isInField &&
           canBeHarvested &&
-          [GameState.WAITING_FOR_PLAYER_TURN_ACTION].includes(gameState)
+          [MatchState.WAITING_FOR_PLAYER_TURN_ACTION].includes(matchState)
         ) {
           showHarvestCropButton = true
         }
@@ -196,7 +196,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
           isSessionOwnersCard &&
           isFocused &&
           canEventCardsBePlayed &&
-          gameState === GameState.WAITING_FOR_PLAYER_TURN_ACTION
+          matchState === MatchState.WAITING_FOR_PLAYER_TURN_ACTION
         ) {
           showPlayCardButton = true
         }
@@ -208,7 +208,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
         if (
           isSessionOwnersCard &&
           isFocused &&
-          gameState === GameState.WAITING_FOR_PLAYER_TURN_ACTION
+          matchState === MatchState.WAITING_FOR_PLAYER_TURN_ACTION
         ) {
           showPlayCardButton = true
         }
@@ -220,7 +220,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
         if (
           isSessionOwnersCard &&
           isFocused &&
-          gameState === GameState.WAITING_FOR_PLAYER_TURN_ACTION
+          matchState === MatchState.WAITING_FOR_PLAYER_TURN_ACTION
         ) {
           showPlayCardButton = true
         }
@@ -234,8 +234,8 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
     const showWaterableState =
       isInField &&
       canBeWatered &&
-      gameState === GameState.PLAYER_WATERING_CROP &&
-      game.currentPlayerId === playerId &&
+      matchState === MatchState.PLAYER_WATERING_CROP &&
+      match.currentPlayerId === playerId &&
       isCropCardInstance(card)
 
     const showHarvestableState =
@@ -244,7 +244,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
       isCropCardInstance(card) &&
       // NOTE: This is necessary to prevent interfering with waterable crop
       // state presentation
-      gameState !== GameState.PLAYER_WATERING_CROP
+      matchState !== MatchState.PLAYER_WATERING_CROP
 
     let tooltipTitle = ''
 

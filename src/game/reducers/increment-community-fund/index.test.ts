@@ -1,31 +1,34 @@
-import { stubGame } from '../../../test-utils/stubs/game'
-import { IGame } from '../../types'
+import { stubMatch } from '../../../test-utils/stubs/match'
+import { IMatch } from '../../types'
 import { updateTable } from '../update-table'
 
 import { incrementCommunityFund } from '.'
 
 describe('incrementCommunityFund', () => {
-  let game: IGame
+  let match: IMatch
 
   beforeEach(() => {
-    game = stubGame()
+    match = stubMatch()
   })
 
   test('adds funds', () => {
-    const newGame = incrementCommunityFund(game, 5)
-    expect(newGame.table.communityFund).toEqual(game.table.communityFund + 5)
+    const newMatch = incrementCommunityFund(match, 5)
+    expect(newMatch.table.communityFund).toEqual(match.table.communityFund + 5)
   })
 
   test('removes funds', () => {
-    game = updateTable(game, { communityFund: 50 })
+    match = updateTable(match, { communityFund: 50 })
 
-    const newGame = incrementCommunityFund(game, -5)
-    expect(newGame.table.communityFund).toEqual(game.table.communityFund - 5)
+    const newMatch = incrementCommunityFund(match, -5)
+    expect(newMatch.table.communityFund).toEqual(match.table.communityFund - 5)
   })
 
   test('does not remove more funds than the community fund has', () => {
-    const newGame = incrementCommunityFund(game, -game.table.communityFund - 1)
+    const newMatch = incrementCommunityFund(
+      match,
+      -match.table.communityFund - 1
+    )
 
-    expect(newGame.table.communityFund).toEqual(0)
+    expect(newMatch.table.communityFund).toEqual(0)
   })
 })

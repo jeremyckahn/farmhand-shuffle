@@ -2,11 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { spyOn } from 'storybook/test'
 
 import { updatePlayer } from '../../../game/reducers/update-player'
-import { GameState } from '../../../game/types'
+import { MatchState } from '../../../game/types'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 
 import { TurnControl } from './TurnControl'
 
@@ -17,7 +17,7 @@ const meta = {
     layout: 'centered',
   },
   args: {
-    game: stubGame(),
+    match: stubMatch(),
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof TurnControl>
@@ -29,10 +29,10 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
   args: {},
   decorators: [
     Story => {
-      const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+      const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
-      let game = stubGame()
-      game = updatePlayer(game, stubPlayer1.id, {
+      let match = stubMatch()
+      match = updatePlayer(match, stubPlayer1.id, {
         field: {
           crops: [
             {
@@ -45,11 +45,11 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
       })
 
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce({
-        gameState,
-        game,
+        matchState,
+        match,
       })
 
-      return <Story args={{ game }} />
+      return <Story args={{ match }} />
     },
   ],
 }

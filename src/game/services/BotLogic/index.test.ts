@@ -5,7 +5,7 @@ import {
   stubShovel,
   stubWater,
 } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { carrot, instantiate, water } from '../../cards'
 import { STANDARD_FIELD_SIZE } from '../../config'
@@ -93,8 +93,8 @@ describe('BotLogicService', () => {
       ({ rngStub, hand, fieldCrops, minimumCropsToPlay, expectedResult }) => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
-        let game = stubGame()
-        game = updatePlayer(game, stubPlayer1.id, {
+        let match = stubMatch()
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
             crops: fieldCrops,
@@ -102,7 +102,7 @@ describe('BotLogicService', () => {
         })
 
         const result = botLogic.getNumberOfCropCardsToPlay(
-          game,
+          match,
           stubPlayer1.id,
           {
             minimumCropsToPlay,
@@ -215,15 +215,15 @@ describe('BotLogicService', () => {
     ])(
       'returns indices of crop cards that need water for hand $hand and crops $fieldCrops',
       ({ hand, fieldCrops, expectedResult }) => {
-        let game = stubGame()
-        game = updatePlayer(game, stubPlayer1.id, {
+        let match = stubMatch()
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
             crops: fieldCrops,
           },
         })
 
-        const result = botLogic.getCropCardIndicesToWater(game, stubPlayer1.id)
+        const result = botLogic.getCropCardIndicesToWater(match, stubPlayer1.id)
 
         expect(result).toEqual(expectedResult)
       }
@@ -281,15 +281,15 @@ describe('BotLogicService', () => {
     ])(
       'returns indices of crop cards that are ready to harvest for crops $fieldCrops',
       ({ fieldCrops, expectedResult }) => {
-        let game = stubGame()
-        game = updatePlayer(game, stubPlayer1.id, {
+        let match = stubMatch()
+        match = updatePlayer(match, stubPlayer1.id, {
           field: {
             crops: fieldCrops,
           },
         })
 
         const result = botLogic.getCropCardIndicesToHarvest(
-          game,
+          match,
           stubPlayer1.id
         )
 
@@ -306,13 +306,13 @@ describe('BotLogicService', () => {
     ])(
       'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
       ({ hand, expectedResult }) => {
-        let game = stubGame()
-        game = updatePlayer(game, stubPlayer1.id, {
+        let match = stubMatch()
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
 
         const result = botLogic.getNumberOfEventCardsToPlay(
-          game,
+          match,
           stubPlayer1.id
         )
 
@@ -334,12 +334,15 @@ describe('BotLogicService', () => {
       ({ hand, rngStub, expectedResult }) => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
-        let game = stubGame()
-        game = updatePlayer(game, stubPlayer1.id, {
+        let match = stubMatch()
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
 
-        const result = botLogic.getNumberOfToolCardsToPlay(game, stubPlayer1.id)
+        const result = botLogic.getNumberOfToolCardsToPlay(
+          match,
+          stubPlayer1.id
+        )
 
         expect(result).toBe(expectedResult)
       }
@@ -366,12 +369,12 @@ describe('BotLogicService', () => {
       ({ hand, rngStub, expectedResult }) => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
-        let game = stubGame()
-        game = updatePlayer(game, stubPlayer1.id, {
+        let match = stubMatch()
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
 
-        const result = botLogic.getEventCardIndexToPlay(game, stubPlayer1.id)
+        const result = botLogic.getEventCardIndexToPlay(match, stubPlayer1.id)
 
         expect(result).toBe(expectedResult)
       }
@@ -398,12 +401,12 @@ describe('BotLogicService', () => {
       ({ hand, rngStub, expectedResult }) => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
-        let game = stubGame()
-        game = updatePlayer(game, stubPlayer1.id, {
+        let match = stubMatch()
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
 
-        const result = botLogic.getToolCardIndexToPlay(game, stubPlayer1.id)
+        const result = botLogic.getToolCardIndexToPlay(match, stubPlayer1.id)
 
         expect(result).toBe(expectedResult)
       }

@@ -9,8 +9,8 @@ import { incrementPlayer } from '../../../reducers/increment-player'
 import { removeTurnCardsPlayed } from '../../../reducers/remove-turn-cards-played'
 import { startTurn } from '../../../reducers/start-turn'
 import {
-  GameEvent,
-  GameState,
+  MatchEvent,
+  MatchState,
   isToolCardInstance,
   ShellNotificationType,
 } from '../../../types'
@@ -22,39 +22,39 @@ import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
 
 export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
-  [GameState.WAITING_FOR_PLAYER_TURN_ACTION]: {
+  [MatchState.WAITING_FOR_PLAYER_TURN_ACTION]: {
     on: {
-      [GameEvent.PLAYER_RAN_OUT_OF_FUNDS]: GameState.GAME_OVER,
+      [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
-      [GameEvent.PLAY_CROP]: GameState.PLANTING_CROP,
+      [MatchEvent.PLAY_CROP]: MatchState.PLANTING_CROP,
 
-      [GameEvent.PLAY_EVENT]: GameState.PLAYING_EVENT,
+      [MatchEvent.PLAY_EVENT]: MatchState.PLAYING_EVENT,
 
-      [GameEvent.PLAY_WATER]: GameState.PLAYER_WATERING_CROP,
+      [MatchEvent.PLAY_WATER]: MatchState.PLAYER_WATERING_CROP,
 
-      [GameEvent.PLAY_TOOL]: GameState.PLAYING_TOOL,
+      [MatchEvent.PLAY_TOOL]: MatchState.PLAYING_TOOL,
 
-      [GameEvent.START_TURN]: GameState.PERFORMING_BOT_TURN_ACTION,
+      [MatchEvent.START_TURN]: MatchState.PERFORMING_BOT_TURN_ACTION,
 
-      [GameEvent.HARVEST_CROP]: {
+      [MatchEvent.HARVEST_CROP]: {
         actions: enqueueActions(
           ({
             event,
             enqueue,
             context: {
-              game,
+              match,
               shell: { triggerNotification },
             },
           }) => {
             const { playerId, cropIdxInFieldToHarvest } = event
 
             const playedCrop = lookup.getPlayedCropFromField(
-              game,
+              match,
               playerId,
               cropIdxInFieldToHarvest
             )
 
-            game = harvestCrop(game, playerId, cropIdxInFieldToHarvest)
+            match = harvestCrop(match, playerId, cropIdxInFieldToHarvest)
 
             triggerNotification({
               type: ShellNotificationType.CROP_HARVESTED,
@@ -63,29 +63,29 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
               },
             })
 
-            enqueue.assign({ game })
+            enqueue.assign({ match })
           }
         ),
       },
     },
 
-    entry: enqueueActions(({ event, context, context: { game }, enqueue }) => {
+    entry: enqueueActions(({ event, context, context: { match }, enqueue }) => {
       {
         try {
           switch (event.type) {
-            case GameEvent.START_TURN: {
-              game = {
-                ...game,
+            case MatchEvent.START_TURN: {
+              match = {
+                ...match,
                 cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
               }
-              const previousTurnGameState = game
+              const previousTurnMatchState = match
 
-              game = incrementPlayer(game)
-              const { currentPlayerId } = game
+              match = incrementPlayer(match)
+              const { currentPlayerId } = match
               assertCurrentPlayer(currentPlayerId)
 
               const previousTurnStateForCurrentPlayer =
-                previousTurnGameState.table.players[currentPlayerId]
+                previousTurnMatchState.table.players[currentPlayerId]
 
               for (const turnCardPlayed of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
                 if (
@@ -94,34 +94,34 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
                 ) {
                   const newContext = turnCardPlayed.onStartFollowingTurn({
                     ...context,
-                    // NOTE: Updated game instance is passed explicitly here so
-                    // that the stale context.game reference is not used.
-                    game,
+                    // NOTE: Updated match instance is passed explicitly here so
+                    // that the stale context.match reference is not used.
+                    match,
                   })
-                  game = newContext.game
+                  match = newContext.match
                 }
               }
 
-              game = {
-                ...game,
+              match = {
+                ...match,
                 eventCardsThatCanBePlayed:
                   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
               }
 
-              game = startTurn(
-                game,
+              match = startTurn(
+                match,
                 currentPlayerId,
-                game.cardsToDrawAtTurnStart
+                match.cardsToDrawAtTurnStart
               )
 
               break
             }
 
-            case GameEvent.OPERATION_ABORTED: {
-              const { currentPlayerId } = game
+            case MatchEvent.OPERATION_ABORTED: {
+              const { currentPlayerId } = match
               assertCurrentPlayer(currentPlayerId)
 
-              game = removeTurnCardsPlayed(game, currentPlayerId, 1)
+              match = removeTurnCardsPlayed(match, currentPlayerId, 1)
 
               break
             }
@@ -130,11 +130,11 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
           }
         } catch (error) {
           if (error instanceof PlayerOutOfFundsError) {
-            const { currentPlayerId } = game
+            const { currentPlayerId } = match
             assertCurrentPlayer(currentPlayerId)
 
             enqueue.raise({
-              type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS,
+              type: MatchEvent.PLAYER_RAN_OUT_OF_FUNDS,
               playerId: currentPlayerId,
             })
           } else {
@@ -144,16 +144,16 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
 
         enqueue.assign({
           ...context,
-          game,
+          match,
         })
       }
     }),
 
-    exit: enqueueActions(({ event, context: { game }, enqueue }) => {
+    exit: enqueueActions(({ event, context: { match }, enqueue }) => {
       {
-        game = recordCardPlayEvents(game, event)
+        match = recordCardPlayEvents(match, event)
 
-        enqueue.assign({ game })
+        enqueue.assign({ match })
       }
     }),
   },

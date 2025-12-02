@@ -1,9 +1,9 @@
 import { stubCarrot } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
-import { updateGame } from '../../reducers/update-game'
+import { updateMatch } from '../../reducers/update-match'
 import { factory } from '../../services/Factory'
-import { createGameStateMachineContext } from '../../services/Rules/createGameStateMachineContext'
+import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
 import { IPlayedCrop } from '../../types'
 
 import { rain } from './rain'
@@ -11,10 +11,10 @@ import { rain } from './rain'
 describe('rain card', () => {
   describe('applyEffect', () => {
     it('should increment water cards for all crops in all players fields', () => {
-      let game = stubGame()
-      game = updateGame(game, {
+      let match = stubMatch()
+      match = updateMatch(match, {
         table: {
-          ...stubGame().table,
+          ...stubMatch().table,
           players: {
             [stubPlayer1.id]: {
               ...stubPlayer1,
@@ -61,38 +61,38 @@ describe('rain card', () => {
         },
       })
 
-      const { game: updatedGame } = rain.applyEffect({
-        ...createGameStateMachineContext(),
-        game,
+      const { match: updatedMatch } = rain.applyEffect({
+        ...createMatchStateMachineContext(),
+        match,
       })
 
       expect(
-        updatedGame.table.players[stubPlayer1.id].field.crops[1]
+        updatedMatch.table.players[stubPlayer1.id].field.crops[1]
       ).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
       expect(
-        updatedGame.table.players[stubPlayer1.id].field.crops[2]
+        updatedMatch.table.players[stubPlayer1.id].field.crops[2]
       ).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 3,
       })
       expect(
-        updatedGame.table.players[stubPlayer1.id].field.crops[3]
+        updatedMatch.table.players[stubPlayer1.id].field.crops[3]
       ).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
 
       expect(
-        updatedGame.table.players[stubPlayer2.id].field.crops[0]
+        updatedMatch.table.players[stubPlayer2.id].field.crops[0]
       ).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 1,
       })
       expect(
-        updatedGame.table.players[stubPlayer2.id].field.crops[2]
+        updatedMatch.table.players[stubPlayer2.id].field.crops[2]
       ).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 4,

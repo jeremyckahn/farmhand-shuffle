@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { DECK_SIZE } from '../../../game/config'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 
 import { Deck, DeckProps } from './Deck'
 
@@ -14,13 +14,13 @@ vi.mock('../Card', () => ({
   ),
 }))
 
-const game = stubGame()
+const match = stubMatch()
 
-const [player1Id, player2Id] = Object.keys(game.table.players)
+const [player1Id, player2Id] = Object.keys(match.table.players)
 
 const StubDeck = ({ ref, ...overrides }: Partial<DeckProps> = {}) => (
   <ActorContext.Provider>
-    <Deck game={game} playerId={player1Id} {...overrides} />
+    <Deck match={match} playerId={player1Id} {...overrides} />
   </ActorContext.Provider>
 )
 

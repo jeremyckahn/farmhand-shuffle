@@ -4,34 +4,34 @@ import {
   stubShovel,
   stubWater,
 } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { updatePlayer } from '../../reducers/update-player'
-import { IGame, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { isPlayer } from '../../types/guards'
 import { factory } from '../Factory'
 import { InvalidIdError } from '../Rules/errors'
 
 import { lookup } from '.'
 
-const game = stubGame()
+const match = stubMatch()
 
 describe('Lookup', () => {
   describe('getCardFromHand', () => {
-    let mutatedGame: IGame
+    let mutatedMatch: IMatch
     let player1Id: IPlayer['id']
 
     beforeEach(() => {
-      mutatedGame = stubGame()
-      player1Id = Object.keys(mutatedGame.table.players)[0]
+      mutatedMatch = stubMatch()
+      player1Id = Object.keys(mutatedMatch.table.players)[0]
 
       // eslint-disable-next-line functional/immutable-data
-      mutatedGame.table.players[player1Id].hand[0] = stubCarrot
+      mutatedMatch.table.players[player1Id].hand[0] = stubCarrot
     })
 
     test('returns card from hand', () => {
-      const cardInstance = lookup.getCardFromHand(mutatedGame, player1Id, 0)
+      const cardInstance = lookup.getCardFromHand(mutatedMatch, player1Id, 0)
 
       expect(cardInstance).toBe(stubCarrot)
     })
@@ -39,9 +39,9 @@ describe('Lookup', () => {
     test('throws an error when specified card is not in hand', () => {
       expect(() => {
         lookup.getCardFromHand(
-          mutatedGame,
+          mutatedMatch,
           player1Id,
-          mutatedGame.table.players[player1Id].hand.length
+          mutatedMatch.table.players[player1Id].hand.length
         )
       }).toThrow()
     })
@@ -49,24 +49,24 @@ describe('Lookup', () => {
 
   describe('getOpponentPlayerIds', () => {
     test('returns opponent player IDs', () => {
-      const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
-      const playerIds = Object.keys(game.table.players)
+      const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
+      const playerIds = Object.keys(match.table.players)
 
       expect(opponentPlayerIds).toHaveLength(playerIds.length - 1)
-      expect(opponentPlayerIds).not.toContain(game.currentPlayerId)
+      expect(opponentPlayerIds).not.toContain(match.currentPlayerId)
     })
   })
 
   describe('getPlayer', () => {
     test('retrieves player', () => {
-      const player = lookup.getPlayer(game, game.sessionOwnerPlayerId)
+      const player = lookup.getPlayer(match, match.sessionOwnerPlayerId)
 
       expect(isPlayer(player)).toEqual(true)
     })
 
     test('throws an error when unavailable player is requested', () => {
       expect(() => {
-        lookup.getPlayer(game, '')
+        lookup.getPlayer(match, '')
       }).toThrow(InvalidIdError)
     })
   })
@@ -85,14 +85,14 @@ describe('Lookup', () => {
     ])(
       'retrieves $howMany crop indices in deck ($deck)',
       ({ deck, howMany, expected }) => {
-        let game = stubGame()
+        let match = stubMatch()
 
-        game = updatePlayer(game, stubPlayer1.id, {
+        match = updatePlayer(match, stubPlayer1.id, {
           deck,
         })
 
         const cropIndexesInDeck = lookup.findCropIndexesInDeck(
-          game,
+          match,
           stubPlayer1.id,
           howMany
         )
@@ -116,14 +116,14 @@ describe('Lookup', () => {
         expected: [0, 3],
       },
     ])('retrieves crop indices in hand ($hand)', ({ hand, expected }) => {
-      let game = stubGame()
+      let match = stubMatch()
 
-      game = updatePlayer(game, stubPlayer1.id, {
+      match = updatePlayer(match, stubPlayer1.id, {
         hand,
       })
 
       const cropIndexesInHand = lookup.findCropIndexesInPlayerHand(
-        game,
+        match,
         stubPlayer1.id
       )
 
@@ -145,14 +145,14 @@ describe('Lookup', () => {
         expected: [1, 2],
       },
     ])('retrieves water indices in hand ($hand)', ({ hand, expected }) => {
-      let game = stubGame()
+      let match = stubMatch()
 
-      game = updatePlayer(game, stubPlayer1.id, {
+      match = updatePlayer(match, stubPlayer1.id, {
         hand,
       })
 
       const waterIndexesInHand = lookup.findWaterIndexesInPlayerHand(
-        game,
+        match,
         stubPlayer1.id
       )
 
@@ -161,19 +161,19 @@ describe('Lookup', () => {
   })
 
   describe('getPlayedCropFromField', () => {
-    let mutatedGame: IGame
+    let mutatedMatch: IMatch
 
     beforeEach(() => {
-      mutatedGame = stubGame()
+      mutatedMatch = stubMatch()
 
       // eslint-disable-next-line functional/immutable-data
-      mutatedGame.table.players[stubPlayer1.id].field.crops[0] =
+      mutatedMatch.table.players[stubPlayer1.id].field.crops[0] =
         factory.buildPlayedCrop(stubCarrot)
     })
 
     test('returns card from field', () => {
       const playedCrop = lookup.getPlayedCropFromField(
-        mutatedGame,
+        mutatedMatch,
         stubPlayer1.id,
         0
       )
@@ -184,9 +184,9 @@ describe('Lookup', () => {
     test('throws an error when specified card is not in field', () => {
       expect(() => {
         lookup.getPlayedCropFromField(
-          mutatedGame,
+          mutatedMatch,
           stubPlayer1.id,
-          mutatedGame.table.players[stubPlayer1.id].field.crops.length
+          mutatedMatch.table.players[stubPlayer1.id].field.crops.length
         )
       }).toThrow()
     })
@@ -206,14 +206,14 @@ describe('Lookup', () => {
     ])(
       'retrieves event indices $expected in hand (%s)',
       ({ hand, expected }) => {
-        let game = stubGame()
+        let match = stubMatch()
 
-        game = updatePlayer(game, stubPlayer1.id, {
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
 
         const eventIndexesInHand = lookup.findEventIndexesInPlayerHand(
-          game,
+          match,
           stubPlayer1.id
         )
 
@@ -236,14 +236,14 @@ describe('Lookup', () => {
     ])(
       'retrieves tool indices $expected in hand (%s)',
       ({ hand, expected }) => {
-        let game = stubGame()
+        let match = stubMatch()
 
-        game = updatePlayer(game, stubPlayer1.id, {
+        match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
 
         const eventIndexesInHand = lookup.findToolIndexesInPlayerHand(
-          game,
+          match,
           stubPlayer1.id
         )
 
@@ -254,7 +254,7 @@ describe('Lookup', () => {
 
   describe('playerIds', () => {
     test('retrieves player IDs', () => {
-      const playerIds = lookup.playerIds(game)
+      const playerIds = lookup.playerIds(match)
 
       expect(playerIds).toEqual([stubPlayer1.id, stubPlayer2.id])
     })
@@ -262,7 +262,7 @@ describe('Lookup', () => {
 
   describe('nextPlayerIndex', () => {
     test('determines the next player ID', () => {
-      const nextPlayer = lookup.nextPlayerIndex(game)
+      const nextPlayer = lookup.nextPlayerIndex(match)
 
       expect(nextPlayer).toEqual(1)
     })

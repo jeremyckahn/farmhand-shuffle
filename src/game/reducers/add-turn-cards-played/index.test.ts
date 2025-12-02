@@ -3,35 +3,35 @@ import {
   stubPumpkin,
   stubWater,
 } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../update-player'
 
 import { addCardsPlayedDuringTurn } from '.'
 
 describe('addCardsPlayedDuringTurn', () => {
   test("adds to a player's turn cards played record", () => {
-    const game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
-    const newGame = addCardsPlayedDuringTurn(game, player1Id, [
+    const match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
+    const newMatch = addCardsPlayedDuringTurn(match, player1Id, [
       stubCarrot,
       stubPumpkin,
     ])
 
-    expect(newGame.table.players[player1Id].cardsPlayedDuringTurn).toEqual([
+    expect(newMatch.table.players[player1Id].cardsPlayedDuringTurn).toEqual([
       stubCarrot,
       stubPumpkin,
     ])
   })
 
   test('cards are prepended', () => {
-    let game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
-    game = updatePlayer(game, player1Id, {
+    let match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
+    match = updatePlayer(match, player1Id, {
       cardsPlayedDuringTurn: [stubCarrot, stubWater],
     })
-    const newGame = addCardsPlayedDuringTurn(game, player1Id, [stubPumpkin])
+    const newMatch = addCardsPlayedDuringTurn(match, player1Id, [stubPumpkin])
 
-    expect(newGame.table.players[player1Id].cardsPlayedDuringTurn).toEqual([
+    expect(newMatch.table.players[player1Id].cardsPlayedDuringTurn).toEqual([
       stubPumpkin,
       stubCarrot,
       stubWater,

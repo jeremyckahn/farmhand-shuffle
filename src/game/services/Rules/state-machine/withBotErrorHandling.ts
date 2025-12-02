@@ -1,13 +1,13 @@
-import { GameEvents, GameEvent } from '../../../types'
-import { PlayerOutOfFundsError, GameStateCorruptError } from '../errors'
+import { MatchEvents, MatchEvent } from '../../../types'
+import { PlayerOutOfFundsError, MatchStateCorruptError } from '../errors'
 
-import { GameMachineContext } from './createMachine'
+import { MatchMachineContext } from './createMachine'
 
 interface BotTurnActionArgs {
-  context: GameMachineContext
+  context: MatchMachineContext
   enqueue: {
-    raise: (event: GameEvents) => void
-    assign: (context: Partial<GameMachineContext>) => void
+    raise: (event: MatchEvents) => void
+    assign: (context: Partial<MatchMachineContext>) => void
   }
 }
 
@@ -18,7 +18,7 @@ interface BotTurnActionArgs {
  * raises a `PLAYER_RAN_OUT_OF_FUNDS` event instead of crashing the game.
  *
  * Any other errors are logged to the console and re-thrown as a
- * `GameStateCorruptError`.
+ * `MatchStateCorruptError`.
  *
  * @param fn - The bot action function to wrap.
  * @returns A new function that executes the original action with error handling.
@@ -34,12 +34,12 @@ export const withBotErrorHandling = <TParams extends BotTurnActionArgs>(
         const { enqueue } = params
 
         enqueue.raise({
-          type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS,
+          type: MatchEvent.PLAYER_RAN_OUT_OF_FUNDS,
           playerId: error.playerId,
         })
       } else {
         console.error(error)
-        throw new GameStateCorruptError('Unexpected bot logic error')
+        throw new MatchStateCorruptError('Unexpected bot logic error')
       }
     }
   }

@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
 import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
-import { GameEvent, GameEventPayload, GameState } from '../../../game/types'
+import { MatchEvent, MatchEventPayload, MatchState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import {
   stubCarrot,
@@ -10,11 +10,11 @@ import {
   stubShovel,
   stubWater,
 } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import * as useGameStateModule from '../../hooks/useGameRules'
+import * as useMatchStateModule from '../../hooks/useMatchRules'
 import { StubShellContext } from '../../test-utils/StubShellContext'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 
 import { Card } from './Card'
 import { CardProps } from './types'
@@ -96,17 +96,17 @@ describe('Card', () => {
   })
 
   test.each([
-    { gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION },
-    { gameState: GameState.WAITING_FOR_PLAYER_SETUP_ACTION },
+    { matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION },
+    { matchState: MatchState.WAITING_FOR_PLAYER_SETUP_ACTION },
   ])(
-    'allows player to place crop in game state $gameState',
-    ({ gameState }) => {
+    'allows player to place crop in match state $matchState',
+    ({ matchState }) => {
       const send = mockSend()
-      const game = stubGame()
-      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        gameState,
-        game: {
-          ...game,
+      const match = stubMatch()
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState,
+        match: {
+          ...match,
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         },
       })
@@ -124,22 +124,22 @@ describe('Card', () => {
       fireEvent.click(playCardButton)
 
       expect(send).toHaveBeenCalledWith<
-        [GameEventPayload[GameEvent.PLAY_CROP]]
+        [MatchEventPayload[MatchEvent.PLAY_CROP]]
       >({
-        type: GameEvent.PLAY_CROP,
+        type: MatchEvent.PLAY_CROP,
         cardIdx: 0,
         playerId: stubPlayer1.id,
       })
     }
   )
 
-  test.each([{ gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION }])(
-    'allows player to start watering sequence in game state $gameState',
-    ({ gameState }) => {
+  test.each([{ matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION }])(
+    'allows player to start watering sequence in match state $matchState',
+    ({ matchState }) => {
       const send = mockSend()
-      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        gameState,
-        game: stubGame({
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState,
+        match: stubMatch({
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         }),
       })
@@ -157,9 +157,9 @@ describe('Card', () => {
       fireEvent.click(playCardButton)
 
       expect(send).toHaveBeenCalledWith<
-        [GameEventPayload[GameEvent.PLAY_WATER]]
+        [MatchEventPayload[MatchEvent.PLAY_WATER]]
       >({
-        type: GameEvent.PLAY_WATER,
+        type: MatchEvent.PLAY_WATER,
         cardIdx: 0,
         playerId: stubPlayer1.id,
       })
@@ -170,9 +170,9 @@ describe('Card', () => {
     const send = mockSend()
     const selectedWaterCardInHandIdx = 2
 
-    vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      gameState: GameState.PLAYER_WATERING_CROP,
-      game: stubGame({ selectedWaterCardInHandIdx }),
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx }),
     })
 
     render(
@@ -190,9 +190,9 @@ describe('Card', () => {
     fireEvent.click(playCardButton)
 
     expect(send).toHaveBeenCalledWith<
-      [GameEventPayload[GameEvent.SELECT_CROP_TO_WATER]]
+      [MatchEventPayload[MatchEvent.SELECT_CROP_TO_WATER]]
     >({
-      type: GameEvent.SELECT_CROP_TO_WATER,
+      type: MatchEvent.SELECT_CROP_TO_WATER,
       cropIdxInFieldToWater: 0,
       waterCardInHandIdx: selectedWaterCardInHandIdx,
       playerId: stubPlayer1.id,
@@ -202,9 +202,9 @@ describe('Card', () => {
   test('allows player to harvest a crop card', () => {
     const send = mockSend()
 
-    vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-      game: stubGame({ selectedWaterCardInHandIdx: 0 }),
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
     })
 
     const cardIdx = 2
@@ -225,9 +225,9 @@ describe('Card', () => {
     fireEvent.click(playCardButton)
 
     expect(send).toHaveBeenCalledWith<
-      [GameEventPayload[GameEvent.HARVEST_CROP]]
+      [MatchEventPayload[MatchEvent.HARVEST_CROP]]
     >({
-      type: GameEvent.HARVEST_CROP,
+      type: MatchEvent.HARVEST_CROP,
       playerId: stubPlayer1.id,
       cropIdxInFieldToHarvest: cardIdx,
     })
@@ -235,9 +235,9 @@ describe('Card', () => {
 
   test('allows player to play event card', () => {
     const send = mockSend()
-    vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-      game: stubGame({
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      match: stubMatch({
         eventCardsThatCanBePlayed: 1,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       }),
@@ -251,20 +251,20 @@ describe('Card', () => {
 
     fireEvent.click(playCardButton)
 
-    expect(send).toHaveBeenCalledWith<[GameEventPayload[GameEvent.PLAY_EVENT]]>(
-      {
-        type: GameEvent.PLAY_EVENT,
-        cardIdx: 0,
-        playerId: stubPlayer1.id,
-      }
-    )
+    expect(send).toHaveBeenCalledWith<
+      [MatchEventPayload[MatchEvent.PLAY_EVENT]]
+    >({
+      type: MatchEvent.PLAY_EVENT,
+      cardIdx: 0,
+      playerId: stubPlayer1.id,
+    })
   })
 
   test('allows player to play tool card', () => {
     const send = mockSend()
-    vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-      gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-      game: stubGame({
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      match: stubMatch({
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       }),
     })
@@ -277,37 +277,43 @@ describe('Card', () => {
 
     fireEvent.click(playCardButton)
 
-    expect(send).toHaveBeenCalledWith<[GameEventPayload[GameEvent.PLAY_TOOL]]>({
-      type: GameEvent.PLAY_TOOL,
+    expect(send).toHaveBeenCalledWith<
+      [MatchEventPayload[MatchEvent.PLAY_TOOL]]
+    >({
+      type: MatchEvent.PLAY_TOOL,
       cardIdx: 0,
       playerId: stubPlayer1.id,
     })
   })
 
   describe('Tooltip variations', () => {
-    const game = stubGame()
+    const match = stubMatch()
 
     test('shows "Needs water" tooltip when canBeWatered is true', () => {
-      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        gameState: GameState.PLAYER_WATERING_CROP,
-        game: {
-          ...game,
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState: MatchState.PLAYER_WATERING_CROP,
+        match: {
+          ...match,
           selectedWaterCardInHandIdx: 0,
         },
       })
 
       render(
-        <StubCard isInField canBeWatered playerId={game.sessionOwnerPlayerId} />
+        <StubCard
+          isInField
+          canBeWatered
+          playerId={match.sessionOwnerPlayerId}
+        />
       )
 
       expect(screen.getByLabelText('Needs water')).toBeInTheDocument()
     })
 
     test('shows "Ready to be harvested" tooltip when canBeHarvested is true', () => {
-      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: {
-          ...game,
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+        match: {
+          ...match,
           selectedWaterCardInHandIdx: 0,
         },
       })
@@ -316,7 +322,7 @@ describe('Card', () => {
         <StubCard
           isInField
           canBeHarvested
-          playerId={game.sessionOwnerPlayerId}
+          playerId={match.sessionOwnerPlayerId}
         />
       )
 
@@ -324,15 +330,15 @@ describe('Card', () => {
     })
 
     test('shows no tooltip when neither canBeWatered nor canBeHarvested is true', () => {
-      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: {
-          ...game,
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+        match: {
+          ...match,
           selectedWaterCardInHandIdx: 0,
         },
       })
 
-      render(<StubCard isInField playerId={game.sessionOwnerPlayerId} />)
+      render(<StubCard isInField playerId={match.sessionOwnerPlayerId} />)
 
       expect(screen.queryByTitle('Needs water')).not.toBeInTheDocument()
       expect(
@@ -341,10 +347,10 @@ describe('Card', () => {
     })
 
     test('tooltip does not show when isSessionOwnersCard is false', () => {
-      vi.spyOn(useGameStateModule, 'useGameRules').mockReturnValueOnce({
-        gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        game: {
-          ...game,
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+        match: {
+          ...match,
           selectedWaterCardInHandIdx: 0,
         },
       })

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 
 import { Deck, defaultDeckCardSize, defaultDeckThicknessPx } from './Deck'
 
@@ -27,13 +27,13 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const game = stubGame()
-const opponentPlayerId = Object.keys(game.table.players)[1]
+const match = stubMatch()
+const opponentPlayerId = Object.keys(match.table.players)[1]
 
 export const SelfDeck: Story = {
   args: {
-    playerId: game.sessionOwnerPlayerId,
-    game,
+    playerId: match.sessionOwnerPlayerId,
+    match,
     cardSize: defaultDeckCardSize,
     deckThicknessPx: defaultDeckThicknessPx,
   },
@@ -61,7 +61,7 @@ export const SelfDeck: Story = {
 export const OpponentDeck: Story = {
   args: {
     playerId: opponentPlayerId,
-    game,
+    match,
     cardSize: defaultDeckCardSize,
     deckThicknessPx: defaultDeckThicknessPx,
   },

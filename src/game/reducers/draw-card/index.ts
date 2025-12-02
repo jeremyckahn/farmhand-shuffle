@@ -1,12 +1,16 @@
 import shuffle from 'lodash.shuffle'
 
-import { IGame, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
-export const drawCard = (game: IGame, playerId: IPlayer['id'], howMany = 1) => {
-  let newHand = [...game.table.players[playerId].hand]
-  let newDeck = [...game.table.players[playerId].deck]
-  let newDiscardPile = [...game.table.players[playerId].discardPile]
+export const drawCard = (
+  match: IMatch,
+  playerId: IPlayer['id'],
+  howMany = 1
+) => {
+  let newHand = [...match.table.players[playerId].hand]
+  let newDeck = [...match.table.players[playerId].deck]
+  let newDiscardPile = [...match.table.players[playerId].discardPile]
 
   const drawnCards = newDeck.slice(0, howMany)
   newDeck = newDeck.slice(howMany)
@@ -18,11 +22,11 @@ export const drawCard = (game: IGame, playerId: IPlayer['id'], howMany = 1) => {
     newDiscardPile = []
   }
 
-  game = updatePlayer(game, playerId, {
+  match = updatePlayer(match, playerId, {
     deck: newDeck,
     hand: newHand,
     discardPile: newDiscardPile,
   })
 
-  return game
+  return match
 }

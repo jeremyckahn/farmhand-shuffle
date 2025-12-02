@@ -1,4 +1,4 @@
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { IField } from '../../types'
 
 import { factory } from '../../services/Factory'
@@ -8,14 +8,14 @@ import { updateField } from '.'
 
 describe('updateField', () => {
   test('updates field contents', () => {
-    const game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
+    const match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
     const field: IField = {
       crops: [factory.buildPlayedCrop(stubCarrot)],
     }
 
-    const newGame = updateField(game, player1Id, field)
+    const newMatch = updateField(match, player1Id, field)
 
-    expect(newGame.table.players[player1Id].field).toEqual(field)
+    expect(newMatch.table.players[player1Id].field).toEqual(field)
   })
 })

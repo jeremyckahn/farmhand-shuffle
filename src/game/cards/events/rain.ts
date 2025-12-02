@@ -10,15 +10,15 @@ export const rain: IEvent = Object.freeze<IEvent>({
   /**
    *  Gives all players an additional water card to each of their crops.
    *
-   *  @param game - The current game state.
+   *  @param match - The current match state.
    *
-   *  @returns The updated game state.
+   *  @returns The updated match state.
    */
   applyEffect: context => {
-    let { game } = context
+    let { match } = context
 
-    for (const playerId in game.table.players) {
-      const player = game.table.players[playerId]
+    for (const playerId in match.table.players) {
+      const player = match.table.players[playerId]
 
       const crops = player.field.crops.map(crop => {
         if (!crop) return crop
@@ -26,7 +26,7 @@ export const rain: IEvent = Object.freeze<IEvent>({
         // NOTE: Always water all of the opponent's crops, even if they were
         // watered during the previous turn. This is achieved by only early
         // returning if the current crop belongs to the current player.
-        if (playerId === game.currentPlayerId && crop.wasWateredDuringTurn) {
+        if (playerId === match.currentPlayerId && crop.wasWateredDuringTurn) {
           return crop
         }
 
@@ -39,9 +39,9 @@ export const rain: IEvent = Object.freeze<IEvent>({
 
       // TODO: Show a notification indicating that all crops were watered
 
-      game = updateField(game, playerId, { crops })
+      match = updateField(match, playerId, { crops })
     }
 
-    return { ...context, game }
+    return { ...context, match }
   },
 })

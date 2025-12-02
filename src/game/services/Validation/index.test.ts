@@ -2,7 +2,7 @@ import { stubCarrot, stubWater } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { DECK_SIZE } from '../../config'
 import { CropInstance, IPlayer, WaterInstance } from '../../types'
-import { GameStateCorruptError } from '../Rules/errors'
+import { MatchStateCorruptError } from '../Rules/errors'
 
 import { validate } from './' // Update path accordingly
 
@@ -20,7 +20,7 @@ describe('ValidationService', () => {
     expect(validate.playerSeed(player)).toBe(true)
   })
 
-  it('should throw GameStateCorruptError if a card ID is invalid', () => {
+  it('should throw MatchStateCorruptError if a card ID is invalid', () => {
     const player = stubPlayer({
       deck: [
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,22 +29,22 @@ describe('ValidationService', () => {
       ],
     })
 
-    expect(() => validate.playerSeed(player)).toThrow(GameStateCorruptError)
+    expect(() => validate.playerSeed(player)).toThrow(MatchStateCorruptError)
   })
 
-  it("should throw GameStateCorruptError if no crops are found in the player's deck", () => {
+  it("should throw MatchStateCorruptError if no crops are found in the player's deck", () => {
     const player = stubPlayer({
       deck: new Array<WaterInstance>(DECK_SIZE).fill(stubWater),
     })
 
-    expect(() => validate.playerSeed(player)).toThrow(GameStateCorruptError)
+    expect(() => validate.playerSeed(player)).toThrow(MatchStateCorruptError)
   })
 
-  it('should throw GameStateCorruptError if deck contains wrong amount of cards', () => {
+  it('should throw MatchStateCorruptError if deck contains wrong amount of cards', () => {
     const player = stubPlayer({
       deck: [],
     })
 
-    expect(() => validate.playerSeed(player)).toThrow(GameStateCorruptError)
+    expect(() => validate.playerSeed(player)).toThrow(MatchStateCorruptError)
   })
 })

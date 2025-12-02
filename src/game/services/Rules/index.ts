@@ -2,20 +2,20 @@ import { createActor } from 'xstate'
 
 import { machineConfig } from './state-machine'
 import { createMachine } from './state-machine/createMachine'
-import { createGameStateMachineContext } from './createGameStateMachineContext'
+import { createMatchStateMachineContext } from './createMatchStateMachineContext'
 
 export class RulesService {
-  createGameStateMachine = () => {
+  createMatchStateMachine = () => {
     const machine = createMachine({
-      context: createGameStateMachineContext(),
+      context: createMatchStateMachineContext(),
       ...machineConfig,
     })
 
     return machine
   }
 
-  startGame = () => {
-    return createActor(this.createGameStateMachine()).start()
+  startMatch = () => {
+    return createActor(this.createMatchStateMachine()).start()
   }
 }
 

@@ -4,10 +4,10 @@ import {
   STANDARD_CARDS_TO_DRAW_AT_TURN_START,
 } from '../../config'
 
-import { GameMachineContext } from './state-machine/createMachine'
+import { MatchMachineContext } from './state-machine/createMachine'
 import { defaultSelectedWaterCardInHandIdx } from './constants'
 
-export const createGameStateMachineContext = (): GameMachineContext => {
+export const createMatchStateMachineContext = (): MatchMachineContext => {
   return {
     botState: {
       cropCardIndicesToHarvest: [],
@@ -15,7 +15,7 @@ export const createGameStateMachineContext = (): GameMachineContext => {
       fieldCropIndicesToWaterDuringTurn: [],
       toolCardsThatCanBePlayed: 0,
     },
-    game: factory.buildGame({
+    match: factory.buildMatch({
       cardsToDrawAtTurnStart: STANDARD_CARDS_TO_DRAW_AT_TURN_START,
       eventCardsThatCanBePlayed: EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
       selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,

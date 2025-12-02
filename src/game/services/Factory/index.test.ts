@@ -6,7 +6,7 @@ import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
 import { ICard, IPlayedCrop } from '../../types'
-import { isField, isGame, isPlayer, isTable } from '../../types/guards'
+import { isField, isMatch, isPlayer, isTable } from '../../types/guards'
 
 import { factory } from '.'
 
@@ -43,26 +43,26 @@ describe('Factory', () => {
     })
   })
 
-  describe('buildGame', () => {
-    test('builds a game', () => {
-      const game = factory.buildGame()
+  describe('buildMatch', () => {
+    test('builds a match', () => {
+      const match = factory.buildMatch()
 
-      expect(isGame(game)).toBe(true)
+      expect(isMatch(match)).toBe(true)
     })
   })
 
-  describe('buildGameForSession', () => {
+  describe('buildMatchForSession', () => {
     const player1 = stubPlayer()
     const player2 = stubPlayer()
 
-    test('creates a new game', () => {
-      const game = factory.buildGameForSession([player1, player2])
+    test('creates a new match', () => {
+      const match = factory.buildMatchForSession([player1, player2])
 
-      expect(isGame(game)).toBe(true)
+      expect(isMatch(match)).toBe(true)
     })
 
     test('shuffles decks', () => {
-      factory.buildGameForSession([player1, player2])
+      factory.buildMatchForSession([player1, player2])
 
       expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player1.deck))
       expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player2.deck))
@@ -73,34 +73,34 @@ describe('Factory', () => {
       // NOTE: Ensures that the first crop card in the deck is the one that's
       // pulled in drawValidStartingHand to produce a predictable hand. This is
       // helpful for keeping tests and Storybook stories aligned to a
-      // consistent game state that's easy to understand.
+      // consistent match state that's easy to understand.
       vi.spyOn(randomNumber, 'generate').mockReturnValue(0)
 
-      const game = factory.buildGameForSession([player1, player2])
-      const [player1Id, player2Id] = Object.keys(game.table.players)
+      const match = factory.buildMatchForSession([player1, player2])
+      const [player1Id, player2Id] = Object.keys(match.table.players)
 
-      expect(game.table.players[player1Id].hand).toEqual(
+      expect(match.table.players[player1Id].hand).toEqual(
         expect.arrayContaining(player1.deck.slice(0, INITIAL_HAND_SIZE))
       )
 
-      expect(game.table.players[player2Id].hand).toEqual(
+      expect(match.table.players[player2Id].hand).toEqual(
         expect.arrayContaining(player2.deck.slice(0, INITIAL_HAND_SIZE))
       )
     })
 
     test('distributes community fund to players', () => {
-      const game = factory.buildGameForSession([player1, player2])
-      const [player1Id, player2Id] = Object.keys(game.table.players)
+      const match = factory.buildMatchForSession([player1, player2])
+      const [player1Id, player2Id] = Object.keys(match.table.players)
 
-      expect(game.table.communityFund).toEqual(0)
-      expect(game.table.players[player1Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
-      expect(game.table.players[player2Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
+      expect(match.table.communityFund).toEqual(0)
+      expect(match.table.players[player1Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
+      expect(match.table.players[player2Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
     })
 
     test('determines first player', () => {
-      const game = factory.buildGameForSession([player1, player2])
+      const match = factory.buildMatchForSession([player1, player2])
 
-      expect(game.currentPlayerId).toEqual(game.sessionOwnerPlayerId)
+      expect(match.currentPlayerId).toEqual(match.sessionOwnerPlayerId)
     })
   })
 

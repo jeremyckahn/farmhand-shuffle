@@ -1,14 +1,14 @@
 import { stubCarrot } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 
 import { addToDiscardPile } from '.'
 
 describe('addToDiscardPile', () => {
   test("adds to a player's discard pile", () => {
-    const game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
-    const newGame = addToDiscardPile(game, player1Id, stubCarrot)
+    const match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
+    const newMatch = addToDiscardPile(match, player1Id, stubCarrot)
 
-    expect(newGame.table.players[player1Id].discardPile).toEqual([stubCarrot])
+    expect(newMatch.table.players[player1Id].discardPile).toEqual([stubCarrot])
   })
 })

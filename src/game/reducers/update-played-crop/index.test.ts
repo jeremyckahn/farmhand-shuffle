@@ -1,12 +1,12 @@
 import { stubCarrot } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { factory } from '../../services/Factory'
 import { updateField } from '../update-field'
 
 import { updatePlayedCrop } from '.'
 
-const game = stubGame()
-const [player1Id] = Object.keys(game.table.players)
+const match = stubMatch()
+const [player1Id] = Object.keys(match.table.players)
 
 describe('updatePlayedCrop', () => {
   test('updates crop in field', () => {
@@ -15,10 +15,10 @@ describe('updatePlayedCrop', () => {
       crops: [playedCrop],
     }
 
-    let newGame = updateField(game, player1Id, field)
-    newGame = updatePlayedCrop(newGame, player1Id, 0, { waterCards: 1 })
+    let newMatch = updateField(match, player1Id, field)
+    newMatch = updatePlayedCrop(newMatch, player1Id, 0, { waterCards: 1 })
 
-    expect(newGame.table.players[player1Id].field.crops).toEqual([
+    expect(newMatch.table.players[player1Id].field.crops).toEqual([
       { ...playedCrop, waterCards: 1 },
     ])
   })
@@ -29,10 +29,10 @@ describe('updatePlayedCrop', () => {
       crops: [playedCrop],
     }
 
-    const newGame = updateField(game, player1Id, field)
+    const newMatch = updateField(match, player1Id, field)
 
     expect(() => {
-      updatePlayedCrop(newGame, player1Id, -1, { waterCards: 1 })
+      updatePlayedCrop(newMatch, player1Id, -1, { waterCards: 1 })
     }).toThrow('cropIdx -1 references a crop that is not in the field.')
   })
 })

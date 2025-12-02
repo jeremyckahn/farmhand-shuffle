@@ -3,12 +3,12 @@ import { v4 as uuid } from 'uuid'
 import { INITIAL_PLAYER_FUNDS } from '../../config'
 import { drawValidStartingHand } from '../../reducers/draw-valid-starting-hand'
 import { shuffleDeck } from '../../reducers/shuffle-deck'
-import { updateGame } from '../../reducers/update-game'
+import { updateMatch } from '../../reducers/update-match'
 import { updateTable } from '../../reducers/update-table'
 import {
   CropInstance,
   IField,
-  IGame,
+  IMatch,
   IPlayedCrop,
   IPlayer,
   IPlayerSeed,
@@ -46,15 +46,15 @@ export class FactoryService {
   }
 
   /**
-   * Constructs a minimally valid IGame object.
+   * Constructs a minimally valid IMatch object.
    */
-  buildGame(overrides: Partial<IGame> = {}, sessionOwnerPlayerId = uuid()) {
+  buildMatch(overrides: Partial<IMatch> = {}, sessionOwnerPlayerId = uuid()) {
     const table = this.buildTable(overrides?.table)
     const { players } = table
 
     const [currentPlayerId = null] = Object.keys(players)
 
-    let game: IGame = {
+    let match: IMatch = {
       sessionOwnerPlayerId,
       table,
       currentPlayerId,
@@ -68,9 +68,9 @@ export class FactoryService {
     }
 
     if (Object.keys(players).length === 0) {
-      game = updateTable(game, {
+      match = updateTable(match, {
         players: {
-          ...game.table.players,
+          ...match.table.players,
           [sessionOwnerPlayerId]: this.buildPlayer({
             id: sessionOwnerPlayerId,
           }),
@@ -78,42 +78,42 @@ export class FactoryService {
       })
     }
 
-    return game
+    return match
   }
 
   /**
-   * Constructs an IGame object that is ready to be used by the rules
+   * Constructs an IMatch object that is ready to be used by the rules
    * processing engine.
    */
-  buildGameForSession(
+  buildMatchForSession(
     playerSeeds: IPlayerSeed[],
     userPlayerId: string | undefined = playerSeeds[0]?.id
-  ): IGame {
-    let game = this.buildGame({}, userPlayerId)
+  ): IMatch {
+    let match = this.buildMatch({}, userPlayerId)
 
     for (const playerSeed of playerSeeds) {
       validate.playerSeed(playerSeed)
 
       const player = this.buildPlayer({
         ...playerSeed,
-        funds: Math.floor(game.table.communityFund / playerSeeds.length),
+        funds: Math.floor(match.table.communityFund / playerSeeds.length),
       })
 
-      game = updateTable(game, {
-        players: { ...game.table.players, [player.id]: player },
+      match = updateTable(match, {
+        players: { ...match.table.players, [player.id]: player },
       })
 
-      game = shuffleDeck(game, player.id)
-      game = drawValidStartingHand(game, player.id)
+      match = shuffleDeck(match, player.id)
+      match = drawValidStartingHand(match, player.id)
     }
 
-    game = updateTable(game, {
-      communityFund: game.table.communityFund % playerSeeds.length,
+    match = updateTable(match, {
+      communityFund: match.table.communityFund % playerSeeds.length,
     })
 
-    game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
+    match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
 
-    return game
+    return match
   }
 
   buildPlayedCrop(cropInstance: CropInstance): IPlayedCrop {

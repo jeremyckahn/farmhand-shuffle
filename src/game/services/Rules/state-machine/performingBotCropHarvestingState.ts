@@ -1,22 +1,22 @@
 import { enqueueActions } from 'xstate'
 
-import { GameEvent, GameState, ShellNotificationType } from '../../../types'
+import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { harvestCrop } from '../../../reducers/harvest-crop'
 
 import { RulesMachineConfig } from './types'
 
 export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
-  [GameState.PERFORMING_BOT_CROP_HARVESTING]: {
+  [MatchState.PERFORMING_BOT_CROP_HARVESTING]: {
     on: {
-      [GameEvent.PROMPT_BOT_FOR_TURN_ACTION]:
-        GameState.PERFORMING_BOT_TURN_ACTION,
+      [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+        MatchState.PERFORMING_BOT_TURN_ACTION,
     },
 
     entry: enqueueActions(
       ({
         context: {
-          game,
+          match,
           botState: {
             cropCardIndicesToHarvest: [cropCardIdxToHarvest],
           },
@@ -24,15 +24,15 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         },
         enqueue,
       }) => {
-        const { currentPlayerId } = game
+        const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
         const plantedCrop =
-          game.table.players[currentPlayerId].field.crops[cropCardIdxToHarvest]
+          match.table.players[currentPlayerId].field.crops[cropCardIdxToHarvest]
 
         assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
 
-        game = harvestCrop(game, currentPlayerId, cropCardIdxToHarvest)
+        match = harvestCrop(match, currentPlayerId, cropCardIdxToHarvest)
 
         triggerNotification({
           type: ShellNotificationType.CROP_HARVESTED,
@@ -42,10 +42,10 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         })
 
         enqueue.raise({
-          type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION,
+          type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
         })
 
-        enqueue.assign({ game })
+        enqueue.assign({ match })
       }
     ),
   },

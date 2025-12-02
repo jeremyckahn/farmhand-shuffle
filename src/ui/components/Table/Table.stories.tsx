@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { StubShellContext } from '../../test-utils/StubShellContext'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 
 import { Table } from './Table'
 
@@ -27,10 +27,10 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const game = stubGame()
+const match = stubMatch()
 
 export const BaseTable: Story = {
   args: {
-    game,
+    match,
   },
 }

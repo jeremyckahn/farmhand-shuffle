@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react'
 
 import { lookup } from '../../../game/services/Lookup'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 import { CardProps } from '../Card/types'
 
 import { Table, TableProps } from './Table'
@@ -20,14 +20,14 @@ vi.mock('../Card', () => ({
   CardProps) => <div {...rest} />,
 }))
 
-const game = stubGame()
-const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
+const match = stubMatch()
+const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
 
 const StubTable = (overrides: Partial<TableProps>) => {
   return (
     <StubShellContext>
       <ActorContext.Provider>
-        <Table game={game} {...overrides} />
+        <Table match={match} {...overrides} />
       </ActorContext.Provider>
     </StubShellContext>
   )
@@ -36,7 +36,7 @@ const StubTable = (overrides: Partial<TableProps>) => {
 describe('Table', () => {
   test('renders field for user player', () => {
     render(<StubTable />)
-    const field = screen.getByTestId(`field_${game.sessionOwnerPlayerId}`)
+    const field = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
 
     expect(field).toBeInTheDocument()
   })
@@ -53,14 +53,14 @@ describe('Table', () => {
 
   test('renders deck for user player', () => {
     render(<StubTable />)
-    const deck = screen.getByTestId(`deck_${game.sessionOwnerPlayerId}`)
+    const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
 
     expect(deck).toBeInTheDocument()
   })
 
   test('renders hand for user player', () => {
     render(<StubTable />)
-    const hand = screen.getByTestId(`hand_${game.sessionOwnerPlayerId}`)
+    const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
 
     expect(hand).toBeInTheDocument()
   })
@@ -68,7 +68,7 @@ describe('Table', () => {
   test('renders discard pile for user player', () => {
     render(<StubTable />)
     const discardPile = screen.getByTestId(
-      `discard-pile_${game.sessionOwnerPlayerId}`
+      `discard-pile_${match.sessionOwnerPlayerId}`
     )
 
     expect(discardPile).toBeInTheDocument()

@@ -3,7 +3,7 @@ import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 import reactNodeToString from 'react-node-to-string'
 
-import { GameEvent, IGame, ShellNotificationType } from '../../../game/types'
+import { MatchEvent, IMatch, ShellNotificationType } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
 
 import { ActorContext } from './ActorContext'
@@ -11,10 +11,10 @@ import { emptyNotificationMessage, SnackbarProps } from './Snackbar'
 
 export const useSnackbar = ({
   actorRef,
-  game,
+  match,
 }: {
   actorRef: ReturnType<typeof ActorContext.useActorRef>
-  game: IGame
+  match: IMatch
 }) => {
   const [snackbarProps, setSnackbarProps] = useState<SnackbarProps>({
     message: '',
@@ -38,13 +38,13 @@ export const useSnackbar = ({
     [setSnackbarProps]
   )
 
-  const isSessionOwner = game.currentPlayerId === game.sessionOwnerPlayerId
+  const isSessionOwner = match.currentPlayerId === match.sessionOwnerPlayerId
 
   useEffect(() => {
-    const currentPlayerName = funAnimalName(game.currentPlayerId ?? '')
+    const currentPlayerName = funAnimalName(match.currentPlayerId ?? '')
 
     actorRef.send({
-      type: GameEvent.SET_SHELL,
+      type: MatchEvent.SET_SHELL,
       shell: {
         triggerNotification: ({ type, payload }) => {
           switch (type) {
@@ -144,7 +144,7 @@ export const useSnackbar = ({
         },
       },
     })
-  }, [actorRef, game.currentPlayerId, isSessionOwner, showNotification])
+  }, [actorRef, match.currentPlayerId, isSessionOwner, showNotification])
 
   return { showNotification, snackbarProps }
 }

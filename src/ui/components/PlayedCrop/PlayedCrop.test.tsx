@@ -4,7 +4,7 @@ import { render } from '@testing-library/react'
 import { IPlayedCrop } from '../../../game/types'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { StubShellContext } from '../../test-utils/StubShellContext'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 
 import {
   PlayedCrop,

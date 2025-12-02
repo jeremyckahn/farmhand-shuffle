@@ -8,7 +8,7 @@ import { useMemo } from 'react'
 import { DecoratorFunction } from 'storybook/internal/csf'
 import { fn, spyOn } from 'storybook/test'
 
-import { ActorContext } from '../src/ui/components/Game/ActorContext'
+import { ActorContext } from '../src/ui/components/Match/ActorContext'
 import { darkTheme, lightTheme } from '../src/ui/theme'
 
 const THEMES = {

@@ -1,12 +1,12 @@
-import { GameState } from '../../game/types'
-import { GameRuleMachineContextSelectorDerivation } from '../../ui/hooks/useGameRules'
+import { MatchState } from '../../game/types'
+import { MatchRuleMachineContextSelectorDerivation } from '../../ui/hooks/useMatchRules'
 
-import { stubGame } from './game'
+import { stubMatch } from './match'
 
 export const stubSelectorState = (
-  overrides?: Partial<GameRuleMachineContextSelectorDerivation>
-): GameRuleMachineContextSelectorDerivation => ({
-  game: stubGame(),
-  gameState: GameState.UNINITIALIZED,
+  overrides?: Partial<MatchRuleMachineContextSelectorDerivation>
+): MatchRuleMachineContextSelectorDerivation => ({
+  match: stubMatch(),
+  matchState: MatchState.UNINITIALIZED,
   ...overrides,
 })

@@ -1,7 +1,7 @@
 import { DECK_SIZE } from '../../config'
 import { IPlayerSeed, isCropCardInstance } from '../../types'
 import { isCard } from '../../types/guards'
-import { GameStateCorruptError } from '../Rules/errors'
+import { MatchStateCorruptError } from '../Rules/errors'
 
 export class ValidationService {
   /**
@@ -14,7 +14,7 @@ export class ValidationService {
     const { deck, id } = player
 
     if (deck.length !== DECK_SIZE) {
-      throw new GameStateCorruptError(
+      throw new MatchStateCorruptError(
         `Deck for player ${id} contains ${deck.length} cards but must contain ${DECK_SIZE} cards instead`
       )
     }
@@ -22,7 +22,7 @@ export class ValidationService {
     const areAllCardsValid = deck.every(isCard)
 
     if (!areAllCardsValid) {
-      throw new GameStateCorruptError(
+      throw new MatchStateCorruptError(
         `Deck for player ${id} contain invalid cards`
       )
     }
@@ -30,7 +30,7 @@ export class ValidationService {
     const deckContainsCrop = deck.some(isCropCardInstance)
 
     if (!deckContainsCrop) {
-      throw new GameStateCorruptError(
+      throw new MatchStateCorruptError(
         `Deck for player ${id} does not contain any crops`
       )
     }

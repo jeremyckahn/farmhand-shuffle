@@ -3,9 +3,9 @@ import { enqueueActions } from 'xstate'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { updatePlayedCrop } from '../../../reducers/update-played-crop'
 import {
-  GameEvent,
-  GameState,
-  GameStateGuard,
+  MatchEvent,
+  MatchState,
+  MatchStateGuard,
   IPlayedCrop,
   ShellNotificationType,
 } from '../../../types'
@@ -15,22 +15,22 @@ import { defaultSelectedWaterCardInHandIdx } from '../constants'
 import { RulesMachineConfig } from './types'
 
 export const playerWateringCropState: RulesMachineConfig['states'] = {
-  [GameState.PLAYER_WATERING_CROP]: {
+  [MatchState.PLAYER_WATERING_CROP]: {
     on: {
-      [GameEvent.SELECT_CROP_TO_WATER]: {
-        target: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-        guard: GameStateGuard.IS_SELECTED_IDX_VALID,
+      [MatchEvent.SELECT_CROP_TO_WATER]: {
+        target: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+        guard: MatchStateGuard.IS_SELECTED_IDX_VALID,
       },
 
-      [GameEvent.OPERATION_ABORTED]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      [MatchEvent.OPERATION_ABORTED]: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
-    entry: enqueueActions(({ event, context: { game }, enqueue }) => {
+    entry: enqueueActions(({ event, context: { match }, enqueue }) => {
       switch (event.type) {
-        case GameEvent.PLAY_WATER: {
+        case MatchEvent.PLAY_WATER: {
           const { cardIdx } = event
-          game = {
-            ...game,
+          match = {
+            ...match,
             selectedWaterCardInHandIdx: cardIdx,
           }
 
@@ -40,27 +40,27 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
         default:
       }
 
-      enqueue.assign({ game })
+      enqueue.assign({ match })
     }),
 
     exit: enqueueActions(
       ({
         event,
         context: {
-          game,
+          match,
           shell: { triggerNotification },
         },
         enqueue,
       }) => {
-        let { selectedWaterCardInHandIdx } = game
+        let { selectedWaterCardInHandIdx } = match
 
         switch (event.type) {
-          case GameEvent.SELECT_CROP_TO_WATER: {
+          case MatchEvent.SELECT_CROP_TO_WATER: {
             const { playerId, waterCardInHandIdx, cropIdxInFieldToWater } =
               event
 
             const playedCrop =
-              game.table.players[playerId].field.crops[cropIdxInFieldToWater]
+              match.table.players[playerId].field.crops[cropIdxInFieldToWater]
 
             assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 
@@ -70,14 +70,18 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
               waterCards: playedCrop.waterCards + 1,
             }
 
-            game = updatePlayedCrop(
-              game,
+            match = updatePlayedCrop(
+              match,
               playerId,
               cropIdxInFieldToWater,
               newPlayedCrop
             )
 
-            game = moveFromHandToDiscardPile(game, playerId, waterCardInHandIdx)
+            match = moveFromHandToDiscardPile(
+              match,
+              playerId,
+              waterCardInHandIdx
+            )
 
             selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
 
@@ -91,7 +95,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
             break
           }
 
-          case GameEvent.OPERATION_ABORTED: {
+          case MatchEvent.OPERATION_ABORTED: {
             selectedWaterCardInHandIdx = defaultSelectedWaterCardInHandIdx
             break
           }
@@ -100,8 +104,8 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
         }
 
         enqueue.assign({
-          game: {
-            ...game,
+          match: {
+            ...match,
             selectedWaterCardInHandIdx,
           },
         })

@@ -1,19 +1,19 @@
 import { renderHook } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 
-import { GameState, GameEvent, IPlayerSeed } from '../../../game/types'
-import { useGameRules } from '../../hooks/useGameRules'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { MatchState, MatchEvent, IPlayerSeed } from '../../../game/types'
+import { useMatchRules } from '../../hooks/useMatchRules'
+import { stubMatch } from '../../../test-utils/stubs/match'
 
 import { ActorContext } from './ActorContext'
-import { useGame } from './useGame'
+import { useMatch } from './useMatch'
 import { emptyNotificationMessage } from './Snackbar'
 
 // Mock dependencies
-vi.mock('../../hooks/useGameRules')
+vi.mock('../../hooks/useMatchRules')
 vi.mock('./ActorContext')
 
-describe('useGame', () => {
+describe('useMatch', () => {
   // Mock player seeds and user ID
   const mockPlayerSeeds: IPlayerSeed[] = [
     { id: 'player1', deck: [] },
@@ -28,8 +28,8 @@ describe('useGame', () => {
     subscribe: vi.fn(),
   }
 
-  // Mock game rules
-  const mockGame = stubGame({
+  // Mock match rules
+  const mockMatch = stubMatch({
     sessionOwnerPlayerId: 'player1',
     currentPlayerId: 'player1',
   })
@@ -37,20 +37,20 @@ describe('useGame', () => {
   beforeEach(() => {
     // Setup mocks
     vi.mocked(ActorContext.useActorRef).mockReturnValue(mockActorRef)
-    vi.mocked(useGameRules).mockReturnValue({
-      game: {
-        ...mockGame,
+    vi.mocked(useMatchRules).mockReturnValue({
+      match: {
+        ...mockMatch,
         selectedWaterCardInHandIdx: 0,
       },
-      gameState: GameState.UNINITIALIZED,
+      matchState: MatchState.UNINITIALIZED,
     })
 
     vi.spyOn(console, 'debug').mockImplementationOnce(vi.fn())
   })
 
-  it('should initialize game when gameState is UNINITIALIZED', () => {
+  it('should initialize match when matchState is UNINITIALIZED', () => {
     renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -58,7 +58,7 @@ describe('useGame', () => {
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockActorRef.send).toHaveBeenCalledWith({
-      type: GameEvent.INIT,
+      type: MatchEvent.INIT,
       playerSeeds: mockPlayerSeeds,
       userPlayerId: mockUserPlayerId,
     })
@@ -67,7 +67,7 @@ describe('useGame', () => {
   it('should execute blocking operation correctly', async () => {
     const mockOperation = vi.fn().mockResolvedValue(undefined)
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -83,7 +83,7 @@ describe('useGame', () => {
   it('should handle errors in blocking operation', async () => {
     const mockOperation = vi.fn().mockRejectedValue(new Error('Test error'))
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -105,7 +105,7 @@ describe('useGame', () => {
     })
 
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -127,17 +127,17 @@ describe('useGame', () => {
   })
 
   it('should set isInputBlocked when not session owner turn', () => {
-    vi.mocked(useGameRules).mockReturnValue({
-      game: {
-        ...mockGame,
+    vi.mocked(useMatchRules).mockReturnValue({
+      match: {
+        ...mockMatch,
         currentPlayerId: 'player2',
         selectedWaterCardInHandIdx: 0,
       },
-      gameState: GameState.UNINITIALIZED,
+      matchState: MatchState.UNINITIALIZED,
     })
 
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -148,7 +148,7 @@ describe('useGame', () => {
 
   it('should toggle hand visibility', () => {
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -164,16 +164,16 @@ describe('useGame', () => {
   })
 
   it('should set isHandDisabled when in PLAYER_WATERING_CROP state', () => {
-    vi.mocked(useGameRules).mockReturnValue({
-      game: {
-        ...mockGame,
+    vi.mocked(useMatchRules).mockReturnValue({
+      match: {
+        ...mockMatch,
         selectedWaterCardInHandIdx: 0,
       },
-      gameState: GameState.PLAYER_WATERING_CROP,
+      matchState: MatchState.PLAYER_WATERING_CROP,
     })
 
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -184,7 +184,7 @@ describe('useGame', () => {
 
   it('should show hand when isHandInViewport is true', () => {
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -194,16 +194,16 @@ describe('useGame', () => {
   })
 
   it('should always show hand when isHandDisabled is true, regardless of isHandInViewport', () => {
-    vi.mocked(useGameRules).mockReturnValue({
-      game: {
-        ...mockGame,
+    vi.mocked(useMatchRules).mockReturnValue({
+      match: {
+        ...mockMatch,
         selectedWaterCardInHandIdx: 0,
       },
-      gameState: GameState.PLAYER_WATERING_CROP,
+      matchState: MatchState.PLAYER_WATERING_CROP,
     })
 
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -220,7 +220,7 @@ describe('useGame', () => {
 
   it('should update snackbar props when showNotification is called', () => {
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -239,7 +239,7 @@ describe('useGame', () => {
 
   it('should clear snackbar message when onClose is called', () => {
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })
@@ -263,7 +263,7 @@ describe('useGame', () => {
 
   it('should update isHandInViewport when setIsHandInViewport is called', () => {
     const { result } = renderHook(() =>
-      useGame({
+      useMatch({
         playerSeeds: mockPlayerSeeds,
         userPlayerId: mockUserPlayerId,
       })

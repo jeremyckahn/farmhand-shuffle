@@ -1,48 +1,51 @@
 import { setup, assertEvent } from 'xstate'
 
 import {
-  IGame,
-  GameEventPayload,
-  GameEventPayloadKey,
-  GameStateGuard,
-  GameEvent,
+  IMatch,
+  MatchEventPayload,
+  MatchEventPayloadKey,
+  MatchStateGuard,
+  MatchEvent,
   IShell,
   BotState,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 
-export interface GameMachineContext {
-  game: IGame
+export interface MatchMachineContext {
+  match: IMatch
   shell: IShell
   botState: BotState
 }
 
 export const { createMachine } = setup({
   types: {
-    context: {} as GameMachineContext,
-    events: {} as GameEventPayload[GameEventPayloadKey],
+    context: {} as MatchMachineContext,
+    events: {} as MatchEventPayload[MatchEventPayloadKey],
   },
 
   guards: {
-    [GameStateGuard.HAVE_PLAYERS_COMPLETED_SETUP]: ({
+    [MatchStateGuard.HAVE_PLAYERS_COMPLETED_SETUP]: ({
       event,
-      context: { game },
+      context: { match },
     }) => {
-      assertEvent(event, GameEvent.START_TURN)
-      assertCurrentPlayer(game.currentPlayerId)
+      assertEvent(event, MatchEvent.START_TURN)
+      assertCurrentPlayer(match.currentPlayerId)
 
-      return Object.values(game.table.players).every(
+      return Object.values(match.table.players).every(
         player => player.field.crops.length > 0
       )
     },
 
-    [GameStateGuard.IS_SELECTED_IDX_VALID]: ({ event, context: { game } }) => {
-      const { currentPlayerId } = game
+    [MatchStateGuard.IS_SELECTED_IDX_VALID]: ({
+      event,
+      context: { match },
+    }) => {
+      const { currentPlayerId } = match
       assertCurrentPlayer(currentPlayerId)
 
       switch (event.type) {
-        case GameEvent.SELECT_CROP_TO_WATER: {
-          const { crops } = game.table.players[currentPlayerId].field
+        case MatchEvent.SELECT_CROP_TO_WATER: {
+          const { crops } = match.table.players[currentPlayerId].field
           const playedCrop = crops[event.cropIdxInFieldToWater]
 
           return playedCrop !== undefined

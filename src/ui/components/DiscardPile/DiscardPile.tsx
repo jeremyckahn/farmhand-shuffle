@@ -3,13 +3,13 @@ import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip'
 
 import { lookup } from '../../../game/services/Lookup'
-import { IGame, IPlayer } from '../../../game/types'
+import { IMatch, IPlayer } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
 
 export interface DiscardPileProps extends BoxProps {
-  game: IGame
+  match: IMatch
   playerId: IPlayer['id']
   cardSize?: CardSize
   discardPileThicknessPx?: number
@@ -20,15 +20,15 @@ export const defaultDiscardPileCardSize = CardSize.SMALL
 
 export const DiscardPile = ({
   playerId,
-  game,
+  match,
   cardSize = defaultDiscardPileCardSize,
   discardPileThicknessPx = defaultDiscardPileThicknessPx,
   ...rest
 }: DiscardPileProps) => {
   const theme = useTheme()
-  const player = lookup.getPlayer(game, playerId)
+  const player = lookup.getPlayer(match, playerId)
 
-  const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
+  const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
 
   return (
     <Box

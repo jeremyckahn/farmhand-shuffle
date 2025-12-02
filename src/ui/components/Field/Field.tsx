@@ -9,7 +9,7 @@ import {
   STANDARD_FIELD_SIZE,
 } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
-import { IGame, IPlayer } from '../../../game/types'
+import { IMatch, IPlayer } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { PlayedCrop, playedCropClassName } from '../PlayedCrop'
@@ -18,7 +18,7 @@ const deselectedIdx = -1
 const selectedCardYOffset = -25
 
 export interface FieldProps extends BoxProps {
-  game: IGame
+  match: IMatch
   playerId: IPlayer['id']
   cardSize?: CardSize
 }
@@ -50,12 +50,12 @@ const EmptyPlot = ({
 
 export const Field = ({
   playerId,
-  game,
+  match,
   cardSize = CardSize.SMALL,
   ...rest
 }: FieldProps) => {
-  const player = lookup.getPlayer(game, playerId)
-  const isSessionOwnerPlayer = playerId === game.sessionOwnerPlayerId
+  const player = lookup.getPlayer(match, playerId)
+  const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
 
   const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()

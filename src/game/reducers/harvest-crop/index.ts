@@ -1,6 +1,6 @@
 import { lookup } from '../../services/Lookup'
 import { pricing } from '../../services/Pricing'
-import { IGame, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { incrementCommunityFund } from '../increment-community-fund'
 import { incrementPlayerFunds } from '../increment-player-funds'
 import { moveFromFieldToDiscardPile } from '../move-from-field-to-discard-pile'
@@ -14,27 +14,27 @@ import { moveFromFieldToDiscardPile } from '../move-from-field-to-discard-pile'
  * 3. Decrementing the community fund by the sale value.
  * 4. Moving the harvested crop from the field to the discard pile.
  *
- * @param game The current game state.
+ * @param match The current match state.
  * @param playerId The ID of the player harvesting the crop.
  * @param cropIdxInFieldToHarvest The index of the crop in the player's field to harvest.
- * @returns The updated game state.
+ * @returns The updated match state.
  */
 export const harvestCrop = (
-  game: IGame,
+  match: IMatch,
   playerId: IPlayer['id'],
   cropIdxInFieldToHarvest: number
 ) => {
   const playedCrop = lookup.getPlayedCropFromField(
-    game,
+    match,
     playerId,
     cropIdxInFieldToHarvest
   )
 
-  const cropSaleValue = pricing.getCropSaleValue(game, playedCrop.instance)
+  const cropSaleValue = pricing.getCropSaleValue(match, playedCrop.instance)
 
-  game = incrementPlayerFunds(game, playerId, cropSaleValue)
-  game = incrementCommunityFund(game, -cropSaleValue)
-  game = moveFromFieldToDiscardPile(game, playerId, cropIdxInFieldToHarvest)
+  match = incrementPlayerFunds(match, playerId, cropSaleValue)
+  match = incrementCommunityFund(match, -cropSaleValue)
+  match = moveFromFieldToDiscardPile(match, playerId, cropIdxInFieldToHarvest)
 
-  return game
+  return match
 }

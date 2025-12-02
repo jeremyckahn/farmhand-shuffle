@@ -3,7 +3,7 @@ import ThemeProvider from '@mui/material/styles/ThemeProvider'
 
 import { stubDeck } from './test-utils/stubs/deck'
 import { stubPlayer } from './test-utils/stubs/players'
-import { Game } from './ui/components/Game'
+import { Match } from './ui/components/Match'
 import { lightTheme } from './ui/theme'
 
 // NOTE: This is temporary glue code to be replaced by UX that enables players
@@ -16,7 +16,7 @@ export const App = () => {
   return (
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
-      <Game
+      <Match
         fullHeight
         playerSeeds={[player1, player2]}
         userPlayerId={player1.id}

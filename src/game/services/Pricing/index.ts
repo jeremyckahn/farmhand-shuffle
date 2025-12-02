@@ -1,4 +1,4 @@
-import { ICrop, IGame } from '../../types'
+import { ICrop, IMatch } from '../../types'
 
 /**
  * Service class for handling pricing logic.
@@ -15,31 +15,31 @@ export class PricingService {
   }
 
   /**
-   * Calculates the sale value of a crop, taking into account the game's
+   * Calculates the sale value of a crop, taking into account the match's
    * community fund. Adjusts for community funds available for transaction.
    *
-   * @param game - The game object.
+   * @param match - The match object.
    * @param crop - The crop to calculate the sale value for.
    * @returns The sale value of the crop.
    */
-  getCropSaleValue = (game: IGame, crop: ICrop) => {
+  getCropSaleValue = (match: IMatch, crop: ICrop) => {
     const cropBaseValue = this.getCropBaseValue(crop)
 
     let cropAdjustedValue = cropBaseValue
 
-    if (crop.id === game.buffedCrop?.crop.id) {
-      cropAdjustedValue *= game.buffedCrop.multiplier
+    if (crop.id === match.buffedCrop?.crop.id) {
+      cropAdjustedValue *= match.buffedCrop.multiplier
     }
 
-    if (crop.id === game.nerfedCrop?.crop.id) {
-      cropAdjustedValue *= game.nerfedCrop.multiplier
+    if (crop.id === match.nerfedCrop?.crop.id) {
+      cropAdjustedValue *= match.nerfedCrop.multiplier
     }
 
     cropAdjustedValue = Math.floor(cropAdjustedValue)
 
     const cropValueReducedByAvailableCommunityFunds = Math.min(
       cropAdjustedValue,
-      game.table.communityFund
+      match.table.communityFund
     )
 
     return cropValueReducedByAvailableCommunityFunds

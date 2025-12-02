@@ -1,40 +1,40 @@
-import { GameEvent, GameState } from '../../../types'
+import { MatchEvent, MatchState } from '../../../types'
 import { stubPlayer1 } from '../../../../test-utils/stubs/players'
 import { updatePlayer } from '../../../reducers/update-player'
 
-import { createSetUpGameActor, player1, playerSeeds } from './helpers'
+import { createSetUpMatchActor, player1, playerSeeds } from './helpers'
 
 describe('game over state', () => {
-  test('game can be restarted', () => {
-    const gameActor = createSetUpGameActor()
+  test('match can be restarted', () => {
+    const matchActor = createSetUpMatchActor()
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       funds: 1,
     })
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
     // NOTE: Prompts bot player
-    gameActor.send({ type: GameEvent.START_TURN })
+    matchActor.send({ type: MatchEvent.START_TURN })
 
     // NOTE: Performs all bot turn logic
     vi.runAllTimers()
 
-    gameActor.send({
-      type: GameEvent.INIT,
+    matchActor.send({
+      type: MatchEvent.INIT,
       playerSeeds,
       userPlayerId: player1.id,
     })
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_SETUP_ACTION)
-    expect(gameResult.currentPlayerId).toEqual(stubPlayer1.id)
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_SETUP_ACTION)
+    expect(matchResult.currentPlayerId).toEqual(stubPlayer1.id)
   })
 })
