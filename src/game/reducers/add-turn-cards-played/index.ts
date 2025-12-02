@@ -1,17 +1,17 @@
-import { CardInstance, IGame, IPlayer } from '../../types'
+import { CardInstance, IMatch, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
 export const addCardsPlayedDuringTurn = (
-  game: IGame,
+  match: IMatch,
   playerId: IPlayer['id'],
   cardInstances: CardInstance[]
 ) => {
   const cardsPlayedDuringTurn = [
     ...cardInstances,
-    ...game.table.players[playerId].cardsPlayedDuringTurn,
+    ...match.table.players[playerId].cardsPlayedDuringTurn,
   ]
 
-  game = updatePlayer(game, playerId, { cardsPlayedDuringTurn })
+  match = updatePlayer(match, playerId, { cardsPlayedDuringTurn })
 
-  return game
+  return match
 }

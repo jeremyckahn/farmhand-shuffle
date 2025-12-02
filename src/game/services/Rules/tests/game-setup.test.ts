@@ -1,149 +1,148 @@
-import { GameEvent, GameState, IPlayedCrop } from '../../../types'
+import { MatchEvent, MatchState, IPlayedCrop } from '../../../types'
 import { rules } from '..'
 import { updatePlayer } from '../../../reducers/update-player'
 
 import { carrot1, carrot2, player1, player2, playerSeeds } from './helpers'
 
-describe('game setup', () => {
-  test('initializes game', () => {
-    const gameActor = rules.startGame()
+describe('match setup', () => {
+  test('initializes match', () => {
+    const matchActor = rules.startMatch()
 
-    const { value } = gameActor.getSnapshot()
+    const { value } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.UNINITIALIZED)
+    expect(value).toBe(MatchState.UNINITIALIZED)
   })
 
   test('lets the player set up crops', () => {
-    const gameActor = rules.startGame()
+    const matchActor = rules.startMatch()
 
-    gameActor.send({
-      type: GameEvent.INIT,
+    matchActor.send({
+      type: MatchEvent.INIT,
       playerSeeds,
       userPlayerId: player1.id,
     })
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [carrot1, carrot2],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
     // NOTE: Plays first carrot card
-    gameActor.send({
-      type: GameEvent.PLAY_CROP,
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
     })
     // NOTE: Plays second carrot card
-    gameActor.send({
-      type: GameEvent.PLAY_CROP,
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
     })
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_SETUP_ACTION)
-    expect(gameResult.table.players[player1.id].hand).toEqual([])
-    expect(gameResult.table.players[player1.id].field.crops).toEqual<
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_SETUP_ACTION)
+    expect(matchResult.table.players[player1.id].hand).toEqual([])
+    expect(matchResult.table.players[player1.id].field.crops).toEqual<
       IPlayedCrop[]
     >([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
     ])
-    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual([
-      carrot2,
-      carrot1,
-    ])
+    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
+      [carrot2, carrot1]
+    )
   })
 
   test('completes the bot setup sequence', () => {
-    const gameActor = rules.startGame()
+    const matchActor = rules.startMatch()
 
-    gameActor.send({
-      type: GameEvent.INIT,
+    matchActor.send({
+      type: MatchEvent.INIT,
       playerSeeds,
       userPlayerId: player1.id,
     })
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [carrot1],
     })
-    game = updatePlayer(game, player2.id, {
+    match = updatePlayer(match, player2.id, {
       hand: [carrot2],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
-    gameActor.send({
-      type: GameEvent.PLAY_CROP,
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
     })
     // NOTE: Prompts player 2
-    gameActor.send({
-      type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION,
+    matchActor.send({
+      type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION,
     })
 
     vi.runAllTimers()
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
     // NOTE: Indicates that the bot has completed setup and has given control back to the player
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
-    expect(gameResult.currentPlayerId).toEqual(player1.id)
-    expect(gameResult.table.players[player2.id].field.crops).toEqual<
+    expect(matchResult.currentPlayerId).toEqual(player1.id)
+    expect(matchResult.table.players[player2.id].field.crops).toEqual<
       IPlayedCrop[]
     >([{ instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 }])
-    expect(gameResult.table.players[player2.id].cardsPlayedDuringTurn).toEqual([
-      carrot2,
-    ])
+    expect(matchResult.table.players[player2.id].cardsPlayedDuringTurn).toEqual(
+      [carrot2]
+    )
   })
 
-  test('does not let game start until all players have set up', () => {
-    const gameActor = rules.startGame()
+  test('does not let match start until all players have set up', () => {
+    const matchActor = rules.startMatch()
 
-    gameActor.send({
-      type: GameEvent.INIT,
+    matchActor.send({
+      type: MatchEvent.INIT,
       playerSeeds,
       userPlayerId: player1.id,
     })
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [carrot1],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
-    gameActor.send({
-      type: GameEvent.PLAY_CROP,
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
     })
 
-    const previousSnapshot = gameActor.getSnapshot()
+    const previousSnapshot = matchActor.getSnapshot()
 
-    gameActor.send({
-      type: GameEvent.START_TURN,
+    matchActor.send({
+      type: MatchEvent.START_TURN,
     })
 
-    const latestSnapshot = gameActor.getSnapshot()
+    const latestSnapshot = matchActor.getSnapshot()
 
     // NOTE: Indicates that the state change was prevented by a guard
     expect(previousSnapshot).toEqual(latestSnapshot)

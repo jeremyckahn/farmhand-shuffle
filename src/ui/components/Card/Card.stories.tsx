@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { spyOn } from 'storybook/test'
 
-import { GameState } from '../../../game/types'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { MatchState } from '../../../game/types'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { CardSize } from '../../types'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 
 import {
   stubCarrot,
@@ -15,7 +15,7 @@ import {
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubSelectorState } from '../../../test-utils/stubs/selectorState'
-import { updateGame } from '../../../game/reducers/update-game'
+import { updateMatch } from '../../../game/reducers/update-match'
 
 import { Card } from './Card'
 
@@ -54,8 +54,8 @@ export const PlayableCropCard: Story = {
     Story => {
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-          game: stubGame(),
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match: stubMatch(),
         })
       )
 
@@ -77,8 +77,8 @@ export const PlayableWaterCard: Story = {
     Story => {
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-          game: stubGame(),
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match: stubMatch(),
         })
       )
 
@@ -100,8 +100,8 @@ export const PlayableEventCard: Story = {
     Story => {
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-          game: stubGame(),
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match: stubMatch(),
         })
       )
 
@@ -123,8 +123,8 @@ export const PlayableToolCard: Story = {
     Story => {
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-          game: stubGame(),
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match: stubMatch(),
         })
       )
 
@@ -148,8 +148,8 @@ export const WaterableCropCard: Story = {
     Story => {
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.PLAYER_WATERING_CROP,
-          game: stubGame(),
+          matchState: MatchState.PLAYER_WATERING_CROP,
+          match: stubMatch(),
         })
       )
 
@@ -173,8 +173,8 @@ export const HarvestableSessionOwnerCropCard: Story = {
     Story => {
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-          game: stubGame(),
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match: stubMatch(),
         })
       )
 
@@ -196,16 +196,16 @@ export const HarvestableBuffedSessionOwnerCropCard: Story = {
   },
   decorators: [
     Story => {
-      let game = stubGame()
+      let match = stubMatch()
 
-      game = updateGame(game, {
+      match = updateMatch(match, {
         buffedCrop: { crop: stubPumpkin, multiplier: 2 },
       })
 
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-          game,
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match,
         })
       )
 
@@ -229,8 +229,8 @@ export const HarvestableOpponentCropCard: Story = {
     Story => {
       spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
         stubSelectorState({
-          gameState: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
-          game: stubGame(),
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match: stubMatch(),
         })
       )
 

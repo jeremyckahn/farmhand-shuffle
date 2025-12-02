@@ -17,10 +17,10 @@ export class PlayerOutOfCropsError extends Error {
   }
 }
 
-export class GameStateCorruptError extends Error {
+export class MatchStateCorruptError extends Error {
   constructor(message: string) {
     super(...arguments)
-    this.message = `[GameStateCorruptError] ${message}`
+    this.message = `[MatchStateCorruptError] ${message}`
   }
 }
 

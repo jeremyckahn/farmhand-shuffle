@@ -1,20 +1,20 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
-import { GameEvent, GameState, ShellNotificationType } from '../../../types'
+import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import { assertCurrentPlayer, assertIsEventCard } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
 
 export const playingEventCard: RulesMachineConfig['states'] = {
-  [GameState.PLAYING_EVENT]: {
+  [MatchState.PLAYING_EVENT]: {
     on: {
-      [GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION]:
-        GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      [MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION]:
+        MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
 
-      [GameEvent.PROMPT_BOT_FOR_TURN_ACTION]:
-        GameState.PERFORMING_BOT_TURN_ACTION,
+      [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+        MatchState.PERFORMING_BOT_TURN_ACTION,
     },
 
     entry: enqueueActions(
@@ -22,16 +22,16 @@ export const playingEventCard: RulesMachineConfig['states'] = {
         event,
         context,
         context: {
-          game,
+          match,
           shell: { triggerNotification },
         },
         enqueue,
       }) => {
-        assertEvent(event, GameEvent.PLAY_EVENT)
+        assertEvent(event, MatchEvent.PLAY_EVENT)
 
-        const { currentPlayerId, sessionOwnerPlayerId } = game
+        const { currentPlayerId, sessionOwnerPlayerId } = match
         const { playerId, cardIdx } = event
-        const card = lookup.getCardFromHand(game, playerId, cardIdx)
+        const card = lookup.getCardFromHand(match, playerId, cardIdx)
 
         assertIsEventCard(card)
         assertCurrentPlayer(currentPlayerId)
@@ -43,23 +43,23 @@ export const playingEventCard: RulesMachineConfig['states'] = {
           },
         })
 
-        game = card.applyEffect(context).game
-        game = moveFromHandToDiscardPile(game, currentPlayerId, cardIdx)
+        match = card.applyEffect(context).match
+        match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdx)
 
         if (currentPlayerId === sessionOwnerPlayerId) {
-          enqueue.raise({ type: GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
+          enqueue.raise({ type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
         } else {
-          enqueue.raise({ type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION })
+          enqueue.raise({ type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION })
         }
 
-        game = {
-          ...game,
-          eventCardsThatCanBePlayed: game.eventCardsThatCanBePlayed - 1,
+        match = {
+          ...match,
+          eventCardsThatCanBePlayed: match.eventCardsThatCanBePlayed - 1,
         }
 
         enqueue.assign({
           ...context,
-          game,
+          match,
         })
       }
     ),

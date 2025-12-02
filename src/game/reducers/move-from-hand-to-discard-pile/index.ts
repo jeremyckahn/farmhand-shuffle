@@ -1,15 +1,15 @@
 import { array } from '../../../services/Array'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { IGame, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
 
 export const moveFromHandToDiscardPile = (
-  game: IGame,
+  match: IMatch,
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  const { hand } = game.table.players[playerId]
+  const { hand } = match.table.players[playerId]
   const cardId = hand[cardIdx]
 
   if (!cardId) {
@@ -18,8 +18,8 @@ export const moveFromHandToDiscardPile = (
 
   const newHand = array.removeAt(hand, cardIdx)
 
-  game = updatePlayer(game, playerId, { hand: newHand })
-  game = addToDiscardPile(game, playerId, cardId)
+  match = updatePlayer(match, playerId, { hand: newHand })
+  match = addToDiscardPile(match, playerId, cardId)
 
-  return game
+  return match
 }

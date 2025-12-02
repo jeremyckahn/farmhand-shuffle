@@ -1,5 +1,5 @@
 import { stubCarrot, stubWater } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import {
   InvalidCardError,
   InvalidCardIndexError,
@@ -10,44 +10,44 @@ import { moveCropFromHandToField } from '.'
 
 describe('moveCropFromHandToField', () => {
   test("moves a card from a player's hand to their field", () => {
-    const game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
+    const match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
 
     // eslint-disable-next-line functional/immutable-data
-    game.table.players[player1Id].hand[0] = stubCarrot
-    const newGame = moveCropFromHandToField(game, player1Id, 0)
+    match.table.players[player1Id].hand[0] = stubCarrot
+    const newMatch = moveCropFromHandToField(match, player1Id, 0)
 
-    expect(newGame.table.players[player1Id].hand).toEqual(
-      game.table.players[player1Id].hand.slice(1)
+    expect(newMatch.table.players[player1Id].hand).toEqual(
+      match.table.players[player1Id].hand.slice(1)
     )
 
-    expect(newGame.table.players[player1Id].field.crops).toEqual<IPlayedCrop[]>(
-      [{ instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 }]
-    )
+    expect(newMatch.table.players[player1Id].field.crops).toEqual<
+      IPlayedCrop[]
+    >([{ instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 }])
   })
 
   test('throws an error if an invalid card index is specified', () => {
-    const game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
+    const match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
 
     expect(() => {
       moveCropFromHandToField(
-        game,
+        match,
         player1Id,
-        game.table.players[player1Id].hand.length
+        match.table.players[player1Id].hand.length
       )
     }).toThrow(InvalidCardIndexError)
   })
 
   test('throws an error if an invalid card type is specified', () => {
-    const game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
+    const match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
 
     // eslint-disable-next-line functional/immutable-data
-    game.table.players[player1Id].hand[0] = stubWater
+    match.table.players[player1Id].hand[0] = stubWater
 
     expect(() => {
-      moveCropFromHandToField(game, player1Id, 0)
+      moveCropFromHandToField(match, player1Id, 0)
     }).toThrow(InvalidCardError)
   })
 })

@@ -1,6 +1,6 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
-import { GameEvent, GameState } from '../../../types'
+import { MatchEvent, MatchState } from '../../../types'
 
 import { gameOverState } from './gameOverState'
 import { performingBotCropHarvestingState } from './performingBotCropHarvestingState'
@@ -17,14 +17,14 @@ import { waitingForPlayerSetupActionState } from './waitingForPlayerSetupActionS
 import { waitingForPlayerTurnActionState } from './waitingForPlayerTurnActionState'
 
 export const machineConfig: RulesMachineConfig = {
-  initial: GameState.UNINITIALIZED,
+  initial: MatchState.UNINITIALIZED,
 
   on: {
-    // NOTE: Used to override the internal game context of the state machine.
+    // NOTE: Used to override the internal match context of the state machine.
     // This should only be used for test setup and debugging.
-    [GameEvent.DANGEROUSLY_SET_CONTEXT]: {
+    [MatchEvent.DANGEROUSLY_SET_CONTEXT]: {
       actions: enqueueActions(({ event, enqueue }) => {
-        assertEvent(event, GameEvent.DANGEROUSLY_SET_CONTEXT)
+        assertEvent(event, MatchEvent.DANGEROUSLY_SET_CONTEXT)
 
         const { type, ...context } = event
 
@@ -32,9 +32,9 @@ export const machineConfig: RulesMachineConfig = {
       }),
     },
 
-    [GameEvent.SET_SHELL]: {
+    [MatchEvent.SET_SHELL]: {
       actions: enqueueActions(({ event, enqueue }) => {
-        assertEvent(event, GameEvent.SET_SHELL)
+        assertEvent(event, MatchEvent.SET_SHELL)
 
         const { shell } = event
 

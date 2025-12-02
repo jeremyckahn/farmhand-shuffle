@@ -14,52 +14,52 @@ import Typography from '@mui/material/Typography'
 import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useContext } from 'react'
 
-import { GameEvent, GameState, IGame } from '../../../game/types'
+import { MatchEvent, MatchState, IMatch } from '../../../game/types'
 import { assertCurrentPlayer } from '../../../game/types/guards'
 import { formatNumber } from '../../../lib/formatting/numbers'
-import { useGameRules } from '../../hooks/useGameRules'
-import { ActorContext } from '../Game/ActorContext'
-import { ShellContext } from '../Game/ShellContext'
+import { useMatchRules } from '../../hooks/useMatchRules'
+import { ActorContext } from '../Match/ActorContext'
+import { ShellContext } from '../Match/ShellContext'
 import { STANDARD_TAX_AMOUNT } from '../../../game/config'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
 
 export interface TurnControlProps {
-  game: IGame
+  match: IMatch
 }
 
 const playerFundWarningThreshold = STANDARD_TAX_AMOUNT * 2
 
-export const TurnControl = ({ game }: TurnControlProps) => {
+export const TurnControl = ({ match }: TurnControlProps) => {
   const theme = useTheme()
   const actorRef = ActorContext.useActorRef()
   const { setIsHandInViewport } = useContext(ShellContext)
   const {
-    gameState,
-    game: { currentPlayerId, sessionOwnerPlayerId },
-  } = useGameRules()
+    matchState,
+    match: { currentPlayerId, sessionOwnerPlayerId },
+  } = useMatchRules()
 
   const handleCompleteSetup = () => {
-    actorRef.send({ type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION })
+    actorRef.send({ type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION })
   }
 
   const handleEndTurn = () => {
-    actorRef.send({ type: GameEvent.START_TURN })
+    actorRef.send({ type: MatchEvent.START_TURN })
   }
 
   const handleCancelWatering = () => {
-    actorRef.send({ type: GameEvent.OPERATION_ABORTED })
+    actorRef.send({ type: MatchEvent.OPERATION_ABORTED })
     setIsHandInViewport(true)
   }
 
   let control: ReactNode = null
 
-  const currentPlayer = currentPlayerId && game.table.players[currentPlayerId]
+  const currentPlayer = currentPlayerId && match.table.players[currentPlayerId]
 
   let stateInfo = ''
 
-  switch (gameState) {
-    case GameState.WAITING_FOR_PLAYER_SETUP_ACTION: {
+  switch (matchState) {
+    case MatchState.WAITING_FOR_PLAYER_SETUP_ACTION: {
       stateInfo = 'Set up your Field'
 
       if (currentPlayer && currentPlayer.field.crops.length > 0) {
@@ -69,20 +69,20 @@ export const TurnControl = ({ game }: TurnControlProps) => {
       break
     }
 
-    case GameState.WAITING_FOR_PLAYER_TURN_ACTION: {
+    case MatchState.WAITING_FOR_PLAYER_TURN_ACTION: {
       stateInfo = 'Your turn'
 
-      if (currentPlayer && currentPlayer.id === game.sessionOwnerPlayerId) {
+      if (currentPlayer && currentPlayer.id === match.sessionOwnerPlayerId) {
         control = <Button onClick={handleEndTurn}>End turn</Button>
       }
 
       break
     }
 
-    case GameState.PLAYER_WATERING_CROP: {
+    case MatchState.PLAYER_WATERING_CROP: {
       stateInfo = 'Select a crop to water'
 
-      if (currentPlayer && currentPlayer.id === game.sessionOwnerPlayerId) {
+      if (currentPlayer && currentPlayer.id === match.sessionOwnerPlayerId) {
         control = (
           <Button onClick={handleCancelWatering} color="warning">
             Cancel watering
@@ -93,7 +93,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
       break
     }
 
-    case GameState.PERFORMING_BOT_TURN_ACTION: {
+    case MatchState.PERFORMING_BOT_TURN_ACTION: {
       assertCurrentPlayer(currentPlayerId)
 
       stateInfo = `${funAnimalName(currentPlayerId)}'s turn`
@@ -101,7 +101,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
       break
     }
 
-    case GameState.PERFORMING_BOT_SETUP_ACTION: {
+    case MatchState.PERFORMING_BOT_SETUP_ACTION: {
       assertCurrentPlayer(currentPlayerId)
 
       stateInfo = `${funAnimalName(currentPlayerId)} is setting their field up`
@@ -109,7 +109,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
       break
     }
 
-    case GameState.PERFORMING_BOT_CROP_WATERING: {
+    case MatchState.PERFORMING_BOT_CROP_WATERING: {
       assertCurrentPlayer(currentPlayerId)
 
       stateInfo = `${funAnimalName(currentPlayerId)} is watering crops}`
@@ -121,10 +121,10 @@ export const TurnControl = ({ game }: TurnControlProps) => {
   }
 
   const { [sessionOwnerPlayerId]: sessionOwnerPlayer, ...opponents } =
-    game.table.players
+    match.table.players
 
   const sessionOwnerPlayerFunds = sessionOwnerPlayer.funds
-  const opponentFunds = game.table.players[Object.keys(opponents)[0]]?.funds
+  const opponentFunds = match.table.players[Object.keys(opponents)[0]]?.funds
 
   return (
     <Stack spacing={1}>
@@ -153,9 +153,9 @@ export const TurnControl = ({ game }: TurnControlProps) => {
             <Typography>{formatNumber(sessionOwnerPlayerFunds)}</Typography>
           </Stack>
         </Tooltip>
-        {game.buffedCrop && (
+        {match.buffedCrop && (
           <Tooltip
-            title={`Sell ${game.buffedCrop.crop.name} cards now for ${game.buffedCrop.multiplier}x value`}
+            title={`Sell ${match.buffedCrop.crop.name} cards now for ${match.buffedCrop.multiplier}x value`}
             arrow
           >
             <Stack direction="row" alignItems="center">
@@ -164,7 +164,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
                 icon={<KeyboardArrowUp />}
                 label={
                   <Image
-                    src={getCardImageSrc(game.buffedCrop.crop)}
+                    src={getCardImageSrc(match.buffedCrop.crop)}
                     sx={{
                       imageRendering: 'pixelated',
                       filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
@@ -194,12 +194,12 @@ export const TurnControl = ({ game }: TurnControlProps) => {
                 lineHeight: theme.typography.body1.lineHeight,
               }}
             />
-            <Typography>{formatNumber(game.table.communityFund)}</Typography>
+            <Typography>{formatNumber(match.table.communityFund)}</Typography>
           </Stack>
         </Tooltip>
-        {game.nerfedCrop && (
+        {match.nerfedCrop && (
           <Tooltip
-            title={`${game.nerfedCrop.crop.name} cards now sell for ${game.nerfedCrop.multiplier}x value`}
+            title={`${match.nerfedCrop.crop.name} cards now sell for ${match.nerfedCrop.multiplier}x value`}
             arrow
           >
             <Stack direction="row" alignItems="center">
@@ -222,7 +222,7 @@ export const TurnControl = ({ game }: TurnControlProps) => {
                 icon={<KeyboardArrowDown />}
                 label={
                   <Image
-                    src={getCardImageSrc(game.nerfedCrop.crop)}
+                    src={getCardImageSrc(match.nerfedCrop.crop)}
                     sx={{
                       imageRendering: 'pixelated',
                       filter: `drop-shadow(0 0 5px ${theme.palette.common.black})`,

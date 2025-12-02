@@ -3,17 +3,17 @@ import {
   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
   STANDARD_FIELD_SIZE,
 } from '../../config'
-import { IGame, isCropCardInstance, isWaterCardInstance } from '../../types'
+import { IMatch, isCropCardInstance, isWaterCardInstance } from '../../types'
 import { lookup } from '../Lookup'
 
 export class BotLogicService {
   getNumberOfCropCardsToPlay(
-    game: IGame,
+    match: IMatch,
     playerId: string,
     { minimumCropsToPlay = 0 }: { minimumCropsToPlay?: number } = {}
   ) {
     const cropCardIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
-      game,
+      match,
       playerId
     )
 
@@ -25,7 +25,7 @@ export class BotLogicService {
     )
 
     const availableFieldSpace =
-      STANDARD_FIELD_SIZE - game.table.players[playerId].field.crops.length
+      STANDARD_FIELD_SIZE - match.table.players[playerId].field.crops.length
 
     const safeNumberOfCropsToPlay = Math.min(
       availableFieldSpace,
@@ -36,9 +36,9 @@ export class BotLogicService {
     return safeNumberOfCropsToPlay
   }
 
-  getNumberOfEventCardsToPlay(game: IGame, playerId: string): number {
+  getNumberOfEventCardsToPlay(match: IMatch, playerId: string): number {
     const eventCardIdxsInPlayerHand = lookup.findEventIndexesInPlayerHand(
-      game,
+      match,
       playerId
     )
 
@@ -47,38 +47,38 @@ export class BotLogicService {
       : 0
   }
 
-  getNumberOfToolCardsToPlay(game: IGame, playerId: string) {
+  getNumberOfToolCardsToPlay(match: IMatch, playerId: string) {
     const toolCardIdxsInPlayerHand = lookup.findToolIndexesInPlayerHand(
-      game,
+      match,
       playerId
     )
 
     return randomNumber.chooseIntegerBetween(0, toolCardIdxsInPlayerHand.length)
   }
 
-  getEventCardIndexToPlay(game: IGame, playerId: string) {
+  getEventCardIndexToPlay(match: IMatch, playerId: string) {
     const eventCardIdxsInPlayerHand = lookup.findEventIndexesInPlayerHand(
-      game,
+      match,
       playerId
     )
 
     return randomNumber.chooseElement(eventCardIdxsInPlayerHand)
   }
 
-  getToolCardIndexToPlay(game: IGame, playerId: string) {
+  getToolCardIndexToPlay(match: IMatch, playerId: string) {
     const toolCardIdxsInPlayerHand = lookup.findToolIndexesInPlayerHand(
-      game,
+      match,
       playerId
     )
 
     return randomNumber.chooseElement(toolCardIdxsInPlayerHand)
   }
 
-  getCropCardIndicesToWater(game: IGame, playerId: string) {
+  getCropCardIndicesToWater(match: IMatch, playerId: string) {
     const {
       field: { crops },
       hand,
-    } = game.table.players[playerId]
+    } = match.table.players[playerId]
 
     let fieldCropIdxsThatNeedWater: number[] = []
     const { length: numberOfWaterCardsInHand } = hand.filter(cardInstance => {
@@ -106,10 +106,10 @@ export class BotLogicService {
     return fieldCropIdxsThatNeedWater
   }
 
-  getCropCardIndicesToHarvest(game: IGame, playerId: string) {
+  getCropCardIndicesToHarvest(match: IMatch, playerId: string) {
     const {
       field: { crops },
-    } = game.table.players[playerId]
+    } = match.table.players[playerId]
 
     let fieldCropIdxsToHarvest: number[] = []
 

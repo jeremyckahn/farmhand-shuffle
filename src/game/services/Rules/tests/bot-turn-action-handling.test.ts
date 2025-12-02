@@ -1,8 +1,8 @@
 import { botLogic } from '../../BotLogic'
 import {
   CardInstance,
-  GameEvent,
-  GameState,
+  MatchEvent,
+  MatchState,
   IField,
   IPlayedCrop,
   IPlayer,
@@ -30,7 +30,7 @@ import { updateField } from '../../../reducers/update-field'
 import { updatePlayer } from '../../../reducers/update-player'
 
 import {
-  createSetUpGameActor,
+  createSetUpMatchActor,
   expectInstance,
   player1,
   player2,
@@ -41,7 +41,7 @@ import {
 describe('bot turn action handling', () => {
   describe('crop management', () => {
     // NOTE: For each of these test cases, there was already a carrot in the
-    // field as a result of createSetUpGameActor.
+    // field as a result of createSetUpMatchActor.
     test.each<{
       startingHand: IPlayer['hand']
       startingDeck: IPlayer['deck']
@@ -174,11 +174,11 @@ describe('bot turn action handling', () => {
         resultingDeck,
         playedCards,
       }) => {
-        const gameActor = createSetUpGameActor()
+        const matchActor = createSetUpMatchActor()
 
-        const snapshot = gameActor.getSnapshot()
+        const snapshot = matchActor.getSnapshot()
         let {
-          context: { game },
+          context: { match },
         } = snapshot
         const {
           context: { shell },
@@ -190,14 +190,14 @@ describe('bot turn action handling', () => {
         // played. It plays from the back of the hand to the front.
         vi.spyOn(randomNumber, 'generate').mockReturnValue(1)
 
-        game = updatePlayer(game, player2.id, {
+        match = updatePlayer(match, player2.id, {
           deck: startingDeck,
           hand: startingHand,
         })
-        gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+        matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
         // NOTE: Prompts bot player
-        gameActor.send({ type: GameEvent.START_TURN })
+        matchActor.send({ type: MatchEvent.START_TURN })
 
         // NOTE: Performs all bot turn logic
         vi.runAllTimers()
@@ -205,21 +205,25 @@ describe('bot turn action handling', () => {
         const {
           value,
           context: {
-            game: gameResult,
+            match: matchResult,
             botState: { cropsToPlayDuringTurn },
           },
-        } = gameActor.getSnapshot()
+        } = matchActor.getSnapshot()
 
-        expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-        expect(gameResult.currentPlayerId).toBe(player1.id)
-        expect(gameResult.table.players[player2.id].field.crops).toEqual<
+        expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+        expect(matchResult.currentPlayerId).toBe(player1.id)
+        expect(matchResult.table.players[player2.id].field.crops).toEqual<
           IField['crops']
         >(resultingFieldCrops)
-        expect(gameResult.table.players[player2.id].hand).toEqual(resultingHand)
-        expect(gameResult.table.players[player2.id].deck).toEqual(resultingDeck)
+        expect(matchResult.table.players[player2.id].hand).toEqual(
+          resultingHand
+        )
+        expect(matchResult.table.players[player2.id].deck).toEqual(
+          resultingDeck
+        )
         expect(cropsToPlayDuringTurn).toEqual(0)
         expect(
-          gameResult.table.players[player2.id].cardsPlayedDuringTurn
+          matchResult.table.players[player2.id].cardsPlayedDuringTurn
         ).toEqual(playedCards)
 
         const wereAnyCropsWatered = resultingFieldCrops.some(
@@ -246,7 +250,7 @@ describe('bot turn action handling', () => {
     )
 
     // NOTE: For each of these test cases, there was already a carrot in the
-    // field as a result of createSetUpGameActor.
+    // field as a result of createSetUpMatchActor.
     test.each<{
       startingFieldCrops: IField['crops']
       startingDiscardPile: CardInstance[]
@@ -314,49 +318,49 @@ describe('bot turn action handling', () => {
         resultingDiscardPile,
         playedCards,
       }) => {
-        const gameActor = createSetUpGameActor()
+        const matchActor = createSetUpMatchActor()
 
         let {
-          context: { game },
-        } = gameActor.getSnapshot()
+          context: { match },
+        } = matchActor.getSnapshot()
 
-        game = updateField(game, player2.id, {
+        match = updateField(match, player2.id, {
           crops: startingFieldCrops,
         })
 
-        game = updatePlayer(game, player2.id, {
+        match = updatePlayer(match, player2.id, {
           discardPile: startingDiscardPile,
         })
 
-        gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+        matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
         // NOTE: Prompts bot player
-        gameActor.send({ type: GameEvent.START_TURN })
+        matchActor.send({ type: MatchEvent.START_TURN })
 
         // NOTE: Performs all bot turn logic
         vi.runAllTimers()
 
         const {
           value,
-          context: { game: gameResult },
-        } = gameActor.getSnapshot()
+          context: { match: matchResult },
+        } = matchActor.getSnapshot()
 
-        expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-        expect(gameResult.currentPlayerId).toBe(player1.id)
-        expect(gameResult.table.players[player2.id].field.crops).toEqual<
+        expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+        expect(matchResult.currentPlayerId).toBe(player1.id)
+        expect(matchResult.table.players[player2.id].field.crops).toEqual<
           IField['crops']
         >(resultingFieldCrops)
-        expect(gameResult.table.players[player2.id].discardPile).toEqual<
+        expect(matchResult.table.players[player2.id].discardPile).toEqual<
           IPlayer['discardPile']
         >(resultingDiscardPile)
         expect(
-          gameResult.table.players[player2.id].cardsPlayedDuringTurn
+          matchResult.table.players[player2.id].cardsPlayedDuringTurn
         ).toEqual(playedCards)
       }
     )
 
     // NOTE: For this test case, there was already a carrot in the field as a
-    // result of createSetUpGameActor.
+    // result of createSetUpMatchActor.
     test('prevents planting crops if field is full', () => {
       // NOTE: When the turn starts, the player will draw an additional Carrot
       // from the deck. This would result in a hand that is the max size of the
@@ -379,11 +383,11 @@ describe('bot turn action handling', () => {
         .fill(null)
         .map(() => expectInstance(carrot))
 
-      const gameActor = createSetUpGameActor()
+      const matchActor = createSetUpMatchActor()
 
-      const snapshot = gameActor.getSnapshot()
+      const snapshot = matchActor.getSnapshot()
       let {
-        context: { game },
+        context: { match },
       } = snapshot
       const {
         context: { shell },
@@ -395,18 +399,18 @@ describe('bot turn action handling', () => {
       // played. It plays from the back of the hand to the front.
       vi.spyOn(randomNumber, 'generate').mockReturnValue(1)
 
-      game = updatePlayer(game, player2.id, {
+      match = updatePlayer(match, player2.id, {
         deck: startingDeck,
         hand: startingHand,
       })
-      gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
       // NOTE: Prompts bot player
-      gameActor.send({ type: GameEvent.START_TURN })
+      matchActor.send({ type: MatchEvent.START_TURN })
 
       // NOTE: Indicates that another Carrot was drawn
       expect(
-        gameActor.getSnapshot().context.game.table.players[player2.id].hand
+        matchActor.getSnapshot().context.match.table.players[player2.id].hand
       ).toEqual([...startingHand, expectInstance(carrot)])
 
       // NOTE: Performs all bot turn logic
@@ -415,20 +419,20 @@ describe('bot turn action handling', () => {
       const {
         value,
         context: {
-          game: gameResult,
+          match: matchResult,
           botState: { cropsToPlayDuringTurn },
         },
-      } = gameActor.getSnapshot()
+      } = matchActor.getSnapshot()
 
-      expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-      expect(gameResult.currentPlayerId).toBe(player1.id)
-      expect(gameResult.table.players[player2.id].hand).toEqual(resultingHand)
-      expect(gameResult.table.players[player2.id].field.crops).toEqual<
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(matchResult.currentPlayerId).toBe(player1.id)
+      expect(matchResult.table.players[player2.id].hand).toEqual(resultingHand)
+      expect(matchResult.table.players[player2.id].field.crops).toEqual<
         IField['crops']
       >(resultingFieldCrops)
       expect(cropsToPlayDuringTurn).toEqual(0)
       expect(
-        gameResult.table.players[player2.id].cardsPlayedDuringTurn
+        matchResult.table.players[player2.id].cardsPlayedDuringTurn
       ).toEqual(playedCards)
 
       const shellNotification: ShellNotification = {
@@ -446,7 +450,7 @@ describe('bot turn action handling', () => {
 
   describe('events', () => {
     // NOTE: For each of these test cases, there was already a carrot in the
-    // field as a result of createSetUpGameActor.
+    // field as a result of createSetUpMatchActor.
     test.each<{
       numberOfEventCardsToPlay: number
       startingDeck: IPlayer['deck']
@@ -489,11 +493,11 @@ describe('bot turn action handling', () => {
         resultingDiscardPile,
         playedCards,
       }) => {
-        const gameActor = createSetUpGameActor()
+        const matchActor = createSetUpMatchActor()
 
-        const snapshot = gameActor.getSnapshot()
+        const snapshot = matchActor.getSnapshot()
         let {
-          context: { game },
+          context: { match },
         } = snapshot
         const {
           context: { shell },
@@ -501,36 +505,36 @@ describe('bot turn action handling', () => {
 
         vi.spyOn(shell, 'triggerNotification')
 
-        game = updatePlayer(game, player2.id, {
+        match = updatePlayer(match, player2.id, {
           deck: startingDeck,
           hand: startingHand,
         })
 
-        gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+        matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
         vi.spyOn(botLogic, 'getNumberOfEventCardsToPlay').mockReturnValueOnce(
           numberOfEventCardsToPlay
         )
 
         // NOTE: Prompts bot player
-        gameActor.send({ type: GameEvent.START_TURN })
+        matchActor.send({ type: MatchEvent.START_TURN })
 
         // NOTE: Performs all bot turn logic
         vi.runAllTimers()
 
         const {
           value,
-          context: { game: gameResult },
-        } = gameActor.getSnapshot()
+          context: { match: matchResult },
+        } = matchActor.getSnapshot()
 
-        expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-        expect(gameResult.currentPlayerId).toBe(player1.id)
+        expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+        expect(matchResult.currentPlayerId).toBe(player1.id)
 
-        expect(gameResult.table.players[player2.id].hand).toEqual<
+        expect(matchResult.table.players[player2.id].hand).toEqual<
           IPlayer['hand']
         >(resultingHand)
 
-        expect(gameResult.table.players[player2.id].discardPile).toEqual<
+        expect(matchResult.table.players[player2.id].discardPile).toEqual<
           IPlayer['discardPile']
         >(resultingDiscardPile)
 
@@ -551,7 +555,7 @@ describe('bot turn action handling', () => {
           >(shellNotification)
         }
         expect(
-          gameResult.table.players[player2.id].cardsPlayedDuringTurn
+          matchResult.table.players[player2.id].cardsPlayedDuringTurn
         ).toEqual(playedCards)
       }
     )
@@ -600,11 +604,11 @@ describe('bot turn action handling', () => {
         // played.
         vi.spyOn(randomNumber, 'generate').mockReturnValue(1)
 
-        const gameActor = createSetUpGameActor()
+        const matchActor = createSetUpMatchActor()
 
-        const snapshot = gameActor.getSnapshot()
+        const snapshot = matchActor.getSnapshot()
         let {
-          context: { game },
+          context: { match },
         } = snapshot
         const {
           context: { shell },
@@ -612,34 +616,34 @@ describe('bot turn action handling', () => {
 
         vi.spyOn(shell, 'triggerNotification')
 
-        game = updatePlayer(game, player2.id, {
+        match = updatePlayer(match, player2.id, {
           deck: startingDeck,
           hand: startingHand,
         })
 
-        gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+        matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
         // NOTE: Prompts bot player
-        gameActor.send({ type: GameEvent.START_TURN })
+        matchActor.send({ type: MatchEvent.START_TURN })
 
         // NOTE: Performs all bot turn logic
         vi.runAllTimers()
 
         const {
           value,
-          context: { game: gameResult },
-        } = gameActor.getSnapshot()
+          context: { match: matchResult },
+        } = matchActor.getSnapshot()
 
-        expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-        expect(gameResult.currentPlayerId).toBe(player1.id)
-        expect(gameResult.table.players[player2.id].hand).toEqual<
+        expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+        expect(matchResult.currentPlayerId).toBe(player1.id)
+        expect(matchResult.table.players[player2.id].hand).toEqual<
           IPlayer['hand']
         >(resultingHand)
-        expect(gameResult.table.players[player2.id].discardPile).toEqual<
+        expect(matchResult.table.players[player2.id].discardPile).toEqual<
           IPlayer['discardPile']
         >(resultingDiscardPile)
         expect(
-          gameResult.table.players[player2.id].cardsPlayedDuringTurn
+          matchResult.table.players[player2.id].cardsPlayedDuringTurn
         ).toEqual(playedCards)
 
         const shellNotification: ShellNotification = {

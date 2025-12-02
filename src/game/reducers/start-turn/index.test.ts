@@ -7,7 +7,7 @@ import { carrot, instantiate } from '../../cards'
 import { DECK_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
 import { updatePlayer } from '../../reducers/update-player'
 import { factory } from '../../services/Factory'
-import { ICard, IField, IGame, IPlayedCrop, IPlayer } from '../../types'
+import { ICard, IField, IMatch, IPlayedCrop, IPlayer } from '../../types'
 
 import { startTurn } from '.'
 
@@ -34,33 +34,33 @@ beforeEach(() => {
 player2.deck[DECK_SIZE - 1] = stubPumpkin
 
 describe('startTurn', () => {
-  let game: IGame
+  let match: IMatch
   let player1Id: IPlayer['id']
 
   beforeEach(() => {
-    game = factory.buildGameForSession([player1, player2])
-    player1Id = Object.keys(game.table.players)[0]
+    match = factory.buildMatchForSession([player1, player2])
+    player1Id = Object.keys(match.table.players)[0]
   })
 
   test('pays tax to community fund', () => {
-    const newGame = startTurn(game, player1Id)
+    const newMatch = startTurn(match, player1Id)
 
-    expect(newGame.table.players[player1Id].funds).toEqual(
-      game.table.players[player1Id].funds - STANDARD_TAX_AMOUNT
+    expect(newMatch.table.players[player1Id].funds).toEqual(
+      match.table.players[player1Id].funds - STANDARD_TAX_AMOUNT
     )
 
-    expect(newGame.table.communityFund).toEqual(
-      game.table.communityFund + STANDARD_TAX_AMOUNT
+    expect(newMatch.table.communityFund).toEqual(
+      match.table.communityFund + STANDARD_TAX_AMOUNT
     )
   })
 
   test('aborts if player is out of money after paying tax', () => {
-    const newGame = updatePlayer(game, player1Id, {
+    const newMatch = updatePlayer(match, player1Id, {
       funds: STANDARD_TAX_AMOUNT,
     })
 
     expect(() => {
-      startTurn(newGame, player1Id)
+      startTurn(newMatch, player1Id)
     }).toThrow(`[PlayerOutOfFundsError] Player ${player1Id} is out of funds.`)
   })
 
@@ -71,15 +71,15 @@ describe('startTurn', () => {
   ])(
     'draws $numberOfCardsToDraw card(s) from deck',
     ({ numberOfCardsToDraw }) => {
-      const newGame = startTurn(game, player1Id, numberOfCardsToDraw)
+      const newMatch = startTurn(match, player1Id, numberOfCardsToDraw)
 
-      expect(newGame.table.players[player1Id].hand).toEqual([
-        ...game.table.players[player1Id].hand,
-        ...game.table.players[player1Id].deck.slice(0, numberOfCardsToDraw),
+      expect(newMatch.table.players[player1Id].hand).toEqual([
+        ...match.table.players[player1Id].hand,
+        ...match.table.players[player1Id].deck.slice(0, numberOfCardsToDraw),
       ])
 
-      expect(newGame.table.players[player1Id].deck).toEqual(
-        game.table.players[player1Id].deck.slice(numberOfCardsToDraw)
+      expect(newMatch.table.players[player1Id].deck).toEqual(
+        match.table.players[player1Id].deck.slice(numberOfCardsToDraw)
       )
     }
   )
@@ -89,7 +89,7 @@ describe('startTurn', () => {
     const carrot2 = instantiate(carrot)
     const carrot3 = instantiate(carrot)
 
-    let newGame = updatePlayer(game, player1Id, {
+    let newMatch = updatePlayer(match, player1Id, {
       field: {
         crops: [
           { instance: carrot1, wasWateredDuringTurn: true, waterCards: 1 },
@@ -99,22 +99,22 @@ describe('startTurn', () => {
       },
     })
 
-    newGame = startTurn(newGame, player1Id)
+    newMatch = startTurn(newMatch, player1Id)
 
-    expect(newGame.table.players[player1Id].field.crops).toEqual<IPlayedCrop[]>(
-      [
-        { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
-        { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
-        { instance: carrot3, wasWateredDuringTurn: false, waterCards: 1 },
-      ]
-    )
+    expect(newMatch.table.players[player1Id].field.crops).toEqual<
+      IPlayedCrop[]
+    >([
+      { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
+      { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
+      { instance: carrot3, wasWateredDuringTurn: false, waterCards: 1 },
+    ])
   })
 
   test('skips over empty field plots', () => {
     const carrot1 = instantiate(carrot)
     const carrot2 = instantiate(carrot)
 
-    let newGame = updatePlayer(game, player1Id, {
+    let newMatch = updatePlayer(match, player1Id, {
       field: {
         crops: [
           { instance: carrot1, wasWateredDuringTurn: true, waterCards: 1 },
@@ -124,9 +124,9 @@ describe('startTurn', () => {
       },
     })
 
-    newGame = startTurn(newGame, player1Id)
+    newMatch = startTurn(newMatch, player1Id)
 
-    expect(newGame.table.players[player1Id].field.crops).toEqual<
+    expect(newMatch.table.players[player1Id].field.crops).toEqual<
       IField['crops']
     >([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
@@ -136,19 +136,19 @@ describe('startTurn', () => {
   })
 
   test('updates prices', () => {
-    const newGame = startTurn(game, player1Id)
+    const newMatch = startTurn(match, player1Id)
 
-    expect(newGame.buffedCrop).not.toBeNull()
-    expect(newGame.nerfedCrop).not.toBeNull()
+    expect(newMatch.buffedCrop).not.toBeNull()
+    expect(newMatch.nerfedCrop).not.toBeNull()
   })
 
   test('resets record of cards played during turn', () => {
-    let newGame = updatePlayer(game, player1Id, {
+    let newMatch = updatePlayer(match, player1Id, {
       cardsPlayedDuringTurn: [stubCarrot],
     })
 
-    newGame = startTurn(newGame, player1Id)
+    newMatch = startTurn(newMatch, player1Id)
 
-    expect(newGame.table.players[player1Id].cardsPlayedDuringTurn).toEqual([])
+    expect(newMatch.table.players[player1Id].cardsPlayedDuringTurn).toEqual([])
   })
 })

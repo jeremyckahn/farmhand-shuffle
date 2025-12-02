@@ -5,7 +5,7 @@ import { Mock } from 'vitest'
 import {
   ShellContext,
   ShellContextProps,
-} from '../components/Game/ShellContext'
+} from '../components/Match/ShellContext'
 
 import { isStorybook } from './isStorybook'
 

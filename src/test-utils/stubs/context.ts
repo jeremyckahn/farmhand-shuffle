@@ -1,3 +1,3 @@
-import { createGameStateMachineContext } from '../../game/services/Rules/createGameStateMachineContext'
+import { createMatchStateMachineContext } from '../../game/services/Rules/createMatchStateMachineContext'
 
-export const stubContext = createGameStateMachineContext()
+export const stubContext = createMatchStateMachineContext()

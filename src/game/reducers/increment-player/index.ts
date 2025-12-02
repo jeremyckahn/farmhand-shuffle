@@ -1,12 +1,12 @@
 import { lookup } from '../../services/Lookup'
-import { IGame } from '../../types'
-import { updateGame } from '../update-game'
+import { IMatch } from '../../types'
+import { updateMatch } from '../update-match'
 
-export const incrementPlayer = (game: IGame) => {
-  const playerIds = lookup.playerIds(game)
-  const nextPlayerIdx = lookup.nextPlayerIndex(game)
+export const incrementPlayer = (match: IMatch) => {
+  const playerIds = lookup.playerIds(match)
+  const nextPlayerIdx = lookup.nextPlayerIndex(match)
 
-  game = updateGame(game, { currentPlayerId: playerIds[nextPlayerIdx] })
+  match = updateMatch(match, { currentPlayerId: playerIds[nextPlayerIdx] })
 
-  return game
+  return match
 }

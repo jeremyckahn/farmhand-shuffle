@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { carrot, instantiate, pumpkin } from '../../../game/cards'
 import { updateField } from '../../../game/reducers/update-field'
 import { factory } from '../../../game/services/Factory'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 
 import { Field } from './Field'
@@ -30,12 +30,12 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-let game = stubGame()
+let match = stubMatch()
 
-const selfPlayerId = game.sessionOwnerPlayerId
-const opponentPlayerId = Object.keys(game.table.players)[1]
+const selfPlayerId = match.sessionOwnerPlayerId
+const opponentPlayerId = Object.keys(match.table.players)[1]
 
-game = updateField(game, selfPlayerId, {
+match = updateField(match, selfPlayerId, {
   crops: [
     { ...factory.buildPlayedCrop(instantiate(carrot)), waterCards: 1 },
     { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 3 },
@@ -43,7 +43,7 @@ game = updateField(game, selfPlayerId, {
   ],
 })
 
-game = updateField(game, opponentPlayerId, {
+match = updateField(match, opponentPlayerId, {
   crops: [
     { ...factory.buildPlayedCrop(instantiate(carrot)), waterCards: 1 },
     { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 3 },
@@ -53,14 +53,14 @@ game = updateField(game, opponentPlayerId, {
 
 export const SelfField: Story = {
   args: {
-    playerId: game.sessionOwnerPlayerId,
-    game,
+    playerId: match.sessionOwnerPlayerId,
+    match,
   },
 }
 
 export const OpponentField: Story = {
   args: {
     playerId: opponentPlayerId,
-    game,
+    match,
   },
 }

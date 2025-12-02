@@ -1,6 +1,6 @@
 import { randomNumber } from '../../../services/RandomNumber'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { instantiate, water } from '../../cards'
 import { DECK_SIZE } from '../../config'
@@ -13,7 +13,7 @@ describe('drawValidStartingHand', () => {
   test('ensures a hand with at least one crop is pulled', () => {
     vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
 
-    let game = stubGame()
+    let match = stubMatch()
 
     const hand: IPlayer['hand'] = []
 
@@ -23,13 +23,13 @@ describe('drawValidStartingHand', () => {
       stubCarrot,
     ]
 
-    game = updatePlayer(game, stubPlayer1.id, {
+    match = updatePlayer(match, stubPlayer1.id, {
       hand,
       deck,
     })
 
-    game = drawValidStartingHand(game, stubPlayer1.id)
+    match = drawValidStartingHand(match, stubPlayer1.id)
 
-    expect(game.table.players[stubPlayer1.id].hand).toContain(stubCarrot)
+    expect(match.table.players[stubPlayer1.id].hand).toContain(stubCarrot)
   })
 })

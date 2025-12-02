@@ -5,7 +5,7 @@ import {
 } from '../../../../../test-utils/stubs/players'
 import { carrot, instantiate, pumpkin } from '../../../../cards'
 import { updatePlayer } from '../../../../reducers/update-player'
-import { CropInstance, GameEvent, ICard } from '../../../../types'
+import { CropInstance, MatchEvent, ICard } from '../../../../types'
 
 import { rules } from '../..'
 
@@ -35,50 +35,50 @@ export const carrot2 = instantiate(carrot)
 export const pumpkin1 = instantiate(pumpkin)
 
 /**
- * Initializes a game actor and sets up each player with a played crop.
+ * Initializes a match actor and sets up each player with a played crop.
  */
-export const createSetUpGameActor = () => {
-  const gameActor = rules.startGame()
+export const createSetUpMatchActor = () => {
+  const matchActor = rules.startMatch()
 
-  gameActor.send({
-    type: GameEvent.INIT,
+  matchActor.send({
+    type: MatchEvent.INIT,
     playerSeeds,
     userPlayerId: player1.id,
   })
 
   let {
-    context: { game },
-  } = gameActor.getSnapshot()
+    context: { match },
+  } = matchActor.getSnapshot()
 
-  game = updatePlayer(game, player1.id, {
+  match = updatePlayer(match, player1.id, {
     hand: [instantiate(carrot)],
   })
-  game = updatePlayer(game, player2.id, {
+  match = updatePlayer(match, player2.id, {
     hand: [instantiate(carrot)],
   })
 
-  gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+  matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
-  gameActor.send({
-    type: GameEvent.PLAY_CROP,
+  matchActor.send({
+    type: MatchEvent.PLAY_CROP,
     playerId: player1.id,
     cardIdx: 0,
   })
 
-  gameActor.send({
+  matchActor.send({
     // NOTE: Prompts bot player
-    type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION,
+    type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION,
   })
 
   // NOTE: Performs all bot setup logic
   vi.runAllTimers()
 
-  gameActor.send({
+  matchActor.send({
     // NOTE: Prompts player 1 again
-    type: GameEvent.PROMPT_PLAYER_FOR_SETUP_ACTION,
+    type: MatchEvent.PROMPT_PLAYER_FOR_SETUP_ACTION,
   })
 
-  return gameActor
+  return matchActor
 }
 
 beforeEach(() => {

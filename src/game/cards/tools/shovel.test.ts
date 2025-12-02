@@ -4,9 +4,9 @@ import {
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubContext } from '../../../test-utils/stubs/context'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../../reducers/update-player'
-import { createGameStateMachineContext } from '../../services/Rules/createGameStateMachineContext'
+import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
 import { ShellNotificationType } from '../../types'
 import { assertCurrentPlayer } from '../../types/guards'
 
@@ -15,27 +15,27 @@ import { shovel } from './shovel'
 describe('shovel', () => {
   describe('applyEffect', () => {
     test('draws two cards', () => {
-      let game = stubGame()
-      const { currentPlayerId } = game
+      let match = stubMatch()
+      const { currentPlayerId } = match
       assertCurrentPlayer(currentPlayerId)
 
-      game = updatePlayer(game, currentPlayerId, {
+      match = updatePlayer(match, currentPlayerId, {
         deck: [stubCarrot, stubPumpkin, stubWater],
         hand: [],
       })
 
-      const context = createGameStateMachineContext()
+      const context = createMatchStateMachineContext()
       vi.spyOn(context.shell, 'triggerNotification')
 
-      const { game: updatedGame } = shovel.applyEffect({
+      const { match: updatedMatch } = shovel.applyEffect({
         ...context,
-        game,
+        match,
       })
 
-      expect(updatedGame.table.players[currentPlayerId].deck).toEqual([
+      expect(updatedMatch.table.players[currentPlayerId].deck).toEqual([
         stubWater,
       ])
-      expect(updatedGame.table.players[currentPlayerId].hand).toEqual([
+      expect(updatedMatch.table.players[currentPlayerId].hand).toEqual([
         stubCarrot,
         stubPumpkin,
       ])
@@ -51,19 +51,22 @@ describe('shovel', () => {
   })
 
   describe('onStartFollowingTurn', () => {
-    test('sets game.cardsToDrawAtTurnStart to 0', () => {
-      let game = stubGame()
-      const { currentPlayerId } = game
+    test('sets match.cardsToDrawAtTurnStart to 0', () => {
+      let match = stubMatch()
+      const { currentPlayerId } = match
       assertCurrentPlayer(currentPlayerId)
 
-      game = updatePlayer(game, currentPlayerId, {
+      match = updatePlayer(match, currentPlayerId, {
         deck: [stubCarrot, stubPumpkin, stubWater],
         hand: [],
       })
 
-      const { game: newGame } = shovel.onStartFollowingTurn!({ ...stubContext, game })
+      const { match: newMatch } = shovel.onStartFollowingTurn!({
+        ...stubContext,
+        match,
+      })
 
-      expect(newGame.cardsToDrawAtTurnStart).toBe(0)
+      expect(newMatch.cardsToDrawAtTurnStart).toBe(0)
     })
   })
 })

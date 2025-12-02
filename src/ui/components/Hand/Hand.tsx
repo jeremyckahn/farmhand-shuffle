@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
-import { IGame, IPlayer } from '../../../game/types'
+import { IMatch, IPlayer } from '../../../game/types'
 import { useRejectingTimeout } from '../../../lib/hooks/useRejectingTimeout'
 import { math } from '../../../services/Math'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -12,7 +12,7 @@ import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
-import { ShellContext } from '../Game/ShellContext'
+import { ShellContext } from '../Match/ShellContext'
 
 const deselectedIdx = -1
 const foregroundCardScale = 1
@@ -35,14 +35,14 @@ export const getGapPixelWidth = (numberOfCards: number) => {
 }
 
 export interface HandProps extends BoxProps {
-  game: IGame
+  match: IMatch
   playerId: IPlayer['id']
   cardSize?: CardSize
 }
 
 export const Hand = ({
   playerId,
-  game,
+  match,
   cardSize = CardSize.LARGE,
   sx = [],
   ...rest
@@ -55,7 +55,7 @@ export const Hand = ({
     cardSize,
   })
 
-  const player = lookup.getPlayer(game, playerId)
+  const player = lookup.getPlayer(match, playerId)
 
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)

@@ -1,24 +1,24 @@
-import { GameEvent, GameState } from '../../../types'
+import { MatchEvent, MatchState } from '../../../types'
 import { stubPlayer1, stubPlayer2 } from '../../../../test-utils/stubs/players'
 import { updatePlayer } from '../../../reducers/update-player'
 
-import { createSetUpGameActor, player1, player2 } from './helpers'
+import { createSetUpMatchActor, player1, player2 } from './helpers'
 
 describe('win conditions', () => {
   test('the player running out of money causes the bot to win', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       funds: 1,
     })
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
     // NOTE: Prompts bot player
-    gameActor.send({ type: GameEvent.START_TURN })
+    matchActor.send({ type: MatchEvent.START_TURN })
 
     // NOTE: Performs all bot turn logic
     vi.runAllTimers()
@@ -26,28 +26,28 @@ describe('win conditions', () => {
     const {
       value,
       context: {
-        game: { winner },
+        match: { winner },
       },
-    } = gameActor.getSnapshot()
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.GAME_OVER)
+    expect(value).toBe(MatchState.GAME_OVER)
     expect(winner).toEqual(stubPlayer2.id)
   })
 
   test('the bot running out of money causes the player to win', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player2.id, {
+    match = updatePlayer(match, player2.id, {
       funds: 1,
     })
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
     // NOTE: Prompts bot player
-    gameActor.send({ type: GameEvent.START_TURN })
+    matchActor.send({ type: MatchEvent.START_TURN })
 
     // NOTE: Performs all bot turn logic
     vi.runAllTimers()
@@ -55,11 +55,11 @@ describe('win conditions', () => {
     const {
       value,
       context: {
-        game: { winner },
+        match: { winner },
       },
-    } = gameActor.getSnapshot()
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.GAME_OVER)
+    expect(value).toBe(MatchState.GAME_OVER)
     expect(winner).toEqual(stubPlayer1.id)
   })
 })

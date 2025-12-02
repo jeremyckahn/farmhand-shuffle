@@ -2,12 +2,12 @@ import {
   CardInstance,
   CardType,
   EventInstance,
-  GameState,
+  MatchState,
   ICard,
   ICrop,
   ICropPriceFluctuation,
   IField,
-  IGame,
+  IMatch,
   IPlayedCrop,
   IPlayer,
   isEventCardInstance,
@@ -16,7 +16,7 @@ import {
   ToolInstance,
 } from '../'
 import * as cards from '../../cards'
-import { GameStateCorruptError } from '../../services/Rules/errors'
+import { MatchStateCorruptError } from '../../services/Rules/errors'
 
 export const isCardInstance = (obj: unknown): obj is CardInstance => {
   if (typeof obj !== 'object' || obj === null) return false
@@ -122,7 +122,7 @@ export const isCropPriceFluctuation = (
   )
 }
 
-export const isGame = (obj: unknown): obj is IGame => {
+export const isMatch = (obj: unknown): obj is IMatch => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
@@ -166,7 +166,7 @@ export const isCard = (obj: unknown): obj is ICard => {
 
 export function assertIsCardId(id: string): asserts id is keyof typeof cards {
   if (!isCardId(id)) {
-    throw new GameStateCorruptError(`${id} is not a valid card ID`)
+    throw new MatchStateCorruptError(`${id} is not a valid card ID`)
   }
 }
 
@@ -174,7 +174,7 @@ export function assertIsEventCard(
   card: CardInstance
 ): asserts card is EventInstance {
   if (!isEventCardInstance(card)) {
-    throw new GameStateCorruptError(`${card.id} is not an event card`)
+    throw new MatchStateCorruptError(`${card.id} is not an event card`)
   }
 }
 
@@ -182,7 +182,7 @@ export function assertIsToolCard(
   card: CardInstance
 ): asserts card is ToolInstance {
   if (!isToolCardInstance(card)) {
-    throw new GameStateCorruptError(`${card.id} is not a tool card`)
+    throw new MatchStateCorruptError(`${card.id} is not a tool card`)
   }
 }
 
@@ -194,9 +194,11 @@ export function assertCurrentPlayer(
   }
 }
 
-export function assertStringIsGameState(str: string): asserts str is GameState {
-  if (!(str in GameState)) {
-    throw new TypeError(`${str} is not a GameState`)
+export function assertStringIsMatchState(
+  str: string
+): asserts str is MatchState {
+  if (!(str in MatchState)) {
+    throw new TypeError(`${str} is not a MatchState`)
   }
 }
 

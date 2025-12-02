@@ -3,37 +3,37 @@ import { enqueueActions } from 'xstate'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { updatePlayedCrop } from '../../../reducers/update-played-crop'
 import {
-  GameEvent,
-  GameState,
+  MatchEvent,
+  MatchState,
   IPlayedCrop,
   isWaterCardInstance,
   ShellNotificationType,
 } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
-import { GameStateCorruptError } from '../errors'
+import { MatchStateCorruptError } from '../errors'
 
 import { RulesMachineConfig } from './types'
 
 export const performingBotCropWateringState: RulesMachineConfig['states'] = {
-  [GameState.PERFORMING_BOT_CROP_WATERING]: {
+  [MatchState.PERFORMING_BOT_CROP_WATERING]: {
     on: {
-      [GameEvent.PROMPT_BOT_FOR_TURN_ACTION]:
-        GameState.PERFORMING_BOT_TURN_ACTION,
+      [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+        MatchState.PERFORMING_BOT_TURN_ACTION,
     },
 
     entry: enqueueActions(
       ({
         context: {
-          game,
+          match,
           botState: { fieldCropIndicesToWaterDuringTurn },
           shell: { triggerNotification },
         },
         enqueue,
       }) => {
-        const { currentPlayerId } = game
+        const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
-        const waterCardInHandIdx = game.table.players[
+        const waterCardInHandIdx = match.table.players[
           currentPlayerId
         ].hand.findIndex(cardInstance => {
           return isWaterCardInstance(cardInstance)
@@ -42,13 +42,15 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         const [cropIdxInFieldToWater] = fieldCropIndicesToWaterDuringTurn
 
         if (cropIdxInFieldToWater === undefined) {
-          throw new GameStateCorruptError(
-            `fieldCropIndicesToWaterDuringTurn is empty in ${GameState.PERFORMING_BOT_CROP_WATERING}`
+          throw new MatchStateCorruptError(
+            `fieldCropIndicesToWaterDuringTurn is empty in ${MatchState.PERFORMING_BOT_CROP_WATERING}`
           )
         }
 
         const playedCrop =
-          game.table.players[currentPlayerId].field.crops[cropIdxInFieldToWater]
+          match.table.players[currentPlayerId].field.crops[
+            cropIdxInFieldToWater
+          ]
 
         assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 
@@ -58,15 +60,15 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
           waterCards: playedCrop.waterCards + 1,
         }
 
-        game = updatePlayedCrop(
-          game,
+        match = updatePlayedCrop(
+          match,
           currentPlayerId,
           cropIdxInFieldToWater,
           updatedPlayedCrop
         )
 
-        game = moveFromHandToDiscardPile(
-          game,
+        match = moveFromHandToDiscardPile(
+          match,
           currentPlayerId,
           waterCardInHandIdx
         )
@@ -79,10 +81,10 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         })
 
         enqueue.raise({
-          type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION,
+          type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
         })
 
-        enqueue.assign({ game })
+        enqueue.assign({ match })
       }
     ),
   },

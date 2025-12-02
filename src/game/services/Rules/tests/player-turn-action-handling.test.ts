@@ -1,7 +1,7 @@
 import { carrot, instantiate, water } from '../../../cards'
 import {
-  GameEvent,
-  GameState,
+  MatchEvent,
+  MatchState,
   IField,
   IPlayedCrop,
   ShellNotification,
@@ -14,7 +14,7 @@ import { stubRain, stubShovel } from '../../../../test-utils/stubs/cards'
 import { updatePlayer } from '../../../reducers/update-player'
 
 import {
-  createSetUpGameActor,
+  createSetUpMatchActor,
   expectInstance,
   player1,
   player2,
@@ -23,31 +23,31 @@ import {
 
 describe('player turn action handling', () => {
   test('player can play a crop card', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [pumpkin1],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
-    gameActor.send({
-      type: GameEvent.PLAY_CROP,
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
     })
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(gameResult.table.players[player1.id].hand).toEqual([])
-    expect(gameResult.table.players[player1.id].field.crops).toEqual<
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(matchResult.table.players[player1.id].hand).toEqual([])
+    expect(matchResult.table.players[player1.id].field.crops).toEqual<
       IField['crops']
     >([
       {
@@ -57,33 +57,33 @@ describe('player turn action handling', () => {
       },
       { instance: pumpkin1, wasWateredDuringTurn: false, waterCards: 0 },
     ])
-    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual([
-      pumpkin1,
-    ])
+    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
+      [pumpkin1]
+    )
   })
 
   test('player can harvest a crop card', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     const {
       context: { shell },
-    } = gameActor.getSnapshot()
+    } = matchActor.getSnapshot()
 
     vi.spyOn(shell, 'triggerNotification')
 
-    gameActor.send({
-      type: GameEvent.HARVEST_CROP,
+    matchActor.send({
+      type: MatchEvent.HARVEST_CROP,
       playerId: player1.id,
       cropIdxInFieldToHarvest: 0,
     })
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(gameResult.table.players[player1.id].field.crops).toEqual<
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(matchResult.table.players[player1.id].field.crops).toEqual<
       IField['crops']
     >([undefined])
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
@@ -94,7 +94,7 @@ describe('player turn action handling', () => {
         },
       }
     )
-    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
+    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
       []
     )
   })
@@ -102,11 +102,11 @@ describe('player turn action handling', () => {
   test('player cannot play crop card if field is full', () => {
     vi.spyOn(console, 'error').mockImplementationOnce(vi.fn())
 
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
     const filledField = {
       crops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill(
@@ -114,32 +114,32 @@ describe('player turn action handling', () => {
       ),
     }
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [instantiate(carrot)],
       field: filledField,
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
-    const previousSnapshot = gameActor.getSnapshot()
+    const previousSnapshot = matchActor.getSnapshot()
 
-    gameActor.send({
-      type: GameEvent.PLAY_CROP,
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
     })
 
-    const latestSnapshot = gameActor.getSnapshot()
+    const latestSnapshot = matchActor.getSnapshot()
 
     expect(latestSnapshot).toEqual(previousSnapshot)
   })
 
   test('player can play a water card', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
-    const snapshot = gameActor.getSnapshot()
+    const snapshot = matchActor.getSnapshot()
     let {
-      context: { game },
+      context: { match },
     } = snapshot
     const {
       context: { shell },
@@ -147,20 +147,20 @@ describe('player turn action handling', () => {
 
     vi.spyOn(shell, 'triggerNotification')
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [instantiate(water)],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
     // NOTE: Plays the water card
-    gameActor.send({
-      type: GameEvent.PLAY_WATER,
+    matchActor.send({
+      type: MatchEvent.PLAY_WATER,
       playerId: player1.id,
       cardIdx: 0,
     })
-    gameActor.send({
-      type: GameEvent.SELECT_CROP_TO_WATER,
+    matchActor.send({
+      type: MatchEvent.SELECT_CROP_TO_WATER,
       playerId: player1.id,
       cropIdxInFieldToWater: 0,
       waterCardInHandIdx: 0,
@@ -168,12 +168,12 @@ describe('player turn action handling', () => {
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(gameResult.table.players[player1.id].hand).toEqual([])
-    expect(gameResult.table.players[player1.id].field.crops).toEqual<
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(matchResult.table.players[player1.id].hand).toEqual([])
+    expect(matchResult.table.players[player1.id].field.crops).toEqual<
       IField['crops']
     >([
       {
@@ -182,9 +182,9 @@ describe('player turn action handling', () => {
         waterCards: 1,
       },
     ])
-    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual([
-      expectInstance(water),
-    ])
+    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
+      [expectInstance(water)]
+    )
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
@@ -197,11 +197,11 @@ describe('player turn action handling', () => {
   })
 
   test('player can play an event card', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
-    const snapshot = gameActor.getSnapshot()
+    const snapshot = matchActor.getSnapshot()
     let {
-      context: { game },
+      context: { match },
     } = snapshot
     const {
       context: { shell },
@@ -209,27 +209,29 @@ describe('player turn action handling', () => {
 
     vi.spyOn(shell, 'triggerNotification')
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [stubRain],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
     // NOTE: Plays the event card
-    gameActor.send({
-      type: GameEvent.PLAY_EVENT,
+    matchActor.send({
+      type: MatchEvent.PLAY_EVENT,
       playerId: player1.id,
       cardIdx: 0,
     })
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(gameResult.table.players[player1.id].hand).toEqual([])
-    expect(gameResult.table.players[player1.id].discardPile).toEqual([stubRain])
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(matchResult.table.players[player1.id].hand).toEqual([])
+    expect(matchResult.table.players[player1.id].discardPile).toEqual([
+      stubRain,
+    ])
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
@@ -239,17 +241,17 @@ describe('player turn action handling', () => {
         },
       }
     )
-    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual([
-      stubRain,
-    ])
+    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
+      [stubRain]
+    )
   })
 
   test('player can play a tool card', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
-    const snapshot = gameActor.getSnapshot()
+    const snapshot = matchActor.getSnapshot()
     let {
-      context: { game },
+      context: { match },
     } = snapshot
     const {
       context: { shell },
@@ -257,37 +259,37 @@ describe('player turn action handling', () => {
 
     vi.spyOn(shell, 'triggerNotification')
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [stubShovel],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
     // NOTE: Plays the tool card
-    gameActor.send({
-      type: GameEvent.PLAY_TOOL,
+    matchActor.send({
+      type: MatchEvent.PLAY_TOOL,
       playerId: player1.id,
       cardIdx: 0,
     })
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
     // NOTE: Asserts that shovel card was played (two cards were drawn)
-    expect(gameResult.table.players[player1.id].hand).toEqual(
-      game.table.players[player1.id].deck.slice(0, 2)
+    expect(matchResult.table.players[player1.id].hand).toEqual(
+      match.table.players[player1.id].deck.slice(0, 2)
     )
 
-    expect(gameResult.table.players[player1.id].discardPile).toEqual([
+    expect(matchResult.table.players[player1.id].discardPile).toEqual([
       stubShovel,
     ])
-    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual([
-      stubShovel,
-    ])
+    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
+      [stubShovel]
+    )
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
@@ -300,32 +302,32 @@ describe('player turn action handling', () => {
   })
 
   test('player can abort playing a water card', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [instantiate(water)],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
-    const previousSnapshot = gameActor.getSnapshot()
+    const previousSnapshot = matchActor.getSnapshot()
 
     // NOTE: Plays the water card
-    gameActor.send({
-      type: GameEvent.PLAY_WATER,
+    matchActor.send({
+      type: MatchEvent.PLAY_WATER,
       playerId: player1.id,
       cardIdx: 0,
     })
 
-    gameActor.send({
-      type: GameEvent.OPERATION_ABORTED,
+    matchActor.send({
+      type: MatchEvent.OPERATION_ABORTED,
     })
 
-    const latestSnapshot = gameActor.getSnapshot()
+    const latestSnapshot = matchActor.getSnapshot()
 
     expect(latestSnapshot).toEqual(previousSnapshot)
   })
@@ -333,55 +335,55 @@ describe('player turn action handling', () => {
   test('handles failure when watering a crop', () => {
     vi.spyOn(console, 'error').mockImplementationOnce(vi.fn())
 
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     let {
-      context: { game },
-    } = gameActor.getSnapshot()
+      context: { match },
+    } = matchActor.getSnapshot()
 
-    game = updatePlayer(game, player1.id, {
+    match = updatePlayer(match, player1.id, {
       hand: [instantiate(water)],
     })
 
-    gameActor.send({ type: GameEvent.DANGEROUSLY_SET_CONTEXT, game })
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
 
     // NOTE: Plays the water card
-    gameActor.send({
-      type: GameEvent.PLAY_WATER,
+    matchActor.send({
+      type: MatchEvent.PLAY_WATER,
       playerId: player1.id,
       cardIdx: 0,
     })
 
-    const previousSnapshot = gameActor.getSnapshot()
+    const previousSnapshot = matchActor.getSnapshot()
 
-    gameActor.send({
-      type: GameEvent.SELECT_CROP_TO_WATER,
+    matchActor.send({
+      type: MatchEvent.SELECT_CROP_TO_WATER,
       playerId: player1.id,
       cropIdxInFieldToWater: -1, // An intentionally invalid index
       waterCardInHandIdx: 0,
     })
 
-    const latestSnapshot = gameActor.getSnapshot()
+    const latestSnapshot = matchActor.getSnapshot()
 
     expect(latestSnapshot).toEqual(previousSnapshot)
   })
 
   test('player can end their turn', () => {
-    const gameActor = createSetUpGameActor()
+    const matchActor = createSetUpMatchActor()
 
     const startPlayerTurn = vi.spyOn(startTurnModule, 'startTurn')
-    gameActor.send({ type: GameEvent.START_TURN })
+    matchActor.send({ type: MatchEvent.START_TURN })
 
     vi.runAllTimers()
 
     const {
       value,
-      context: { game: gameResult },
-    } = gameActor.getSnapshot()
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
 
-    expect(value).toBe(GameState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
-    expect(gameResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
+    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
       []
     )
 
@@ -389,6 +391,6 @@ describe('player turn action handling', () => {
     expect(startPlayerTurn.mock.calls[0][1]).toEqual(player2.id)
 
     // NOTE: Indicates that control has been returned back to the player
-    expect(gameResult.currentPlayerId).toEqual(player1.id)
+    expect(matchResult.currentPlayerId).toEqual(player1.id)
   })
 })

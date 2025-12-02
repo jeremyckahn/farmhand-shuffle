@@ -8,12 +8,12 @@ import {
   stubPumpkin,
   stubWater,
 } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { isSxArray } from '../../type-guards'
 import { cardClassName } from '../Card/CardCore'
 import { CardProps } from '../Card/types'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 
 import { getGapPixelWidth, Hand, HandProps } from './Hand'
 
@@ -63,10 +63,10 @@ vi.mock('../Card/Card', async () => {
   }
 })
 
-const baseGame = stubGame()
+const baseMatch = stubMatch()
 
 const handCards = [stubCarrot, stubPumpkin, stubWater]
-const game = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
+const match = updatePlayer(baseMatch, baseMatch.sessionOwnerPlayerId, {
   hand: handCards,
 })
 
@@ -74,7 +74,11 @@ const StubHand = (overrides: Partial<HandProps>) => {
   return (
     <StubShellContext>
       <ActorContext.Provider>
-        <Hand game={game} playerId={game.sessionOwnerPlayerId} {...overrides} />
+        <Hand
+          match={match}
+          playerId={match.sessionOwnerPlayerId}
+          {...overrides}
+        />
       </ActorContext.Provider>
     </StubShellContext>
   )
@@ -189,11 +193,11 @@ describe('Hand', () => {
     await userEvent.click(card1!)
 
     const newHand = [...handCards, instantiate(water)]
-    const newGame = updatePlayer(game, game.sessionOwnerPlayerId, {
+    const newMatch = updatePlayer(match, match.sessionOwnerPlayerId, {
       hand: newHand,
     })
 
-    render(<StubHand game={newGame} />)
+    render(<StubHand match={newMatch} />)
 
     const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toMatchInlineSnapshot(

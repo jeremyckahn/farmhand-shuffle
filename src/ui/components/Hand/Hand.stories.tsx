@@ -10,7 +10,7 @@ import { carrot, instantiate, pumpkin, water } from '../../../game/cards'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
 import { randomNumber } from '../../../services/RandomNumber'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
@@ -33,9 +33,9 @@ const meta = {
   argTypes: {},
   decorators: [
     (Story, { args }) => {
-      let { game } = args
+      let { match } = args
       const [hand, setHand] = useState(
-        lookup.getPlayer(game, game.sessionOwnerPlayerId).hand
+        lookup.getPlayer(match, match.sessionOwnerPlayerId).hand
       )
 
       const handleClickAdd = () => {
@@ -54,7 +54,7 @@ const meta = {
         setHand(hand.slice(0, hand.length - 1))
       }
 
-      game = updatePlayer(game, game.sessionOwnerPlayerId, { hand })
+      match = updatePlayer(match, match.sessionOwnerPlayerId, { hand })
 
       return (
         <StubShellContext>
@@ -68,10 +68,10 @@ const meta = {
               position: 'relative',
             }}
           >
-            <Story args={{ ...args, game, sx: { m: 'auto', mt: 0 } }} />
+            <Story args={{ ...args, match, sx: { m: 'auto', mt: 0 } }} />
             <Tooltip
               title={`Cards: ${
-                game.table.players[game.sessionOwnerPlayerId].hand.length
+                match.table.players[match.sessionOwnerPlayerId].hand.length
               }`}
               open
             >
@@ -117,34 +117,42 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const baseGame = stubGame()
+const baseMatch = stubMatch()
 
-const gameWithHandOf3 = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
-  hand: [stubCarrot, stubPumpkin, stubWater],
-})
+const matchWithHandOf3 = updatePlayer(
+  baseMatch,
+  baseMatch.sessionOwnerPlayerId,
+  {
+    hand: [stubCarrot, stubPumpkin, stubWater],
+  }
+)
 
-const gameWithHandOf5 = updatePlayer(baseGame, baseGame.sessionOwnerPlayerId, {
-  hand: [
-    instantiate(carrot),
-    instantiate(pumpkin),
-    instantiate(water),
-    instantiate(carrot),
-    instantiate(pumpkin),
-  ],
-})
+const matchWithHandOf5 = updatePlayer(
+  baseMatch,
+  baseMatch.sessionOwnerPlayerId,
+  {
+    hand: [
+      instantiate(carrot),
+      instantiate(pumpkin),
+      instantiate(water),
+      instantiate(carrot),
+      instantiate(pumpkin),
+    ],
+  }
+)
 
 export const HandOf3: Story = {
   args: {
-    playerId: gameWithHandOf3.sessionOwnerPlayerId,
-    game: gameWithHandOf3,
+    playerId: matchWithHandOf3.sessionOwnerPlayerId,
+    match: matchWithHandOf3,
     cardSize: CardSize.LARGE,
   },
 }
 
 export const HandOf5: Story = {
   args: {
-    playerId: gameWithHandOf5.sessionOwnerPlayerId,
-    game: gameWithHandOf5,
+    playerId: matchWithHandOf5.sessionOwnerPlayerId,
+    match: matchWithHandOf5,
     cardSize: CardSize.LARGE,
   },
 }

@@ -3,16 +3,16 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { ReactNode } from 'react'
 import { describe, expect, it } from 'vitest'
 
-import { updateGame } from '../../../game/reducers/update-game'
+import { updateMatch } from '../../../game/reducers/update-match'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
-import { GameEvent, GameState } from '../../../game/types'
+import { MatchEvent, MatchState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
-import * as useGameRulesModule from '../../hooks/useGameRules'
-import { ActorContext } from '../Game/ActorContext'
+import * as useMatchRulesModule from '../../hooks/useMatchRules'
+import { ActorContext } from '../Match/ActorContext'
 
 import { TurnControl, TurnControlProps } from './TurnControl'
 
@@ -116,17 +116,17 @@ vi.mock('fun-animal-names', () => ({
 const StubTurnControl = (overrides: Partial<TurnControlProps>) => {
   return (
     <ActorContext.Provider>
-      <TurnControl game={stubGame()} {...overrides} />
+      <TurnControl match={stubMatch()} {...overrides} />
     </ActorContext.Provider>
   )
 }
 
 describe('TurnControl Component', () => {
   it('renders a "Complete setup" button when in WAITING_FOR_PLAYER_SETUP_ACTION state and current player has crops', () => {
-    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
-    let game = stubGame()
-    game = updatePlayer(game, stubPlayer1.id, {
+    let match = stubMatch()
+    match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
@@ -134,15 +134,15 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     expect(
       screen.getByRole('button', { name: /Complete setup/i })
@@ -150,20 +150,20 @@ describe('TurnControl Component', () => {
   })
 
   it('renders an "End turn" button when it is the current player turn', () => {
-    const gameState = GameState.WAITING_FOR_PLAYER_TURN_ACTION
+    const matchState = MatchState.WAITING_FOR_PLAYER_TURN_ACTION
 
-    let game = stubGame()
-    game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
+    let match = stubMatch()
+    match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     expect(
       screen.getByRole('button', { name: /End turn/i })
@@ -171,33 +171,33 @@ describe('TurnControl Component', () => {
   })
 
   it('does not render a button when in WAITING_FOR_PLAYER_SETUP_ACTION state but current player has no crops', () => {
-    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
-    let game = stubGame()
-    game = updatePlayer(game, stubPlayer1.id, {
+    let match = stubMatch()
+    match = updatePlayer(match, stubPlayer1.id, {
       field: { crops: [] },
     })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     expect(
       screen.queryByRole('button', { name: /Complete setup/i })
     ).not.toBeInTheDocument()
   })
 
-  it('does not render a button when in an unhandled game state', () => {
-    const gameState = GameState.UNINITIALIZED
+  it('does not render a button when in an unhandled match state', () => {
+    const matchState = MatchState.UNINITIALIZED
 
-    let game = stubGame()
-    game = updatePlayer(game, stubPlayer1.id, {
+    let match = stubMatch()
+    match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
@@ -205,15 +205,15 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     // Check if the button is not rendered
     expect(
@@ -222,10 +222,10 @@ describe('TurnControl Component', () => {
   })
 
   it('handles completing player setup', () => {
-    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
-    let game = stubGame()
-    game = updatePlayer(game, stubPlayer1.id, {
+    let match = stubMatch()
+    match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
@@ -233,69 +233,69 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
     const send = mockSend()
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     const button = screen.getByRole('button', { name: /Complete setup/i })
     fireEvent.click(button)
 
     expect(send).toHaveBeenCalledWith({
-      type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION,
+      type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION,
     })
   })
 
   it('handles ending the player turn', () => {
-    const gameState = GameState.WAITING_FOR_PLAYER_TURN_ACTION
+    const matchState = MatchState.WAITING_FOR_PLAYER_TURN_ACTION
 
-    let game = stubGame()
-    game = updateGame(game, { currentPlayerId: game.sessionOwnerPlayerId })
+    let match = stubMatch()
+    match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
     const send = mockSend()
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     const button = screen.getByRole('button', { name: /End turn/i })
     fireEvent.click(button)
 
     expect(send).toHaveBeenCalledWith({
-      type: GameEvent.START_TURN,
+      type: MatchEvent.START_TURN,
     })
   })
 
   it('renders a closed accordion when no control button is present', () => {
-    const gameState = GameState.UNINITIALIZED
+    const matchState = MatchState.UNINITIALIZED
 
-    let game = stubGame()
-    game = updatePlayer(game, stubPlayer1.id, {
+    let match = stubMatch()
+    match = updatePlayer(match, stubPlayer1.id, {
       field: { crops: [] },
     })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     // Assert that the accordion is not expanded
     expect(screen.getByTestId('mock-accordion')).toHaveAttribute(
@@ -305,10 +305,10 @@ describe('TurnControl Component', () => {
   })
 
   it('renders an expanded accordion when a control button is present', () => {
-    const gameState = GameState.WAITING_FOR_PLAYER_SETUP_ACTION
+    const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
-    let game = stubGame()
-    game = updatePlayer(game, stubPlayer1.id, {
+    let match = stubMatch()
+    match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
@@ -316,15 +316,15 @@ describe('TurnControl Component', () => {
       },
     })
 
-    vi.spyOn(useGameRulesModule, 'useGameRules').mockReturnValue({
-      gameState,
-      game: {
-        ...game,
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
     })
 
-    render(<StubTurnControl game={game} />)
+    render(<StubTurnControl match={match} />)
 
     // Assert that the accordion is expanded
     expect(screen.getByTestId('mock-accordion')).toHaveAttribute(

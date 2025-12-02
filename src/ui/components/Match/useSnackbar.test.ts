@@ -5,15 +5,15 @@ import { MockInstance } from 'vitest'
 import { assertEvent } from 'xstate'
 
 import { carrot } from '../../../game/cards'
-import { updateGame } from '../../../game/reducers/update-game'
+import { updateMatch } from '../../../game/reducers/update-match'
 import {
-  GameEvent,
-  IGame,
+  MatchEvent,
+  IMatch,
   ShellNotificationPayload,
   ShellNotificationType,
 } from '../../../game/types'
 import { stubRain, stubShovel } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
 import { ActorContext } from './ActorContext'
@@ -35,13 +35,13 @@ vi.mock('./ActorContext', () => ({
 
 describe('useSnackbar Hook', () => {
   let actorRef: ReturnType<typeof ActorContext.useActorRef>
-  let game: IGame
+  let match: IMatch
 
   beforeEach(() => {
     actorRef = { send: vi.fn() } as unknown as ReturnType<
       typeof ActorContext.useActorRef
     >
-    game = stubGame({
+    match = stubMatch({
       currentPlayerId: stubPlayer1.id,
       sessionOwnerPlayerId: stubPlayer1.id,
     })
@@ -54,7 +54,7 @@ describe('useSnackbar Hook', () => {
     const { result } = renderHook(() =>
       useSnackbar({
         actorRef,
-        game,
+        match,
       })
     )
     expect(result.current.snackbarProps.message).toBe('')
@@ -64,13 +64,13 @@ describe('useSnackbar Hook', () => {
     renderHook(() =>
       useSnackbar({
         actorRef,
-        game,
+        match,
       })
     )
 
     expect(actorRef.send).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: GameEvent.SET_SHELL,
+        type: MatchEvent.SET_SHELL,
         shell: expect.objectContaining({
           triggerNotification: expect.any(Function) as unknown,
         }) as unknown,
@@ -88,24 +88,24 @@ describe('useSnackbar Hook', () => {
         const { result } = renderHook(() =>
           useSnackbar({
             actorRef,
-            game,
+            match,
           })
         )
 
         const payload: ShellNotificationPayload[ShellNotificationType.CARDS_DRAWN] =
           {
             howMany,
-            playerId: game.sessionOwnerPlayerId,
+            playerId: match.sessionOwnerPlayerId,
           }
 
         const send = actorRef.send as unknown as MockInstance<
           typeof actorRef.send
         >
-        const gameEventPayload = send.mock.calls[0][0]
-        assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+        const matchEventPayload = send.mock.calls[0][0]
+        assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
-          gameEventPayload.shell.triggerNotification({
+          matchEventPayload.shell.triggerNotification({
             type: ShellNotificationType.CARDS_DRAWN,
             payload,
           })
@@ -124,11 +124,11 @@ describe('useSnackbar Hook', () => {
     ])(
       'shows the correct CARDS_DRAWN notification message when $howMany cards are drawn by non-session owner',
       ({ howMany, expectedNotification }) => {
-        game = updateGame(game, { sessionOwnerPlayerId: stubPlayer2.id })
+        match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
         const { result } = renderHook(() =>
           useSnackbar({
             actorRef,
-            game,
+            match,
           })
         )
 
@@ -141,11 +141,11 @@ describe('useSnackbar Hook', () => {
         const send = actorRef.send as unknown as MockInstance<
           typeof actorRef.send
         >
-        const gameEventPayload = send.mock.calls[0][0]
-        assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+        const matchEventPayload = send.mock.calls[0][0]
+        assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
-          gameEventPayload.shell.triggerNotification({
+          matchEventPayload.shell.triggerNotification({
             type: ShellNotificationType.CARDS_DRAWN,
             payload,
           })
@@ -162,7 +162,7 @@ describe('useSnackbar Hook', () => {
       const { result } = renderHook(() =>
         useSnackbar({
           actorRef,
-          game,
+          match,
         })
       )
 
@@ -174,11 +174,11 @@ describe('useSnackbar Hook', () => {
       const send = actorRef.send as unknown as MockInstance<
         typeof actorRef.send
       >
-      const gameEventPayload = send.mock.calls[0][0]
-      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+      const matchEventPayload = send.mock.calls[0][0]
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification({
           type: ShellNotificationType.CROP_HARVESTED,
           payload,
         })
@@ -191,11 +191,11 @@ describe('useSnackbar Hook', () => {
     })
 
     it('should show the correct CROP_HARVESTED notification message when not session owner', () => {
-      game = updateGame(game, { sessionOwnerPlayerId: stubPlayer2.id })
+      match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
       const { result } = renderHook(() =>
         useSnackbar({
           actorRef,
-          game,
+          match,
         })
       )
 
@@ -212,11 +212,11 @@ describe('useSnackbar Hook', () => {
       const send = actorRef.send as unknown as MockInstance<
         typeof actorRef.send
       >
-      const gameEventPayload = send.mock.calls[0][0]
-      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+      const matchEventPayload = send.mock.calls[0][0]
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification({
           type: ShellNotificationType.CROP_HARVESTED,
           payload,
         })
@@ -232,7 +232,7 @@ describe('useSnackbar Hook', () => {
       const { result } = renderHook(() =>
         useSnackbar({
           actorRef,
-          game,
+          match,
         })
       )
 
@@ -244,11 +244,11 @@ describe('useSnackbar Hook', () => {
       const send = actorRef.send as unknown as MockInstance<
         typeof actorRef.send
       >
-      const gameEventPayload = send.mock.calls[0][0]
-      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+      const matchEventPayload = send.mock.calls[0][0]
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification({
           type: ShellNotificationType.CROP_WATERED,
           payload,
         })
@@ -261,11 +261,11 @@ describe('useSnackbar Hook', () => {
     })
 
     it('should show the correct CROP_WATERED notification message when not session owner', () => {
-      game = updateGame(game, { sessionOwnerPlayerId: stubPlayer2.id })
+      match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
       const { result } = renderHook(() =>
         useSnackbar({
           actorRef,
-          game,
+          match,
         })
       )
 
@@ -282,11 +282,11 @@ describe('useSnackbar Hook', () => {
       const send = actorRef.send as unknown as MockInstance<
         typeof actorRef.send
       >
-      const gameEventPayload = send.mock.calls[0][0]
-      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+      const matchEventPayload = send.mock.calls[0][0]
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification({
           type: ShellNotificationType.CROP_WATERED,
           payload,
         })
@@ -302,7 +302,7 @@ describe('useSnackbar Hook', () => {
       const { result } = renderHook(() =>
         useSnackbar({
           actorRef,
-          game,
+          match,
         })
       )
 
@@ -314,11 +314,11 @@ describe('useSnackbar Hook', () => {
       const send = actorRef.send as unknown as MockInstance<
         typeof actorRef.send
       >
-      const gameEventPayload = send.mock.calls[0][0]
-      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+      const matchEventPayload = send.mock.calls[0][0]
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification({
           type: ShellNotificationType.EVENT_CARD_PLAYED,
           payload,
         })
@@ -331,11 +331,11 @@ describe('useSnackbar Hook', () => {
     })
 
     it('should show the correct EVENT_CARD_PLAYED notification message when not session owner', () => {
-      game = updateGame(game, { sessionOwnerPlayerId: stubPlayer2.id })
+      match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
       const { result } = renderHook(() =>
         useSnackbar({
           actorRef,
-          game,
+          match,
         })
       )
 
@@ -352,11 +352,11 @@ describe('useSnackbar Hook', () => {
       const send = actorRef.send as unknown as MockInstance<
         typeof actorRef.send
       >
-      const gameEventPayload = send.mock.calls[0][0]
-      assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+      const matchEventPayload = send.mock.calls[0][0]
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        gameEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification({
           type: ShellNotificationType.EVENT_CARD_PLAYED,
           payload,
         })
@@ -373,7 +373,7 @@ describe('useSnackbar Hook', () => {
     const { result } = renderHook(() =>
       useSnackbar({
         actorRef,
-        game,
+        match,
       })
     )
 
@@ -383,11 +383,11 @@ describe('useSnackbar Hook', () => {
       }
 
     const send = actorRef.send as unknown as MockInstance<typeof actorRef.send>
-    const gameEventPayload = send.mock.calls[0][0]
-    assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+    const matchEventPayload = send.mock.calls[0][0]
+    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
-      gameEventPayload.shell.triggerNotification({
+      matchEventPayload.shell.triggerNotification({
         type: ShellNotificationType.TOOL_CARD_PLAYED,
         payload,
       })
@@ -400,11 +400,11 @@ describe('useSnackbar Hook', () => {
   })
 
   it('should show the correct TOOL_CARD_PLAYED notification message when not session owner', () => {
-    game = updateGame(game, { sessionOwnerPlayerId: stubPlayer2.id })
+    match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
     const { result } = renderHook(() =>
       useSnackbar({
         actorRef,
-        game,
+        match,
       })
     )
 
@@ -419,11 +419,11 @@ describe('useSnackbar Hook', () => {
       }
 
     const send = actorRef.send as unknown as MockInstance<typeof actorRef.send>
-    const gameEventPayload = send.mock.calls[0][0]
-    assertEvent(gameEventPayload, GameEvent.SET_SHELL)
+    const matchEventPayload = send.mock.calls[0][0]
+    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
-      gameEventPayload.shell.triggerNotification({
+      matchEventPayload.shell.triggerNotification({
         type: ShellNotificationType.TOOL_CARD_PLAYED,
         payload,
       })
@@ -439,7 +439,7 @@ describe('useSnackbar Hook', () => {
     const { result } = renderHook(() =>
       useSnackbar({
         actorRef,
-        game,
+        match,
       })
     )
 
@@ -455,7 +455,7 @@ describe('useSnackbar Hook', () => {
     const { result } = renderHook(() =>
       useSnackbar({
         actorRef,
-        game,
+        match,
       })
     )
 

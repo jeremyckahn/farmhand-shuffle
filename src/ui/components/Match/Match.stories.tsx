@@ -6,11 +6,11 @@ import { stubDeck } from '../../../test-utils/stubs/deck'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 
 import { ActorContext } from './ActorContext'
-import { Game } from './Game'
+import { Match } from './Match'
 
 const meta = {
-  title: 'Farmhand Shuffle/Game',
-  component: Game,
+  title: 'Farmhand Shuffle/Match',
+  component: Match,
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
@@ -33,7 +33,7 @@ const meta = {
       )
     },
   ],
-} satisfies Meta<typeof Game>
+} satisfies Meta<typeof Match>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -43,7 +43,7 @@ const deck = stubDeck()
 const player1 = stubPlayer({ id: 'player-1', deck })
 const player2 = stubPlayer({ id: 'player-2', deck })
 
-export const BaseGame: Story = {
+export const BaseMatch: Story = {
   args: {
     playerSeeds: [player1, player2],
     userPlayerId: player1.id,

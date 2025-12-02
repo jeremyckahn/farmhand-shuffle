@@ -1,13 +1,13 @@
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 
 import { updatePlayer } from '.'
 
 describe('updatePlayer', () => {
   test('updates player properties', () => {
-    const game = stubGame()
-    const [player1Id] = Object.keys(game.table.players)
-    const newGame = updatePlayer(game, player1Id, { funds: 30 })
+    const match = stubMatch()
+    const [player1Id] = Object.keys(match.table.players)
+    const newMatch = updatePlayer(match, player1Id, { funds: 30 })
 
-    expect(newGame.table.players[player1Id].funds).toEqual(30)
+    expect(newMatch.table.players[player1Id].funds).toEqual(30)
   })
 })

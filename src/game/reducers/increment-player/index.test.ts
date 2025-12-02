@@ -1,35 +1,35 @@
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 
-import { updateGame } from '../update-game'
+import { updateMatch } from '../update-match'
 
 import { incrementPlayer } from '.'
 
 describe('incrementPlayer', () => {
   test('changes from player 1 to player 2', () => {
-    const game = stubGame()
-    const [, player2Id] = Object.keys(game.table.players)
+    const match = stubMatch()
+    const [, player2Id] = Object.keys(match.table.players)
 
-    const newGame = incrementPlayer(game)
+    const newMatch = incrementPlayer(match)
 
-    expect(newGame.currentPlayerId).toEqual(player2Id)
+    expect(newMatch.currentPlayerId).toEqual(player2Id)
   })
 
   test('changes from player 2 to player 1', () => {
-    const game = stubGame()
-    const [player1Id, player2Id] = Object.keys(game.table.players)
+    const match = stubMatch()
+    const [player1Id, player2Id] = Object.keys(match.table.players)
 
-    let newGame = updateGame(game, { currentPlayerId: player2Id })
-    newGame = incrementPlayer(newGame)
+    let newMatch = updateMatch(match, { currentPlayerId: player2Id })
+    newMatch = incrementPlayer(newMatch)
 
-    expect(newGame.currentPlayerId).toEqual(player1Id)
+    expect(newMatch.currentPlayerId).toEqual(player1Id)
   })
 
   test('throws error is there is no current player', () => {
-    const game = stubGame()
-    const newGame = updateGame(game, { currentPlayerId: null })
+    const match = stubMatch()
+    const newMatch = updateMatch(match, { currentPlayerId: null })
 
     expect(() => {
-      incrementPlayer(newGame)
+      incrementPlayer(newMatch)
     }).toThrowError(TypeError)
   })
 })

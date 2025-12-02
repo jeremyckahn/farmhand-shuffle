@@ -1,13 +1,13 @@
-import { IGame, IPlayedCrop, IPlayer } from '../../types'
+import { IMatch, IPlayedCrop, IPlayer } from '../../types'
 import { updateField } from '../update-field'
 
 export const updatePlayedCrop = (
-  game: IGame,
+  match: IMatch,
   playerId: IPlayer['id'],
   cropIdx: number,
   newPlayedCropProperties: Partial<IPlayedCrop>
 ) => {
-  const { crops } = game.table.players[playerId].field
+  const { crops } = match.table.players[playerId].field
   const playedCrop = crops[cropIdx]
 
   if (!playedCrop) {
@@ -22,9 +22,9 @@ export const updatePlayedCrop = (
     ...crops.slice(cropIdx + 1),
   ]
 
-  game = updateField(game, playerId, {
+  match = updateField(match, playerId, {
     crops: newCrops,
   })
 
-  return game
+  return match
 }

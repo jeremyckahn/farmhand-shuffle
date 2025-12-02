@@ -1,21 +1,21 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
-import { GameEvent, GameState } from '../../../types'
+import { MatchEvent, MatchState } from '../../../types'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
 import { RulesMachineConfig } from './types'
 
 export const plantingCropState: RulesMachineConfig['states'] = {
-  [GameState.PLANTING_CROP]: {
+  [MatchState.PLANTING_CROP]: {
     on: {
-      [GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION]:
-        GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      [MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION]:
+        MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
 
-      [GameEvent.PROMPT_BOT_FOR_TURN_ACTION]:
-        GameState.PERFORMING_BOT_TURN_ACTION,
+      [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+        MatchState.PERFORMING_BOT_TURN_ACTION,
 
-      [GameEvent.OPERATION_ABORTED]: GameState.WAITING_FOR_PLAYER_TURN_ACTION,
+      [MatchEvent.OPERATION_ABORTED]: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
 
     entry: enqueueActions(
@@ -24,37 +24,37 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         context: {
           botState,
           botState: { cropsToPlayDuringTurn },
-          game,
+          match,
         },
         enqueue,
       }) => {
-        assertEvent(event, GameEvent.PLAY_CROP)
+        assertEvent(event, MatchEvent.PLAY_CROP)
 
         const { playerId, cardIdx } = event
 
         try {
-          game = moveCropFromHandToField(game, playerId, cardIdx)
+          match = moveCropFromHandToField(match, playerId, cardIdx)
 
-          const { currentPlayerId, sessionOwnerPlayerId } = game
+          const { currentPlayerId, sessionOwnerPlayerId } = match
 
           if (currentPlayerId === sessionOwnerPlayerId) {
-            enqueue.raise({ type: GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
+            enqueue.raise({ type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
           } else {
             if (cropsToPlayDuringTurn > 0) {
               cropsToPlayDuringTurn--
             }
 
-            enqueue.raise({ type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION })
+            enqueue.raise({ type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION })
           }
         } catch (e) {
           console.error(e)
-          enqueue.raise({ type: GameEvent.OPERATION_ABORTED })
+          enqueue.raise({ type: MatchEvent.OPERATION_ABORTED })
 
           return
         }
 
         enqueue.assign({
-          game,
+          match,
           botState: {
             ...botState,
             cropsToPlayDuringTurn,
@@ -64,12 +64,12 @@ export const plantingCropState: RulesMachineConfig['states'] = {
     ),
 
     exit: enqueueActions(({ event, context, enqueue }) => {
-      let { game } = context
+      let { match } = context
 
       switch (event.type) {
-        case GameEvent.OPERATION_ABORTED: {
-          game = {
-            ...game,
+        case MatchEvent.OPERATION_ABORTED: {
+          match = {
+            ...match,
             selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
           }
           break
@@ -78,7 +78,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         default:
       }
 
-      enqueue.assign({ game })
+      enqueue.assign({ match })
     }),
   },
 }

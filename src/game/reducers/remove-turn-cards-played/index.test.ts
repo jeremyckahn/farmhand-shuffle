@@ -1,5 +1,5 @@
 import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../update-player'
 
 import { removeTurnCardsPlayed } from '.'
@@ -28,14 +28,14 @@ describe('removeTurnCardsPlayed', () => {
       resultingCardsPlayedDuringTurn,
       howMany,
     }) => {
-      let game = stubGame()
-      const [player1Id] = Object.keys(game.table.players)
-      game = updatePlayer(game, player1Id, {
+      let match = stubMatch()
+      const [player1Id] = Object.keys(match.table.players)
+      match = updatePlayer(match, player1Id, {
         cardsPlayedDuringTurn: startingCardsPlayedDuringTurn,
       })
-      const newGame = removeTurnCardsPlayed(game, player1Id, howMany)
+      const newMatch = removeTurnCardsPlayed(match, player1Id, howMany)
 
-      expect(newGame.table.players[player1Id].cardsPlayedDuringTurn).toEqual(
+      expect(newMatch.table.players[player1Id].cardsPlayedDuringTurn).toEqual(
         resultingCardsPlayedDuringTurn
       )
     }

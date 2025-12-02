@@ -4,7 +4,7 @@ import useTheme from '@mui/material/styles/useTheme'
 import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 
 import { lookup } from '../../../game/services/Lookup'
-import { IGame } from '../../../game/types'
+import { IMatch } from '../../../game/types'
 import { CardSize } from '../../types'
 import { Deck } from '../Deck/Deck'
 import { DiscardPile } from '../DiscardPile/DiscardPile'
@@ -12,13 +12,13 @@ import { Field } from '../Field/Field'
 import { Hand } from '../Hand/Hand'
 
 export interface TableProps extends GridProps {
-  game: IGame
+  match: IMatch
 }
 
-export const Table = ({ game, ...rest }: TableProps) => {
+export const Table = ({ match, ...rest }: TableProps) => {
   const theme = useTheme()
-  const { sessionOwnerPlayerId: userPlayerId } = game
-  const opponentPlayerIds = lookup.getOpponentPlayerIds(game)
+  const { sessionOwnerPlayerId: userPlayerId } = match
+  const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
   const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
   const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.SMALL
 
@@ -28,14 +28,14 @@ export const Table = ({ game, ...rest }: TableProps) => {
         gap={4}
         container
         {...rest}
-        data-testid={`table_${game.sessionOwnerPlayerId}`}
+        data-testid={`table_${match.sessionOwnerPlayerId}`}
       >
         <Grid item xs={12}>
           {opponentPlayerIds.map(playerId => {
             return (
               <Field
                 key={playerId}
-                game={game}
+                match={match}
                 playerId={playerId}
                 cardSize={CardSize.SMALL}
               />
@@ -49,19 +49,19 @@ export const Table = ({ game, ...rest }: TableProps) => {
             alignContent="center"
           >
             <Deck
-              game={game}
+              match={match}
               playerId={userPlayerId}
               cardSize={CardSize.SMALL}
             />
-            <DiscardPile game={game} playerId={userPlayerId} />
+            <DiscardPile match={match} playerId={userPlayerId} />
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Field game={game} playerId={userPlayerId} />
+          <Field match={match} playerId={userPlayerId} />
         </Grid>
       </Grid>
       <Box position="fixed" left="50%" right="50%" bottom={theme.spacing(-8)}>
-        <Hand game={game} playerId={userPlayerId} cardSize={handCardSize} />
+        <Hand match={match} playerId={userPlayerId} cardSize={handCardSize} />
       </Box>
     </>
   )

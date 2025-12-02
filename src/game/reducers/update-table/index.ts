@@ -1,9 +1,11 @@
-import { IGame, ITable } from '../../types'
-import { updateGame } from '../update-game'
+import { IMatch, ITable } from '../../types'
+import { updateMatch } from '../update-match'
 
 export const updateTable = (
-  game: IGame,
+  match: IMatch,
   newTableProperties: Partial<ITable>
-): IGame => {
-  return updateGame(game, { table: { ...game.table, ...newTableProperties } })
+): IMatch => {
+  return updateMatch(match, {
+    table: { ...match.table, ...newTableProperties },
+  })
 }

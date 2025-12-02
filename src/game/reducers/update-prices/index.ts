@@ -1,15 +1,15 @@
 import shuffle from 'lodash.shuffle'
 
 import * as crops from '../../cards/crops'
-import { IGame } from '../../types'
-import { updateGame } from '../update-game'
+import { IMatch } from '../../types'
+import { updateMatch } from '../update-match'
 
-export const updatePrices = (game: IGame) => {
+export const updatePrices = (match: IMatch) => {
   // TODO: Only buff/nerf crops that are present in either player's decks
   const [cropToBuff, cropToNerf] = shuffle(Object.values(crops))
 
   // TODO: Make the buff/nerf multipliers variable
-  game = updateGame(game, {
+  match = updateMatch(match, {
     buffedCrop: {
       crop: cropToBuff,
       multiplier: 2,
@@ -20,5 +20,5 @@ export const updatePrices = (game: IGame) => {
     },
   })
 
-  return game
+  return match
 }

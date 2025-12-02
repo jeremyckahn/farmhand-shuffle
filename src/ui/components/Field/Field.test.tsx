@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { updateField } from '../../../game/reducers/update-field'
 import { factory } from '../../../game/services/Factory'
 import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { isSxArray } from '../../type-guards'
 import { CardProps } from '../Card/types'
-import { ActorContext } from '../Game/ActorContext'
+import { ActorContext } from '../Match/ActorContext'
 
 import {
   Field,
@@ -46,19 +46,19 @@ vi.mock('../Card', () => ({
   },
 }))
 
-let gameStub = stubGame()
-const opponentPlayerId = Object.keys(gameStub.table.players)[1]
+let matchStub = stubMatch()
+const opponentPlayerId = Object.keys(matchStub.table.players)[1]
 
 const cropsStub = [
   { ...factory.buildPlayedCrop(stubCarrot), waterCards: 1 },
   { ...factory.buildPlayedCrop(stubPumpkin), waterCards: 3 },
 ]
 
-gameStub = updateField(gameStub, gameStub.sessionOwnerPlayerId, {
+matchStub = updateField(matchStub, matchStub.sessionOwnerPlayerId, {
   crops: cropsStub,
 })
 
-gameStub = updateField(gameStub, opponentPlayerId, {
+matchStub = updateField(matchStub, opponentPlayerId, {
   crops: cropsStub,
 })
 
@@ -67,8 +67,8 @@ const StubField = (overrides: Partial<FieldProps>) => {
     <StubShellContext>
       <ActorContext.Provider>
         <Field
-          game={gameStub}
-          playerId={gameStub.sessionOwnerPlayerId}
+          match={matchStub}
+          playerId={matchStub.sessionOwnerPlayerId}
           {...overrides}
         />
       </ActorContext.Provider>

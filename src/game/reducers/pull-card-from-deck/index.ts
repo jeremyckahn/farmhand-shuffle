@@ -1,15 +1,15 @@
 import shuffle from 'lodash.shuffle'
 
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { IGame, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
 export const pullCardFromDeck = (
-  game: IGame,
+  match: IMatch,
   playerId: IPlayer['id'],
   idx: number
 ) => {
-  const player = game.table.players[playerId]
+  const player = match.table.players[playerId]
   let hand = [...player.hand]
   let deck = [...player.deck]
   let discardPile = [...player.discardPile]
@@ -28,11 +28,11 @@ export const pullCardFromDeck = (
     discardPile = []
   }
 
-  game = updatePlayer(game, playerId, {
+  match = updatePlayer(match, playerId, {
     deck,
     hand,
     discardPile,
   })
 
-  return game
+  return match
 }

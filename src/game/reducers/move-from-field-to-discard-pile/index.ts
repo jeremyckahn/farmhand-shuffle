@@ -1,24 +1,24 @@
 import { array } from '../../../services/Array'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { IGame, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updateField } from '../update-field'
 
 /**
  * Moves a card from the player's field to their discard pile.
  *
- * @param game The current game state.
+ * @param match The current match state.
  * @param playerId The ID of the player moving the card.
  * @param cardIdx The index of the card in the field to move to the discard pile.
- * @returns The updated game state.
+ * @returns The updated match state.
  * @throws {InvalidCardIndexError} If the card index is invalid.
  */
 export const moveFromFieldToDiscardPile = (
-  game: IGame,
+  match: IMatch,
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  const { field } = game.table.players[playerId]
+  const { field } = match.table.players[playerId]
   const playedCrop = field.crops[cardIdx]
 
   if (!playedCrop) {
@@ -28,8 +28,8 @@ export const moveFromFieldToDiscardPile = (
   let { crops } = field
   crops = array.replaceAt(crops, cardIdx, undefined)
 
-  game = updateField(game, playerId, { crops })
-  game = addToDiscardPile(game, playerId, playedCrop.instance)
+  match = updateField(match, playerId, { crops })
+  match = addToDiscardPile(match, playerId, playedCrop.instance)
 
-  return game
+  return match
 }

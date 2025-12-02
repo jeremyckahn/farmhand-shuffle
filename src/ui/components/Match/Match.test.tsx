@@ -2,19 +2,19 @@ import { render, screen } from '@testing-library/react'
 
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
-import { Game } from './Game'
+import { Match } from './Match'
 
 // NOTE: Mocking out the Card component improves test execution speed
 vi.mock('../Card', () => ({
   Card: () => <div data-testid="mock-card" />,
 }))
 
-describe('Game', () => {
+describe('Match', () => {
   test('renders table', () => {
     vi.spyOn(console, 'debug').mockImplementation(() => {})
 
     render(
-      <Game
+      <Match
         playerSeeds={[stubPlayer1, stubPlayer2]}
         userPlayerId={stubPlayer1.id}
       />

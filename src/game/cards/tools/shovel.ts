@@ -12,16 +12,16 @@ export const shovel: ITool = Object.freeze<ITool>({
   /**
    *  Draws two cards from the deck.
    *
-   *  @param game - The current game state.
+   *  @param match - The current match state.
    *
-   *  @returns The updated game state.
+   *  @returns The updated match state.
    */
   applyEffect: context => {
-    let { game } = context
-    const { currentPlayerId } = game
+    let { match } = context
+    const { currentPlayerId } = match
     assertCurrentPlayer(currentPlayerId)
 
-    game = drawCard(game, currentPlayerId, SHOVEL_CARDS_TO_DRAW)
+    match = drawCard(match, currentPlayerId, SHOVEL_CARDS_TO_DRAW)
 
     context.shell.triggerNotification({
       type: ShellNotificationType.CARDS_DRAWN,
@@ -31,14 +31,14 @@ export const shovel: ITool = Object.freeze<ITool>({
       },
     })
 
-    return { ...context, game }
+    return { ...context, match }
   },
 
   onStartFollowingTurn: context => {
     return {
       ...context,
-      game: {
-        ...context.game,
+      match: {
+        ...context.match,
         cardsToDrawAtTurnStart: 0,
       },
     }

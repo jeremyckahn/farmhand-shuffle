@@ -1,10 +1,8 @@
 import { uuidString } from '../../services/types'
-import { GameMachineContext } from '../services/Rules/state-machine/createMachine'
+import { MatchMachineContext } from '../services/Rules/state-machine/createMachine'
 
-// NOTE: Most of the game's interface properties are readonly to enforce
+// NOTE: Most of the match's interface properties are readonly to enforce
 // immutability.
-
-export type GameReducer = (game: IGame) => Promise<IGame>
 
 export enum CardType {
   CROP = 'CROP',
@@ -66,11 +64,11 @@ export interface IPlayedCrop {
 interface IEffect extends ICard {
   readonly description: string
 
-  readonly applyEffect: (context: GameMachineContext) => GameMachineContext
+  readonly applyEffect: (context: MatchMachineContext) => MatchMachineContext
 
   readonly onStartFollowingTurn?: (
-    context: GameMachineContext
-  ) => GameMachineContext
+    context: MatchMachineContext
+  ) => MatchMachineContext
 }
 
 /**
@@ -176,7 +174,7 @@ export interface IPlayer {
 
 /**
  * This is meant to represent the minimal player data that is needed to boot an
- * IGame instance. The remainder of the properties of IPlayer can be computed.
+ * IMatch instance. The remainder of the properties of IPlayer can be computed.
  */
 export type IPlayerSeed = Pick<IPlayer, 'id' | 'deck'>
 
@@ -197,7 +195,7 @@ export interface ITable {
   readonly communityFund: number
 }
 
-export interface IGame {
+export interface IMatch {
   /**
    * The IPlayer['id'] associated with the user who owns the current session.
    */
@@ -238,15 +236,15 @@ export interface IGame {
   readonly selectedWaterCardInHandIdx: number
 
   /**
-   * The winner of the current game, if any.
+   * The winner of the current match, if any.
    */
   readonly winner: IPlayer['id'] | null
 }
 
-export enum GameEvent {
+export enum MatchEvent {
   /**
-   * Used to override the internal game context of the state machine. This
-   * should only be used for test setup and debugging.
+   * Used to override the internal context of the state machine. This should
+   * only be used for test setup and debugging.
    */
   DANGEROUSLY_SET_CONTEXT = 'DANGEROUSLY_SET_CONTEXT',
 
@@ -281,7 +279,7 @@ export enum BotTurnActionState {
   DONE = 'DONE',
 }
 
-interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
+interface PlayCardEventPayload<T = MatchEvent.PLAY_CARD> {
   type: T
   playerId: IPlayer['id']
   /**
@@ -290,7 +288,7 @@ interface PlayCardEventPayload<T = GameEvent.PLAY_CARD> {
   cardIdx: number
 }
 
-export enum GameState {
+export enum MatchState {
   UNINITIALIZED = 'UNINITIALIZED',
 
   GAME_OVER = 'GAME_OVER',
@@ -307,7 +305,7 @@ export enum GameState {
   WAITING_FOR_PLAYER_TURN_ACTION = 'WAITING_FOR_PLAYER_TURN_ACTION',
 }
 
-export enum GameStateGuard {
+export enum MatchStateGuard {
   HAVE_PLAYERS_COMPLETED_SETUP = 'HAVE_PLAYERS_COMPLETED_SETUP',
   IS_SELECTED_IDX_VALID = 'IS_SELECTED_IDX_VALID',
 }
@@ -360,91 +358,91 @@ export interface IShell {
   triggerNotification: (notfication: ShellNotification) => void
 }
 
-export interface GameEventPayload {
-  [GameEvent.DANGEROUSLY_SET_CONTEXT]: {
-    type: GameEvent.DANGEROUSLY_SET_CONTEXT
-    game: IGame
+export interface MatchEventPayload {
+  [MatchEvent.DANGEROUSLY_SET_CONTEXT]: {
+    type: MatchEvent.DANGEROUSLY_SET_CONTEXT
+    match: IMatch
   }
 
-  [GameEvent.HARVEST_CROP]: {
-    type: GameEvent.HARVEST_CROP
+  [MatchEvent.HARVEST_CROP]: {
+    type: MatchEvent.HARVEST_CROP
     playerId: IPlayer['id']
     cropIdxInFieldToHarvest: number
   }
 
-  [GameEvent.INIT]: {
-    type: GameEvent.INIT
+  [MatchEvent.INIT]: {
+    type: MatchEvent.INIT
     playerSeeds: IPlayerSeed[]
     userPlayerId: string
   }
 
-  [GameEvent.START_TURN]: {
-    type: GameEvent.START_TURN
+  [MatchEvent.START_TURN]: {
+    type: MatchEvent.START_TURN
   }
 
-  [GameEvent.SET_SHELL]: {
-    type: GameEvent.SET_SHELL
+  [MatchEvent.SET_SHELL]: {
+    type: MatchEvent.SET_SHELL
     shell: IShell
   }
 
-  [GameEvent.PLAY_CROP]: PlayCardEventPayload<GameEvent.PLAY_CROP>
+  [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP>
 
-  [GameEvent.PLAY_EVENT]: PlayCardEventPayload<GameEvent.PLAY_EVENT>
+  [MatchEvent.PLAY_EVENT]: PlayCardEventPayload<MatchEvent.PLAY_EVENT>
 
-  [GameEvent.PLAY_TOOL]: PlayCardEventPayload<GameEvent.PLAY_TOOL>
+  [MatchEvent.PLAY_TOOL]: PlayCardEventPayload<MatchEvent.PLAY_TOOL>
 
-  [GameEvent.PLAY_WATER]: PlayCardEventPayload<GameEvent.PLAY_WATER>
+  [MatchEvent.PLAY_WATER]: PlayCardEventPayload<MatchEvent.PLAY_WATER>
 
-  [GameEvent.PLAYER_RAN_OUT_OF_FUNDS]: {
-    type: GameEvent.PLAYER_RAN_OUT_OF_FUNDS
+  [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: {
+    type: MatchEvent.PLAYER_RAN_OUT_OF_FUNDS
     playerId: IPlayer['id']
   }
 
-  [GameEvent.PROMPT_PLAYER_FOR_SETUP_ACTION]: {
-    type: GameEvent.PROMPT_PLAYER_FOR_SETUP_ACTION
+  [MatchEvent.PROMPT_PLAYER_FOR_SETUP_ACTION]: {
+    type: MatchEvent.PROMPT_PLAYER_FOR_SETUP_ACTION
   }
 
-  [GameEvent.PROMPT_BOT_FOR_SETUP_ACTION]: {
-    type: GameEvent.PROMPT_BOT_FOR_SETUP_ACTION
+  [MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION]: {
+    type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION
   }
 
-  [GameEvent.PROMPT_PLAYER_FOR_CROP_TO_WATER]: {
-    type: GameEvent.PROMPT_PLAYER_FOR_CROP_TO_WATER
+  [MatchEvent.PROMPT_PLAYER_FOR_CROP_TO_WATER]: {
+    type: MatchEvent.PROMPT_PLAYER_FOR_CROP_TO_WATER
     playerId: IPlayer['id']
     waterCardInHandIdx: number
   }
 
-  [GameEvent.SELECT_CROP_TO_WATER]: {
-    type: GameEvent.SELECT_CROP_TO_WATER
+  [MatchEvent.SELECT_CROP_TO_WATER]: {
+    type: MatchEvent.SELECT_CROP_TO_WATER
     playerId: IPlayer['id']
     waterCardInHandIdx: number
     cropIdxInFieldToWater: number
   }
 
-  [GameEvent.OPERATION_ABORTED]: {
-    type: GameEvent.OPERATION_ABORTED
+  [MatchEvent.OPERATION_ABORTED]: {
+    type: MatchEvent.OPERATION_ABORTED
   }
 
-  [GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION]: {
-    type: GameEvent.PROMPT_PLAYER_FOR_TURN_ACTION
+  [MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION]: {
+    type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION
   }
 
-  [GameEvent.PROMPT_BOT_FOR_TURN_ACTION]: {
-    type: GameEvent.PROMPT_BOT_FOR_TURN_ACTION
+  [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]: {
+    type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION
   }
 
-  [GameEvent.BOT_TURN_INITIALIZED]: {
-    type: GameEvent.BOT_TURN_INITIALIZED
+  [MatchEvent.BOT_TURN_INITIALIZED]: {
+    type: MatchEvent.BOT_TURN_INITIALIZED
   }
 
-  [GameEvent.BOT_TURN_PHASE_COMPLETE]: {
-    type: GameEvent.BOT_TURN_PHASE_COMPLETE
+  [MatchEvent.BOT_TURN_PHASE_COMPLETE]: {
+    type: MatchEvent.BOT_TURN_PHASE_COMPLETE
   }
 }
 
-export type GameEventPayloadKey = keyof GameEventPayload
+export type MatchEventPayloadKey = keyof MatchEventPayload
 
-export type GameEvents = GameEventPayload[GameEventPayloadKey]
+export type MatchEvents = MatchEventPayload[MatchEventPayloadKey]
 
 export interface BotState {
   cropCardIndicesToHarvest: number[]

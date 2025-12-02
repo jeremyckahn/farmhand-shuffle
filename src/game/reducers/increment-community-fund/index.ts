@@ -1,17 +1,17 @@
-import { IGame } from '../../types'
+import { IMatch } from '../../types'
 import { updateTable } from '../update-table'
 
 export const incrementCommunityFund = (
-  game: IGame,
+  match: IMatch,
   /**
    * This number can be negative to perform a decrement of funds.
    */
   amount: number
 ) => {
-  const { communityFund } = game.table
+  const { communityFund } = match.table
   const newCommunityFund = Math.max(0, communityFund + amount)
 
-  game = updateTable(game, { communityFund: newCommunityFund })
+  match = updateTable(match, { communityFund: newCommunityFund })
 
-  return game
+  return match
 }

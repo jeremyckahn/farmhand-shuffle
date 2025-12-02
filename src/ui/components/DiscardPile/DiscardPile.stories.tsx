@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { carrot, instantiate, pumpkin, water } from '../../../game/cards'
 import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'
-import { IGame } from '../../../game/types'
-import { stubGame } from '../../../test-utils/stubs/game'
+import { IMatch } from '../../../game/types'
+import { stubMatch } from '../../../test-utils/stubs/match'
 
 import {
   DiscardPile,
@@ -33,24 +33,24 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const game = stubGame()
-const [selfPlayerId, opponentPlayerId] = Object.keys(game.table.players)
+const match = stubMatch()
+const [selfPlayerId, opponentPlayerId] = Object.keys(match.table.players)
 
 export const SelfDiscardPile: Story = {
   args: {
     playerId: selfPlayerId,
     cardSize: defaultDiscardPileCardSize,
     discardPileThicknessPx: defaultDiscardPileThicknessPx,
-    game: (() => {
+    match: (() => {
       return [
         instantiate(carrot),
         instantiate(pumpkin),
         instantiate(pumpkin),
         instantiate(water),
       ].reduce(
-        (acc: IGame, cardInstance) =>
+        (acc: IMatch, cardInstance) =>
           addToDiscardPile(acc, selfPlayerId, cardInstance),
-        game
+        match
       )
     })(),
   },
@@ -61,16 +61,16 @@ export const OpponentDiscardPile: Story = {
     playerId: opponentPlayerId,
     cardSize: defaultDiscardPileCardSize,
     discardPileThicknessPx: defaultDiscardPileThicknessPx,
-    game: (() => {
+    match: (() => {
       return [
         instantiate(carrot),
         instantiate(pumpkin),
         instantiate(pumpkin),
         instantiate(water),
       ].reduce(
-        (acc: IGame, cardInstance) =>
+        (acc: IMatch, cardInstance) =>
           addToDiscardPile(acc, opponentPlayerId, cardInstance),
-        game
+        match
       )
     })(),
   },
