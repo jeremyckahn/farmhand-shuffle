@@ -20,8 +20,8 @@ won or lost, many things are still missing. Some planned features:
 
 ## Gameplay Overview
 
-Please see [the wiki](https://github.com/jeremyckahn/farmhand-shuffle/wiki) for
-a more complete explanation of the game rules.
+Please see [the Rules README](src/game/services/Rules/README.md) for a more
+complete explanation of the game rules.
 
 - **Crop Planting**: Players can plant crop cards from their hand onto their
   field.
