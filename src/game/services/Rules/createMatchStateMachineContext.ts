@@ -3,8 +3,8 @@ import {
   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
   STANDARD_CARDS_TO_DRAW_AT_TURN_START,
 } from '../../config'
+import { MatchMachineContext } from '../../types'
 
-import { MatchMachineContext } from './state-machine/createMachine'
 import { defaultSelectedWaterCardInHandIdx } from './constants'
 
 export const createMatchStateMachineContext = (): MatchMachineContext => {

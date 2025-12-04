@@ -1,7 +1,6 @@
 import { StateValue } from 'xstate'
 
-import { MatchMachineContext } from '../../game/services/Rules/state-machine/createMachine'
-import { MatchState } from '../../game/types'
+import { MatchMachineContext, MatchState } from '../../game/types'
 import { assertStringIsMatchState } from '../../game/types/guards'
 import { ActorContext } from '../components/Match/ActorContext'
 

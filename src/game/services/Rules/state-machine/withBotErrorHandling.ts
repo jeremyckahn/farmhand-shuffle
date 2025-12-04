@@ -1,7 +1,5 @@
-import { MatchEvents, MatchEvent } from '../../../types'
+import { MatchEvents, MatchEvent, MatchMachineContext } from '../../../types'
 import { PlayerOutOfFundsError, MatchStateCorruptError } from '../errors'
-
-import { MatchMachineContext } from './createMachine'
 
 interface BotTurnActionArgs {
   context: MatchMachineContext

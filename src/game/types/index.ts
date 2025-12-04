@@ -1,5 +1,4 @@
 import { uuidString } from '../../services/types'
-import { MatchMachineContext } from '../services/Rules/state-machine/createMachine'
 
 // NOTE: Most of the match's interface properties are readonly to enforce
 // immutability.
@@ -59,6 +58,12 @@ export interface IPlayedCrop {
    * Whether or not the crop has been watered during the current turn.
    */
   wasWateredDuringTurn: boolean
+}
+
+export interface MatchMachineContext {
+  match: IMatch
+  shell: IShell
+  botState: BotState
 }
 
 interface IEffect extends ICard {
@@ -359,9 +364,8 @@ export interface IShell {
 }
 
 export interface MatchEventPayload {
-  [MatchEvent.DANGEROUSLY_SET_CONTEXT]: {
+  [MatchEvent.DANGEROUSLY_SET_CONTEXT]: Partial<MatchMachineContext> & {
     type: MatchEvent.DANGEROUSLY_SET_CONTEXT
-    match: IMatch
   }
 
   [MatchEvent.HARVEST_CROP]: {
