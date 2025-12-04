@@ -3,3 +3,8 @@ export enum CardSize {
   MEDIUM = 'MEDIUM',
   LARGE = 'LARGE',
 }
+
+export enum AppRoute {
+  ROOT = '/',
+  MATCH = '/match',
+}
