@@ -1,21 +1,13 @@
-import { setup, assertEvent } from 'xstate'
+import { assertEvent, setup } from 'xstate'
 
 import {
-  IMatch,
+  MatchEvent,
   MatchEventPayload,
   MatchEventPayloadKey,
+  MatchMachineContext,
   MatchStateGuard,
-  MatchEvent,
-  IShell,
-  BotState,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
-
-export interface MatchMachineContext {
-  match: IMatch
-  shell: IShell
-  botState: BotState
-}
 
 export const { createMachine } = setup({
   types: {
