@@ -21,6 +21,7 @@ describe('CardQuantityControl', () => {
         onChange={onChange}
       />
     )
+
     expect(screen.getByText(stubCarrot.name)).toBeInTheDocument()
     expect(screen.getByText('5')).toBeInTheDocument()
   })
@@ -33,8 +34,13 @@ describe('CardQuantityControl', () => {
         onChange={onChange}
       />
     )
+
     fireEvent.click(screen.getByLabelText('decrease quantity'))
-    expect(onChange).toHaveBeenCalledWith(4)
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    const updateFn = onChange.mock.calls[0][0] as (prev: number) => number
+    expect(typeof updateFn).toBe('function')
+    expect(updateFn(5)).toBe(4)
   })
 
   test('calls onChange with incremented value when plus clicked', () => {
@@ -45,8 +51,13 @@ describe('CardQuantityControl', () => {
         onChange={onChange}
       />
     )
+
     fireEvent.click(screen.getByLabelText('increase quantity'))
-    expect(onChange).toHaveBeenCalledWith(6)
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    const updateFn = onChange.mock.calls[0][0] as (prev: number) => number
+    expect(typeof updateFn).toBe('function')
+    expect(updateFn(5)).toBe(6)
   })
 
   test('disables minus button at quantity 0', () => {
@@ -57,6 +68,7 @@ describe('CardQuantityControl', () => {
         onChange={onChange}
       />
     )
+
     const button = screen.getByLabelText('decrease quantity')
     expect(button).toBeDisabled()
     fireEvent.click(button)
@@ -71,6 +83,7 @@ describe('CardQuantityControl', () => {
         onChange={onChange}
       />
     )
+
     const button = screen.getByLabelText('increase quantity')
     expect(button).toBeDisabled()
     fireEvent.click(button)

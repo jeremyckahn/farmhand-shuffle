@@ -10,13 +10,11 @@ import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
 
-import { CardProps, CardViewProps } from './types'
+import { CardProps, CardInteractions } from './types'
 
-export const useCardInteractions = (
-  props: CardProps
-): Omit<CardViewProps, keyof CardProps> => {
+export const useCardInteractions = (props: CardProps): CardInteractions => {
   const {
-    cardInstance: card,
+    cardInstance,
     cardIdx,
     playerId,
     onBeforePlay,
@@ -39,7 +37,7 @@ export const useCardInteractions = (
       await onBeforePlay()
     }
 
-    switch (card.type) {
+    switch (cardInstance.type) {
       case CardType.CROP: {
         actorRef.send({ type: MatchEvent.PLAY_CROP, cardIdx, playerId })
 
@@ -93,9 +91,9 @@ export const useCardInteractions = (
   let showHarvestCropButton = false
   let isBuffedCrop = false
 
-  switch (card.type) {
+  switch (cardInstance.type) {
     case CardType.CROP: {
-      isBuffedCrop = card.id === match.buffedCrop?.crop.id
+      isBuffedCrop = cardInstance.id === match.buffedCrop?.crop.id
 
       if (
         isSessionOwnersCard &&
@@ -177,12 +175,12 @@ export const useCardInteractions = (
     canBeWatered &&
     matchState === MatchState.PLAYER_WATERING_CROP &&
     match.currentPlayerId === playerId &&
-    isCropCardInstance(card)
+    isCropCardInstance(cardInstance)
 
   const showHarvestableState =
     isInField &&
     canBeHarvested &&
-    isCropCardInstance(card) &&
+    isCropCardInstance(cardInstance) &&
     // NOTE: This is necessary to prevent interfering with waterable crop
     // state presentation
     matchState !== MatchState.PLAYER_WATERING_CROP

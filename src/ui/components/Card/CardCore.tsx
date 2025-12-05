@@ -59,14 +59,9 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       cardIdx,
       playerId,
       children,
-      onBeforePlay: _onBeforePlay,
-      canBeWatered: _canBeWatered = false,
-      canBeHarvested: _canBeHarvested = false,
       disableEnterAnimation = false,
       imageScale = 0.75,
       isFlipped = false,
-      isFocused: _isFocused = false,
-      isInField: _isInField = false,
       paperProps,
       size = CardSize.MEDIUM,
       sx = [],
@@ -82,6 +77,15 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       onPlayCard,
       onWaterCrop,
       onHarvestCrop,
+
+      // NOTE: These props are renamed and excluded because they are handled
+      // by the interaction hook or not used in the visual component directly.
+      onBeforePlay: _onBeforePlay,
+      canBeWatered: _canBeWatered = false,
+      canBeHarvested: _canBeHarvested = false,
+      isFocused: _isFocused = false,
+      isInField: _isInField = false,
+
       ...props
     },
     containerRef

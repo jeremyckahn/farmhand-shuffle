@@ -65,3 +65,5 @@ export type CardViewProps = CardProps & {
   onWaterCrop?: () => void
   onHarvestCrop?: () => void
 }
+
+export type CardInteractions = Omit<CardViewProps, keyof CardProps>

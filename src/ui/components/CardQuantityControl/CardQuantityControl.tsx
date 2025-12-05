@@ -31,13 +31,13 @@ export const CardQuantityControl = ({
 
   const handleDecrease = () => {
     if (quantity > 0) {
-      onChange(quantity - 1)
+      onChange(prev => prev - 1)
     }
   }
 
   const handleIncrease = () => {
     if (quantity < DECK_SIZE) {
-      onChange(quantity + 1)
+      onChange(prev => prev + 1)
     }
   }
 
@@ -68,7 +68,7 @@ export const CardQuantityControl = ({
           variant="h6"
           sx={{ minWidth: '1.5rem', textAlign: 'center' }}
         >
-          {quantity}
+          {new Intl.NumberFormat().format(quantity)}
         </Typography>
         <Tooltip title="Add card">
           <span>
