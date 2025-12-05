@@ -51,3 +51,19 @@ export type CardProps =
   | EventCardProps
   | ToolCardProps
   | WaterCardProps
+
+export type CardViewProps = CardProps & {
+  isBuffedCrop?: boolean
+  isSessionOwnersCard?: boolean
+  showPlayCardButton?: boolean
+  showWaterCropButton?: boolean
+  showHarvestCropButton?: boolean
+  showWaterableState?: boolean
+  showHarvestableState?: boolean
+  tooltipTitle?: string
+  onPlayCard?: () => Promise<void>
+  onWaterCrop?: () => void
+  onHarvestCrop?: () => void
+}
+
+export type CardInteractions = Omit<CardViewProps, keyof CardProps>
