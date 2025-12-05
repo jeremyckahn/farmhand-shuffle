@@ -1,7 +1,8 @@
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
+import Fab from '@mui/material/Fab'
+import Paper from '@mui/material/Paper'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import React, { useMemo } from 'react'
@@ -41,7 +42,7 @@ export const CardQuantityControl = ({
   }
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+    <Paper sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
       <CardCore
         cardInstance={dummyCardInstance}
         size={CardSize.SMALL}
@@ -52,13 +53,15 @@ export const CardQuantityControl = ({
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Tooltip title="Remove card">
           <span>
-            <IconButton
+            <Fab
+              size="small"
+              color="secondary"
               onClick={handleDecrease}
               disabled={quantity <= 0}
               aria-label="decrease quantity"
             >
               <RemoveIcon />
-            </IconButton>
+            </Fab>
           </span>
         </Tooltip>
         <Typography
@@ -69,16 +72,18 @@ export const CardQuantityControl = ({
         </Typography>
         <Tooltip title="Add card">
           <span>
-            <IconButton
+            <Fab
+              size="small"
+              color="primary"
               onClick={handleIncrease}
               disabled={quantity >= DECK_SIZE}
               aria-label="increase quantity"
             >
               <AddIcon />
-            </IconButton>
+            </Fab>
           </span>
         </Tooltip>
       </Box>
-    </Box>
+    </Paper>
   )
 }
