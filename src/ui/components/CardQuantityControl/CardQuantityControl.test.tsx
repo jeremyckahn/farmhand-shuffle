@@ -39,7 +39,6 @@ describe('CardQuantityControl', () => {
 
     expect(onChange).toHaveBeenCalledTimes(1)
     const updateFn = onChange.mock.calls[0][0] as (prev: number) => number
-    expect(typeof updateFn).toBe('function')
     expect(updateFn(5)).toBe(4)
   })
 
@@ -56,7 +55,6 @@ describe('CardQuantityControl', () => {
 
     expect(onChange).toHaveBeenCalledTimes(1)
     const updateFn = onChange.mock.calls[0][0] as (prev: number) => number
-    expect(typeof updateFn).toBe('function')
     expect(updateFn(5)).toBe(6)
   })
 

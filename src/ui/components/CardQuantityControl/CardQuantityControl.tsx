@@ -24,6 +24,9 @@ export const CardQuantityControl = ({
     () =>
       ({
         ...card,
+        // NOTE: Strictly typing the variable as `CardInstance` without a cast
+        // causes a TypeScript error because `card` is `ICard`, which is a
+        // subset of `CardInstance`.
         instanceId: uuidv4(),
       } as CardInstance),
     [card]
@@ -52,6 +55,11 @@ export const CardQuantityControl = ({
       />
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Tooltip title="Remove card">
+          {/* NOTE: The `<span>` wrappers are necessary because `Fab` (like
+              `IconButton`) can be disabled. Disabled elements do not emit mouse
+              events, preventing the Tooltip from appearing. Wrapping them in a
+              `<span>` ensures the Tooltip works even when the button is
+              disabled. */}
           <span>
             <Fab
               size="small"
