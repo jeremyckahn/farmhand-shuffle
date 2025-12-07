@@ -40,6 +40,7 @@ const isPropsToolCardProps = (props: CardProps): props is ToolCardProps => {
 export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
   function CropCard({ playedCrop, ...props }, ref) {
     const cardInteractionProps = useCardInteractions(props)
+
     return (
       <CardCore {...props} {...cardInteractionProps} ref={ref}>
         {isCrop(props.cardInstance) ? (
@@ -53,6 +54,7 @@ export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
 export const WaterCard = forwardRef<HTMLDivElement, WaterCardProps>(
   function WaterCard(props, ref) {
     const cardInteractionProps = useCardInteractions(props)
+
     return <CardCore {...props} {...cardInteractionProps} ref={ref} />
   }
 )
@@ -60,6 +62,7 @@ export const WaterCard = forwardRef<HTMLDivElement, WaterCardProps>(
 export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(
   function EventCard(props, ref) {
     const cardInteractionProps = useCardInteractions(props)
+
     return (
       <CardCore {...props} {...cardInteractionProps} ref={ref}>
         <ReactMarkdown>{props.cardInstance.description}</ReactMarkdown>
@@ -71,6 +74,7 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(
 export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
   function ToolCard(props, ref) {
     const cardInteractionProps = useCardInteractions(props)
+
     return (
       <CardCore {...props} {...cardInteractionProps} ref={ref}>
         <ReactMarkdown>{props.cardInstance.description}</ReactMarkdown>

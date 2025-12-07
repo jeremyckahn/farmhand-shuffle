@@ -91,6 +91,7 @@ The project uses Prettier and ESLint to enforce a consistent code style. The con
 - **Quotes:** Single quotes.
 - **Trailing Commas:** Yes (`es5`).
 - **Import Order:** Imports are automatically sorted.
+- **Vertical Whitespace:** Insert a newline before `return` statements in functions that contain other statements.
 
 ## Naming Conventions
 
