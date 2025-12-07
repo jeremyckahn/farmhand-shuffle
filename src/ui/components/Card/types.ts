@@ -66,4 +66,7 @@ export type CardViewProps = CardProps & {
   onHarvestCrop?: () => void
 }
 
+// NOTE: We exclude `keyof CardProps` here to isolate the properties that are
+// purely derived from the game state logic, separating them from the props
+// that are passed in by the parent component.
 export type CardInteractions = Omit<CardViewProps, keyof CardProps>
