@@ -91,6 +91,7 @@ The project uses Prettier and ESLint to enforce a consistent code style. The con
 - **Quotes:** Single quotes.
 - **Trailing Commas:** Yes (`es5`).
 - **Import Order:** Imports are automatically sorted.
+- **Vertical Whitespace:** Insert a newline before `return` statements in functions that contain other statements.
 
 ## Naming Conventions
 
@@ -104,3 +105,11 @@ The project uses Prettier and ESLint to enforce a consistent code style. The con
 
 - Use JSDoc for public-facing functions and methods in services to explain their purpose, parameters, and return values.
 - Use inline comments (`//`) to explain complex or non-obvious logic. Avoid redundant comments.
+
+## Testing
+
+- **Render Calls:** Add a newline after each `render` expression in test files for readability.
+
+## React Patterns
+
+- **State Updates:** Use the functional update pattern for state setters (e.g., `setState(prev => prev + 1)`) when the new state depends on the previous state.

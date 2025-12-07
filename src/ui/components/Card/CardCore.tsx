@@ -10,12 +10,9 @@ import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx'
 import { AnimatePresence, motion } from 'motion/react'
-import React, { useContext, useRef } from 'react'
+import React, { useRef } from 'react'
 
 import {
-  CardType,
-  MatchEvent,
-  MatchState,
   isCropCardInstance,
   isEventCardInstance,
   isToolCardInstance,
@@ -23,15 +20,12 @@ import {
 } from '../../../game/types'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { useMatchRules } from '../../hooks/useMatchRules'
 import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
-import { ActorContext } from '../Match/ActorContext'
-import { ShellContext } from '../Match/ShellContext'
 import { getCardImageSrc, Image } from '../Image'
 
-import { CardProps } from './types'
+import { CardViewProps } from './types'
 
 export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'
@@ -58,203 +52,41 @@ const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
   }
 }
 
-export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
+export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
   function CardCore(
     {
       cardInstance: card,
       cardIdx,
       playerId,
       children,
-      onBeforePlay,
-      canBeWatered = false,
-      canBeHarvested = false,
       disableEnterAnimation = false,
       imageScale = 0.75,
       isFlipped = false,
-      isFocused = false,
-      isInField = false,
       paperProps,
       size = CardSize.MEDIUM,
       sx = [],
+      // Visual/Interaction props
+      isBuffedCrop = false,
+      isSessionOwnersCard = false,
+      showPlayCardButton = false,
+      showWaterCropButton = false,
+      showHarvestCropButton = false,
+      showWaterableState = false,
+      showHarvestableState = false,
+      tooltipTitle = '',
+      onPlayCard,
+      onWaterCrop,
+      onHarvestCrop,
+
       ...props
     },
     containerRef
   ) {
-    const { useActorRef } = ActorContext
-    const actorRef = useActorRef()
-    const { match, matchState } = useMatchRules()
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
-    const { setIsHandInViewport } = useContext(ShellContext)
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
-
-    const { eventCardsThatCanBePlayed, selectedWaterCardInHandIdx } = match
-    const canEventCardsBePlayed = eventCardsThatCanBePlayed > 0
-
-    const handlePlayCard = async () => {
-      if (onBeforePlay) {
-        await onBeforePlay()
-      }
-
-      switch (card.type) {
-        case CardType.CROP: {
-          actorRef.send({ type: MatchEvent.PLAY_CROP, cardIdx, playerId })
-
-          break
-        }
-
-        case CardType.WATER: {
-          actorRef.send({ type: MatchEvent.PLAY_WATER, cardIdx, playerId })
-          setIsHandInViewport(false)
-
-          break
-        }
-
-        case CardType.EVENT: {
-          actorRef.send({ type: MatchEvent.PLAY_EVENT, cardIdx, playerId })
-
-          break
-        }
-
-        case CardType.TOOL: {
-          actorRef.send({ type: MatchEvent.PLAY_TOOL, cardIdx, playerId })
-
-          break
-        }
-
-        default:
-      }
-    }
-
-    const handleWaterCrop = () => {
-      actorRef.send({
-        type: MatchEvent.SELECT_CROP_TO_WATER,
-        playerId,
-        cropIdxInFieldToWater: cardIdx,
-        waterCardInHandIdx: selectedWaterCardInHandIdx,
-      })
-    }
-
-    const handleHarvestCrop = () => {
-      actorRef.send({
-        type: MatchEvent.HARVEST_CROP,
-        playerId,
-        cropIdxInFieldToHarvest: cardIdx,
-      })
-    }
-
-    const isSessionOwnersCard = playerId === match.sessionOwnerPlayerId
-
-    let showPlayCardButton = false
-    let showWaterCropButton = false
-    let showHarvestCropButton = false
-    let isBuffedCrop = false
-
-    switch (card.type) {
-      case CardType.CROP: {
-        isBuffedCrop = card.id === match.buffedCrop?.crop.id
-
-        if (
-          isSessionOwnersCard &&
-          isFocused &&
-          !isInField &&
-          [
-            MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
-            MatchState.WAITING_FOR_PLAYER_SETUP_ACTION,
-          ].includes(matchState)
-        ) {
-          showPlayCardButton = true
-        }
-
-        if (
-          isSessionOwnersCard &&
-          isFocused &&
-          isInField &&
-          canBeWatered &&
-          [MatchState.PLAYER_WATERING_CROP].includes(matchState)
-        ) {
-          showWaterCropButton = true
-        }
-
-        if (
-          isSessionOwnersCard &&
-          isFocused &&
-          isInField &&
-          canBeHarvested &&
-          [MatchState.WAITING_FOR_PLAYER_TURN_ACTION].includes(matchState)
-        ) {
-          showHarvestCropButton = true
-        }
-
-        break
-      }
-
-      case CardType.EVENT: {
-        if (
-          isSessionOwnersCard &&
-          isFocused &&
-          canEventCardsBePlayed &&
-          matchState === MatchState.WAITING_FOR_PLAYER_TURN_ACTION
-        ) {
-          showPlayCardButton = true
-        }
-
-        break
-      }
-
-      case CardType.TOOL: {
-        if (
-          isSessionOwnersCard &&
-          isFocused &&
-          matchState === MatchState.WAITING_FOR_PLAYER_TURN_ACTION
-        ) {
-          showPlayCardButton = true
-        }
-
-        break
-      }
-
-      case CardType.WATER: {
-        if (
-          isSessionOwnersCard &&
-          isFocused &&
-          matchState === MatchState.WAITING_FOR_PLAYER_TURN_ACTION
-        ) {
-          showPlayCardButton = true
-        }
-
-        break
-      }
-
-      default:
-    }
-
-    const showWaterableState =
-      isInField &&
-      canBeWatered &&
-      matchState === MatchState.PLAYER_WATERING_CROP &&
-      match.currentPlayerId === playerId &&
-      isCropCardInstance(card)
-
-    const showHarvestableState =
-      isInField &&
-      canBeHarvested &&
-      isCropCardInstance(card) &&
-      // NOTE: This is necessary to prevent interfering with waterable crop
-      // state presentation
-      matchState !== MatchState.PLAYER_WATERING_CROP
-
-    let tooltipTitle = ''
-
-    if (isSessionOwnersCard) {
-      if (showWaterableState) {
-        tooltipTitle = 'Needs water'
-      } else if (showHarvestableState) {
-        tooltipTitle = 'Ready to be harvested'
-      }
-    }
 
     return (
       <AnimatePresence>
@@ -392,7 +224,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                       <Typography>
                         <Button
                           variant="contained"
-                          onClick={() => void handlePlayCard()}
+                          onClick={() => void onPlayCard?.()}
                         >
                           {isCropCardInstance(card) && 'Play crop'}
                           {isWaterCardInstance(card) && 'Water a crop'}
@@ -405,7 +237,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                   {showWaterCropButton && (
                     <Box position="absolute" right="-100%" width={1} px={1}>
                       <Typography>
-                        <Button variant="contained" onClick={handleWaterCrop}>
+                        <Button variant="contained" onClick={onWaterCrop}>
                           Water crop
                         </Button>
                       </Typography>
@@ -417,7 +249,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardProps>(
                         <Button
                           variant="contained"
                           color="success"
-                          onClick={handleHarvestCrop}
+                          onClick={onHarvestCrop}
                         >
                           Harvest crop
                         </Button>

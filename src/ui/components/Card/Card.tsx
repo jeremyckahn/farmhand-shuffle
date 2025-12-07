@@ -19,6 +19,7 @@ import {
   ToolCardProps,
   WaterCardProps,
 } from './types'
+import { useCardInteractions } from './useCardInteractions'
 
 const isPropsCropCardProps = (props: CardProps): props is CropCardProps => {
   return isCropCardInstance(props.cardInstance)
@@ -38,8 +39,19 @@ const isPropsToolCardProps = (props: CardProps): props is ToolCardProps => {
 
 export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
   function CropCard({ playedCrop, ...props }, ref) {
+    const cardInteractionProps = useCardInteractions({ playedCrop, ...props })
+
+    const {
+      canBeHarvested: _canBeHarvested,
+      canBeWatered: _canBeWatered,
+      isFocused: _isFocused,
+      isInField: _isInField,
+      onBeforePlay: _onBeforePlay,
+      ...viewProps
+    } = props
+
     return (
-      <CardCore {...props} ref={ref}>
+      <CardCore {...viewProps} {...cardInteractionProps} ref={ref}>
         {isCrop(props.cardInstance) ? (
           <CardCropText crop={props.cardInstance} playedCrop={playedCrop} />
         ) : null}
@@ -50,14 +62,36 @@ export const CropCard = forwardRef<HTMLDivElement, CropCardProps>(
 
 export const WaterCard = forwardRef<HTMLDivElement, WaterCardProps>(
   function WaterCard(props, ref) {
-    return <CardCore {...props} ref={ref} />
+    const cardInteractionProps = useCardInteractions(props)
+
+    const {
+      canBeHarvested: _canBeHarvested,
+      canBeWatered: _canBeWatered,
+      isFocused: _isFocused,
+      isInField: _isInField,
+      onBeforePlay: _onBeforePlay,
+      ...viewProps
+    } = props
+
+    return <CardCore {...viewProps} {...cardInteractionProps} ref={ref} />
   }
 )
 
 export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(
   function EventCard(props, ref) {
+    const cardInteractionProps = useCardInteractions(props)
+
+    const {
+      canBeHarvested: _canBeHarvested,
+      canBeWatered: _canBeWatered,
+      isFocused: _isFocused,
+      isInField: _isInField,
+      onBeforePlay: _onBeforePlay,
+      ...viewProps
+    } = props
+
     return (
-      <CardCore {...props} ref={ref}>
+      <CardCore {...viewProps} {...cardInteractionProps} ref={ref}>
         <ReactMarkdown>{props.cardInstance.description}</ReactMarkdown>
       </CardCore>
     )
@@ -66,8 +100,19 @@ export const EventCard = forwardRef<HTMLDivElement, EventCardProps>(
 
 export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
   function ToolCard(props, ref) {
+    const cardInteractionProps = useCardInteractions(props)
+
+    const {
+      canBeHarvested: _canBeHarvested,
+      canBeWatered: _canBeWatered,
+      isFocused: _isFocused,
+      isInField: _isInField,
+      onBeforePlay: _onBeforePlay,
+      ...viewProps
+    } = props
+
     return (
-      <CardCore {...props} ref={ref}>
+      <CardCore {...viewProps} {...cardInteractionProps} ref={ref}>
         <ReactMarkdown>{props.cardInstance.description}</ReactMarkdown>
       </CardCore>
     )
