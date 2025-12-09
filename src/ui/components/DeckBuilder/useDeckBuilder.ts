@@ -34,12 +34,14 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
   const handleDone = useCallback(() => {
     if (!isDeckValid) return
 
-    const deckEntries = sortedCards
-      .map((card): [ICard, number] | undefined => {
-        const quantity = quantities[card.id] || 0
-        return quantity > 0 ? [card, quantity] : undefined
-      })
-      .filter((entry): entry is [ICard, number] => entry !== undefined)
+    const deckEntries = sortedCards.reduce<[ICard, number][]>((acc, card) => {
+      const quantity = quantities[card.id] || 0
+      if (quantity > 0) {
+        // eslint-disable-next-line functional/immutable-data
+        acc.push([card, quantity])
+      }
+      return acc
+    }, [])
 
     const deck = new Map<ICard, number>(deckEntries)
     onDone(deck)

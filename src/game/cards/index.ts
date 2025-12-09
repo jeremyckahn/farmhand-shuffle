@@ -19,7 +19,7 @@ export const instantiate = <T = ICard>(card: T): T & Instance => {
 
 export const sortedCards = (() => {
   const crops = Object.values(cropCards).filter(
-    (c): c is ICrop => (c as ICard).type === CardType.CROP
+    (c): c is ICrop => c.type === CardType.CROP
   )
 
   const sortedCrops = [...crops].sort(
