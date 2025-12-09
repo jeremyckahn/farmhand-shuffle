@@ -10,22 +10,22 @@ interface UseDeckBuilderProps {
   onDone: (deck: Map<ICard, number>) => void
 }
 
+const sortedCards = (() => {
+  const cards = (Object.values(AllCards) as unknown[]).filter(isCard)
+
+  const crops = cards.filter(c => c.type === CardType.CROP) as ICrop[]
+  const water = cards.filter(c => c.type === CardType.WATER)
+  const tools = cards.filter(c => c.type === CardType.TOOL)
+  const events = cards.filter(c => c.type === CardType.EVENT)
+
+  const sortedCrops = [...crops].sort(
+    (a, b) => pricing.getCropBaseValue(a) - pricing.getCropBaseValue(b)
+  )
+
+  return [...sortedCrops, ...water, ...tools, ...events]
+})()
+
 export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
-  const sortedCards = useMemo(() => {
-    const cards = (Object.values(AllCards) as unknown[]).filter(isCard)
-
-    const crops = cards.filter(c => c.type === CardType.CROP) as ICrop[]
-    const water = cards.filter(c => c.type === CardType.WATER)
-    const tools = cards.filter(c => c.type === CardType.TOOL)
-    const events = cards.filter(c => c.type === CardType.EVENT)
-
-    const sortedCrops = [...crops].sort(
-      (a, b) => pricing.getCropBaseValue(a) - pricing.getCropBaseValue(b)
-    )
-
-    return [...sortedCrops, ...water, ...tools, ...events]
-  }, [])
-
   const [quantities, setQuantities] = useState<Record<string, number>>({})
 
   const totalCards = useMemo(
@@ -33,11 +33,14 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
     [quantities]
   )
 
+  const isDoneDisabled = totalCards !== DECK_SIZE
+
   const handleQuantityChange = useCallback(
     (cardId: string) => (action: React.SetStateAction<number>) => {
       setQuantities(prev => {
         const current = prev[cardId] || 0
         const next = typeof action === 'function' ? action(current) : action
+
         return { ...prev, [cardId]: next }
       })
     },
@@ -45,18 +48,18 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
   )
 
   const handleDone = useCallback(() => {
-    if (totalCards !== DECK_SIZE) return
+    if (isDoneDisabled) return
 
-    const deck = new Map<ICard, number>()
-    sortedCards.forEach(card => {
-      const qty = quantities[card.id] || 0
-      if (qty > 0) {
-        // eslint-disable-next-line functional/immutable-data
-        deck.set(card, qty)
-      }
-    })
+    const deckEntries = sortedCards
+      .map((card): [ICard, number] | undefined => {
+        const qty = quantities[card.id] || 0
+        return qty > 0 ? [card, qty] : undefined
+      })
+      .filter((entry): entry is [ICard, number] => entry !== undefined)
+
+    const deck = new Map<ICard, number>(deckEntries)
     onDone(deck)
-  }, [totalCards, sortedCards, quantities, onDone])
+  }, [isDoneDisabled, quantities, onDone])
 
   return {
     sortedCards,
@@ -64,5 +67,6 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
     totalCards,
     handleQuantityChange,
     handleDone,
+    isDoneDisabled,
   }
 }

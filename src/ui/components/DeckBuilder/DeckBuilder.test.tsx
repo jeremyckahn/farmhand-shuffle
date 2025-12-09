@@ -5,11 +5,13 @@ import { ICard } from '../../../game/types'
 
 import { DeckBuilder } from './DeckBuilder'
 
-// Mock configuration
 vi.mock('../../../game/config', () => ({
   DECK_SIZE: 2,
 }))
 
+// NOTE: We cannot use stubs from `src/test-utils/stubs/cards.ts` here because
+// that file imports `src/game/cards`, which we are mocking below. This would
+// cause a circular dependency.
 const { mockCarrot, mockPumpkin, mockWater, mockShovel, mockRain } = vi.hoisted(
   () => ({
     mockCarrot: {

@@ -18,14 +18,22 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
     totalCards,
     handleQuantityChange,
     handleDone,
+    isDoneDisabled,
   } = useDeckBuilder({ onDone })
 
   return (
     <Paper sx={{ p: 4, maxWidth: 600, margin: 'auto' }}>
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography variant="h4" component="h2" align="center" gutterBottom>
         Select your cards
       </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
+      <Typography
+        variant="h6"
+        component="h3"
+        align="center"
+        gutterBottom
+        role="status"
+        aria-live="polite"
+      >
         Total: {totalCards} / {DECK_SIZE}
       </Typography>
 
@@ -42,12 +50,12 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
         ))}
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           variant="contained"
           size="large"
           onClick={handleDone}
-          disabled={totalCards !== DECK_SIZE}
+          disabled={isDoneDisabled}
         >
           Done
         </Button>
