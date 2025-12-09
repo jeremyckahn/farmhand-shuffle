@@ -1,39 +1,23 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import * as AllCards from '../../../game/cards'
+import { sortedCards } from '../../../game/cards'
 import { DECK_SIZE } from '../../../game/config'
-import { pricing } from '../../../game/services/Pricing'
-import { CardType, ICard, ICrop } from '../../../game/types'
-import { isCard } from '../../../game/types/guards'
+import { ICard } from '../../../game/types'
 
 interface UseDeckBuilderProps {
   onDone: (deck: Map<ICard, number>) => void
 }
 
-const sortedCards = (() => {
-  const cards = (Object.values(AllCards) as unknown[]).filter(isCard)
-
-  const crops = cards.filter(c => c.type === CardType.CROP) as ICrop[]
-  const water = cards.filter(c => c.type === CardType.WATER)
-  const tools = cards.filter(c => c.type === CardType.TOOL)
-  const events = cards.filter(c => c.type === CardType.EVENT)
-
-  const sortedCrops = [...crops].sort(
-    (a, b) => pricing.getCropBaseValue(a) - pricing.getCropBaseValue(b)
-  )
-
-  return [...sortedCrops, ...water, ...tools, ...events]
-})()
-
 export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
   const [quantities, setQuantities] = useState<Record<string, number>>({})
 
   const totalCards = useMemo(
-    () => Object.values(quantities).reduce((acc, qty) => acc + qty, 0),
+    () =>
+      Object.values(quantities).reduce((acc, quantity) => acc + quantity, 0),
     [quantities]
   )
 
-  const isDoneDisabled = totalCards !== DECK_SIZE
+  const isDeckValid = totalCards === DECK_SIZE
 
   const handleQuantityChange = useCallback(
     (cardId: string) => (action: React.SetStateAction<number>) => {
@@ -48,18 +32,18 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
   )
 
   const handleDone = useCallback(() => {
-    if (isDoneDisabled) return
+    if (!isDeckValid) return
 
     const deckEntries = sortedCards
       .map((card): [ICard, number] | undefined => {
-        const qty = quantities[card.id] || 0
-        return qty > 0 ? [card, qty] : undefined
+        const quantity = quantities[card.id] || 0
+        return quantity > 0 ? [card, quantity] : undefined
       })
       .filter((entry): entry is [ICard, number] => entry !== undefined)
 
     const deck = new Map<ICard, number>(deckEntries)
     onDone(deck)
-  }, [isDoneDisabled, quantities, onDone])
+  }, [isDeckValid, quantities, onDone])
 
   return {
     sortedCards,
@@ -67,6 +51,6 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
     totalCards,
     handleQuantityChange,
     handleDone,
-    isDoneDisabled,
+    isDeckValid,
   }
 }

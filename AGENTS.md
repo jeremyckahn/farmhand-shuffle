@@ -46,6 +46,8 @@ Leverage TypeScript's type system to make the code as type-safe as possible.
 
 Favor using named variables rather than inlining significant logic to improve clarity.
 
+Avoid variable name abbreviations (e.g., use `quantity` instead of `qty`) to improve readability.
+
 ## File and Directory Structure
 
 - **Component Structure:** A component should be in its own directory (e.g., `src/ui/components/MyComponent/`).

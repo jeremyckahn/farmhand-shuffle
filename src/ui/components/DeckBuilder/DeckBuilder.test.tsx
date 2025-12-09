@@ -38,6 +38,8 @@ vi.mock('../../../game/cards', () => ({
   water: mockWater,
   shovel: mockShovel,
   rain: mockRain,
+  // Expected order: Crops (sorted by value/water), Water, Tools, Events
+  sortedCards: [mockPumpkin, mockCarrot, mockWater, mockShovel, mockRain],
 }))
 
 describe('DeckBuilder', () => {

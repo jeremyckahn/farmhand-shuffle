@@ -18,7 +18,7 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
     totalCards,
     handleQuantityChange,
     handleDone,
-    isDoneDisabled,
+    isDeckValid,
   } = useDeckBuilder({ onDone })
 
   return (
@@ -55,7 +55,7 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
           variant="contained"
           size="large"
           onClick={handleDone}
-          disabled={isDoneDisabled}
+          disabled={!isDeckValid}
         >
           Done
         </Button>
