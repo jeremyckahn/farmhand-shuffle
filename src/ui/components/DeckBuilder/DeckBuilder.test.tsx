@@ -33,13 +33,19 @@ const { mockCarrot, mockPumpkin, mockWater, mockShovel, mockRain } = vi.hoisted(
 )
 
 vi.mock('../../../game/cards', () => ({
-  carrot: mockCarrot,
-  pumpkin: mockPumpkin,
-  water: mockWater,
-  shovel: mockShovel,
-  rain: mockRain,
-  // Expected order: Crops (sorted by value/water), Water, Tools, Events
-  sortedCards: [mockPumpkin, mockCarrot, mockWater, mockShovel, mockRain],
+  cropCards: {
+    carrot: mockCarrot,
+    pumpkin: mockPumpkin,
+  },
+  waterCards: {
+    water: mockWater,
+  },
+  toolCards: {
+    shovel: mockShovel,
+  },
+  eventCards: {
+    rain: mockRain,
+  },
 }))
 
 describe('DeckBuilder', () => {
@@ -52,13 +58,14 @@ describe('DeckBuilder', () => {
   test('renders cards in correct order', () => {
     render(<DeckBuilder onDone={onDone} />)
 
-    // Expected order: Crops (sorted by value/water), Water, Tools, Events
+    // NOTE: Expected order: Crops (sorted by value/water), Water, Tools,
+    // Events
+    //
     // Pumpkin (1 water) < Carrot (2 water)
     const expectedOrder = ['Pumpkin', 'Carrot', 'Water', 'Shovel', 'Rain']
 
     const regex = new RegExp(expectedOrder.join('|'))
     const cardNameElements = screen.getAllByText(regex)
-
     const relevantNames = cardNameElements.map(el => el.textContent)
 
     expect(relevantNames).toEqual(expectedOrder)
@@ -68,18 +75,21 @@ describe('DeckBuilder', () => {
     render(<DeckBuilder onDone={onDone} />)
 
     const doneButton = screen.getByRole('button', { name: 'Done' })
+
     expect(doneButton).toBeDisabled()
     expect(screen.getByText('Total: 0 / 2')).toBeInTheDocument()
 
     // Add 1 Pumpkin
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0] // Pumpkin is first
     fireEvent.click(pumpkinAdd)
+
     expect(screen.getByText('Total: 1 / 2')).toBeInTheDocument()
     expect(doneButton).toBeDisabled()
 
     // Add 1 Carrot
     const carrotAdd = screen.getAllByLabelText('increase quantity')[1] // Carrot is second
     fireEvent.click(carrotAdd)
+
     expect(screen.getByText('Total: 2 / 2')).toBeInTheDocument()
     expect(doneButton).toBeEnabled()
 
@@ -90,6 +100,7 @@ describe('DeckBuilder', () => {
     // Remove 1 Pumpkin
     const pumpkinRemove = screen.getAllByLabelText('decrease quantity')[0]
     fireEvent.click(pumpkinRemove)
+
     expect(screen.getByText('Total: 1 / 2')).toBeInTheDocument()
     expect(doneButton).toBeDisabled()
     expect(pumpkinAdd).toBeEnabled()
@@ -107,10 +118,10 @@ describe('DeckBuilder', () => {
     fireEvent.click(doneButton)
 
     expect(onDone).toHaveBeenCalledTimes(1)
+
     const deckMap = onDone.mock.calls[0][0] as Map<ICard, number>
-    // @ts-expect-error - mockPumpkin is a test mock, simplified
-    expect(deckMap.get(mockPumpkin)).toBe(2)
-    // @ts-expect-error - mockCarrot is a test mock, simplified
-    expect(deckMap.has(mockCarrot)).toBe(false)
+
+    expect(deckMap.get(mockPumpkin as ICard)).toBe(2)
+    expect(deckMap.has(mockCarrot as ICard)).toBe(false)
   })
 })
