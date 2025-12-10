@@ -7,25 +7,24 @@ import {
   waterCards,
 } from '../../../game/cards'
 import { DECK_SIZE } from '../../../game/config'
-import { CardType, ICard, ICrop } from '../../../game/types'
 import { pricing } from '../../../game/services/Pricing'
+import { ICard } from '../../../game/types'
 
 interface UseDeckBuilderProps {
   onDone: (deck: Map<ICard, number>) => void
 }
 
 export const sortedCards = (() => {
-  const crops = Object.values(cropCards).filter(
-    (c): c is ICrop => c.type === CardType.CROP
-  )
-
-  const sortedCrops = [...crops].sort(
+  const sortedCrops = Object.values(cropCards).sort(
     (a, b) => pricing.getCropBaseValue(a) - pricing.getCropBaseValue(b)
   )
 
-  const water = Object.values(waterCards)
-  const tools = Object.values(toolCards)
-  const events = Object.values(eventCards)
+  const sortByCardNameAscending = (a: ICard, b: ICard): number =>
+    a.name.localeCompare(b.name)
+
+  const water = Object.values(waterCards).sort(sortByCardNameAscending)
+  const tools = Object.values(toolCards).sort(sortByCardNameAscending)
+  const events = Object.values(eventCards).sort(sortByCardNameAscending)
 
   return [...sortedCrops, ...water, ...tools, ...events]
 })()
