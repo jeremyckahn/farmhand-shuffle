@@ -42,6 +42,12 @@ Leverage TypeScript's type system to make the code as type-safe as possible.
 - Avoid the `as` keyword, especially in application code. It is acceptable to use it sparingly in tests when necessary.
 - Use type guards to narrow down types within conditional blocks.
 
+### 4. Readability
+
+Favor using named variables rather than inlining significant logic to improve clarity.
+
+Avoid variable name abbreviations (e.g., use `quantity` instead of `qty`) to improve readability.
+
 ## File and Directory Structure
 
 - **Component Structure:** A component should be in its own directory (e.g., `src/ui/components/MyComponent/`).
@@ -104,11 +110,12 @@ The project uses Prettier and ESLint to enforce a consistent code style. The con
 ## Comments and JSDoc
 
 - Use JSDoc for public-facing functions and methods in services to explain their purpose, parameters, and return values.
-- Use inline comments (`//`) to explain complex or non-obvious logic. Avoid redundant comments.
+- Use inline comments (`//`) to explain complex or non-obvious logic. Avoid redundant "what" comments (e.g., `// Mock configuration`). Bias towards "why" comments that explain the reasoning behind the code.
 
 ## Testing
 
 - **Render Calls:** Add a newline after each `render` expression in test files for readability.
+- **Stubs:** Reuse stubs from `src/test-utils/stubs` whenever possible instead of defining bespoke mocks.
 
 ## React Patterns
 
