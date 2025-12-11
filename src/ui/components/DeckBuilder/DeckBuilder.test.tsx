@@ -79,7 +79,7 @@ describe('DeckBuilder', () => {
     ]
     expect(textContent).toEqual(expectedTextContent)
 
-    expect(container).toMatchSnapshot()
+    expect(container).toMatchInlineSnapshot()
   })
 
   test('enforces max instances per card limit (except Water)', () => {
