@@ -18,4 +18,5 @@ export const EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN = 1
 
 export const SHOVEL_CARDS_TO_DRAW = 2
 
+// NOTE: Water cards are excluded from this limit.
 export const MAX_INSTANCES_PER_CARD = 4

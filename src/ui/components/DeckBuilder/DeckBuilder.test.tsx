@@ -57,20 +57,7 @@ describe('DeckBuilder', () => {
   })
 
   test('renders cards in sections', () => {
-    render(<DeckBuilder onDone={onDone} />)
-
-    expect(
-      screen.getByRole('heading', { name: 'Crops', level: 5 })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: 'Water', level: 5 })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: 'Tools', level: 5 })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: 'Events', level: 5 })
-    ).toBeInTheDocument()
+    const { container } = render(<DeckBuilder onDone={onDone} />)
 
     // NOTE: Expected order: Crops (sorted by value/water), Water, Tools,
     // Events
@@ -79,39 +66,9 @@ describe('DeckBuilder', () => {
     const expectedOrder = ['Pumpkin', 'Carrot', 'Water', 'Shovel', 'Rain']
 
     const regex = new RegExp(expectedOrder.join('|'))
-    // We filter out the headers by ensuring we are looking for card names which are likely rendered in specific elements or just check presence and order.
-    // Given the previous test failure, we know card names are present.
-    // The previous test failed because "Water" was found twice (Header + Card).
-    // Here we can search for the card names. Since "Water" card name is identical to the header, we might get multiple elements.
-    // `getAllByText` returns an array.
-
-    const allWaterElements = screen.getAllByText('Water')
-    expect(allWaterElements.length).toBeGreaterThanOrEqual(2) // Header + Card
-
-    // To check order, we can check the order of all text nodes that match the expected order.
-    // However, `getAllByText(regex)` might pick up the headers too.
-    // Crops header comes before Pumpkin/Carrot.
-    // Water header comes before Water card.
-    // Tools header comes before Shovel.
-    // Events header comes before Rain.
-
-    // Let's refine the test to look for specific card elements if possible, or just accept that the text content appears in that order.
-    // The `getAllByText(regex)` will return elements in document order.
     const allMatches = screen.getAllByText(regex)
     const textContent = allMatches.map(el => el.textContent)
 
-    // Filter out headers if they are picked up. The headers are "Crops", "Water", "Tools", "Events".
-    // "Crops" matches "Crop" if the regex was loose, but here expectedOrder doesn't have "Crops".
-    // "Water" is in expectedOrder. So "Water" header will be picked up.
-    // "Tools" is not.
-    // "Events" is not.
-
-    // So "Water" header will appear before "Water" card.
-    // expectedOrder is ['Pumpkin', 'Carrot', 'Water', 'Shovel', 'Rain']
-    // Actual text content found for regex /Pumpkin|Carrot|Water|Shovel|Rain/ will be:
-    // Pumpkin, Carrot, Water (header), Water (card), Shovel, Rain.
-
-    // Let's verify that.
     const expectedTextContent = [
       'Pumpkin',
       'Carrot',
@@ -121,6 +78,8 @@ describe('DeckBuilder', () => {
       'Rain',
     ]
     expect(textContent).toEqual(expectedTextContent)
+
+    expect(container).toMatchSnapshot()
   })
 
   test('enforces max instances per card limit (except Water)', () => {
