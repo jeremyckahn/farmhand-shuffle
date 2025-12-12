@@ -13,18 +13,20 @@ import { CardInstance } from '../../game/types'
 export const stubDeck = () => {
   const deck = new Array<CardInstance>(DECK_SIZE)
 
+  // Populate first half with mixture of Carrots, Pumpkins, and Water
   for (let i = 0; i < deck.length / 2; i += 2) {
-    deck[i] = instantiate(carrot)
-  }
-
-  for (let i = 30; i < deck.length; i += 2) {
-    deck[i] = instantiate(pumpkin)
+    if (i < 14) {
+      deck[i] = instantiate(carrot)
+    } else {
+      deck[i] = instantiate(pumpkin)
+    }
   }
 
   for (let i = 1; i < deck.length / 2; i += 2) {
     deck[i] = instantiate(water)
   }
 
+  // Populate second half with Rain and Shovels
   for (let i = deck.length / 2 - 1; i < deck.length; i += 2) {
     deck[i] = instantiate(rain)
   }
