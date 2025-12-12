@@ -2,6 +2,7 @@ import shuffle from 'lodash.shuffle'
 
 import * as crops from '../../cards/crops'
 import {
+  CardInstance,
   ICrop,
   IMatch,
   IPlayedCrop,
@@ -11,21 +12,21 @@ import { updateMatch } from '../update-match'
 
 export const updatePrices = (match: IMatch) => {
   const players = Object.values(match.table.players)
-  const allCards = players.flatMap(player => [
-    ...player.deck,
-    ...player.hand,
-    ...player.discardPile,
-    ...player.field.crops
-      .filter((c): c is IPlayedCrop => c !== undefined)
-      .map(c => c.instance),
-  ])
+  const allCards = players.reduce((acc, player) => {
+    return [
+      ...acc,
+      ...player.deck,
+      ...player.hand,
+      ...player.discardPile,
+      ...player.field.crops
+        .filter((c): c is IPlayedCrop => c !== undefined)
+        .map(c => c.instance),
+    ]
+  }, [] as CardInstance[])
 
-  const presentCropIds = new Set<string>()
-  for (const card of allCards) {
-    if (isCropCardInstance(card)) {
-      presentCropIds.add(card.id)
-    }
-  }
+  const presentCropIds = new Set(
+    allCards.filter(isCropCardInstance).map(c => c.id)
+  )
 
   const availableCrops = Object.values(crops).filter(crop =>
     presentCropIds.has(crop.id)
