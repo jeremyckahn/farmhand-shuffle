@@ -19,13 +19,13 @@ export const updatePrices = (match: IMatch) => {
       ...player.hand,
       ...player.discardPile,
       ...player.field.crops
-        .filter((c): c is IPlayedCrop => c !== undefined)
-        .map(c => c.instance),
+        .filter((playedCrop): playedCrop is IPlayedCrop => playedCrop !== undefined)
+        .map(playedCrop => playedCrop.instance),
     ]
   }, [] as CardInstance[])
 
   const presentCropIds = new Set(
-    allCards.filter(isCropCardInstance).map(c => c.id)
+    allCards.filter(isCropCardInstance).map(card => card.id)
   )
 
   const availableCrops = Object.values(crops).filter(crop =>
