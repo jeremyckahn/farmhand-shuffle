@@ -139,10 +139,11 @@ export const useSnackbar = ({
               break
             }
 
-            case ShellNotificationType.GENERIC_INFO: {
-              const { message } = payload
-
-              showNotification(message, 'info')
+            // NOTE: Centralized notification content management ensures consistent
+            // messaging across the application and separates concern between game
+            // logic and UI presentation.
+            case ShellNotificationType.ALL_CROPS_WATERED: {
+              showNotification('Watered all crops', 'info')
 
               break
             }

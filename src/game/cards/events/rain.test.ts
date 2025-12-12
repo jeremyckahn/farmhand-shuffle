@@ -103,10 +103,8 @@ describe('rain card', () => {
       })
 
       expect(triggerNotification).toHaveBeenCalledWith({
-        type: ShellNotificationType.GENERIC_INFO,
-        payload: {
-          message: 'Watered all crops',
-        },
+        type: ShellNotificationType.ALL_CROPS_WATERED,
+        payload: {},
       })
     })
   })

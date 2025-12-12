@@ -41,10 +41,8 @@ export const rain: IEvent = Object.freeze<IEvent>({
     }
 
     context.shell.triggerNotification({
-      type: ShellNotificationType.GENERIC_INFO,
-      payload: {
-        message: 'Watered all crops',
-      },
+      type: ShellNotificationType.ALL_CROPS_WATERED,
+      payload: {},
     })
 
     return { ...context, match }
