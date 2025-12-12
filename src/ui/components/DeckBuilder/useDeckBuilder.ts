@@ -8,13 +8,13 @@ import {
 } from '../../../game/cards'
 import { DECK_SIZE } from '../../../game/config'
 import { pricing } from '../../../game/services/Pricing'
-import { ICard } from '../../../game/types'
+import { CardType, ICard } from '../../../game/types'
 
 interface UseDeckBuilderProps {
   onDone: (deck: Map<ICard, number>) => void
 }
 
-export const sortedCards = (() => {
+export const groupedCards = (() => {
   const sortedCrops = Object.values(cropCards).sort(
     (a, b) => pricing.getCropBaseValue(a) - pricing.getCropBaseValue(b)
   )
@@ -26,8 +26,20 @@ export const sortedCards = (() => {
   const tools = Object.values(toolCards).sort(sortByCardNameAscending)
   const events = Object.values(eventCards).sort(sortByCardNameAscending)
 
-  return [...sortedCrops, ...water, ...tools, ...events]
+  return {
+    crops: sortedCrops,
+    water,
+    tools,
+    events,
+  }
 })()
+
+export const sortedCards = [
+  ...groupedCards.crops,
+  ...groupedCards.water,
+  ...groupedCards.tools,
+  ...groupedCards.events,
+]
 
 export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
   const [quantities, setQuantities] = useState<Record<string, number>>({})
@@ -38,7 +50,14 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
     [quantities]
   )
 
-  const isDeckValid = totalCards === DECK_SIZE
+  const hasAtLeastOneCrop = useMemo(() => {
+    return sortedCards.some(card => {
+      const quantity = quantities[card.id] || 0
+      return card.type === CardType.CROP && quantity > 0
+    })
+  }, [quantities])
+
+  const isDeckValid = totalCards === DECK_SIZE && hasAtLeastOneCrop
 
   const handleQuantityChange = useCallback(
     (cardId: string) => (action: React.SetStateAction<number>) => {
@@ -73,6 +92,7 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
   }, [isDeckValid, quantities, onDone])
 
   return {
+    groupedCards,
     sortedCards,
     quantities,
     totalCards,

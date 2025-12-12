@@ -6,7 +6,8 @@ import { ICard } from '../../../game/types'
 import { DeckBuilder } from './DeckBuilder'
 
 vi.mock('../../../game/config', () => ({
-  DECK_SIZE: 2,
+  DECK_SIZE: 5,
+  MAX_INSTANCES_PER_CARD: 2,
 }))
 
 // NOTE: We cannot use stubs from `src/test-utils/stubs/cards.ts` here because
@@ -55,8 +56,8 @@ describe('DeckBuilder', () => {
     onDone.mockClear()
   })
 
-  test('renders cards in correct order', () => {
-    render(<DeckBuilder onDone={onDone} />)
+  test('renders cards in sections', () => {
+    const { container } = render(<DeckBuilder onDone={onDone} />)
 
     // NOTE: Expected order: Crops (sorted by value/water), Water, Tools,
     // Events
@@ -65,10 +66,38 @@ describe('DeckBuilder', () => {
     const expectedOrder = ['Pumpkin', 'Carrot', 'Water', 'Shovel', 'Rain']
 
     const regex = new RegExp(expectedOrder.join('|'))
-    const cardNameElements = screen.getAllByText(regex)
-    const relevantNames = cardNameElements.map(el => el.textContent)
+    const allMatches = screen.getAllByText(regex)
+    const textContent = allMatches.map(el => el.textContent)
 
-    expect(relevantNames).toEqual(expectedOrder)
+    const expectedTextContent = [
+      'Pumpkin',
+      'Carrot',
+      'Water',
+      'Water',
+      'Shovel',
+      'Rain',
+    ]
+    expect(textContent).toEqual(expectedTextContent)
+
+    expect(container).toMatchSnapshot()
+  })
+
+  test('enforces max instances per card limit (except Water)', () => {
+    render(<DeckBuilder onDone={onDone} />)
+
+    // Add 2 Pumpkins (limit reached)
+    const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
+    fireEvent.click(pumpkinAdd)
+    fireEvent.click(pumpkinAdd)
+
+    expect(pumpkinAdd).toBeDisabled()
+
+    // Add 2 Water (limit not reached because Water is exception)
+    const waterAdd = screen.getAllByLabelText('increase quantity')[2]
+    fireEvent.click(waterAdd)
+    fireEvent.click(waterAdd)
+
+    expect(waterAdd).toBeEnabled()
   })
 
   test('updates total and enables/disables Done button', () => {
@@ -77,33 +106,65 @@ describe('DeckBuilder', () => {
     const doneButton = screen.getByRole('button', { name: 'Done' })
 
     expect(doneButton).toBeDisabled()
-    expect(screen.getByText('Total: 0 / 2')).toBeInTheDocument()
+    expect(screen.getByText('Total: 0 / 5')).toBeInTheDocument()
 
     // Add 1 Pumpkin
-    const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0] // Pumpkin is first
+    const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
     fireEvent.click(pumpkinAdd)
 
-    expect(screen.getByText('Total: 1 / 2')).toBeInTheDocument()
+    expect(screen.getByText('Total: 1 / 5')).toBeInTheDocument()
     expect(doneButton).toBeDisabled()
 
     // Add 1 Carrot
-    const carrotAdd = screen.getAllByLabelText('increase quantity')[1] // Carrot is second
+    const carrotAdd = screen.getAllByLabelText('increase quantity')[1]
     fireEvent.click(carrotAdd)
 
-    expect(screen.getByText('Total: 2 / 2')).toBeInTheDocument()
+    expect(screen.getByText('Total: 2 / 5')).toBeInTheDocument()
+    expect(doneButton).toBeDisabled()
+
+    // Add 3 Water
+    const waterAdd = screen.getAllByLabelText('increase quantity')[2]
+    fireEvent.click(waterAdd)
+    fireEvent.click(waterAdd)
+    fireEvent.click(waterAdd)
+
+    expect(screen.getByText('Total: 5 / 5')).toBeInTheDocument()
     expect(doneButton).toBeEnabled()
 
-    // Try to add more (should be disabled)
+    // Try to add more (should be disabled because DECK_SIZE reached)
     expect(pumpkinAdd).toBeDisabled()
     expect(carrotAdd).toBeDisabled()
+    expect(waterAdd).toBeDisabled()
 
     // Remove 1 Pumpkin
     const pumpkinRemove = screen.getAllByLabelText('decrease quantity')[0]
     fireEvent.click(pumpkinRemove)
 
-    expect(screen.getByText('Total: 1 / 2')).toBeInTheDocument()
+    expect(screen.getByText('Total: 4 / 5')).toBeInTheDocument()
     expect(doneButton).toBeDisabled()
     expect(pumpkinAdd).toBeEnabled()
+  })
+
+  test('requires at least one crop', () => {
+    render(<DeckBuilder onDone={onDone} />)
+
+    // Add 5 Water cards (Valid deck size, but no crops)
+    const waterAdd = screen.getAllByLabelText('increase quantity')[2]
+    for (let i = 0; i < 5; i++) {
+      fireEvent.click(waterAdd)
+    }
+
+    const doneButton = screen.getByRole('button', { name: 'Done' })
+    expect(doneButton).toBeDisabled()
+
+    // Remove 1 Water and add 1 Pumpkin
+    const waterRemove = screen.getAllByLabelText('decrease quantity')[2]
+    fireEvent.click(waterRemove)
+
+    const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
+    fireEvent.click(pumpkinAdd)
+
+    expect(doneButton).toBeEnabled()
   })
 
   test('calls onDone with correct deck map', () => {
@@ -114,6 +175,12 @@ describe('DeckBuilder', () => {
     fireEvent.click(pumpkinAdd)
     fireEvent.click(pumpkinAdd)
 
+    // Add 3 Water
+    const waterAdd = screen.getAllByLabelText('increase quantity')[2]
+    fireEvent.click(waterAdd)
+    fireEvent.click(waterAdd)
+    fireEvent.click(waterAdd)
+
     const doneButton = screen.getByRole('button', { name: 'Done' })
     fireEvent.click(doneButton)
 
@@ -122,6 +189,7 @@ describe('DeckBuilder', () => {
     const deckMap = onDone.mock.calls[0][0] as Map<ICard, number>
 
     expect(deckMap.get(mockPumpkin as ICard)).toBe(2)
+    expect(deckMap.get(mockWater as ICard)).toBe(3)
     expect(deckMap.has(mockCarrot as ICard)).toBe(false)
   })
 })

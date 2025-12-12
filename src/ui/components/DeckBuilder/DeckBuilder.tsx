@@ -2,18 +2,16 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
-import React from 'react'
 
 import { DECK_SIZE } from '../../../game/config'
-import { CardSize } from '../../types'
-import { CardQuantityControl } from '../CardQuantityControl/CardQuantityControl'
 
+import { DeckBuilderSection } from './DeckBuilderSection'
 import { DeckBuilderProps } from './types'
 import { useDeckBuilder } from './useDeckBuilder'
 
 export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
   const {
-    sortedCards,
+    groupedCards,
     quantities,
     totalCards,
     handleQuantityChange,
@@ -37,17 +35,39 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
         Total: {totalCards} / {DECK_SIZE}
       </Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, my: 4 }}>
-        {sortedCards.map(card => (
-          <CardQuantityControl
-            key={card.id}
-            card={card}
-            quantity={quantities[card.id] || 0}
-            onChange={handleQuantityChange(card.id)}
-            cardSize={CardSize.SMALL}
-            isIncreaseDisabled={totalCards >= DECK_SIZE}
-          />
-        ))}
+      <Box sx={{ display: 'flex', flexDirection: 'column', my: 4 }}>
+        <DeckBuilderSection
+          title="Crops"
+          cards={groupedCards.crops}
+          isLast={false}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
+        <DeckBuilderSection
+          title="Water"
+          cards={groupedCards.water}
+          isLast={false}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
+        <DeckBuilderSection
+          title="Tools"
+          cards={groupedCards.tools}
+          isLast={false}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
+        <DeckBuilderSection
+          title="Events"
+          cards={groupedCards.events}
+          isLast={true}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

@@ -109,13 +109,14 @@ The project uses Prettier and ESLint to enforce a consistent code style. The con
 
 ## Comments and JSDoc
 
-- Use JSDoc for public-facing functions and methods in services to explain their purpose, parameters, and return values.
-- Use inline comments (`//`) to explain complex or non-obvious logic. Avoid redundant "what" comments (e.g., `// Mock configuration`). Bias towards "why" comments that explain the reasoning behind the code.
+- **JSDoc:** Use JSDoc for public-facing functions and methods in services to explain their purpose, parameters, and return values.
+- **Inline Comments:** Use inline comments (`//`) to explain complex or non-obvious logic. Avoid redundant "what" comments (e.g., `// Mock configuration`). Bias towards "why" comments that explain the reasoning behind the code.
 
 ## Testing
 
 - **Render Calls:** Add a newline after each `render` expression in test files for readability.
 - **Stubs:** Reuse stubs from `src/test-utils/stubs` whenever possible instead of defining bespoke mocks.
+- **Pre-commit Checks:** Always run `npm run check` before submitting changes to ensure tests, types, and linting pass.
 
 ## React Patterns
 
