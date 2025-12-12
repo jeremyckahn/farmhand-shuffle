@@ -100,9 +100,9 @@ describe('Card', () => {
     const match = stubMatch()
 
     // Create a full field (6 crops)
-    const fullFieldCrops = Array(6)
-      .fill(null)
-      .map(() => factory.buildPlayedCrop(stubCarrot))
+    const fullFieldCrops = Array.from({ length: 6 }, () =>
+      factory.buildPlayedCrop(stubCarrot)
+    )
 
     // Update player's field in the match stub
     const playerWithFullField = {
