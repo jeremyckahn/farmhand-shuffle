@@ -139,6 +139,14 @@ export const useSnackbar = ({
               break
             }
 
+            case ShellNotificationType.GENERIC_INFO: {
+              const { message } = payload
+
+              showNotification(message, 'info')
+
+              break
+            }
+
             default:
           }
         },

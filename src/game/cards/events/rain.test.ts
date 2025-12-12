@@ -4,13 +4,13 @@ import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { updateMatch } from '../../reducers/update-match'
 import { factory } from '../../services/Factory'
 import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
-import { IPlayedCrop } from '../../types'
+import { IPlayedCrop, ShellNotificationType } from '../../types'
 
 import { rain } from './rain'
 
 describe('rain card', () => {
   describe('applyEffect', () => {
-    it('should increment water cards for all crops in all players fields', () => {
+    it('should increment water cards for all crops in all players fields and show a notification', () => {
       let match = stubMatch()
       match = updateMatch(match, {
         table: {
@@ -61,9 +61,13 @@ describe('rain card', () => {
         },
       })
 
+      const triggerNotification = vi.fn()
       const { match: updatedMatch } = rain.applyEffect({
         ...createMatchStateMachineContext(),
         match,
+        shell: {
+          triggerNotification,
+        },
       })
 
       expect(
@@ -96,6 +100,13 @@ describe('rain card', () => {
       ).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 4,
+      })
+
+      expect(triggerNotification).toHaveBeenCalledWith({
+        type: ShellNotificationType.GENERIC_INFO,
+        payload: {
+          message: 'Watered all crops',
+        },
       })
     })
   })
