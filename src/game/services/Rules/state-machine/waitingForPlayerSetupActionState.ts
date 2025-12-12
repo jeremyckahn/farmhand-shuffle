@@ -24,7 +24,7 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
 
           const player = match.table.players[playerId]
           const isFieldFull =
-            player.field.crops.filter((c) => c !== undefined).length >=
+            player.field.crops.filter((crop) => crop !== undefined).length >=
             STANDARD_FIELD_SIZE
 
           if (isFieldFull) {
