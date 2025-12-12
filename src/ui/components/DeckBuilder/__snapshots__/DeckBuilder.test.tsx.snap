@@ -15,9 +15,9 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
       class="MuiTypography-root MuiTypography-h6 MuiTypography-alignCenter MuiTypography-gutterBottom css-tcrtuv-MuiTypography-root"
       role="status"
     >
-      Total:
+      Total: 
       0
-       /
+       / 
       5
     </h3>
     <div
