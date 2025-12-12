@@ -1,15 +1,11 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
-import React from 'react'
 
-import { DECK_SIZE, MAX_INSTANCES_PER_CARD } from '../../../game/config'
-import { CardType, ICard } from '../../../game/types'
-import { CardSize } from '../../types'
-import { CardQuantityControl } from '../CardQuantityControl/CardQuantityControl'
+import { DECK_SIZE } from '../../../game/config'
 
+import { DeckBuilderSection } from './DeckBuilderSection'
 import { DeckBuilderProps } from './types'
 import { useDeckBuilder } from './useDeckBuilder'
 
@@ -22,35 +18,6 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
     handleDone,
     isDeckValid,
   } = useDeckBuilder({ onDone })
-
-  const renderCardSection = (
-    title: string,
-    cards: ICard[],
-    isLast: boolean
-  ) => (
-    <Box key={title}>
-      <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
-        {title}
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
-        {cards.map(card => (
-          <CardQuantityControl
-            key={card.id}
-            card={card}
-            quantity={quantities[card.id] || 0}
-            onChange={handleQuantityChange(card.id)}
-            cardSize={CardSize.SMALL}
-            isIncreaseDisabled={
-              totalCards >= DECK_SIZE ||
-              (card.type !== CardType.WATER &&
-                (quantities[card.id] || 0) >= MAX_INSTANCES_PER_CARD)
-            }
-          />
-        ))}
-      </Box>
-      {!isLast && <Divider sx={{ my: 2 }} />}
-    </Box>
-  )
 
   return (
     <Paper sx={{ p: 4, maxWidth: 600, margin: 'auto' }}>
@@ -68,11 +35,39 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
         Total: {totalCards} / {DECK_SIZE}
       </Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, my: 4 }}>
-        {renderCardSection('Crops', groupedCards.crops, false)}
-        {renderCardSection('Water', groupedCards.water, false)}
-        {renderCardSection('Tools', groupedCards.tools, false)}
-        {renderCardSection('Events', groupedCards.events, true)}
+      <Box sx={{ display: 'flex', flexDirection: 'column', my: 4 }}>
+        <DeckBuilderSection
+          title="Crops"
+          cards={groupedCards.crops}
+          isLast={false}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
+        <DeckBuilderSection
+          title="Water"
+          cards={groupedCards.water}
+          isLast={false}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
+        <DeckBuilderSection
+          title="Tools"
+          cards={groupedCards.tools}
+          isLast={false}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
+        <DeckBuilderSection
+          title="Events"
+          cards={groupedCards.events}
+          isLast={true}
+          quantities={quantities}
+          onQuantityChange={handleQuantityChange}
+          totalCards={totalCards}
+        />
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

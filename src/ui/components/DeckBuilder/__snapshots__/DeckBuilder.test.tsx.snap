@@ -21,13 +21,13 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
       5
     </h3>
     <div
-      class="MuiBox-root css-27oi8k"
+      class="MuiBox-root css-46az0k"
     >
       <div
         class="MuiBox-root css-0"
       >
         <h5
-          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1o0ov7z-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
         >
           Crops
         </h5>
@@ -269,7 +269,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
         class="MuiBox-root css-0"
       >
         <h5
-          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1o0ov7z-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
         >
           Water
         </h5>
@@ -398,7 +398,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
         class="MuiBox-root css-0"
       >
         <h5
-          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1o0ov7z-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
         >
           Tools
         </h5>
@@ -527,7 +527,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
         class="MuiBox-root css-0"
       >
         <h5
-          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1o0ov7z-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
         >
           Events
         </h5>

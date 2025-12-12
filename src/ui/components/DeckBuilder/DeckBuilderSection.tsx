@@ -29,7 +29,7 @@ export const DeckBuilderSection = ({
 }: DeckBuilderSectionProps) => {
   return (
     <Box key={title}>
-      <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
+      <Typography variant="h5" gutterBottom>
         {title}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
