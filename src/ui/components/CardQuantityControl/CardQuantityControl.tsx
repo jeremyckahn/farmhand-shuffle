@@ -5,7 +5,7 @@ import Fab from '@mui/material/Fab'
 import Paper from '@mui/material/Paper'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import { DECK_SIZE } from '../../../game/config'
