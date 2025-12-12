@@ -1,5 +1,6 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
+import { STANDARD_FIELD_SIZE } from '../../../config'
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
 import { MatchEvent, MatchState } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
@@ -15,12 +16,24 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
 
       [MatchEvent.PLAY_CROP]: {
         actions: enqueueActions(({ event, context: { match }, enqueue }) => {
-          // TODO: Ensure scenario where field is full is handled
           assertEvent(event, MatchEvent.PLAY_CROP)
           const { cardIdx, playerId } = event
 
           const { currentPlayerId } = match
           assertCurrentPlayer(currentPlayerId)
+
+          const player = match.table.players[playerId]
+          const isFieldFull =
+            player.field.crops.filter((c) => c !== undefined).length >=
+            STANDARD_FIELD_SIZE
+
+          if (isFieldFull) {
+            console.warn(
+              `Player ${playerId} attempted to play a crop but the field is full.`
+            )
+
+            return
+          }
 
           match = recordCardPlayEvents(match, event)
           match = moveCropFromHandToField(match, playerId, cardIdx)

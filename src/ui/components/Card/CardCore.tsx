@@ -69,6 +69,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       isBuffedCrop = false,
       isSessionOwnersCard = false,
       showPlayCardButton = false,
+      playButtonDisabled = false,
       showWaterCropButton = false,
       showHarvestCropButton = false,
       showWaterableState = false,
@@ -224,6 +225,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       <Typography>
                         <Button
                           variant="contained"
+                          disabled={playButtonDisabled}
                           onClick={() => void onPlayCard?.()}
                         >
                           {isCropCardInstance(card) && 'Play crop'}
