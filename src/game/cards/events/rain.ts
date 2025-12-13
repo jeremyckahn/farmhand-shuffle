@@ -1,5 +1,5 @@
 import { updateField } from '../../reducers/update-field'
-import { CardType, IEvent } from '../../types'
+import { CardType, IEvent, ShellNotificationType } from '../../types'
 
 export const rain: IEvent = Object.freeze<IEvent>({
   type: CardType.EVENT,
@@ -37,10 +37,13 @@ export const rain: IEvent = Object.freeze<IEvent>({
         }
       })
 
-      // TODO: Show a notification indicating that all crops were watered
-
       match = updateField(match, playerId, { crops })
     }
+
+    context.shell.triggerNotification({
+      type: ShellNotificationType.ALL_CROPS_WATERED,
+      payload: {},
+    })
 
     return { ...context, match }
   },

@@ -9,6 +9,10 @@ import { isDebugEnabled } from '../../config/constants'
 import { ActorContext } from './ActorContext'
 import { emptyNotificationMessage, SnackbarProps } from './Snackbar'
 
+// NOTE: Centralized notification content management ensures consistent
+// messaging across the application and separates concern between game
+// logic and UI presentation.
+
 export const useSnackbar = ({
   actorRef,
   match,
@@ -135,6 +139,12 @@ export const useSnackbar = ({
                   'info'
                 )
               }
+
+              break
+            }
+
+            case ShellNotificationType.ALL_CROPS_WATERED: {
+              showNotification('Watered all crops', 'info')
 
               break
             }

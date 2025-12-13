@@ -321,6 +321,7 @@ export enum ShellNotificationType {
   CROP_WATERED = 'CROP_WATERED',
   EVENT_CARD_PLAYED = 'EVENT_CARD_PLAYED',
   TOOL_CARD_PLAYED = 'TOOL_CARD_PLAYED',
+  ALL_CROPS_WATERED = 'ALL_CROPS_WATERED',
 }
 
 export interface ShellNotificationPayload {
@@ -344,6 +345,8 @@ export interface ShellNotificationPayload {
   [ShellNotificationType.TOOL_CARD_PLAYED]: {
     toolCard: ToolInstance
   }
+
+  [ShellNotificationType.ALL_CROPS_WATERED]: Record<string, never>
 }
 
 /**
