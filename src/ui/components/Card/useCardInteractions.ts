@@ -108,11 +108,9 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
       ) {
         showPlayCardButton = true
         const player = match.table.players[playerId]
-        // Debugging
-        // console.log('PlayerId:', playerId)
-        // console.log('Field Crops Length:', player?.field?.crops?.filter((c) => c !== undefined).length)
+
         if (
-          player.field.crops.filter((c) => c !== undefined).length >=
+          player.field.crops.filter((crop) => crop !== undefined).length >=
           STANDARD_FIELD_SIZE
         ) {
           playButtonDisabled = true

@@ -31,12 +31,10 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
             console.warn(
               `Player ${playerId} attempted to play a crop but the field is full.`
             )
-
-            return
+          } else {
+            match = recordCardPlayEvents(match, event)
+            match = moveCropFromHandToField(match, playerId, cardIdx)
           }
-
-          match = recordCardPlayEvents(match, event)
-          match = moveCropFromHandToField(match, playerId, cardIdx)
 
           enqueue.assign({ match })
         }),
