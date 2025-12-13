@@ -36,7 +36,7 @@ vi.mock('../Card', () => ({
     const style = sx && isSxArray(sx) ? sx?.[0] || {} : {}
 
     if ('playedCrop' in rest) {
-      // HACK: Prevents a harmless warning in the tests
+      // NOTE: Prevents a harmless warning in the tests
       // eslint-disable-next-line functional/immutable-data
       delete rest.playedCrop
     }
