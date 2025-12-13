@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
+import { factory } from '../../../game/services/Factory'
 import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
 import { MatchEvent, MatchEventPayload, MatchState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
@@ -93,6 +94,50 @@ describe('Card', () => {
 
     const { transform } = getComputedStyle(card!)
     expect(transform).toEqual('rotateY(180deg)')
+  })
+
+  test('disables "Play crop" button when field is full during setup phase', () => {
+    const match = stubMatch()
+
+    // Create a full field (6 crops)
+    const fullFieldCrops = Array.from({ length: 6 }, () =>
+      factory.buildPlayedCrop(stubCarrot)
+    )
+
+    // Update player's field in the match stub
+    const playerWithFullField = {
+      ...match.table.players[stubPlayer1.id],
+      field: {
+        crops: fullFieldCrops,
+      },
+    }
+
+    const matchWithFullField = {
+      ...match,
+      table: {
+        ...match.table,
+        players: {
+          ...match.table.players,
+          [stubPlayer1.id]: playerWithFullField,
+        },
+      },
+    }
+
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValue({
+      matchState: MatchState.WAITING_FOR_PLAYER_SETUP_ACTION,
+      match: matchWithFullField,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        isFocused
+      />
+    )
+
+    const playCardButton = screen.getByText('Play crop')
+    expect(playCardButton).toBeDisabled()
   })
 
   test.each([

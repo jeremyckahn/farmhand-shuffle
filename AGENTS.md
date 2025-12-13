@@ -82,6 +82,7 @@ Avoid variable name abbreviations (e.g., use `quantity` instead of `qty`) to imp
 - Reducers are pure functions that take the current state and an action's payload, and return a new state.
 - The reducer's signature should be `(currentState, payload) => newState`.
 - All state updates must be immutable.
+- Prefer skipping over unnecessary logical operations rather than early returning. This ensures consistent execution flow.
 
 ## Services and Utilities
 

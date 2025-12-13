@@ -59,6 +59,7 @@ export type CardViewProps = Omit<CardProps, keyof CardInteractionProps> & {
   isBuffedCrop?: boolean
   isSessionOwnersCard?: boolean
   showPlayCardButton?: boolean
+  playButtonDisabled?: boolean
   showWaterCropButton?: boolean
   showHarvestCropButton?: boolean
   showWaterableState?: boolean

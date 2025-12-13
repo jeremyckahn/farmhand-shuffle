@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 
+import { STANDARD_FIELD_SIZE } from '../../../game/config'
 import {
   CardType,
   MatchEvent,
@@ -87,6 +88,7 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
   const isSessionOwnersCard = playerId === match.sessionOwnerPlayerId
 
   let showPlayCardButton = false
+  let playButtonDisabled = false
   let showWaterCropButton = false
   let showHarvestCropButton = false
   let isBuffedCrop = false
@@ -105,6 +107,14 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
         ].includes(matchState)
       ) {
         showPlayCardButton = true
+        const player = match.table.players[playerId]
+
+        if (
+          player.field.crops.filter((crop) => crop !== undefined).length >=
+          STANDARD_FIELD_SIZE
+        ) {
+          playButtonDisabled = true
+        }
       }
 
       if (
@@ -198,6 +208,7 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
   return {
     isBuffedCrop,
     showPlayCardButton,
+    playButtonDisabled,
     showWaterCropButton,
     showHarvestCropButton,
     showWaterableState,
