@@ -31,11 +31,15 @@ vi.mock('../Card', () => ({
     isFocused,
     paperProps,
     sx,
-    // @ts-expect-error Type error is acceptable for tests
-    playedCrop,
     ...rest
   }: CardProps) => {
     const style = sx && isSxArray(sx) ? sx?.[0] || {} : {}
+
+    if ('playedCrop' in rest) {
+      // NOTE: Prevents a harmless warning in the tests
+      // eslint-disable-next-line functional/immutable-data
+      delete rest.playedCrop
+    }
 
     // @ts-expect-error Type error is acceptable for tests
     return <div {...rest} style={style} />
