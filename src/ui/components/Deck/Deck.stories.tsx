@@ -30,6 +30,10 @@ type Story = StoryObj<typeof meta>
 const match = stubMatch()
 const opponentPlayerId = Object.keys(match.table.players)[1]
 
+if (!opponentPlayerId) {
+  throw new Error('Opponent player not found')
+}
+
 export const SelfDeck: Story = {
   args: {
     playerId: match.sessionOwnerPlayerId,

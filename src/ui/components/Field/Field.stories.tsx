@@ -35,6 +35,10 @@ let match = stubMatch()
 const selfPlayerId = match.sessionOwnerPlayerId
 const opponentPlayerId = Object.keys(match.table.players)[1]
 
+if (!opponentPlayerId) {
+  throw new Error('Opponent player not found')
+}
+
 match = updateField(match, selfPlayerId, {
   crops: [
     { ...factory.buildPlayedCrop(instantiate(carrot)), waterCards: 1 },

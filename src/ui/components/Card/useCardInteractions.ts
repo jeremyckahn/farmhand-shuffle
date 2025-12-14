@@ -110,8 +110,9 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
         const player = match.table.players[playerId]
 
         if (
-          player.field.crops.filter((crop) => crop !== undefined).length >=
-          STANDARD_FIELD_SIZE
+          player &&
+          player.field.crops.filter(crop => crop !== undefined).length >=
+            STANDARD_FIELD_SIZE
         ) {
           playButtonDisabled = true
         }

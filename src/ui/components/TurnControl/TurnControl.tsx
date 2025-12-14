@@ -123,8 +123,15 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   const { [sessionOwnerPlayerId]: sessionOwnerPlayer, ...opponents } =
     match.table.players
 
+  if (!sessionOwnerPlayer) {
+    throw new Error('Session owner player not found')
+  }
+
   const sessionOwnerPlayerFunds = sessionOwnerPlayer.funds
-  const opponentFunds = match.table.players[Object.keys(opponents)[0]]?.funds
+  const opponentPlayerId = Object.keys(opponents)[0]
+  const opponentFunds = opponentPlayerId
+    ? match.table.players[opponentPlayerId]?.funds
+    : 0
 
   return (
     <Stack spacing={1}>
@@ -242,9 +249,10 @@ export const TurnControl = ({ match }: TurnControlProps) => {
             alignItems="center"
             sx={{
               cursor: 'help',
-              ...(opponentFunds <= playerFundWarningThreshold && {
-                color: theme.palette.error.dark,
-              }),
+              ...(opponentFunds !== undefined &&
+                opponentFunds <= playerFundWarningThreshold && {
+                  color: theme.palette.error.dark,
+                }),
             }}
           >
             <AttachMoney
@@ -253,7 +261,9 @@ export const TurnControl = ({ match }: TurnControlProps) => {
                 lineHeight: theme.typography.body1.lineHeight,
               }}
             />
-            <Typography>{formatNumber(opponentFunds)}</Typography>
+            <Typography>
+              {opponentFunds !== undefined ? formatNumber(opponentFunds) : ''}
+            </Typography>
           </Stack>
         </Tooltip>
       </Stack>

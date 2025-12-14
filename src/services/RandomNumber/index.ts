@@ -48,6 +48,12 @@ export class RandomNumberService {
 
     const [minimum, maximum] = [a, b].sort()
 
+    if (minimum === undefined || maximum === undefined) {
+      throw new Error(
+        `chooseInteger requires two numbers. Received: ${a} and ${b}`
+      )
+    }
+
     return Math.round(this.generate() * (maximum - minimum)) + minimum
   }
 }

@@ -37,9 +37,14 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             const { currentPlayerId } = match
             assertCurrentPlayer(currentPlayerId)
 
+            const player = match.table.players[currentPlayerId]
+
+            if (!player) {
+              throw new Error(`Player not found: ${currentPlayerId}`)
+            }
+
             const hasBotCompletedSetup =
-              match.table.players[currentPlayerId].field.crops.length > 0 &&
-              cropsToPlayDuringTurn === 0
+              player.field.crops.length > 0 && cropsToPlayDuringTurn === 0
 
             if (hasBotCompletedSetup) {
               // NOTE: Returns control to the player

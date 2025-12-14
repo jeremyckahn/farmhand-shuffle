@@ -23,8 +23,13 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
           assertCurrentPlayer(currentPlayerId)
 
           const player = match.table.players[playerId]
+
+          if (!player) {
+            throw new Error(`Player not found: ${playerId}`)
+          }
+
           const isFieldFull =
-            player.field.crops.filter((crop) => crop !== undefined).length >=
+            player.field.crops.filter(crop => crop !== undefined).length >=
             STANDARD_FIELD_SIZE
 
           if (isFieldFull) {

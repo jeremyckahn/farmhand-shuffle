@@ -59,8 +59,13 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
             const { playerId, waterCardInHandIdx, cropIdxInFieldToWater } =
               event
 
-            const playedCrop =
-              match.table.players[playerId].field.crops[cropIdxInFieldToWater]
+            const player = match.table.players[playerId]
+
+            if (!player) {
+              throw new Error(`Player not found: ${playerId}`)
+            }
+
+            const playedCrop = player.field.crops[cropIdxInFieldToWater]
 
             assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 

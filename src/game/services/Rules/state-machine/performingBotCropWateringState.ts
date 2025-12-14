@@ -33,9 +33,13 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
-        const waterCardInHandIdx = match.table.players[
-          currentPlayerId
-        ].hand.findIndex(cardInstance => {
+        const player = match.table.players[currentPlayerId]
+
+        if (!player) {
+          throw new Error(`Player not found: ${currentPlayerId}`)
+        }
+
+        const waterCardInHandIdx = player.hand.findIndex(cardInstance => {
           return isWaterCardInstance(cardInstance)
         })
 
@@ -47,10 +51,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
           )
         }
 
-        const playedCrop =
-          match.table.players[currentPlayerId].field.crops[
-            cropIdxInFieldToWater
-          ]
+        const playedCrop = player.field.crops[cropIdxInFieldToWater]
 
         assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 

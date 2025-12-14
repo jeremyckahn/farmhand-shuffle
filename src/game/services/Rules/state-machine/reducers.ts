@@ -27,7 +27,13 @@ export const recordCardPlayEvents = (
       const { currentPlayerId } = match
       assertCurrentPlayer(currentPlayerId)
 
-      const card = match.table.players[currentPlayerId].hand[event.cardIdx]
+      const player = match.table.players[currentPlayerId]
+
+      if (!player) {
+        throw new Error(`Player not found: ${currentPlayerId}`)
+      }
+
+      const card = player.hand[event.cardIdx]
 
       if (!card) {
         throw new MatchStateCorruptError(
