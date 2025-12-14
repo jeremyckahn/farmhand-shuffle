@@ -6,10 +6,13 @@ export const addCardsPlayedDuringTurn = (
   playerId: IPlayer['id'],
   cardInstances: CardInstance[]
 ) => {
-  const cardsPlayedDuringTurn = [
-    ...cardInstances,
-    ...match.table.players[playerId].cardsPlayedDuringTurn,
-  ]
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  const cardsPlayedDuringTurn = [...cardInstances, ...player.cardsPlayedDuringTurn]
 
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn })
 

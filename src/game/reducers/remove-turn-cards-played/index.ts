@@ -15,8 +15,13 @@ export const removeTurnCardsPlayed = (
   playerId: IPlayer['id'],
   howMany = Infinity
 ) => {
-  const cardsPlayedDuringTurn =
-    match.table.players[playerId].cardsPlayedDuringTurn.slice(howMany)
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  const cardsPlayedDuringTurn = player.cardsPlayedDuringTurn.slice(howMany)
 
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn })
 

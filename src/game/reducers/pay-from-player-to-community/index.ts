@@ -9,7 +9,13 @@ export const payFromPlayerToCommunity = (
   amount: number,
   sourcePlayerId: IPlayer['id']
 ) => {
-  const { funds: sourcePlayerFunds } = match.table.players[sourcePlayerId]
+  const sourcePlayer = match.table.players[sourcePlayerId]
+
+  if (!sourcePlayer) {
+    throw new Error(`Player not found: ${sourcePlayerId}`)
+  }
+
+  const { funds: sourcePlayerFunds } = sourcePlayer
   const { communityFund } = match.table
   const clampedAmount = clamp(amount, -communityFund, sourcePlayerFunds)
 

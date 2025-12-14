@@ -6,7 +6,13 @@ export const updateField = (
   playerId: IPlayer['id'],
   newFieldProperties: Partial<IField>
 ) => {
-  const { field } = match.table.players[playerId]
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  const { field } = player
 
   match = updatePlayer(match, playerId, {
     field: { ...field, ...newFieldProperties },

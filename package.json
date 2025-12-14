@@ -13,7 +13,7 @@
     "fix:style": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "check": "npm test -- --coverage && npm run check:lint && npm run check:types",
     "check:lint": "eslint src --max-warnings=0",
-    "check:types": "tsc",
+    "check:types": "tsc --project tsconfig.app.json",
     "prepare": "husky install",
     "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes",
     "gitingest": "command -v gitingest >/dev/null 2>&1 || { echo \"gitingest not found. Please install it: https://github.com/cyclotruc/gitingest\"; exit 1; } && gitingest",

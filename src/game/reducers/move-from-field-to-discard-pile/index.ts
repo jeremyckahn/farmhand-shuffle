@@ -18,7 +18,13 @@ export const moveFromFieldToDiscardPile = (
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  const { field } = match.table.players[playerId]
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  const { field } = player
   const playedCrop = field.crops[cardIdx]
 
   if (!playedCrop) {

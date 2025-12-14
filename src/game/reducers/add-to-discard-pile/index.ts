@@ -6,10 +6,13 @@ export const addToDiscardPile = (
   playerId: IPlayer['id'],
   cardInstance: CardInstance
 ) => {
-  const discardPile = [
-    cardInstance,
-    ...match.table.players[playerId].discardPile,
-  ]
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  const discardPile = [cardInstance, ...player.discardPile]
 
   match = updatePlayer(match, playerId, { discardPile })
 

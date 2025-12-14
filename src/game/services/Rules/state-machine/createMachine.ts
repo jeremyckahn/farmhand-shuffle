@@ -37,7 +37,13 @@ export const { createMachine } = setup({
 
       switch (event.type) {
         case MatchEvent.SELECT_CROP_TO_WATER: {
-          const { crops } = match.table.players[currentPlayerId].field
+          const player = match.table.players[currentPlayerId]
+
+          if (!player) {
+            return false
+          }
+
+          const { crops } = player.field
           const playedCrop = crops[event.cropIdxInFieldToWater]
 
           return playedCrop !== undefined

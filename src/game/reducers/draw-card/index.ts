@@ -8,9 +8,15 @@ export const drawCard = (
   playerId: IPlayer['id'],
   howMany = 1
 ) => {
-  let newHand = [...match.table.players[playerId].hand]
-  let newDeck = [...match.table.players[playerId].deck]
-  let newDiscardPile = [...match.table.players[playerId].discardPile]
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  let newHand = [...player.hand]
+  let newDeck = [...player.deck]
+  let newDiscardPile = [...player.discardPile]
 
   const drawnCards = newDeck.slice(0, howMany)
   newDeck = newDeck.slice(howMany)

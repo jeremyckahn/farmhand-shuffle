@@ -7,7 +7,13 @@ export const updatePlayedCrop = (
   cropIdx: number,
   newPlayedCropProperties: Partial<IPlayedCrop>
 ) => {
-  const { crops } = match.table.players[playerId].field
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  const { crops } = player.field
   const playedCrop = crops[cropIdx]
 
   if (!playedCrop) {

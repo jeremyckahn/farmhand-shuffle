@@ -12,16 +12,36 @@ export const startTurn = (
   playerId: IPlayer['id'],
   cardsToDraw = 1
 ): IMatch => {
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn: [] })
   match = payFromPlayerToCommunity(match, STANDARD_TAX_AMOUNT, playerId)
 
-  if (match.table.players[playerId].funds === 0) {
+  const playerAfterPayment = match.table.players[playerId]
+
+  if (!playerAfterPayment) {
+    // This should not happen if payFromPlayerToCommunity is correct
+    throw new Error(`Player not found after payment: ${playerId}`)
+  }
+
+  if (playerAfterPayment.funds === 0) {
     throw new PlayerOutOfFundsError(playerId)
   }
 
   match = drawCard(match, playerId, cardsToDraw)
 
-  const crops = match.table.players[playerId].field.crops
+  const playerAfterDraw = match.table.players[playerId]
+
+  if (!playerAfterDraw) {
+    // This should not happen if drawCard is correct
+    throw new Error(`Player not found after draw: ${playerId}`)
+  }
+
+  const crops = playerAfterDraw.field.crops
 
   for (let i = 0; i < crops.length; i++) {
     if (crops[i] === undefined) {

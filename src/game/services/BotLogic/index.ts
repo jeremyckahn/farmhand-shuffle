@@ -3,7 +3,12 @@ import {
   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
   STANDARD_FIELD_SIZE,
 } from '../../config'
-import { IMatch, isCropCardInstance, isWaterCardInstance } from '../../types'
+import {
+  IMatch,
+  isCropCardInstance,
+  isWaterCardInstance,
+  WaterInstance,
+} from '../../types'
 import { lookup } from '../Lookup'
 
 export class BotLogicService {
@@ -12,6 +17,7 @@ export class BotLogicService {
     playerId: string,
     { minimumCropsToPlay = 0 }: { minimumCropsToPlay?: number } = {}
   ) {
+    const player = lookup.getPlayer(match, playerId)
     const cropCardIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
       match,
       playerId
@@ -23,7 +29,7 @@ export class BotLogicService {
     )
 
     const availableFieldSpace =
-      STANDARD_FIELD_SIZE - match.table.players[playerId].field.crops.length
+      STANDARD_FIELD_SIZE - player.field.crops.length
 
     const safeNumberOfCropsToPlay = Math.min(
       availableFieldSpace,
@@ -73,15 +79,18 @@ export class BotLogicService {
   }
 
   getCropCardIndicesToWater(match: IMatch, playerId: string) {
+    const player = lookup.getPlayer(match, playerId)
     const {
       field: { crops },
       hand,
-    } = match.table.players[playerId]
+    } = player
 
     let fieldCropIdxsThatNeedWater: number[] = []
-    const { length: numberOfWaterCardsInHand } = hand.filter(cardInstance => {
-      return isWaterCardInstance(cardInstance)
-    })
+    const { length: numberOfWaterCardsInHand } = hand.filter(
+      (cardInstance): cardInstance is WaterInstance => {
+        return isWaterCardInstance(cardInstance)
+      }
+    )
 
     for (let i = 0; i < crops.length; i++) {
       // NOTE: Prevents playing more water cards than there are in the player's hand
@@ -105,9 +114,10 @@ export class BotLogicService {
   }
 
   getCropCardIndicesToHarvest(match: IMatch, playerId: string) {
+    const player = lookup.getPlayer(match, playerId)
     const {
       field: { crops },
-    } = match.table.players[playerId]
+    } = player
 
     let fieldCropIdxsToHarvest: number[] = []
 

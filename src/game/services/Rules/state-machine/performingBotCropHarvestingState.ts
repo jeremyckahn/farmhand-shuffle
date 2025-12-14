@@ -27,8 +27,20 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
-        const plantedCrop =
-          match.table.players[currentPlayerId].field.crops[cropCardIdxToHarvest]
+        if (cropCardIdxToHarvest === undefined) {
+          enqueue.raise({
+            type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
+          })
+          return
+        }
+
+        const player = match.table.players[currentPlayerId]
+
+        if (!player) {
+          throw new Error(`Player not found: ${currentPlayerId}`)
+        }
+
+        const plantedCrop = player.field.crops[cropCardIdxToHarvest]
 
         assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
 

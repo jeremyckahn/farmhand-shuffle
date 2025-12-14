@@ -9,7 +9,13 @@ export const addCropToField = (
   playerId: IPlayer['id'],
   newCrop: IPlayedCrop
 ) => {
-  const { field } = match.table.players[playerId]
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
+  const { field } = player
   let { crops } = field
 
   const fullPlots = crops.filter(Boolean)
@@ -18,7 +24,9 @@ export const addCropToField = (
     throw new FieldFullError(playerId)
   }
 
-  const emptyPlotIdx = crops.findIndex(crop => crop === undefined)
+  const emptyPlotIdx = crops.findIndex(
+    (crop: IPlayedCrop | undefined) => crop === undefined
+  )
 
   if (emptyPlotIdx === -1) {
     crops = [...crops, newCrop]

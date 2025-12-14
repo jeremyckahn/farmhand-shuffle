@@ -6,11 +6,17 @@ export const updatePlayer = (
   playerId: IPlayer['id'],
   newPlayerProperties: Partial<IPlayer>
 ): IMatch => {
+  const player = match.table.players[playerId]
+
+  if (!player) {
+    throw new Error(`Player not found: ${playerId}`)
+  }
+
   match = updateTable(match, {
     players: {
       ...match.table.players,
       [playerId]: {
-        ...match.table.players[playerId],
+        ...player,
         ...newPlayerProperties,
       },
     },

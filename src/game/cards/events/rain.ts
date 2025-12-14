@@ -20,6 +20,8 @@ export const rain: IEvent = Object.freeze<IEvent>({
     for (const playerId in match.table.players) {
       const player = match.table.players[playerId]
 
+      if (!player) continue
+
       const crops = player.field.crops.map(crop => {
         if (!crop) return crop
 
