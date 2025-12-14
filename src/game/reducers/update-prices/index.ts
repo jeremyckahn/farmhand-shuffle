@@ -32,6 +32,11 @@ export const updatePrices = (match: IMatch) => {
     presentCropIds.has(crop.id)
   )
 
+  // NOTE: Explicitly casting to a tuple with undefined elements is necessary here.
+  // Without strict null checks on array access (noUncheckedIndexedAccess),
+  // TypeScript assumes the array elements are defined (ICrop).
+  // However, availableCrops can be empty or have fewer than 2 elements,
+  // so we must ensure we handle undefined values safely.
   const [cropToBuff, cropToNerf] = shuffle(availableCrops) as [
     ICrop | undefined,
     ICrop | undefined,
