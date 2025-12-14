@@ -1,6 +1,7 @@
 import shuffle from 'lodash.shuffle'
 
 import { IMatch, IPlayer } from '../../types'
+import { MatchStateCorruptError } from '../../services/Rules/errors'
 import { updatePlayer } from '../update-player'
 
 export const drawCard = (
@@ -11,7 +12,7 @@ export const drawCard = (
   const player = match.table.players[playerId]
 
   if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
+    throw new MatchStateCorruptError(`Player not found: ${playerId}`)
   }
 
   let newHand = [...player.hand]

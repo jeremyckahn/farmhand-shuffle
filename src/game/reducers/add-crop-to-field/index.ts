@@ -1,6 +1,6 @@
 import { array } from '../../../services/Array'
 import { STANDARD_FIELD_SIZE } from '../../config'
-import { FieldFullError } from '../../services/Rules/errors'
+import { FieldFullError, PlayerNotFoundError } from '../../services/Rules/errors'
 import { IMatch, IPlayedCrop, IPlayer } from '../../types'
 import { updateField } from '../update-field'
 
@@ -12,7 +12,7 @@ export const addCropToField = (
   const player = match.table.players[playerId]
 
   if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
+    throw new PlayerNotFoundError(playerId)
   }
 
   const { field } = player

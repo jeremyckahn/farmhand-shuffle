@@ -122,3 +122,7 @@ The project uses Prettier and ESLint to enforce a consistent code style. The con
 ## React Patterns
 
 - **State Updates:** Use the functional update pattern for state setters (e.g., `setState(prev => prev + 1)`) when the new state depends on the previous state.
+
+## Error Handling
+
+When throwing errors, prefer to use a specific `Error` subclass from `src/game/services/Rules/errors.ts` instead of the generic `Error` class. If a suitable error type does not exist, create a new one. This provides more specific and actionable error information.
