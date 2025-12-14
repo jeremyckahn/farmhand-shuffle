@@ -1,6 +1,5 @@
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { isCropPriceFluctuation } from '../../types/guards'
-import { factory } from '../../services/Factory'
 import { instantiate } from '../../cards'
 import { carrot, pumpkin } from '../../cards/crops'
 import { stubPlayer } from '../../../test-utils/stubs/players'
@@ -18,10 +17,10 @@ describe('updatePrices', () => {
     const mockMatch = stubMatch({
       table: {
         players: {
-          [player1.id]: player1
+          [player1.id]: player1,
         },
-        communityFund: 0
-      }
+        communityFund: 0,
+      },
     })
     const updatedMatch = updatePrices(mockMatch)
 
