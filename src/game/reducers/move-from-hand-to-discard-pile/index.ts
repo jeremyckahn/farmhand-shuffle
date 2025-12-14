@@ -1,6 +1,5 @@
-import { array } from '../../../services/Array'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { CardInstance, IMatch, IPlayer } from '../../types'
+import { IMatch, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
 
