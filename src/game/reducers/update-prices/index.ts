@@ -1,23 +1,61 @@
 import shuffle from 'lodash.shuffle'
 
 import * as crops from '../../cards/crops'
-import { IMatch } from '../../types'
+import {
+  CardInstance,
+  ICrop,
+  IMatch,
+  IPlayedCrop,
+  isCropCardInstance,
+} from '../../types'
 import { updateMatch } from '../update-match'
 
 export const updatePrices = (match: IMatch) => {
-  // TODO: Only buff/nerf crops that are present in either player's decks
-  const [cropToBuff, cropToNerf] = shuffle(Object.values(crops))
+  const players = Object.values(match.table.players)
+  const allCards = players.reduce((acc, player) => {
+    return [
+      ...acc,
+      ...player.deck,
+      ...player.hand,
+      ...player.discardPile,
+      ...player.field.crops
+        .filter((playedCrop): playedCrop is IPlayedCrop => playedCrop !== undefined)
+        .map(playedCrop => playedCrop.instance),
+    ]
+  }, [] as CardInstance[])
+
+  const presentCropIds = new Set(
+    allCards.filter(isCropCardInstance).map(card => card.id)
+  )
+
+  const availableCrops = Object.values(crops).filter(crop =>
+    presentCropIds.has(crop.id)
+  )
+
+  // NOTE: Explicitly casting to a tuple with undefined elements is necessary here.
+  // Without strict null checks on array access (noUncheckedIndexedAccess),
+  // TypeScript assumes the array elements are defined (ICrop).
+  // However, availableCrops can be empty or have fewer than 2 elements,
+  // so we must ensure we handle undefined values safely.
+  const [cropToBuff, cropToNerf] = shuffle(availableCrops) as [
+    ICrop | undefined,
+    ICrop | undefined,
+  ]
 
   // TODO: Make the buff/nerf multipliers variable
   match = updateMatch(match, {
-    buffedCrop: {
-      crop: cropToBuff,
-      multiplier: 2,
-    },
-    nerfedCrop: {
-      crop: cropToNerf,
-      multiplier: 0.5,
-    },
+    buffedCrop: cropToBuff
+      ? {
+          crop: cropToBuff,
+          multiplier: 2,
+        }
+      : null,
+    nerfedCrop: cropToNerf
+      ? {
+          crop: cropToNerf,
+          multiplier: 0.5,
+        }
+      : null,
   })
 
   return match
