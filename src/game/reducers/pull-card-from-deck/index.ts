@@ -1,6 +1,7 @@
 import shuffle from 'lodash.shuffle'
 
 import { InvalidCardIndexError } from '../../services/Rules/errors'
+import { lookup } from '../../services/Lookup'
 import { IMatch, IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
@@ -9,11 +10,7 @@ export const pullCardFromDeck = (
   playerId: IPlayer['id'],
   idx: number
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   let hand = [...player.hand]
   let deck = [...player.deck]

@@ -11,6 +11,7 @@ import {
 } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { MatchStateCorruptError } from '../errors'
+import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
 
@@ -33,11 +34,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
-        const player = match.table.players[currentPlayerId]
-
-        if (!player) {
-          throw new Error(`Player not found: ${currentPlayerId}`)
-        }
+        const player = lookup.getPlayer(match, currentPlayerId)
 
         const waterCardInHandIdx = player.hand.findIndex(cardInstance => {
           return isWaterCardInstance(cardInstance)

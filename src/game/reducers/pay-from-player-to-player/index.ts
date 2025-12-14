@@ -1,4 +1,5 @@
 import { IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { incrementPlayerFunds } from '../increment-player-funds'
 
 export const payFromPlayerToPlayer = (
@@ -12,16 +13,8 @@ export const payFromPlayerToPlayer = (
   if (amount < 0)
     return payFromPlayerToPlayer(match, -amount, targetPlayerId, sourcePlayerId)
 
-  const sourcePlayer = match.table.players[sourcePlayerId]
-  const targetPlayer = match.table.players[targetPlayerId]
-
-  if (!sourcePlayer) {
-    throw new Error(`Player not found: ${sourcePlayerId}`)
-  }
-
-  if (!targetPlayer) {
-    throw new Error(`Player not found: ${targetPlayerId}`)
-  }
+  const sourcePlayer = lookup.getPlayer(match, sourcePlayerId)
+  lookup.getPlayer(match, targetPlayerId)
 
   const { funds: sourcePlayerFunds } = sourcePlayer
   const adjustedAmount = Math.min(sourcePlayerFunds, amount)

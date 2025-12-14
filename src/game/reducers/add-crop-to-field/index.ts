@@ -1,6 +1,7 @@
 import { array } from '../../../services/Array'
 import { STANDARD_FIELD_SIZE } from '../../config'
-import { FieldFullError, PlayerNotFoundError } from '../../services/Rules/errors'
+import { FieldFullError } from '../../services/Rules/errors'
+import { lookup } from '../../services/Lookup'
 import { IMatch, IPlayedCrop, IPlayer } from '../../types'
 import { updateField } from '../update-field'
 
@@ -9,11 +10,7 @@ export const addCropToField = (
   playerId: IPlayer['id'],
   newCrop: IPlayedCrop
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new PlayerNotFoundError(playerId)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   const { field } = player
   let { crops } = field

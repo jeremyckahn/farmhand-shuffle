@@ -1,4 +1,5 @@
 import { IField, IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
 
 export const updateField = (
@@ -6,11 +7,7 @@ export const updateField = (
   playerId: IPlayer['id'],
   newFieldProperties: Partial<IField>
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   const { field } = player
 

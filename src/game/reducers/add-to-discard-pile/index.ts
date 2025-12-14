@@ -1,4 +1,5 @@
 import { CardInstance, IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
 
 export const addToDiscardPile = (
@@ -6,11 +7,7 @@ export const addToDiscardPile = (
   playerId: IPlayer['id'],
   cardInstance: CardInstance
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   const discardPile = [cardInstance, ...player.discardPile]
 

@@ -1,4 +1,5 @@
 import { InvalidCardIndexError } from '../../services/Rules/errors'
+import { lookup } from '../../services/Lookup'
 import { IMatch, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
@@ -8,11 +9,7 @@ export const moveFromHandToDiscardPile = (
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   const { hand } = player
   const cardId = hand[cardIdx]

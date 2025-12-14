@@ -13,11 +13,7 @@ export const drawValidStartingHand = (
   match: IMatch,
   playerId: IPlayer['id']
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   const cropIdxs = lookup.findCropIndexesInDeck(
     match,
@@ -34,12 +30,7 @@ export const drawValidStartingHand = (
 
   match = pullCardFromDeck(match, playerId, randomCropIdx)
 
-  const playerAfterPull = match.table.players[playerId]
-
-  if (!playerAfterPull) {
-    // This should not happen if pullCardFromDeck is correct
-    throw new Error(`Player not found after card pull: ${playerId}`)
-  }
+  const playerAfterPull = lookup.getPlayer(match, playerId)
 
   match = updatePlayer(match, playerId, {
     hand: shuffle(playerAfterPull.hand),

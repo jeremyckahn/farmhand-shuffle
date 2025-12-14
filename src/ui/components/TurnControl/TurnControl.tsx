@@ -16,6 +16,7 @@ import { ReactNode, useContext } from 'react'
 
 import { MatchEvent, MatchState, IMatch } from '../../../game/types'
 import { assertCurrentPlayer } from '../../../game/types/guards'
+import { lookup } from '../../../game/services/Lookup'
 import { formatNumber } from '../../../lib/formatting/numbers'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
@@ -54,7 +55,9 @@ export const TurnControl = ({ match }: TurnControlProps) => {
 
   let control: ReactNode = null
 
-  const currentPlayer = currentPlayerId && match.table.players[currentPlayerId]
+  const currentPlayer = currentPlayerId
+    ? lookup.getPlayer(match, currentPlayerId)
+    : null
 
   let stateInfo = ''
 
@@ -130,7 +133,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   const sessionOwnerPlayerFunds = sessionOwnerPlayer.funds
   const opponentPlayerId = Object.keys(opponents)[0]
   const opponentFunds = opponentPlayerId
-    ? match.table.players[opponentPlayerId]?.funds
+    ? lookup.getPlayer(match, opponentPlayerId)?.funds
     : 0
 
   return (

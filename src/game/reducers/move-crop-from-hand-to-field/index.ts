@@ -14,11 +14,7 @@ export const moveCropFromHandToField = (
   playerId: IPlayer['id'],
   cropCardIdx: number
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   const { hand } = player
   const cardId = hand[cropCardIdx]

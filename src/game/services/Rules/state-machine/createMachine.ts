@@ -8,6 +8,7 @@ import {
   MatchStateGuard,
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
+import { lookup } from '../../Lookup'
 
 export const { createMachine } = setup({
   types: {
@@ -37,11 +38,7 @@ export const { createMachine } = setup({
 
       switch (event.type) {
         case MatchEvent.SELECT_CROP_TO_WATER: {
-          const player = match.table.players[currentPlayerId]
-
-          if (!player) {
-            return false
-          }
+          const player = lookup.getPlayer(match, currentPlayerId)
 
           const { crops } = player.field
           const playedCrop = crops[event.cropIdxInFieldToWater]

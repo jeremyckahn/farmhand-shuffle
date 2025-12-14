@@ -1,4 +1,5 @@
 import { IMatch, IPlayedCrop, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updateField } from '../update-field'
 
 export const updatePlayedCrop = (
@@ -7,11 +8,7 @@ export const updatePlayedCrop = (
   cropIdx: number,
   newPlayedCropProperties: Partial<IPlayedCrop>
 ) => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  const player = lookup.getPlayer(match, playerId)
 
   const { crops } = player.field
   const playedCrop = crops[cropIdx]

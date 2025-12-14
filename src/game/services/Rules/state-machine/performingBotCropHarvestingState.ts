@@ -3,6 +3,7 @@ import { enqueueActions } from 'xstate'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { harvestCrop } from '../../../reducers/harvest-crop'
+import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
 
@@ -34,11 +35,7 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
           return
         }
 
-        const player = match.table.players[currentPlayerId]
-
-        if (!player) {
-          throw new Error(`Player not found: ${currentPlayerId}`)
-        }
+        const player = lookup.getPlayer(match, currentPlayerId)
 
         const plantedCrop = player.field.crops[cropCardIdxToHarvest]
 

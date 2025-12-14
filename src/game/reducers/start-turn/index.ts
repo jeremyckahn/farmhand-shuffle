@@ -1,5 +1,6 @@
 import { STANDARD_TAX_AMOUNT } from '../../config'
 import { PlayerOutOfFundsError } from '../../services/Rules/errors'
+import { lookup } from '../../services/Lookup'
 import { IMatch, IPlayer } from '../../types'
 import { drawCard } from '../draw-card'
 import { payFromPlayerToCommunity } from '../pay-from-player-to-community'
@@ -12,21 +13,12 @@ export const startTurn = (
   playerId: IPlayer['id'],
   cardsToDraw = 1
 ): IMatch => {
-  const player = match.table.players[playerId]
-
-  if (!player) {
-    throw new Error(`Player not found: ${playerId}`)
-  }
+  lookup.getPlayer(match, playerId)
 
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn: [] })
   match = payFromPlayerToCommunity(match, STANDARD_TAX_AMOUNT, playerId)
 
-  const playerAfterPayment = match.table.players[playerId]
-
-  if (!playerAfterPayment) {
-    // This should not happen if payFromPlayerToCommunity is correct
-    throw new Error(`Player not found after payment: ${playerId}`)
-  }
+  const playerAfterPayment = lookup.getPlayer(match, playerId)
 
   if (playerAfterPayment.funds === 0) {
     throw new PlayerOutOfFundsError(playerId)
@@ -34,12 +26,7 @@ export const startTurn = (
 
   match = drawCard(match, playerId, cardsToDraw)
 
-  const playerAfterDraw = match.table.players[playerId]
-
-  if (!playerAfterDraw) {
-    // This should not happen if drawCard is correct
-    throw new Error(`Player not found after draw: ${playerId}`)
-  }
+  const playerAfterDraw = lookup.getPlayer(match, playerId)
 
   const crops = playerAfterDraw.field.crops
 
