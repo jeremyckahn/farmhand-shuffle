@@ -70,41 +70,47 @@ describe('rain card', () => {
         },
       })
 
-      const p1 = updatedMatch.table.players[stubPlayer1.id]
-      const p2 = updatedMatch.table.players[stubPlayer2.id]
+      const player1 = updatedMatch.table.players[stubPlayer1.id]
+      const player2 = updatedMatch.table.players[stubPlayer2.id]
 
-      if (!p1 || !p2) {
+      if (!player1 || !player2) {
         throw new Error('Player not found in test setup')
       }
 
-      const p1c1 = p1.field.crops[1]
-      const p1c2 = p1.field.crops[2]
-      const p1c3 = p1.field.crops[3]
-      const p2c0 = p2.field.crops[0]
-      const p2c2 = p2.field.crops[2]
+      const player1Crop1 = player1.field.crops[1]
+      const player1crop2 = player1.field.crops[2]
+      const player1crop3 = player1.field.crops[3]
+      const player2crop0 = player2.field.crops[0]
+      const player2crop2 = player2.field.crops[2]
 
-      if (!p1c1 || !p1c2 || !p1c3 || !p2c0 || !p2c2) {
+      if (
+        !player1Crop1 ||
+        !player1crop2 ||
+        !player1crop3 ||
+        !player2crop0 ||
+        !player2crop2
+      ) {
         throw new Error('Crop not found in test setup')
       }
 
-      expect(p1c1).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player1Crop1).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
-      expect(p1c2).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player1crop2).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 3,
       })
-      expect(p1c3).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player1crop3).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
 
-      expect(p2c0).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player2crop0).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 1,
       })
-      expect(p2c2).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player2crop2).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 4,
       })
