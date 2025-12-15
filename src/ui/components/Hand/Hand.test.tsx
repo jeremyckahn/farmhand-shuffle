@@ -102,11 +102,9 @@ describe('Hand', () => {
     const card1 = screen
       .getByText(handCards[0].name)
       .closest(`.${cardClassName}`)
-    // @ts-expect-error TODO: Fix this type error
-    await userEvent.click(card1)
+    await userEvent.click(card1!)
 
-    // @ts-expect-error TODO: Fix this type error
-    const { transform: card1Transform } = getComputedStyle(card1)
+    const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toMatchInlineSnapshot(
       `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
     )
@@ -114,8 +112,7 @@ describe('Hand', () => {
     for (const { name } of handCards.slice(1)) {
       const card = screen.getByText(name).closest(`.${cardClassName}`)
 
-      // @ts-expect-error TODO: Fix this type error
-      const { transform } = getComputedStyle(card)
+      const { transform } = getComputedStyle(card!)
       expect(transform).toMatchSnapshot()
     }
   })
@@ -127,15 +124,13 @@ describe('Hand', () => {
       .getByText(handCards[0].name)
       .closest(`.${cardClassName}`)
 
-    // @ts-expect-error TODO: Fix this type error
-    await userEvent.click(card1)
+    await userEvent.click(card1!)
 
     await waitFor(() => {
       ;(document.activeElement as HTMLElement).blur()
     })
 
-    // @ts-expect-error TODO: Fix this type error
-    const { transform: card1Transform } = getComputedStyle(card1)
+    const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
     )
@@ -151,21 +146,18 @@ describe('Hand', () => {
       .getByText(handCards[1].name)
       .closest(`.${cardClassName}`)
 
-    // @ts-expect-error TODO: Fix this type error
-    await userEvent.click(card1)
+    await userEvent.click(card1!)
 
     await waitFor(async () => {
       await userEvent.keyboard('{Tab}')
     })
 
-    // @ts-expect-error TODO: Fix this type error
-    const { transform: card1Transform } = getComputedStyle(card1)
+    const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`
     )
 
-    // @ts-expect-error TODO: Fix this type error
-    const { transform: card2Transform } = getComputedStyle(card2)
+    const { transform: card2Transform } = getComputedStyle(card2!)
     expect(card2Transform).toMatchInlineSnapshot(
       `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
     )
@@ -178,15 +170,13 @@ describe('Hand', () => {
       .getByText(handCards[0].name)
       .closest(`.${cardClassName}`)
 
-    // @ts-expect-error TODO: Fix this type error
-    await userEvent.click(card1)
+    await userEvent.click(card1!)
 
     await waitFor(async () => {
       await userEvent.keyboard('{Escape}')
     })
 
-    // @ts-expect-error TODO: Fix this type error
-    const { transform: card1Transform } = getComputedStyle(card1)
+    const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
     )
@@ -200,8 +190,7 @@ describe('Hand', () => {
       .getByText(handCards[0].name)
       .closest(`.${cardClassName}`)
 
-    // @ts-expect-error TODO: Fix this type error
-    await userEvent.click(card1)
+    await userEvent.click(card1!)
 
     const newHand = [...handCards, instantiate(water)]
     const newMatch = updatePlayer(match, match.sessionOwnerPlayerId, {
@@ -210,8 +199,7 @@ describe('Hand', () => {
 
     render(<StubHand match={newMatch} />)
 
-    // @ts-expect-error TODO: Fix this type error
-    const { transform: card1Transform } = getComputedStyle(card1)
+    const { transform: card1Transform } = getComputedStyle(card1!)
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
     )
