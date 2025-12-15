@@ -100,7 +100,7 @@ describe('Hand', () => {
     render(<StubHand />)
 
     const card1 = screen
-      .getByText(handCards[0].name)
+      .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
     await userEvent.click(card1!)
 
@@ -121,7 +121,7 @@ describe('Hand', () => {
     render(<StubHand />)
 
     const card1 = screen
-      .getByText(handCards[0].name)
+      .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
 
     await userEvent.click(card1!)
@@ -140,10 +140,10 @@ describe('Hand', () => {
     render(<StubHand />)
 
     const card1 = screen
-      .getByText(handCards[0].name)
+      .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
     const card2 = screen
-      .getByText(handCards[1].name)
+      .getByText(handCards[1]!.name)
       .closest(`.${cardClassName}`)
 
     await userEvent.click(card1!)
@@ -167,7 +167,7 @@ describe('Hand', () => {
     render(<StubHand />)
 
     const card1 = screen
-      .getByText(handCards[0].name)
+      .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
 
     await userEvent.click(card1!)
@@ -187,7 +187,7 @@ describe('Hand', () => {
     render(<StubHand />)
 
     const card1 = screen
-      .getByText(handCards[0].name)
+      .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
 
     await userEvent.click(card1!)
