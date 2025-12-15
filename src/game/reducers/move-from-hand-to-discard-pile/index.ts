@@ -1,6 +1,7 @@
 import { InvalidCardIndexError } from '../../services/Rules/errors'
 import { lookup } from '../../services/Lookup'
 import { IMatch, IPlayer } from '../../types'
+import { array } from '../../../services/Array'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
 
@@ -18,7 +19,7 @@ export const moveFromHandToDiscardPile = (
     throw new InvalidCardIndexError(cardIdx, playerId)
   }
 
-  const newHand = hand.filter((_, i) => i !== cardIdx)
+  const newHand = array.removeAt(hand, cardIdx)
 
   match = updatePlayer(match, playerId, { hand: newHand })
   match = addToDiscardPile(match, playerId, cardId)

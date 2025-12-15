@@ -30,12 +30,22 @@ describe('removeTurnCardsPlayed', () => {
     }) => {
       let match = stubMatch()
       const [player1Id] = Object.keys(match.table.players)
+
+      if (!player1Id) {
+        throw new Error('Player not found')
+      }
+
       match = updatePlayer(match, player1Id, {
         cardsPlayedDuringTurn: startingCardsPlayedDuringTurn,
       })
       const newMatch = removeTurnCardsPlayed(match, player1Id, howMany)
+      const newPlayer = newMatch.table.players[player1Id]
 
-      expect(newMatch.table.players[player1Id].cardsPlayedDuringTurn).toEqual(
+      if (!newPlayer) {
+        throw new Error('Player not found')
+      }
+
+      expect(newPlayer.cardsPlayedDuringTurn).toEqual(
         resultingCardsPlayedDuringTurn
       )
     }

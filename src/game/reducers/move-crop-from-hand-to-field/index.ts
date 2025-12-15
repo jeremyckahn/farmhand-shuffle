@@ -6,6 +6,7 @@ import {
   IPlayer,
   isCropCardInstance,
 } from '../../types'
+import { array } from '../../../services/Array'
 import { addCropToField } from '../add-crop-to-field'
 import { updatePlayer } from '../update-player'
 
@@ -23,11 +24,12 @@ export const moveCropFromHandToField = (
     throw new InvalidCardIndexError(cropCardIdx, playerId)
   }
 
-  const newHand = hand.filter((_, i) => i !== cropCardIdx)
+  const newHand = array.removeAt(hand, cropCardIdx)
   const cropInstance = lookup.getCropFromHand(match, playerId, cropCardIdx)
 
   if (!isCropCardInstance(cropInstance)) {
-    // This should be caught by getCropFromHand, but it satisfies TypeScript
+    // NOTE: This should be caught by getCropFromHand, but it satisfies
+    // TypeScript
     throw new InvalidCardIndexError(cropCardIdx, playerId)
   }
 

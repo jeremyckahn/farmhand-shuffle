@@ -12,16 +12,32 @@ describe('addCropToField', () => {
   test('adds crop to field', () => {
     const match = stubMatch()
     const [player1Id] = Object.keys(match.table.players)
+
+    if (!player1Id) {
+      throw new Error('Player not found')
+    }
+
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
 
     const newMatch = addCropToField(match, player1Id, playedCrop)
 
-    expect(newMatch.table.players[player1Id].field.crops).toEqual([playedCrop])
+    const newPlayer = newMatch.table.players[player1Id]
+
+    if (!newPlayer) {
+      throw new Error('Player not found')
+    }
+
+    expect(newPlayer.field.crops).toEqual([playedCrop])
   })
 
   test('adds crop to empty slot in sparse field', () => {
     const match = stubMatch()
     const [player1Id] = Object.keys(match.table.players)
+
+    if (!player1Id) {
+      throw new Error('Player not found')
+    }
+
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
     const insertedCrop = factory.buildPlayedCrop(stubPumpkin)
 
@@ -37,12 +53,23 @@ describe('addCropToField', () => {
     )
 
     const expectedCrops = [playedCrop, insertedCrop, playedCrop, undefined]
-    expect(newMatch.table.players[player1Id].field.crops).toEqual(expectedCrops)
+    const newPlayer = newMatch.table.players[player1Id]
+
+    if (!newPlayer) {
+      throw new Error('Player not found')
+    }
+
+    expect(newPlayer.field.crops).toEqual(expectedCrops)
   })
 
   test('throws an error if field is full', () => {
     const match = stubMatch()
     const [player1Id] = Object.keys(match.table.players)
+
+    if (!player1Id) {
+      throw new Error('Player not found')
+    }
+
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
 
     const fullField = stubField({

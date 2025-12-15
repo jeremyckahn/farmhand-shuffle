@@ -17,6 +17,7 @@ import { ReactNode, useContext } from 'react'
 import { MatchEvent, MatchState, IMatch } from '../../../game/types'
 import { assertCurrentPlayer } from '../../../game/types/guards'
 import { lookup } from '../../../game/services/Lookup'
+import { MatchStateCorruptError } from '../../../game/services/Rules/errors'
 import { formatNumber } from '../../../lib/formatting/numbers'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
@@ -127,7 +128,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     match.table.players
 
   if (!sessionOwnerPlayer) {
-    throw new Error('Session owner player not found')
+    throw new MatchStateCorruptError('Session owner player not found')
   }
 
   const sessionOwnerPlayerFunds = sessionOwnerPlayer.funds

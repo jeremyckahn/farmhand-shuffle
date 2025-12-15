@@ -7,8 +7,19 @@ describe('addToDiscardPile', () => {
   test("adds to a player's discard pile", () => {
     const match = stubMatch()
     const [player1Id] = Object.keys(match.table.players)
+
+    if (!player1Id) {
+      throw new Error('Player not found')
+    }
+
     const newMatch = addToDiscardPile(match, player1Id, stubCarrot)
 
-    expect(newMatch.table.players[player1Id].discardPile).toEqual([stubCarrot])
+    const newPlayer = newMatch.table.players[player1Id]
+
+    if (!newPlayer) {
+      throw new Error('Player not found')
+    }
+
+    expect(newPlayer.discardPile).toEqual([stubCarrot])
   })
 })

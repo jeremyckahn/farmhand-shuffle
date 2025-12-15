@@ -79,11 +79,22 @@ describe('Factory', () => {
       const match = factory.buildMatchForSession([player1, player2])
       const [player1Id, player2Id] = Object.keys(match.table.players)
 
-      expect(match.table.players[player1Id].hand).toEqual(
+      if (!player1Id || !player2Id) {
+        throw new Error('Players not found')
+      }
+
+      const newPlayer1 = match.table.players[player1Id]
+      const newPlayer2 = match.table.players[player2Id]
+
+      if (!newPlayer1 || !newPlayer2) {
+        throw new Error('Players not found')
+      }
+
+      expect(newPlayer1.hand).toEqual(
         expect.arrayContaining(player1.deck.slice(0, INITIAL_HAND_SIZE))
       )
 
-      expect(match.table.players[player2Id].hand).toEqual(
+      expect(newPlayer2.hand).toEqual(
         expect.arrayContaining(player2.deck.slice(0, INITIAL_HAND_SIZE))
       )
     })
@@ -92,9 +103,20 @@ describe('Factory', () => {
       const match = factory.buildMatchForSession([player1, player2])
       const [player1Id, player2Id] = Object.keys(match.table.players)
 
+      if (!player1Id || !player2Id) {
+        throw new Error('Players not found')
+      }
+
+      const newPlayer1 = match.table.players[player1Id]
+      const newPlayer2 = match.table.players[player2Id]
+
+      if (!newPlayer1 || !newPlayer2) {
+        throw new Error('Players not found')
+      }
+
       expect(match.table.communityFund).toEqual(0)
-      expect(match.table.players[player1Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
-      expect(match.table.players[player2Id].funds).toEqual(INITIAL_PLAYER_FUNDS)
+      expect(newPlayer1.funds).toEqual(INITIAL_PLAYER_FUNDS)
+      expect(newPlayer2.funds).toEqual(INITIAL_PLAYER_FUNDS)
     })
 
     test('determines first player', () => {

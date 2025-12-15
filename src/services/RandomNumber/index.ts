@@ -49,7 +49,7 @@ export class RandomNumberService {
     const [minimum, maximum] = [a, b].sort()
 
     if (minimum === undefined || maximum === undefined) {
-      throw new Error(
+      throw new TypeError(
         `chooseInteger requires two numbers. Received: ${a} and ${b}`
       )
     }

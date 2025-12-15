@@ -23,7 +23,8 @@ export const pullCardFromDeck = (
   const [drawnCard] = deck.slice(idx, idx + 1)
 
   if (!drawnCard) {
-    // This case should be covered by the idx check above, but it satisfies TypeScript
+    // NOTE: This case should be covered by the idx check above, but it
+    // satisfies TypeScript
     throw new InvalidCardIndexError(idx, playerId)
   }
 

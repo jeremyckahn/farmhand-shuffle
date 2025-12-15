@@ -8,6 +8,10 @@ import { updatePlayedCrop } from '.'
 const match = stubMatch()
 const [player1Id] = Object.keys(match.table.players)
 
+if (!player1Id) {
+  throw new Error('Player not found')
+}
+
 describe('updatePlayedCrop', () => {
   test('updates crop in field', () => {
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
@@ -17,10 +21,13 @@ describe('updatePlayedCrop', () => {
 
     let newMatch = updateField(match, player1Id, field)
     newMatch = updatePlayedCrop(newMatch, player1Id, 0, { waterCards: 1 })
+    const newPlayer = newMatch.table.players[player1Id]
 
-    expect(newMatch.table.players[player1Id].field.crops).toEqual([
-      { ...playedCrop, waterCards: 1 },
-    ])
+    if (!newPlayer) {
+      throw new Error('Player not found')
+    }
+
+    expect(newPlayer.field.crops).toEqual([{ ...playedCrop, waterCards: 1 }])
   })
 
   test('throws an error if invalid cropIdx is provided', () => {

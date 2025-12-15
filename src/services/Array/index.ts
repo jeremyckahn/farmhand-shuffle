@@ -7,7 +7,7 @@ export class ArrayService {
       throw new Error(`removeAt: Index ${idx} out of bounds`)
     }
 
-    return [...array.slice(0, idx).concat(array.slice(idx + 1))]
+    return array.filter((_, i) => i !== idx)
   }
 
   /**

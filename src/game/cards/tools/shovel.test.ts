@@ -32,13 +32,14 @@ describe('shovel', () => {
         match,
       })
 
-      expect(updatedMatch.table.players[currentPlayerId].deck).toEqual([
-        stubWater,
-      ])
-      expect(updatedMatch.table.players[currentPlayerId].hand).toEqual([
-        stubCarrot,
-        stubPumpkin,
-      ])
+      const updatedPlayer = updatedMatch.table.players[currentPlayerId]
+
+      if (!updatedPlayer) {
+        throw new Error('Player not found')
+      }
+
+      expect(updatedPlayer.deck).toEqual([stubWater])
+      expect(updatedPlayer.hand).toEqual([stubCarrot, stubPumpkin])
 
       expect(context.shell.triggerNotification).toHaveBeenCalledWith({
         type: ShellNotificationType.CARDS_DRAWN,

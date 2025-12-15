@@ -28,27 +28,22 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
-        if (cropCardIdxToHarvest === undefined) {
-          enqueue.raise({
-            type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
+        if (cropCardIdxToHarvest !== undefined) {
+          const player = lookup.getPlayer(match, currentPlayerId)
+
+          const plantedCrop = player.field.crops[cropCardIdxToHarvest]
+
+          assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
+
+          match = harvestCrop(match, currentPlayerId, cropCardIdxToHarvest)
+
+          triggerNotification({
+            type: ShellNotificationType.CROP_HARVESTED,
+            payload: {
+              cropHarvested: plantedCrop.instance,
+            },
           })
-          return
         }
-
-        const player = lookup.getPlayer(match, currentPlayerId)
-
-        const plantedCrop = player.field.crops[cropCardIdxToHarvest]
-
-        assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
-
-        match = harvestCrop(match, currentPlayerId, cropCardIdxToHarvest)
-
-        triggerNotification({
-          type: ShellNotificationType.CROP_HARVESTED,
-          payload: {
-            cropHarvested: plantedCrop.instance,
-          },
-        })
 
         enqueue.raise({
           type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
