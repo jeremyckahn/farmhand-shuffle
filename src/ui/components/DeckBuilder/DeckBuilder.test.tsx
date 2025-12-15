@@ -206,7 +206,9 @@ describe('DeckBuilder', () => {
 
     expect(onDone).toHaveBeenCalledTimes(1)
 
-    const deckMap = onDone.mock.calls[0][0] as Map<ICard, number>
+    const call = onDone.mock.calls[0]
+    if (!call) throw new Error('onDone not called')
+    const deckMap = call[0] as Map<ICard, number>
 
     expect(deckMap.get(mockPumpkin as ICard)).toBe(2)
     expect(deckMap.get(mockWater as ICard)).toBe(3)

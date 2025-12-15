@@ -11,8 +11,8 @@ import { ICard, IField, IMatch, IPlayedCrop, IPlayer } from '../../types'
 
 import { startTurn } from '.'
 
-const player1 = stubPlayer()
-const player2 = stubPlayer()
+const player1Stub = stubPlayer()
+const player2Stub = stubPlayer()
 
 vitest.mock('../../cards/crops/handlePlayFromHand', () => {
   return {
@@ -31,24 +31,30 @@ beforeEach(() => {
 // Make player2's deck slightly different from player1's to prevent false
 // positives.
 // eslint-disable-next-line functional/immutable-data
-player2.deck[DECK_SIZE - 1] = stubPumpkin
+player2Stub.deck[DECK_SIZE - 1] = stubPumpkin
 
 describe('startTurn', () => {
   let match: IMatch
   let player1Id: IPlayer['id']
 
   beforeEach(() => {
-    match = factory.buildMatchForSession([player1, player2])
-    player1Id = Object.keys(match.table.players)[0]
+    match = factory.buildMatchForSession([player1Stub, player2Stub])
+    const playerIds = Object.keys(match.table.players)
+    const p1Id = playerIds[0]
+    if (!p1Id) throw new Error('Player not found in test setup')
+    player1Id = p1Id
   })
 
   test('pays tax to community fund', () => {
+    const p1 = match.table.players[player1Id]
+    if (!p1) throw new Error('Player not found in test setup')
+
     const newMatch = startTurn(match, player1Id)
 
-    expect(newMatch.table.players[player1Id].funds).toEqual(
-      match.table.players[player1Id].funds - STANDARD_TAX_AMOUNT
-    )
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
 
+    expect(newP1.funds).toEqual(p1.funds - STANDARD_TAX_AMOUNT)
     expect(newMatch.table.communityFund).toEqual(
       match.table.communityFund + STANDARD_TAX_AMOUNT
     )
@@ -71,16 +77,18 @@ describe('startTurn', () => {
   ])(
     'draws $numberOfCardsToDraw card(s) from deck',
     ({ numberOfCardsToDraw }) => {
+      const p1 = match.table.players[player1Id]
+      if (!p1) throw new Error('Player not found in test setup')
+
       const newMatch = startTurn(match, player1Id, numberOfCardsToDraw)
+      const newP1 = newMatch.table.players[player1Id]
+      if (!newP1) throw new Error('Player not found after reducer')
 
-      expect(newMatch.table.players[player1Id].hand).toEqual([
-        ...match.table.players[player1Id].hand,
-        ...match.table.players[player1Id].deck.slice(0, numberOfCardsToDraw),
+      expect(newP1.hand).toEqual([
+        ...p1.hand,
+        ...p1.deck.slice(0, numberOfCardsToDraw),
       ])
-
-      expect(newMatch.table.players[player1Id].deck).toEqual(
-        match.table.players[player1Id].deck.slice(numberOfCardsToDraw)
-      )
+      expect(newP1.deck).toEqual(p1.deck.slice(numberOfCardsToDraw))
     }
   )
 
@@ -101,9 +109,10 @@ describe('startTurn', () => {
 
     newMatch = startTurn(newMatch, player1Id)
 
-    expect(newMatch.table.players[player1Id].field.crops).toEqual<
-      IPlayedCrop[]
-    >([
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
+
+    expect(newP1.field.crops).toEqual<IPlayedCrop[]>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot3, wasWateredDuringTurn: false, waterCards: 1 },
@@ -126,9 +135,10 @@ describe('startTurn', () => {
 
     newMatch = startTurn(newMatch, player1Id)
 
-    expect(newMatch.table.players[player1Id].field.crops).toEqual<
-      IField['crops']
-    >([
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
+
+    expect(newP1.field.crops).toEqual<IField['crops']>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
       undefined,
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 1 },
@@ -149,6 +159,9 @@ describe('startTurn', () => {
 
     newMatch = startTurn(newMatch, player1Id)
 
-    expect(newMatch.table.players[player1Id].cardsPlayedDuringTurn).toEqual([])
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
+
+    expect(newP1.cardsPlayedDuringTurn).toEqual([])
   })
 })

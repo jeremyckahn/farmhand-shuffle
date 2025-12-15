@@ -38,7 +38,9 @@ describe('CardQuantityControl', () => {
     fireEvent.click(screen.getByLabelText('decrease quantity'))
 
     expect(onChange).toHaveBeenCalledTimes(1)
-    const updateFn = onChange.mock.calls[0][0] as (prev: number) => number
+    const call = onChange.mock.calls[0]
+    if (!call) throw new Error('onChange not called')
+    const updateFn = call[0] as (prev: number) => number
     expect(updateFn(5)).toBe(4)
   })
 
@@ -54,7 +56,9 @@ describe('CardQuantityControl', () => {
     fireEvent.click(screen.getByLabelText('increase quantity'))
 
     expect(onChange).toHaveBeenCalledTimes(1)
-    const updateFn = onChange.mock.calls[0][0] as (prev: number) => number
+    const call = onChange.mock.calls[0]
+    if (!call) throw new Error('onChange not called')
+    const updateFn = call[0] as (prev: number) => number
     expect(updateFn(5)).toBe(6)
   })
 

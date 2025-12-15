@@ -44,12 +44,12 @@ describe('player turn action handling', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const p1 = matchResult.table.players[player1.id]
+    if (!p1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(matchResult.table.players[player1.id].hand).toEqual([])
-    expect(matchResult.table.players[player1.id].field.crops).toEqual<
-      IField['crops']
-    >([
+    expect(p1.hand).toEqual([])
+    expect(p1.field.crops).toEqual<IField['crops']>([
       {
         instance: expectInstance(carrot),
         wasWateredDuringTurn: false,
@@ -57,9 +57,7 @@ describe('player turn action handling', () => {
       },
       { instance: pumpkin1, wasWateredDuringTurn: false, waterCards: 0 },
     ])
-    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
-      [pumpkin1]
-    )
+    expect(p1.cardsPlayedDuringTurn).toEqual([pumpkin1])
   })
 
   test('player can harvest a crop card', () => {
@@ -81,11 +79,11 @@ describe('player turn action handling', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const p1 = matchResult.table.players[player1.id]
+    if (!p1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(matchResult.table.players[player1.id].field.crops).toEqual<
-      IField['crops']
-    >([undefined])
+    expect(p1.field.crops).toEqual<IField['crops']>([undefined])
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
         type: ShellNotificationType.CROP_HARVESTED,
@@ -94,9 +92,7 @@ describe('player turn action handling', () => {
         },
       }
     )
-    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
-      []
-    )
+    expect(p1.cardsPlayedDuringTurn).toEqual([])
   })
 
   test('player cannot play crop card if field is full', () => {
@@ -170,21 +166,19 @@ describe('player turn action handling', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const p1 = matchResult.table.players[player1.id]
+    if (!p1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(matchResult.table.players[player1.id].hand).toEqual([])
-    expect(matchResult.table.players[player1.id].field.crops).toEqual<
-      IField['crops']
-    >([
+    expect(p1.hand).toEqual([])
+    expect(p1.field.crops).toEqual<IField['crops']>([
       {
         instance: expectInstance(carrot),
         wasWateredDuringTurn: true,
         waterCards: 1,
       },
     ])
-    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
-      [expectInstance(water)]
-    )
+    expect(p1.cardsPlayedDuringTurn).toEqual([expectInstance(water)])
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
@@ -226,12 +220,12 @@ describe('player turn action handling', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const p1 = matchResult.table.players[player1.id]
+    if (!p1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(matchResult.table.players[player1.id].hand).toEqual([])
-    expect(matchResult.table.players[player1.id].discardPile).toEqual([
-      stubRain,
-    ])
+    expect(p1.hand).toEqual([])
+    expect(p1.discardPile).toEqual([stubRain])
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
@@ -241,9 +235,7 @@ describe('player turn action handling', () => {
         },
       }
     )
-    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
-      [stubRain]
-    )
+    expect(p1.cardsPlayedDuringTurn).toEqual([stubRain])
   })
 
   test('player can play a tool card', () => {
@@ -276,20 +268,18 @@ describe('player turn action handling', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const p1 = matchResult.table.players[player1.id]
+    if (!p1) throw new Error('Player not found')
+    const p1Before = match.table.players[player1.id]
+    if (!p1Before) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
     // NOTE: Asserts that shovel card was played (two cards were drawn)
-    expect(matchResult.table.players[player1.id].hand).toEqual(
-      match.table.players[player1.id].deck.slice(0, 2)
-    )
+    expect(p1.hand).toEqual(p1Before.deck.slice(0, 2))
 
-    expect(matchResult.table.players[player1.id].discardPile).toEqual([
-      stubShovel,
-    ])
-    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
-      [stubShovel]
-    )
+    expect(p1.discardPile).toEqual([stubShovel])
+    expect(p1.cardsPlayedDuringTurn).toEqual([stubShovel])
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
@@ -380,15 +370,17 @@ describe('player turn action handling', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const p1 = matchResult.table.players[player1.id]
+    if (!p1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
-    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
-      []
-    )
+    expect(p1.cardsPlayedDuringTurn).toEqual([])
 
+    const firstCall = startPlayerTurn.mock.calls[0]
+    if (!firstCall) throw new Error('startTurn not called')
     // NOTE: Indicates that bot logic has been executed
-    expect(startPlayerTurn.mock.calls[0][1]).toEqual(player2.id)
+    expect(firstCall[1]).toEqual(player2.id)
 
     // NOTE: Indicates that control has been returned back to the player
     expect(matchResult.currentPlayerId).toEqual(player1.id)

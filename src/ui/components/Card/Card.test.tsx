@@ -3,7 +3,12 @@ import { render } from '@testing-library/react'
 
 import { factory } from '../../../game/services/Factory'
 import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
-import { MatchEvent, MatchEventPayload, MatchState } from '../../../game/types'
+import {
+  MatchEvent,
+  MatchEventPayload,
+  MatchState,
+  IPlayer,
+} from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import {
   stubCarrot,
@@ -81,7 +86,9 @@ describe('Card', () => {
       .getByText(stubCardInstance.name)
       .closest(`.${cardFlipWrapperClassName}`)
 
-    const { transform } = getComputedStyle(card!)
+    if (!card) throw new Error('Card not found')
+
+    const { transform } = getComputedStyle(card)
     expect(transform).toEqual('')
   })
 
@@ -92,12 +99,16 @@ describe('Card', () => {
       .getByText(stubCardInstance.name)
       .closest(`.${cardFlipWrapperClassName}`)
 
-    const { transform } = getComputedStyle(card!)
+    if (!card) throw new Error('Card not found')
+
+    const { transform } = getComputedStyle(card)
     expect(transform).toEqual('rotateY(180deg)')
   })
 
   test('disables "Play crop" button when field is full during setup phase', () => {
     const match = stubMatch()
+    const player = match.table.players[stubPlayer1.id]
+    if (!player) throw new Error('Player not found')
 
     // Create a full field (6 crops)
     const fullFieldCrops = Array.from({ length: 6 }, () =>
@@ -105,8 +116,8 @@ describe('Card', () => {
     )
 
     // Update player's field in the match stub
-    const playerWithFullField = {
-      ...match.table.players[stubPlayer1.id],
+    const playerWithFullField: IPlayer = {
+      ...player,
       field: {
         crops: fullFieldCrops,
       },
