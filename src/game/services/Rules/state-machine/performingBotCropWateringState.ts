@@ -35,7 +35,6 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         assertCurrentPlayer(currentPlayerId)
 
         const player = lookup.getPlayer(match, currentPlayerId)
-
         const waterCardInHandIdx = player.hand.findIndex(cardInstance => {
           return isWaterCardInstance(cardInstance)
         })

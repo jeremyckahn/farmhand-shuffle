@@ -9,7 +9,6 @@ export const updatePlayedCrop = (
   newPlayedCropProperties: Partial<IPlayedCrop>
 ) => {
   const player = lookup.getPlayer(match, playerId)
-
   const { crops } = player.field
   const playedCrop = crops[cropIdx]
 

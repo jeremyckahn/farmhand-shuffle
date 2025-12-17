@@ -29,7 +29,6 @@ export const recordCardPlayEvents = (
       assertCurrentPlayer(currentPlayerId)
 
       const player = lookup.getPlayer(match, currentPlayerId)
-
       const card = player.hand[event.cardIdx]
 
       if (!card) {
