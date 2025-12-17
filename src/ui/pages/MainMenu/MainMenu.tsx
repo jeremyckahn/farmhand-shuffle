@@ -1,5 +1,6 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
+
 import { AppRoute } from '../../types'
 
 export const MainMenu = () => {
