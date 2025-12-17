@@ -21,7 +21,6 @@ describe('addCardsPlayedDuringTurn', () => {
       stubCarrot,
       stubPumpkin,
     ])
-
     const newPlayer = newMatch.table.players[player1Id]
 
     if (!newPlayer) {
@@ -43,7 +42,6 @@ describe('addCardsPlayedDuringTurn', () => {
       cardsPlayedDuringTurn: [stubCarrot, stubWater],
     })
     const newMatch = addCardsPlayedDuringTurn(match, player1Id, [stubPumpkin])
-
     const newPlayer = newMatch.table.players[player1Id]
 
     if (!newPlayer) {

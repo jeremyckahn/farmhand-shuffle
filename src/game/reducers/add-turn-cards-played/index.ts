@@ -8,8 +8,10 @@ export const addCardsPlayedDuringTurn = (
   cardInstances: CardInstance[]
 ) => {
   const player = lookup.getPlayer(match, playerId)
-
-  const cardsPlayedDuringTurn = [...cardInstances, ...player.cardsPlayedDuringTurn]
+  const cardsPlayedDuringTurn = [
+    ...cardInstances,
+    ...player.cardsPlayedDuringTurn,
+  ]
 
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn })
 

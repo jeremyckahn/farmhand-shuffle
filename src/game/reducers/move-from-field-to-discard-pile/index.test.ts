@@ -10,12 +10,14 @@ describe('moveFromFieldToDiscardPile', () => {
   test("moves a card from a player's field to their discard pile", () => {
     const match = stubMatch()
     const player = match.table.players[stubPlayer1.id]
+
     if (!player) throw new Error('Player not found')
 
     // eslint-disable-next-line functional/immutable-data
     player.field.crops[0] = factory.buildPlayedCrop(stubCarrot)
     const newMatch = moveFromFieldToDiscardPile(match, stubPlayer1.id, 0)
     const newPlayer = newMatch.table.players[stubPlayer1.id]
+
     if (!newPlayer) throw new Error('Player not found')
 
     expect(newPlayer.field.crops).toEqual([undefined])
@@ -25,6 +27,7 @@ describe('moveFromFieldToDiscardPile', () => {
   test('supports sparse fields', () => {
     const match = stubMatch()
     const player = match.table.players[stubPlayer1.id]
+
     if (!player) throw new Error('Player not found')
 
     const playedCarrot = factory.buildPlayedCrop(stubCarrot)
@@ -36,6 +39,7 @@ describe('moveFromFieldToDiscardPile', () => {
     player.field.crops[1] = playedPumpkin
     const newMatch = moveFromFieldToDiscardPile(match, stubPlayer1.id, 0)
     const newPlayer = newMatch.table.players[stubPlayer1.id]
+
     if (!newPlayer) throw new Error('Player not found')
 
     expect(newPlayer.field.crops).toEqual([undefined, playedPumpkin])
@@ -44,10 +48,15 @@ describe('moveFromFieldToDiscardPile', () => {
   test('throws an error if an invalid card index is specified', () => {
     const match = stubMatch()
     const player = match.table.players[stubPlayer1.id]
+
     if (!player) throw new Error('Player not found')
 
     expect(() => {
-      moveFromFieldToDiscardPile(match, stubPlayer1.id, player.field.crops.length)
+      moveFromFieldToDiscardPile(
+        match,
+        stubPlayer1.id,
+        player.field.crops.length
+      )
     }).toThrow(InvalidCardIndexError)
   })
 })

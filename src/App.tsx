@@ -22,10 +22,7 @@ const router = createBrowserRouter([
   {
     path: AppRoute.MATCH,
     element: (
-      <MatchPage
-        playerSeeds={[player1, player2]}
-        userPlayerId={player1.id}
-      />
+      <MatchPage playerSeeds={[player1, player2]} userPlayerId={player1.id} />
     ),
   },
 ])

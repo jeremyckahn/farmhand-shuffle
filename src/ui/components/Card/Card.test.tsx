@@ -89,6 +89,7 @@ describe('Card', () => {
     if (!card) throw new Error('Card not found')
 
     const { transform } = getComputedStyle(card)
+
     expect(transform).toEqual('')
   })
 
@@ -102,12 +103,14 @@ describe('Card', () => {
     if (!card) throw new Error('Card not found')
 
     const { transform } = getComputedStyle(card)
+
     expect(transform).toEqual('rotateY(180deg)')
   })
 
   test('disables "Play crop" button when field is full during setup phase', () => {
     const match = stubMatch()
     const player = match.table.players[stubPlayer1.id]
+
     if (!player) throw new Error('Player not found')
 
     // Create a full field (6 crops)
@@ -140,11 +143,7 @@ describe('Card', () => {
     })
 
     render(
-      <StubCard
-        cardInstance={stubCarrot}
-        playerId={stubPlayer1.id}
-        isFocused
-      />
+      <StubCard cardInstance={stubCarrot} playerId={stubPlayer1.id} isFocused />
     )
 
     const playCardButton = screen.getByText('Play crop')

@@ -1,11 +1,6 @@
 import { lookup } from '../../services/Lookup'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import {
-  IMatch,
-  IPlayedCrop,
-  IPlayer,
-  isCropCardInstance,
-} from '../../types'
+import { IMatch, IPlayedCrop, IPlayer, isCropCardInstance } from '../../types'
 import { array } from '../../../services/Array'
 import { addCropToField } from '../add-crop-to-field'
 import { updatePlayer } from '../update-player'
@@ -16,7 +11,6 @@ export const moveCropFromHandToField = (
   cropCardIdx: number
 ) => {
   const player = lookup.getPlayer(match, playerId)
-
   const { hand } = player
   const cardId = hand[cropCardIdx]
 

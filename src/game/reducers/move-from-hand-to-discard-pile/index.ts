@@ -11,7 +11,6 @@ export const moveFromHandToDiscardPile = (
   cardIdx: number
 ) => {
   const player = lookup.getPlayer(match, playerId)
-
   const { hand } = player
   const cardId = hand[cardIdx]
 

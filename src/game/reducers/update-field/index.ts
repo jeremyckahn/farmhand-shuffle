@@ -8,7 +8,6 @@ export const updateField = (
   newFieldProperties: Partial<IField>
 ) => {
   const player = lookup.getPlayer(match, playerId)
-
   const { field } = player
 
   match = updatePlayer(match, playerId, {
