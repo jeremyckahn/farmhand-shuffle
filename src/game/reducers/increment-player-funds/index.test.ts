@@ -22,7 +22,8 @@ describe('incrementPlayerFunds', () => {
 
     const newMatch = incrementPlayerFunds(match, player1Id, 5)
     const playerAfter = newMatch.table.players[player1Id]
-    if (!playerAfter) throw new Error('Player not found after incrementing funds')
+    if (!playerAfter)
+      throw new Error('Player not found after incrementing funds')
 
     expect(playerAfter.funds).toEqual(playerBefore.funds + 5)
   })
@@ -33,7 +34,8 @@ describe('incrementPlayerFunds', () => {
 
     const newMatch = incrementPlayerFunds(match, player1Id, -5)
     const playerAfter = newMatch.table.players[player1Id]
-    if (!playerAfter) throw new Error('Player not found after incrementing funds')
+    if (!playerAfter)
+      throw new Error('Player not found after incrementing funds')
 
     expect(playerAfter.funds).toEqual(playerBefore.funds - 5)
   })
@@ -48,7 +50,8 @@ describe('incrementPlayerFunds', () => {
       -playerBefore.funds - 1
     )
     const playerAfter = newMatch.table.players[player1Id]
-    if (!playerAfter) throw new Error('Player not found after incrementing funds')
+    if (!playerAfter)
+      throw new Error('Player not found after incrementing funds')
 
     expect(playerAfter.funds).toEqual(0)
   })

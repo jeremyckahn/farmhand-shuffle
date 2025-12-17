@@ -4,7 +4,9 @@ import { useEffect, useRef } from 'react'
 // unmounts. Useful for component animations that need to be cancelled if the
 // component unmounts before they complete (use it in a try/catch).
 export const useRejectingTimeout = () => {
-  const timeoutPool = useRef(new Map<ReturnType<typeof setTimeout>, () => void>())
+  const timeoutPool = useRef(
+    new Map<ReturnType<typeof setTimeout>, () => void>()
+  )
 
   useEffect(() => {
     const { current } = timeoutPool
