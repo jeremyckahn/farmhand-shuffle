@@ -1,10 +1,23 @@
+import seedrandom from 'seedrandom'
+
 export class RandomNumberService {
+  private rng: () => number = () => Math.random()
+
+  /**
+   * Initializes the random number generator with an optional seed.
+   * @param seed - The seed to use for the random number generator.
+   */
+  init(seed?: string) {
+    // eslint-disable-next-line functional/immutable-data
+    this.rng = seed ? seedrandom(seed) : () => Math.random()
+  }
+
   /**
    * Generates a random number between 0 (inclusive) and 1 (exclusive).
    * @returns A random number.
    */
   generate() {
-    return Math.random()
+    return this.rng()
   }
 
   /**

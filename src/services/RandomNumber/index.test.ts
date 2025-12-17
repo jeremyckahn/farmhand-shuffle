@@ -1,6 +1,31 @@
 import { randomNumber } from '.'
 
 describe('RandomNumber', () => {
+  afterEach(() => {
+    vitest.restoreAllMocks()
+    randomNumber.init() // Reset to unseeded for test isolation
+  })
+
+  describe('init', () => {
+    test('produces the same sequence of numbers when the same seed is used', () => {
+      randomNumber.init('test-seed')
+      const sequence1 = Array.from({ length: 5 }, () => randomNumber.generate())
+
+      randomNumber.init('test-seed')
+      const sequence2 = Array.from({ length: 5 }, () => randomNumber.generate())
+
+      expect(sequence1).toEqual(sequence2)
+    })
+
+    test('defaults to standard non-deterministic behavior when no seed is provided', () => {
+      randomNumber.init() // Explicitly unseeded
+      vitest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
+
+      const generatedNumber = randomNumber.generate()
+      expect(generatedNumber).toEqual(0.5)
+    })
+  })
+
   describe('generate', () => {
     test('generates random number', () => {
       vitest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
