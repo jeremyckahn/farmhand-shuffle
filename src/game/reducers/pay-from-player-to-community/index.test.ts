@@ -11,6 +11,7 @@ describe('payFromPlayerToCommunity', () => {
   beforeAll(() => {
     match = stubMatch()
     const maybePlayer1Id = Object.keys(match.table.players)[0]
+
     if (!maybePlayer1Id) throw new Error('Player not found in test setup')
 
     player1Id = maybePlayer1Id

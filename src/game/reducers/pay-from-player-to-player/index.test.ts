@@ -17,24 +17,28 @@ describe('payFromPlayerToPlayer', () => {
     if (!maybePlayer1Id || !maybePlayer2Id) {
       throw new Error('Player not found in test setup')
     }
+
     player1Id = maybePlayer1Id
     player2Id = maybePlayer2Id
   })
 
   describe('positive transactions', () => {
     test('transfers money from player to player', () => {
-      const p1 = match.table.players[player1Id]
-      const p2 = match.table.players[player2Id]
-      if (!p1 || !p2) throw new Error('Player not found in test setup')
+      const maybePlayer1 = match.table.players[player1Id]
+      const maybePlayer2 = match.table.players[player2Id]
+
+      if (!maybePlayer1 || !maybePlayer2)
+        throw new Error('Player not found in test setup')
 
       const newMatch = payFromPlayerToPlayer(match, 5, player1Id, player2Id)
+      const newPlayer1 = newMatch.table.players[player1Id]
+      const newPlayer2 = newMatch.table.players[player2Id]
 
-      const newP1 = newMatch.table.players[player1Id]
-      const newP2 = newMatch.table.players[player2Id]
-      if (!newP1 || !newP2) throw new Error('Player not found after reducer')
+      if (!newPlayer1 || !newPlayer2)
+        throw new Error('Player not found after reducer')
 
-      expect(newP1.funds).toEqual(p1.funds - 5)
-      expect(newP2.funds).toEqual(p2.funds + 5)
+      expect(newPlayer1.funds).toEqual(maybePlayer1.funds - 5)
+      expect(newPlayer2.funds).toEqual(maybePlayer2.funds + 5)
     })
 
     test('does not transfer more money from player than is available', () => {

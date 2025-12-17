@@ -27,6 +27,7 @@ describe('moveFromFieldToDiscardPile', () => {
   test('supports sparse fields', () => {
     const match = stubMatch()
     const player = match.table.players[stubPlayer1.id]
+
     if (!player) throw new Error('Player not found')
 
     const playedCarrot = factory.buildPlayedCrop(stubCarrot)

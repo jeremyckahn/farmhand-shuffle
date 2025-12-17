@@ -11,7 +11,6 @@ export const pullCardFromDeck = (
   idx: number
 ) => {
   const player = lookup.getPlayer(match, playerId)
-
   let hand = [...player.hand]
   let deck = [...player.deck]
   let discardPile = [...player.discardPile]
