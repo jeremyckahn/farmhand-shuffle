@@ -78,17 +78,17 @@ describe('rain card', () => {
       }
 
       const player1Crop1 = player1.field.crops[1]
-      const player1crop2 = player1.field.crops[2]
-      const player1crop3 = player1.field.crops[3]
-      const player2crop0 = player2.field.crops[0]
-      const player2crop2 = player2.field.crops[2]
+      const player1Crop2 = player1.field.crops[2]
+      const player1Crop3 = player1.field.crops[3]
+      const player2Crop0 = player2.field.crops[0]
+      const player2Crop2 = player2.field.crops[2]
 
       if (
         !player1Crop1 ||
-        !player1crop2 ||
-        !player1crop3 ||
-        !player2crop0 ||
-        !player2crop2
+        !player1Crop2 ||
+        !player1Crop3 ||
+        !player2Crop0 ||
+        !player2Crop2
       ) {
         throw new Error('Crop not found in test setup')
       }
@@ -97,20 +97,20 @@ describe('rain card', () => {
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
-      expect(player1crop2).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player1Crop2).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 3,
       })
-      expect(player1crop3).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player1Crop3).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
 
-      expect(player2crop0).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player2Crop0).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 1,
       })
-      expect(player2crop2).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player2Crop2).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 4,
       })

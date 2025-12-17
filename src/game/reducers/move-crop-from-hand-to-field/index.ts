@@ -1,7 +1,7 @@
+import { array } from '../../../services/Array'
 import { lookup } from '../../services/Lookup'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { IMatch, IPlayedCrop, IPlayer, isCropCardInstance } from '../../types'
-import { array } from '../../../services/Array'
+import { IMatch, IPlayedCrop, IPlayer } from '../../types'
 import { addCropToField } from '../add-crop-to-field'
 import { updatePlayer } from '../update-player'
 
@@ -20,12 +20,6 @@ export const moveCropFromHandToField = (
 
   const newHand = array.removeAt(hand, cropCardIdx)
   const cropInstance = lookup.getCropFromHand(match, playerId, cropCardIdx)
-
-  if (!isCropCardInstance(cropInstance)) {
-    // NOTE: This should be caught by getCropFromHand, but it satisfies
-    // TypeScript
-    throw new InvalidCardIndexError(cropCardIdx, playerId)
-  }
 
   const playedCropCard: IPlayedCrop = {
     instance: cropInstance,

@@ -11,7 +11,7 @@ import { updatePlayer } from '../../reducers/update-player'
 import { IMatch } from '../../types'
 import { isPlayer } from '../../types/guards'
 import { factory } from '../Factory'
-import { InvalidIdError } from '../Rules/errors'
+import { PlayerNotFoundError } from '../Rules/errors'
 
 import { lookup } from '.'
 
@@ -73,7 +73,7 @@ describe('Lookup', () => {
     test('throws an error when unavailable player is requested', () => {
       expect(() => {
         lookup.getPlayer(match, '')
-      }).toThrow(InvalidIdError)
+      }).toThrow(PlayerNotFoundError)
     })
   })
 

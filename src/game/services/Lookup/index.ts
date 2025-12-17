@@ -10,7 +10,7 @@ import { assertCurrentPlayer, isCrop } from '../../types/guards'
 import {
   InvalidCardError,
   InvalidCardIndexError,
-  InvalidIdError,
+  PlayerNotFoundError,
 } from '../Rules/errors'
 
 export class LookupService {
@@ -78,9 +78,7 @@ export class LookupService {
     const player = match.table.players[playerId]
 
     if (!player) {
-      throw new InvalidIdError(
-        `playerId ${playerId} does not correspond to any players in the match.`
-      )
+      throw new PlayerNotFoundError(playerId)
     }
 
     return player
