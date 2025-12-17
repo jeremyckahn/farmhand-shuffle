@@ -15,11 +15,7 @@ describe('CardQuantityControl', () => {
 
   test('renders card name and quantity', () => {
     render(
-      <CardQuantityControl
-        card={stubCarrot}
-        quantity={5}
-        onChange={onChange}
-      />
+      <CardQuantityControl card={stubCarrot} quantity={5} onChange={onChange} />
     )
 
     expect(screen.getByText(stubCarrot.name)).toBeInTheDocument()
@@ -28,47 +24,43 @@ describe('CardQuantityControl', () => {
 
   test('calls onChange with decremented value when minus clicked', () => {
     render(
-      <CardQuantityControl
-        card={stubCarrot}
-        quantity={5}
-        onChange={onChange}
-      />
+      <CardQuantityControl card={stubCarrot} quantity={5} onChange={onChange} />
     )
 
     fireEvent.click(screen.getByLabelText('decrease quantity'))
 
     expect(onChange).toHaveBeenCalledTimes(1)
+
     const call = onChange.mock.calls[0]
+
     if (!call) throw new Error('onChange not called')
+
     const updateFn = call[0] as (prev: number) => number
+
     expect(updateFn(5)).toBe(4)
   })
 
   test('calls onChange with incremented value when plus clicked', () => {
     render(
-      <CardQuantityControl
-        card={stubCarrot}
-        quantity={5}
-        onChange={onChange}
-      />
+      <CardQuantityControl card={stubCarrot} quantity={5} onChange={onChange} />
     )
 
     fireEvent.click(screen.getByLabelText('increase quantity'))
 
     expect(onChange).toHaveBeenCalledTimes(1)
+
     const call = onChange.mock.calls[0]
+
     if (!call) throw new Error('onChange not called')
+
     const updateFn = call[0] as (prev: number) => number
+
     expect(updateFn(5)).toBe(6)
   })
 
   test('disables minus button at quantity 0', () => {
     render(
-      <CardQuantityControl
-        card={stubCarrot}
-        quantity={0}
-        onChange={onChange}
-      />
+      <CardQuantityControl card={stubCarrot} quantity={0} onChange={onChange} />
     )
 
     const button = screen.getByLabelText('decrease quantity')
