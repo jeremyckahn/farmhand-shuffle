@@ -1,14 +1,9 @@
 import seedrandom from 'seedrandom'
 
 export class RandomNumberService {
-  private rng: () => number = () => Math.random()
+  private readonly rng: () => number
 
-  /**
-   * Initializes the random number generator with an optional seed.
-   * @param seed - The seed to use for the random number generator.
-   */
-  init(seed?: string) {
-    // eslint-disable-next-line functional/immutable-data
+  constructor(seed?: string | null) {
     this.rng = seed ? seedrandom(seed) : () => Math.random()
   }
 
@@ -71,4 +66,5 @@ export class RandomNumberService {
   }
 }
 
-export const randomNumber = new RandomNumberService()
+const seed = new URLSearchParams(window.location.search).get('seed')
+export const randomNumber = new RandomNumberService(seed)

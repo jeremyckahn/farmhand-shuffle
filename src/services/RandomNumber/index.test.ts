@@ -1,36 +1,36 @@
-import { randomNumber } from '.'
+import { RandomNumberService } from '.'
 
 describe('RandomNumber', () => {
   afterEach(() => {
     vitest.restoreAllMocks()
-    randomNumber.init() // Reset to unseeded for test isolation
   })
 
-  describe('init', () => {
+  describe('constructor', () => {
     test('produces the same sequence of numbers when the same seed is used', () => {
-      randomNumber.init('test-seed')
-      const sequence1 = Array.from({ length: 5 }, () => randomNumber.generate())
+      const service1 = new RandomNumberService('test-seed')
+      const sequence1 = Array.from({ length: 5 }, () => service1.generate())
 
-      randomNumber.init('test-seed')
-      const sequence2 = Array.from({ length: 5 }, () => randomNumber.generate())
+      const service2 = new RandomNumberService('test-seed')
+      const sequence2 = Array.from({ length: 5 }, () => service2.generate())
 
       expect(sequence1).toEqual(sequence2)
     })
 
     test('defaults to standard non-deterministic behavior when no seed is provided', () => {
-      randomNumber.init() // Explicitly unseeded
+      const service = new RandomNumberService()
       vitest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
 
-      const generatedNumber = randomNumber.generate()
+      const generatedNumber = service.generate()
       expect(generatedNumber).toEqual(0.5)
     })
   })
 
   describe('generate', () => {
     test('generates random number', () => {
+      const service = new RandomNumberService()
       vitest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
 
-      const generatedNumber = randomNumber.generate()
+      const generatedNumber = service.generate()
 
       expect(generatedNumber).toEqual(0.5)
     })
@@ -43,9 +43,10 @@ describe('RandomNumber', () => {
     ])(
       'choses a random index ($result) from an array $list',
       ({ generateMock, list, result }) => {
-        vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(generateMock)
+        const service = new RandomNumberService()
+        vitest.spyOn(service, 'generate').mockReturnValueOnce(generateMock)
 
-        const selectedIndex = randomNumber.randomIndex(list)
+        const selectedIndex = service.randomIndex(list)
 
         expect(selectedIndex).toEqual(result)
       }
@@ -54,9 +55,10 @@ describe('RandomNumber', () => {
 
   describe('chooseElement', () => {
     test('choses a random element from an array', () => {
-      vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(0.5)
+      const service = new RandomNumberService()
+      vitest.spyOn(service, 'generate').mockReturnValueOnce(0.5)
 
-      const selectedIndex = randomNumber.chooseElement([1, 2, 3])
+      const selectedIndex = service.chooseElement([1, 2, 3])
 
       expect(selectedIndex).toEqual(2)
     })
@@ -78,9 +80,10 @@ describe('RandomNumber', () => {
     ])(
       'chooses a random number between $a and $b',
       ({ a, b, rngStub, expected }) => {
-        vitest.spyOn(randomNumber, 'generate').mockReturnValueOnce(rngStub)
+        const service = new RandomNumberService()
+        vitest.spyOn(service, 'generate').mockReturnValueOnce(rngStub)
 
-        const selectedNumber = randomNumber.chooseIntegerBetween(a, b)
+        const selectedNumber = service.chooseIntegerBetween(a, b)
 
         expect(selectedNumber).toEqual(expected)
       }
@@ -90,8 +93,9 @@ describe('RandomNumber', () => {
       { a: 1, b: 2.5 },
       { a: 1.2, b: 2 },
     ])('throws an error if provided a floating point', ({ a, b }) => {
+      const service = new RandomNumberService()
       expect(() => {
-        randomNumber.chooseIntegerBetween(a, b)
+        service.chooseIntegerBetween(a, b)
       }).toThrow()
     })
   })
