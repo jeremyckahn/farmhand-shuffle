@@ -1,5 +1,11 @@
-import { Typography } from '@mui/material'
+import { DeckBuilder as DeckBuilderComponent } from '../../components/DeckBuilder'
 
 export const DeckBuilder = () => {
-  return <Typography variant="h1">Deck Builder</Typography>
+  return (
+    <DeckBuilderComponent
+      onDone={(deck) => {
+        console.log('Deck selected:', deck)
+      }}
+    />
+  )
 }
