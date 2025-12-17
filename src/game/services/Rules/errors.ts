@@ -59,6 +59,13 @@ export class InvalidIdError extends Error {
   }
 }
 
+export class PlayerNotFoundError extends Error {
+  constructor(playerId: IPlayer['id']) {
+    super(...arguments)
+    this.message = `[PlayerNotFoundError] Player ${playerId} not found.`
+  }
+}
+
 export class PlayerAbortError extends Error {
   constructor() {
     super(...arguments)

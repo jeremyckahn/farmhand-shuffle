@@ -9,30 +9,50 @@ describe('incrementPlayerFunds', () => {
 
   beforeEach(() => {
     match = stubMatch()
-    player1Id = Object.keys(match.table.players)[0]
+    const p1Id = Object.keys(match.table.players)[0]
+    if (!p1Id) {
+      throw new Error('Player not found in test setup')
+    }
+    player1Id = p1Id
   })
 
   test('adds funds', () => {
+    const playerBefore = match.table.players[player1Id]
+    if (!playerBefore) throw new Error('Player not found in test setup')
+
     const newMatch = incrementPlayerFunds(match, player1Id, 5)
-    expect(newMatch.table.players[player1Id].funds).toEqual(
-      match.table.players[player1Id].funds + 5
-    )
+    const playerAfter = newMatch.table.players[player1Id]
+    if (!playerAfter)
+      throw new Error('Player not found after incrementing funds')
+
+    expect(playerAfter.funds).toEqual(playerBefore.funds + 5)
   })
 
   test('removes funds', () => {
+    const playerBefore = match.table.players[player1Id]
+    if (!playerBefore) throw new Error('Player not found in test setup')
+
     const newMatch = incrementPlayerFunds(match, player1Id, -5)
-    expect(newMatch.table.players[player1Id].funds).toEqual(
-      match.table.players[player1Id].funds - 5
-    )
+    const playerAfter = newMatch.table.players[player1Id]
+    if (!playerAfter)
+      throw new Error('Player not found after incrementing funds')
+
+    expect(playerAfter.funds).toEqual(playerBefore.funds - 5)
   })
 
   test('does not remove more funds than the player has', () => {
+    const playerBefore = match.table.players[player1Id]
+    if (!playerBefore) throw new Error('Player not found in test setup')
+
     const newMatch = incrementPlayerFunds(
       match,
       player1Id,
-      -match.table.players[player1Id].funds - 1
+      -playerBefore.funds - 1
     )
+    const playerAfter = newMatch.table.players[player1Id]
+    if (!playerAfter)
+      throw new Error('Player not found after incrementing funds')
 
-    expect(newMatch.table.players[player1Id].funds).toEqual(0)
+    expect(playerAfter.funds).toEqual(0)
   })
 })

@@ -1,4 +1,5 @@
 import { IField, IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
 
 export const updateField = (
@@ -6,7 +7,8 @@ export const updateField = (
   playerId: IPlayer['id'],
   newFieldProperties: Partial<IField>
 ) => {
-  const { field } = match.table.players[playerId]
+  const player = lookup.getPlayer(match, playerId)
+  const { field } = player
 
   match = updatePlayer(match, playerId, {
     field: { ...field, ...newFieldProperties },

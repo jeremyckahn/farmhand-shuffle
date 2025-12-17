@@ -13,10 +13,11 @@ export const drawValidStartingHand = (
   match: IMatch,
   playerId: IPlayer['id']
 ) => {
+  const player = lookup.getPlayer(match, playerId)
   const cropIdxs = lookup.findCropIndexesInDeck(
     match,
     playerId,
-    match.table.players[playerId].deck.length
+    player.deck.length
   )
   const randomCropIdx = randomNumber.chooseElement(cropIdxs)
 
@@ -27,8 +28,9 @@ export const drawValidStartingHand = (
   }
 
   match = pullCardFromDeck(match, playerId, randomCropIdx)
+  const playerAfterPull = lookup.getPlayer(match, playerId)
   match = updatePlayer(match, playerId, {
-    hand: shuffle(match.table.players[playerId].hand),
+    hand: shuffle(playerAfterPull.hand),
   })
   match = drawCard(match, playerId, INITIAL_HAND_SIZE - 1)
 

@@ -18,6 +18,10 @@ const match = stubMatch()
 
 const [player1Id, player2Id] = Object.keys(match.table.players)
 
+if (!player1Id || !player2Id) {
+  throw new Error('Players not found')
+}
+
 const StubDeck = ({ ref, ...overrides }: Partial<DeckProps> = {}) => (
   <ActorContext.Provider>
     <Deck match={match} playerId={player1Id} {...overrides} />

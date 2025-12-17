@@ -11,6 +11,7 @@ import {
 } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { MatchStateCorruptError } from '../errors'
+import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
 
@@ -33,9 +34,8 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
-        const waterCardInHandIdx = match.table.players[
-          currentPlayerId
-        ].hand.findIndex(cardInstance => {
+        const player = lookup.getPlayer(match, currentPlayerId)
+        const waterCardInHandIdx = player.hand.findIndex(cardInstance => {
           return isWaterCardInstance(cardInstance)
         })
 
@@ -47,10 +47,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
           )
         }
 
-        const playedCrop =
-          match.table.players[currentPlayerId].field.crops[
-            cropIdxInFieldToWater
-          ]
+        const playedCrop = player.field.crops[cropIdxInFieldToWater]
 
         assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 

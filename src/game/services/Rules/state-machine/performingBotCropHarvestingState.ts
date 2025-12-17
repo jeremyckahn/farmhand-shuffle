@@ -3,6 +3,7 @@ import { enqueueActions } from 'xstate'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
 import { harvestCrop } from '../../../reducers/harvest-crop'
+import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
 
@@ -27,19 +28,21 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         const { currentPlayerId } = match
         assertCurrentPlayer(currentPlayerId)
 
-        const plantedCrop =
-          match.table.players[currentPlayerId].field.crops[cropCardIdxToHarvest]
+        if (cropCardIdxToHarvest !== undefined) {
+          const player = lookup.getPlayer(match, currentPlayerId)
+          const plantedCrop = player.field.crops[cropCardIdxToHarvest]
 
-        assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
+          assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
 
-        match = harvestCrop(match, currentPlayerId, cropCardIdxToHarvest)
+          match = harvestCrop(match, currentPlayerId, cropCardIdxToHarvest)
 
-        triggerNotification({
-          type: ShellNotificationType.CROP_HARVESTED,
-          payload: {
-            cropHarvested: plantedCrop.instance,
-          },
-        })
+          triggerNotification({
+            type: ShellNotificationType.CROP_HARVESTED,
+            payload: {
+              cropHarvested: plantedCrop.instance,
+            },
+          })
+        }
 
         enqueue.raise({
           type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,

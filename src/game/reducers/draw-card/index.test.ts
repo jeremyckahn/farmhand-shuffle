@@ -24,20 +24,42 @@ describe('drawCard', () => {
 
     beforeAll(() => {
       match = stubMatch()
-      player1Id = Object.keys(match.table.players)[0]
+      const maybePlayer1Id = Object.keys(match.table.players)[0]
+
+      if (!maybePlayer1Id) {
+        throw new Error('Player not found')
+      }
+
+      player1Id = maybePlayer1Id
       newMatch = drawCard(match, player1Id)
     })
 
     test("adds the drawn card to the player's hand", () => {
-      expect(newMatch.table.players[player1Id].hand).toEqual([
-        match.table.players[player1Id].deck[0],
-      ])
+      const player = match.table.players[player1Id]
+      const newPlayer = newMatch.table.players[player1Id]
+
+      if (!player || !newPlayer) {
+        throw new Error('Player not found')
+      }
+
+      const drawnCard = player.deck[0]
+
+      if (!drawnCard) {
+        throw new Error('Card not found')
+      }
+
+      expect(newPlayer.hand).toEqual([drawnCard])
     })
 
     test("removes the drawn card from the player's deck", () => {
-      expect(newMatch.table.players[player1Id].deck).toEqual(
-        match.table.players[player1Id].deck.slice(1)
-      )
+      const player = match.table.players[player1Id]
+      const newPlayer = newMatch.table.players[player1Id]
+
+      if (!player || !newPlayer) {
+        throw new Error('Player not found')
+      }
+
+      expect(newPlayer.deck).toEqual(player.deck.slice(1))
     })
   })
 
@@ -48,20 +70,36 @@ describe('drawCard', () => {
 
     beforeAll(() => {
       match = stubMatch()
-      player1Id = Object.keys(match.table.players)[0]
+      const maybePlayer1Id = Object.keys(match.table.players)[0]
+
+      if (!maybePlayer1Id) {
+        throw new Error('Player not found')
+      }
+
+      player1Id = maybePlayer1Id
       newMatch = drawCard(match, player1Id, 2)
     })
 
     test("adds the drawn cards to the player's hand", () => {
-      expect(newMatch.table.players[player1Id].hand).toEqual(
-        match.table.players[player1Id].deck.slice(0, 2)
-      )
+      const player = match.table.players[player1Id]
+      const newPlayer = newMatch.table.players[player1Id]
+
+      if (!player || !newPlayer) {
+        throw new Error('Player not found')
+      }
+
+      expect(newPlayer.hand).toEqual(player.deck.slice(0, 2))
     })
 
     test("removes the drawn cards from the player's deck", () => {
-      expect(newMatch.table.players[player1Id].deck).toEqual(
-        match.table.players[player1Id].deck.slice(2)
-      )
+      const player = match.table.players[player1Id]
+      const newPlayer = newMatch.table.players[player1Id]
+
+      if (!player || !newPlayer) {
+        throw new Error('Player not found')
+      }
+
+      expect(newPlayer.deck).toEqual(player.deck.slice(2))
     })
   })
 
@@ -72,18 +110,31 @@ describe('drawCard', () => {
 
     beforeAll(() => {
       match = stubMatch()
-      player1Id = Object.keys(match.table.players)[0]
-      newMatch = drawCard(
-        match,
-        player1Id,
-        match.table.players[player1Id].deck.length + 1
-      )
+      const maybePlayer1Id = Object.keys(match.table.players)[0]
+
+      if (!maybePlayer1Id) {
+        throw new Error('Player not found')
+      }
+
+      player1Id = maybePlayer1Id
+      const player = match.table.players[player1Id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      newMatch = drawCard(match, player1Id, player.deck.length + 1)
     })
 
     test("adds the drawn cards to the player's hand", () => {
-      expect(newMatch.table.players[player1Id].hand).toEqual(
-        match.table.players[player1Id].deck.slice(0)
-      )
+      const player = match.table.players[player1Id]
+      const newPlayer = newMatch.table.players[player1Id]
+
+      if (!player || !newPlayer) {
+        throw new Error('Player not found')
+      }
+
+      expect(newPlayer.hand).toEqual(player.deck.slice(0))
     })
   })
 
@@ -93,6 +144,10 @@ describe('drawCard', () => {
 
       const [player1Id] = Object.keys(match.table.players)
 
+      if (!player1Id) {
+        throw new Error('Player not found')
+      }
+
       const deck = [
         instantiate(pumpkin),
         instantiate(water),
@@ -101,15 +156,21 @@ describe('drawCard', () => {
       const discardPile = [instantiate(water), instantiate(carrot)]
       const hand = [instantiate(pumpkin)]
       match = updatePlayer(match, player1Id, { deck, discardPile, hand })
+      const player = match.table.players[player1Id]
 
-      const newMatch = drawCard(
-        match,
-        player1Id,
-        match.table.players[player1Id].deck.length + 1
-      )
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      const newMatch = drawCard(match, player1Id, player.deck.length + 1)
+      const newPlayer = newMatch.table.players[player1Id]
+
+      if (!newPlayer) {
+        throw new Error('Player not found')
+      }
 
       expect(shuffle).toHaveBeenCalledWith(discardPile)
-      expect(newMatch.table.players[player1Id]).toMatchObject({
+      expect(newPlayer).toMatchObject({
         hand: [...hand, ...deck],
         discardPile: [],
         deck: discardPile,

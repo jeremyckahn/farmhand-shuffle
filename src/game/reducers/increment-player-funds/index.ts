@@ -1,4 +1,5 @@
 import { IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
 
 export const incrementPlayerFunds = (
@@ -9,7 +10,9 @@ export const incrementPlayerFunds = (
    */
   amount: number
 ) => {
-  const { funds } = match.table.players[playerId]
+  const player = lookup.getPlayer(match, playerId)
+
+  const { funds } = player
   const newFunds = Math.max(0, funds + amount)
 
   match = updatePlayer(match, playerId, { funds: newFunds })

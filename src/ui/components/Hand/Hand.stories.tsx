@@ -71,7 +71,7 @@ const meta = {
             <Story args={{ ...args, match, sx: { m: 'auto', mt: 0 } }} />
             <Tooltip
               title={`Cards: ${
-                match.table.players[match.sessionOwnerPlayerId].hand.length
+                lookup.getPlayer(match, match.sessionOwnerPlayerId).hand.length
               }`}
               open
             >

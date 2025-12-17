@@ -10,7 +10,7 @@ import { assertCurrentPlayer, isCrop } from '../../types/guards'
 import {
   InvalidCardError,
   InvalidCardIndexError,
-  InvalidIdError,
+  PlayerNotFoundError,
 } from '../Rules/errors'
 
 export class LookupService {
@@ -19,7 +19,8 @@ export class LookupService {
     playerId: IPlayer['id'],
     cardIdx: number
   ) => {
-    const { hand } = match.table.players[playerId]
+    const player = this.getPlayer(match, playerId)
+    const { hand } = player
     const cardInstance = hand[cardIdx]
 
     if (!cardInstance) {
@@ -49,7 +50,8 @@ export class LookupService {
     playerId: IPlayer['id'],
     cardIdx: number
   ) => {
-    const { crops } = match.table.players[playerId].field
+    const player = this.getPlayer(match, playerId)
+    const { crops } = player.field
     const cardInstance = crops[cardIdx]
 
     if (!cardInstance) {
@@ -76,9 +78,7 @@ export class LookupService {
     const player = match.table.players[playerId]
 
     if (!player) {
-      throw new InvalidIdError(
-        `playerId ${playerId} does not correspond to any players in the match.`
-      )
+      throw new PlayerNotFoundError(playerId)
     }
 
     return player
@@ -101,7 +101,7 @@ export class LookupService {
     ) {
       const cardInstance = deck[i]
 
-      if (isCropCardInstance(cardInstance)) {
+      if (cardInstance && isCropCardInstance(cardInstance)) {
         cropCardIdxs = [...cropCardIdxs, i]
       }
     }
@@ -110,7 +110,8 @@ export class LookupService {
   }
 
   findCropIndexesInPlayerHand = (match: IMatch, playerId: IPlayer['id']) => {
-    const cropCardIdxsInPlayerHand = match.table.players[playerId].hand.reduce(
+    const player = this.getPlayer(match, playerId)
+    const cropCardIdxsInPlayerHand = player.hand.reduce(
       (acc: number[], cardInstance, idx) => {
         if (isCropCardInstance(cardInstance)) {
           acc = [...acc, idx]
@@ -125,7 +126,8 @@ export class LookupService {
   }
 
   findWaterIndexesInPlayerHand = (match: IMatch, playerId: IPlayer['id']) => {
-    const waterIdxsInPlayerHand = match.table.players[playerId].hand.reduce(
+    const player = this.getPlayer(match, playerId)
+    const waterIdxsInPlayerHand = player.hand.reduce(
       (acc: number[], cardInstance, idx) => {
         if (isWaterCardInstance(cardInstance)) {
           acc = [...acc, idx]
@@ -140,7 +142,8 @@ export class LookupService {
   }
 
   findEventIndexesInPlayerHand = (match: IMatch, playerId: IPlayer['id']) => {
-    const eventCardIdxsInPlayerHand = match.table.players[playerId].hand.reduce(
+    const player = this.getPlayer(match, playerId)
+    const eventCardIdxsInPlayerHand = player.hand.reduce(
       (acc: number[], cardInstance, idx) => {
         if (isEventCardInstance(cardInstance)) {
           acc = [...acc, idx]
@@ -155,7 +158,8 @@ export class LookupService {
   }
 
   findToolIndexesInPlayerHand = (match: IMatch, playerId: IPlayer['id']) => {
-    const toolIdxsInPlayerHand = match.table.players[playerId].hand.reduce(
+    const player = this.getPlayer(match, playerId)
+    const toolIdxsInPlayerHand = player.hand.reduce(
       (acc: number[], cardInstance, idx) => {
         if (isToolCardInstance(cardInstance)) {
           acc = [...acc, idx]

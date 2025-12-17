@@ -63,21 +63,23 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   const previousTurnStateForCurrentPlayer =
                     previousTurnMatchState.table.players[currentPlayerId]
 
-                  for (const cardPlayedDuringTurn of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
-                    if (
-                      isToolCardInstance(cardPlayedDuringTurn) &&
-                      cardPlayedDuringTurn.onStartFollowingTurn
-                    ) {
-                      const newContext =
-                        cardPlayedDuringTurn.onStartFollowingTurn({
-                          ...context,
-                          // NOTE: Updated match instance is passed explicitly
-                          // here so that the stale context.match reference is not
-                          // used.
-                          match,
-                        })
+                  if (previousTurnStateForCurrentPlayer) {
+                    for (const cardPlayedDuringTurn of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
+                      if (
+                        isToolCardInstance(cardPlayedDuringTurn) &&
+                        cardPlayedDuringTurn.onStartFollowingTurn
+                      ) {
+                        const newContext =
+                          cardPlayedDuringTurn.onStartFollowingTurn({
+                            ...context,
+                            // NOTE: Updated match instance is passed explicitly
+                            // here so that the stale context.match reference is not
+                            // used.
+                            match,
+                          })
 
-                      match = newContext.match
+                        match = newContext.match
+                      }
                     }
                   }
 
@@ -188,16 +190,18 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               const waterCardIdxsInPlayerHand =
                 lookup.findWaterIndexesInPlayerHand(match, currentPlayerId)
 
-              enqueue.raise(
-                {
-                  type: MatchEvent.PLAY_WATER,
-                  cardIdx: waterCardIdxsInPlayerHand[0],
-                  playerId: currentPlayerId,
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
-              )
+              if (waterCardIdxsInPlayerHand[0] !== undefined) {
+                enqueue.raise(
+                  {
+                    type: MatchEvent.PLAY_WATER,
+                    cardIdx: waterCardIdxsInPlayerHand[0],
+                    playerId: currentPlayerId,
+                  },
+                  {
+                    delay: BOT_ACTION_DELAY,
+                  }
+                )
+              }
             } else {
               enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
             }
@@ -308,16 +312,18 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             const areCropsToHarvest = cropCardIndicesToHarvest.length > 0
 
             if (areCropsToHarvest) {
-              enqueue.raise(
-                {
-                  type: MatchEvent.HARVEST_CROP,
-                  playerId: currentPlayerId,
-                  cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
-              )
+              if (cropCardIndicesToHarvest[0] !== undefined) {
+                enqueue.raise(
+                  {
+                    type: MatchEvent.HARVEST_CROP,
+                    playerId: currentPlayerId,
+                    cropIdxInFieldToHarvest: cropCardIndicesToHarvest[0],
+                  },
+                  {
+                    delay: BOT_ACTION_DELAY,
+                  }
+                )
+              }
             } else {
               enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
             }

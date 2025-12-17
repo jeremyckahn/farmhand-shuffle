@@ -84,8 +84,10 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
               const { currentPlayerId } = match
               assertCurrentPlayer(currentPlayerId)
 
-              const previousTurnStateForCurrentPlayer =
-                previousTurnMatchState.table.players[currentPlayerId]
+              const previousTurnStateForCurrentPlayer = lookup.getPlayer(
+                previousTurnMatchState,
+                currentPlayerId
+              )
 
               for (const turnCardPlayed of previousTurnStateForCurrentPlayer.cardsPlayedDuringTurn) {
                 if (

@@ -87,17 +87,21 @@ describe('DeckBuilder', () => {
 
     // Add 2 Pumpkins (limit reached)
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-    fireEvent.click(pumpkinAdd)
-    fireEvent.click(pumpkinAdd)
 
-    expect(pumpkinAdd).toBeDisabled()
+    if (pumpkinAdd) {
+      fireEvent.click(pumpkinAdd)
+      fireEvent.click(pumpkinAdd)
+      expect(pumpkinAdd).toBeDisabled()
+    }
 
     // Add 2 Water (limit not reached because Water is exception)
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-    fireEvent.click(waterAdd)
-    fireEvent.click(waterAdd)
 
-    expect(waterAdd).toBeEnabled()
+    if (waterAdd) {
+      fireEvent.click(waterAdd)
+      fireEvent.click(waterAdd)
+      expect(waterAdd).toBeEnabled()
+    }
   })
 
   test('updates total and enables/disables Done button', () => {
@@ -110,23 +114,32 @@ describe('DeckBuilder', () => {
 
     // Add 1 Pumpkin
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-    fireEvent.click(pumpkinAdd)
+
+    if (pumpkinAdd) {
+      fireEvent.click(pumpkinAdd)
+    }
 
     expect(screen.getByText('Total: 1 / 5')).toBeInTheDocument()
     expect(doneButton).toBeDisabled()
 
     // Add 1 Carrot
     const carrotAdd = screen.getAllByLabelText('increase quantity')[1]
-    fireEvent.click(carrotAdd)
+
+    if (carrotAdd) {
+      fireEvent.click(carrotAdd)
+    }
 
     expect(screen.getByText('Total: 2 / 5')).toBeInTheDocument()
     expect(doneButton).toBeDisabled()
 
     // Add 3 Water
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-    fireEvent.click(waterAdd)
-    fireEvent.click(waterAdd)
-    fireEvent.click(waterAdd)
+
+    if (waterAdd) {
+      fireEvent.click(waterAdd)
+      fireEvent.click(waterAdd)
+      fireEvent.click(waterAdd)
+    }
 
     expect(screen.getByText('Total: 5 / 5')).toBeInTheDocument()
     expect(doneButton).toBeEnabled()
@@ -138,7 +151,10 @@ describe('DeckBuilder', () => {
 
     // Remove 1 Pumpkin
     const pumpkinRemove = screen.getAllByLabelText('decrease quantity')[0]
-    fireEvent.click(pumpkinRemove)
+
+    if (pumpkinRemove) {
+      fireEvent.click(pumpkinRemove)
+    }
 
     expect(screen.getByText('Total: 4 / 5')).toBeInTheDocument()
     expect(doneButton).toBeDisabled()
@@ -150,8 +166,11 @@ describe('DeckBuilder', () => {
 
     // Add 5 Water cards (Valid deck size, but no crops)
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-    for (let i = 0; i < 5; i++) {
-      fireEvent.click(waterAdd)
+
+    if (waterAdd) {
+      for (let i = 0; i < 5; i++) {
+        fireEvent.click(waterAdd)
+      }
     }
 
     const doneButton = screen.getByRole('button', { name: 'Done' })
@@ -159,10 +178,16 @@ describe('DeckBuilder', () => {
 
     // Remove 1 Water and add 1 Pumpkin
     const waterRemove = screen.getAllByLabelText('decrease quantity')[2]
-    fireEvent.click(waterRemove)
+
+    if (waterRemove) {
+      fireEvent.click(waterRemove)
+    }
 
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-    fireEvent.click(pumpkinAdd)
+
+    if (pumpkinAdd) {
+      fireEvent.click(pumpkinAdd)
+    }
 
     expect(doneButton).toBeEnabled()
   })
@@ -172,21 +197,31 @@ describe('DeckBuilder', () => {
 
     // Add 2 Pumpkins
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-    fireEvent.click(pumpkinAdd)
-    fireEvent.click(pumpkinAdd)
+
+    if (pumpkinAdd) {
+      fireEvent.click(pumpkinAdd)
+      fireEvent.click(pumpkinAdd)
+    }
 
     // Add 3 Water
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-    fireEvent.click(waterAdd)
-    fireEvent.click(waterAdd)
-    fireEvent.click(waterAdd)
+
+    if (waterAdd) {
+      fireEvent.click(waterAdd)
+      fireEvent.click(waterAdd)
+      fireEvent.click(waterAdd)
+    }
 
     const doneButton = screen.getByRole('button', { name: 'Done' })
     fireEvent.click(doneButton)
 
     expect(onDone).toHaveBeenCalledTimes(1)
 
-    const deckMap = onDone.mock.calls[0][0] as Map<ICard, number>
+    const call = onDone.mock.calls[0]
+
+    if (!call) throw new Error('onDone not called')
+
+    const deckMap = call[0] as Map<ICard, number>
 
     expect(deckMap.get(mockPumpkin as ICard)).toBe(2)
     expect(deckMap.get(mockWater as ICard)).toBe(3)

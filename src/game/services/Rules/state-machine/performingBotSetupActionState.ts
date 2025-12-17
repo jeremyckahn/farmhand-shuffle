@@ -37,9 +37,9 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             const { currentPlayerId } = match
             assertCurrentPlayer(currentPlayerId)
 
+            const player = lookup.getPlayer(match, currentPlayerId)
             const hasBotCompletedSetup =
-              match.table.players[currentPlayerId].field.crops.length > 0 &&
-              cropsToPlayDuringTurn === 0
+              player.field.crops.length > 0 && cropsToPlayDuringTurn === 0
 
             if (hasBotCompletedSetup) {
               // NOTE: Returns control to the player

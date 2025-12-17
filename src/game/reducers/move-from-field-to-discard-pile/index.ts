@@ -1,5 +1,6 @@
 import { array } from '../../../services/Array'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
+import { lookup } from '../../services/Lookup'
 import { IMatch, IPlayer } from '../../types'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updateField } from '../update-field'
@@ -18,7 +19,8 @@ export const moveFromFieldToDiscardPile = (
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  const { field } = match.table.players[playerId]
+  const player = lookup.getPlayer(match, playerId)
+  const { field } = player
   const playedCrop = field.crops[cardIdx]
 
   if (!playedCrop) {

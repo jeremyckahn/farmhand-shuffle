@@ -212,19 +212,18 @@ describe('bot turn action handling', () => {
 
         expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
         expect(matchResult.currentPlayerId).toBe(player1.id)
-        expect(matchResult.table.players[player2.id].field.crops).toEqual<
-          IField['crops']
-        >(resultingFieldCrops)
-        expect(matchResult.table.players[player2.id].hand).toEqual(
-          resultingHand
-        )
-        expect(matchResult.table.players[player2.id].deck).toEqual(
-          resultingDeck
-        )
+
+        const player = matchResult.table.players[player2.id]
+
+        if (!player) {
+          throw new Error('Player not found')
+        }
+
+        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.hand).toEqual(resultingHand)
+        expect(player.deck).toEqual(resultingDeck)
         expect(cropsToPlayDuringTurn).toEqual(0)
-        expect(
-          matchResult.table.players[player2.id].cardsPlayedDuringTurn
-        ).toEqual(playedCards)
+        expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
         const wereAnyCropsWatered = resultingFieldCrops.some(
           crop => crop && crop.wasWateredDuringTurn
@@ -347,15 +346,18 @@ describe('bot turn action handling', () => {
 
         expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
         expect(matchResult.currentPlayerId).toBe(player1.id)
-        expect(matchResult.table.players[player2.id].field.crops).toEqual<
-          IField['crops']
-        >(resultingFieldCrops)
-        expect(matchResult.table.players[player2.id].discardPile).toEqual<
-          IPlayer['discardPile']
-        >(resultingDiscardPile)
-        expect(
-          matchResult.table.players[player2.id].cardsPlayedDuringTurn
-        ).toEqual(playedCards)
+
+        const player = matchResult.table.players[player2.id]
+
+        if (!player) {
+          throw new Error('Player not found')
+        }
+
+        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.discardPile).toEqual<IPlayer['discardPile']>(
+          resultingDiscardPile
+        )
+        expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
       }
     )
 
@@ -409,9 +411,14 @@ describe('bot turn action handling', () => {
       matchActor.send({ type: MatchEvent.START_TURN })
 
       // NOTE: Indicates that another Carrot was drawn
-      expect(
-        matchActor.getSnapshot().context.match.table.players[player2.id].hand
-      ).toEqual([...startingHand, expectInstance(carrot)])
+      let player =
+        matchActor.getSnapshot().context.match.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      expect(player.hand).toEqual([...startingHand, expectInstance(carrot)])
 
       // NOTE: Performs all bot turn logic
       vi.runAllTimers()
@@ -426,14 +433,17 @@ describe('bot turn action handling', () => {
 
       expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
       expect(matchResult.currentPlayerId).toBe(player1.id)
-      expect(matchResult.table.players[player2.id].hand).toEqual(resultingHand)
-      expect(matchResult.table.players[player2.id].field.crops).toEqual<
-        IField['crops']
-      >(resultingFieldCrops)
+
+      player = matchResult.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      expect(player.hand).toEqual(resultingHand)
+      expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
       expect(cropsToPlayDuringTurn).toEqual(0)
-      expect(
-        matchResult.table.players[player2.id].cardsPlayedDuringTurn
-      ).toEqual(playedCards)
+      expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
       const shellNotification: ShellNotification = {
         type: ShellNotificationType.CROP_WATERED,
@@ -530,13 +540,17 @@ describe('bot turn action handling', () => {
         expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
         expect(matchResult.currentPlayerId).toBe(player1.id)
 
-        expect(matchResult.table.players[player2.id].hand).toEqual<
-          IPlayer['hand']
-        >(resultingHand)
+        const player = matchResult.table.players[player2.id]
 
-        expect(matchResult.table.players[player2.id].discardPile).toEqual<
-          IPlayer['discardPile']
-        >(resultingDiscardPile)
+        if (!player) {
+          throw new Error('Player not found')
+        }
+
+        expect(player.hand).toEqual<IPlayer['hand']>(resultingHand)
+
+        expect(player.discardPile).toEqual<IPlayer['discardPile']>(
+          resultingDiscardPile
+        )
 
         const shellNotification: ShellNotification = {
           type: ShellNotificationType.EVENT_CARD_PLAYED,
@@ -554,9 +568,7 @@ describe('bot turn action handling', () => {
             ShellNotification[]
           >(shellNotification)
         }
-        expect(
-          matchResult.table.players[player2.id].cardsPlayedDuringTurn
-        ).toEqual(playedCards)
+        expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
       }
     )
   })
@@ -636,15 +648,18 @@ describe('bot turn action handling', () => {
 
         expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
         expect(matchResult.currentPlayerId).toBe(player1.id)
-        expect(matchResult.table.players[player2.id].hand).toEqual<
-          IPlayer['hand']
-        >(resultingHand)
-        expect(matchResult.table.players[player2.id].discardPile).toEqual<
-          IPlayer['discardPile']
-        >(resultingDiscardPile)
-        expect(
-          matchResult.table.players[player2.id].cardsPlayedDuringTurn
-        ).toEqual(playedCards)
+
+        const player = matchResult.table.players[player2.id]
+
+        if (!player) {
+          throw new Error('Player not found')
+        }
+
+        expect(player.hand).toEqual<IPlayer['hand']>(resultingHand)
+        expect(player.discardPile).toEqual<IPlayer['discardPile']>(
+          resultingDiscardPile
+        )
+        expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
         const shellNotification: ShellNotification = {
           type: ShellNotificationType.TOOL_CARD_PLAYED,

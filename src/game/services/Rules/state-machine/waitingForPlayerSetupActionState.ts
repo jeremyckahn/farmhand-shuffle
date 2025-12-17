@@ -4,6 +4,7 @@ import { STANDARD_FIELD_SIZE } from '../../../config'
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
 import { MatchEvent, MatchState } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
+import { lookup } from '../../Lookup'
 
 import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
@@ -22,9 +23,9 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
           const { currentPlayerId } = match
           assertCurrentPlayer(currentPlayerId)
 
-          const player = match.table.players[playerId]
+          const player = lookup.getPlayer(match, playerId)
           const isFieldFull =
-            player.field.crops.filter((crop) => crop !== undefined).length >=
+            player.field.crops.filter(crop => crop !== undefined).length >=
             STANDARD_FIELD_SIZE
 
           if (isFieldFull) {

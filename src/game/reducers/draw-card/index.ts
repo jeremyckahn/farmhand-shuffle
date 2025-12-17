@@ -1,6 +1,7 @@
 import shuffle from 'lodash.shuffle'
 
 import { IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
 
 export const drawCard = (
@@ -8,9 +9,10 @@ export const drawCard = (
   playerId: IPlayer['id'],
   howMany = 1
 ) => {
-  let newHand = [...match.table.players[playerId].hand]
-  let newDeck = [...match.table.players[playerId].deck]
-  let newDiscardPile = [...match.table.players[playerId].discardPile]
+  const player = lookup.getPlayer(match, playerId)
+  let newHand = [...player.hand]
+  let newDeck = [...player.deck]
+  let newDiscardPile = [...player.discardPile]
 
   const drawnCards = newDeck.slice(0, howMany)
   newDeck = newDeck.slice(howMany)

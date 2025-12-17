@@ -48,18 +48,17 @@ describe('match setup', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const maybePlayer1 = matchResult.table.players[player1.id]
+
+    if (!maybePlayer1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_SETUP_ACTION)
-    expect(matchResult.table.players[player1.id].hand).toEqual([])
-    expect(matchResult.table.players[player1.id].field.crops).toEqual<
-      IPlayedCrop[]
-    >([
+    expect(maybePlayer1.hand).toEqual([])
+    expect(maybePlayer1.field.crops).toEqual<IPlayedCrop[]>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
     ])
-    expect(matchResult.table.players[player1.id].cardsPlayedDuringTurn).toEqual(
-      [carrot2, carrot1]
-    )
+    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([carrot2, carrot1])
   })
 
   test('completes the bot setup sequence', () => {
@@ -99,17 +98,18 @@ describe('match setup', () => {
       value,
       context: { match: matchResult },
     } = matchActor.getSnapshot()
+    const maybePlayer2 = matchResult.table.players[player2.id]
+
+    if (!maybePlayer2) throw new Error('Player not found')
 
     // NOTE: Indicates that the bot has completed setup and has given control back to the player
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
     expect(matchResult.currentPlayerId).toEqual(player1.id)
-    expect(matchResult.table.players[player2.id].field.crops).toEqual<
-      IPlayedCrop[]
-    >([{ instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 }])
-    expect(matchResult.table.players[player2.id].cardsPlayedDuringTurn).toEqual(
-      [carrot2]
-    )
+    expect(maybePlayer2.field.crops).toEqual<IPlayedCrop[]>([
+      { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
+    ])
+    expect(maybePlayer2.cardsPlayedDuringTurn).toEqual([carrot2])
   })
 
   test('does not let match start until all players have set up', () => {

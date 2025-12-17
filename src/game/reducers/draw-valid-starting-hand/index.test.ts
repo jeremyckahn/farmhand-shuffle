@@ -30,6 +30,11 @@ describe('drawValidStartingHand', () => {
 
     match = drawValidStartingHand(match, stubPlayer1.id)
 
-    expect(match.table.players[stubPlayer1.id].hand).toContain(stubCarrot)
+    const player = match.table.players[stubPlayer1.id]
+    if (!player) {
+      throw new Error('Player not found')
+    }
+
+    expect(player.hand).toContain(stubCarrot)
   })
 })

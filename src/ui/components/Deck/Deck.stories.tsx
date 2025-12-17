@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
 import { stubMatch } from '../../../test-utils/stubs/match'
+import { PlayerNotFoundError } from '../../../game/services/Rules/errors'
 
 import { Deck, defaultDeckCardSize, defaultDeckThicknessPx } from './Deck'
 
@@ -29,6 +30,10 @@ type Story = StoryObj<typeof meta>
 
 const match = stubMatch()
 const opponentPlayerId = Object.keys(match.table.players)[1]
+
+if (!opponentPlayerId) {
+  throw new PlayerNotFoundError('opponentPlayerId')
+}
 
 export const SelfDeck: Story = {
   args: {

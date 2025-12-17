@@ -1,6 +1,7 @@
 import clamp from 'lodash.clamp'
 
 import { IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { incrementCommunityFund } from '../increment-community-fund'
 import { incrementPlayerFunds } from '../increment-player-funds'
 
@@ -9,7 +10,8 @@ export const payFromPlayerToCommunity = (
   amount: number,
   sourcePlayerId: IPlayer['id']
 ) => {
-  const { funds: sourcePlayerFunds } = match.table.players[sourcePlayerId]
+  const sourcePlayer = lookup.getPlayer(match, sourcePlayerId)
+  const { funds: sourcePlayerFunds } = sourcePlayer
   const { communityFund } = match.table
   const clampedAmount = clamp(amount, -communityFund, sourcePlayerFunds)
 

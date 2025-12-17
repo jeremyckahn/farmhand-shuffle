@@ -49,6 +49,10 @@ vi.mock('../Card', () => ({
 let matchStub = stubMatch()
 const opponentPlayerId = Object.keys(matchStub.table.players)[1]
 
+if (!opponentPlayerId) {
+  throw new Error('Opponent player not found')
+}
+
 const cropsStub = [
   { ...factory.buildPlayedCrop(stubCarrot), waterCards: 1 },
   { ...factory.buildPlayedCrop(stubPumpkin), waterCards: 3 },
@@ -106,6 +110,10 @@ describe('Field', () => {
     const [playedCrop1, ...restPlayedCrops] =
       screen.getAllByLabelText(unselectedCardLabel)
 
+    if (!playedCrop1) {
+      throw new Error('Crop not found')
+    }
+
     await userEvent.click(playedCrop1)
 
     const { transform: playedCrop1Transform } = getComputedStyle(playedCrop1)
@@ -127,6 +135,10 @@ describe('Field', () => {
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
+    if (!playedCrop1) {
+      throw new Error('Crop not found')
+    }
+
     await userEvent.click(playedCrop1)
 
     const { transform } = getComputedStyle(playedCrop1)
@@ -141,6 +153,10 @@ describe('Field', () => {
     render(<StubField />)
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    if (!playedCrop1) {
+      throw new Error('Crop not found')
+    }
 
     await userEvent.click(playedCrop1)
 
@@ -158,6 +174,11 @@ describe('Field', () => {
 
     const [playedCrop1, playedCrop2] =
       screen.getAllByLabelText(unselectedCardLabel)
+
+    if (!playedCrop1 || !playedCrop2) {
+      throw new Error('Crops not found')
+    }
+
     await userEvent.click(playedCrop1)
 
     await waitFor(async () => {
@@ -179,6 +200,10 @@ describe('Field', () => {
     render(<StubField />)
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    if (!playedCrop1) {
+      throw new Error('Crop not found')
+    }
 
     await userEvent.click(playedCrop1)
 

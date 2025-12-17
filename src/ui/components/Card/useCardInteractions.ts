@@ -7,6 +7,7 @@ import {
   MatchState,
   isCropCardInstance,
 } from '../../../game/types'
+import { lookup } from '../../../game/services/Lookup'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
@@ -107,10 +108,10 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
         ].includes(matchState)
       ) {
         showPlayCardButton = true
-        const player = match.table.players[playerId]
+        const player = lookup.getPlayer(match, playerId)
 
         if (
-          player.field.crops.filter((crop) => crop !== undefined).length >=
+          player.field.crops.filter(crop => crop !== undefined).length >=
           STANDARD_FIELD_SIZE
         ) {
           playButtonDisabled = true

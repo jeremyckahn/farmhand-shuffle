@@ -36,6 +36,10 @@ type Story = StoryObj<typeof meta>
 const match = stubMatch()
 const [selfPlayerId, opponentPlayerId] = Object.keys(match.table.players)
 
+if (!selfPlayerId || !opponentPlayerId) {
+  throw new Error('Players not found')
+}
+
 export const SelfDiscardPile: Story = {
   args: {
     playerId: selfPlayerId,

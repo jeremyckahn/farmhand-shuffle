@@ -1,4 +1,5 @@
 import { IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
 
 /**
@@ -15,8 +16,8 @@ export const removeTurnCardsPlayed = (
   playerId: IPlayer['id'],
   howMany = Infinity
 ) => {
-  const cardsPlayedDuringTurn =
-    match.table.players[playerId].cardsPlayedDuringTurn.slice(howMany)
+  const player = lookup.getPlayer(match, playerId)
+  const cardsPlayedDuringTurn = player.cardsPlayedDuringTurn.slice(howMany)
 
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn })
 

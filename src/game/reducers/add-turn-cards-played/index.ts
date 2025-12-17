@@ -1,4 +1,5 @@
 import { CardInstance, IMatch, IPlayer } from '../../types'
+import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
 
 export const addCardsPlayedDuringTurn = (
@@ -6,9 +7,10 @@ export const addCardsPlayedDuringTurn = (
   playerId: IPlayer['id'],
   cardInstances: CardInstance[]
 ) => {
+  const player = lookup.getPlayer(match, playerId)
   const cardsPlayedDuringTurn = [
     ...cardInstances,
-    ...match.table.players[playerId].cardsPlayedDuringTurn,
+    ...player.cardsPlayedDuringTurn,
   ]
 
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn })

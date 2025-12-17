@@ -34,18 +34,21 @@ describe('shovel', () => {
       cardIdx: 0,
     })
 
+    const playerBefore = matchBeforePlayingShovel.table.players[player1.id]
+
+    if (!playerBefore) throw new Error('Player not found in test setup')
+
     {
       const {
         context: { match: matchResult },
       } = matchActor.getSnapshot()
+      const player = matchResult.table.players[player1.id]
+
+      if (!player) throw new Error('Player not found after playing shovel')
 
       // NOTE: Asserts that cards were drawn
-      expect(matchResult.table.players[player1.id].hand).toEqual(
-        matchBeforePlayingShovel.table.players[player1.id].deck.slice(0, 2)
-      )
-      expect(matchResult.table.players[player1.id].deck).toEqual(
-        matchBeforePlayingShovel.table.players[player1.id].deck.slice(2)
-      )
+      expect(player.hand).toEqual(playerBefore.deck.slice(0, 2))
+      expect(player.deck).toEqual(playerBefore.deck.slice(2))
     }
 
     // NOTE: Ends player turn and starts bot player turn
@@ -61,15 +64,15 @@ describe('shovel', () => {
       context: { match: matchResult },
     } = matchActor.getSnapshot()
 
+    const player = matchResult.table.players[player1.id]
+
+    if (!player) throw new Error('Player not found after bot turn')
+
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
     // NOTE: Asserts that no new cards were drawn
-    expect(matchResult.table.players[player1.id].hand).toEqual(
-      matchBeforePlayingShovel.table.players[player1.id].deck.slice(0, 2)
-    )
-    expect(matchResult.table.players[player1.id].deck).toEqual(
-      matchBeforePlayingShovel.table.players[player1.id].deck.slice(2)
-    )
+    expect(player.hand).toEqual(playerBefore.deck.slice(0, 2))
+    expect(player.deck).toEqual(playerBefore.deck.slice(2))
   })
 
   test('bot draws two cards and prevents card draw on next turn', () => {
@@ -118,23 +121,28 @@ describe('shovel', () => {
     // NOTE: Bot logic is intentionally not run at this point so that pre-logic
     // (planting crops, playing events, etc.) state can be evaluated
 
+    const playerAfterShovel = matchAfterPlayingShovel.table.players[player2.id]
+
+    if (!playerAfterShovel) {
+      throw new Error('Player not found after playing shovel')
+    }
+
     {
       const {
         context: { match: matchResult },
       } = matchActor.getSnapshot()
+      const player = matchResult.table.players[player2.id]
+
+      if (!player) throw new Error('Player not found after bot turn')
 
       // NOTE: Indicates that the card draw has been skipped
-      expect(matchResult.table.players[player2.id].hand).toEqual<
-        IPlayer['hand']
-      >(matchAfterPlayingShovel.table.players[player2.id].hand)
-      expect(matchResult.table.players[player2.id].discardPile).toEqual<
-        IPlayer['discardPile']
-      >(matchAfterPlayingShovel.table.players[player2.id].discardPile)
+      expect(player.hand).toEqual<IPlayer['hand']>(playerAfterShovel.hand)
+      expect(player.discardPile).toEqual<IPlayer['discardPile']>(
+        playerAfterShovel.discardPile
+      )
 
       // NOTE: Indicates that the bot's turn has started properly
-      expect(
-        matchResult.table.players[player2.id].cardsPlayedDuringTurn
-      ).toEqual<IPlayer['discardPile']>([])
+      expect(player.cardsPlayedDuringTurn).toEqual<IPlayer['discardPile']>([])
     }
   })
 })

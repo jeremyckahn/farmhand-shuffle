@@ -70,34 +70,47 @@ describe('rain card', () => {
         },
       })
 
-      expect(
-        updatedMatch.table.players[stubPlayer1.id].field.crops[1]
-      ).toMatchObject<Partial<IPlayedCrop>>({
+      const player1 = updatedMatch.table.players[stubPlayer1.id]
+      const player2 = updatedMatch.table.players[stubPlayer2.id]
+
+      if (!player1 || !player2) {
+        throw new Error('Player not found in test setup')
+      }
+
+      const player1Crop1 = player1.field.crops[1]
+      const player1Crop2 = player1.field.crops[2]
+      const player1Crop3 = player1.field.crops[3]
+      const player2Crop0 = player2.field.crops[0]
+      const player2Crop2 = player2.field.crops[2]
+
+      if (
+        !player1Crop1 ||
+        !player1Crop2 ||
+        !player1Crop3 ||
+        !player2Crop0 ||
+        !player2Crop2
+      ) {
+        throw new Error('Crop not found in test setup')
+      }
+
+      expect(player1Crop1).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
-      expect(
-        updatedMatch.table.players[stubPlayer1.id].field.crops[2]
-      ).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player1Crop2).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 3,
       })
-      expect(
-        updatedMatch.table.players[stubPlayer1.id].field.crops[3]
-      ).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player1Crop3).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 2,
       })
 
-      expect(
-        updatedMatch.table.players[stubPlayer2.id].field.crops[0]
-      ).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player2Crop0).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 1,
       })
-      expect(
-        updatedMatch.table.players[stubPlayer2.id].field.crops[2]
-      ).toMatchObject<Partial<IPlayedCrop>>({
+      expect(player2Crop2).toMatchObject<Partial<IPlayedCrop>>({
         wasWateredDuringTurn: true,
         waterCards: 4,
       })

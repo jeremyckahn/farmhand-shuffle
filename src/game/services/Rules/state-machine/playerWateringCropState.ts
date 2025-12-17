@@ -10,6 +10,7 @@ import {
   ShellNotificationType,
 } from '../../../types'
 import { assertIsPlayedCrop } from '../../../types/guards'
+import { lookup } from '../../Lookup'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
 import { RulesMachineConfig } from './types'
@@ -59,8 +60,8 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
             const { playerId, waterCardInHandIdx, cropIdxInFieldToWater } =
               event
 
-            const playedCrop =
-              match.table.players[playerId].field.crops[cropIdxInFieldToWater]
+            const player = lookup.getPlayer(match, playerId)
+            const playedCrop = player.field.crops[cropIdxInFieldToWater]
 
             assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 

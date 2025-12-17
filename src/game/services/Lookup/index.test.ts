@@ -8,10 +8,10 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { carrot, instantiate, pumpkin, water } from '../../cards'
 import { updatePlayer } from '../../reducers/update-player'
-import { IMatch, IPlayer } from '../../types'
+import { IMatch } from '../../types'
 import { isPlayer } from '../../types/guards'
 import { factory } from '../Factory'
-import { InvalidIdError } from '../Rules/errors'
+import { PlayerNotFoundError } from '../Rules/errors'
 
 import { lookup } from '.'
 
@@ -20,14 +20,18 @@ const match = stubMatch()
 describe('Lookup', () => {
   describe('getCardFromHand', () => {
     let mutatedMatch: IMatch
-    let player1Id: IPlayer['id']
+    const { id: player1Id } = stubPlayer1
 
     beforeEach(() => {
       mutatedMatch = stubMatch()
-      player1Id = Object.keys(mutatedMatch.table.players)[0]
+      const player = mutatedMatch.table.players[player1Id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
 
       // eslint-disable-next-line functional/immutable-data
-      mutatedMatch.table.players[player1Id].hand[0] = stubCarrot
+      player.hand[0] = stubCarrot
     })
 
     test('returns card from hand', () => {
@@ -37,12 +41,14 @@ describe('Lookup', () => {
     })
 
     test('throws an error when specified card is not in hand', () => {
+      const player = mutatedMatch.table.players[player1Id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
       expect(() => {
-        lookup.getCardFromHand(
-          mutatedMatch,
-          player1Id,
-          mutatedMatch.table.players[player1Id].hand.length
-        )
+        lookup.getCardFromHand(mutatedMatch, player1Id, player.hand.length)
       }).toThrow()
     })
   })
@@ -67,7 +73,7 @@ describe('Lookup', () => {
     test('throws an error when unavailable player is requested', () => {
       expect(() => {
         lookup.getPlayer(match, '')
-      }).toThrow(InvalidIdError)
+      }).toThrow(PlayerNotFoundError)
     })
   })
 
@@ -165,10 +171,14 @@ describe('Lookup', () => {
 
     beforeEach(() => {
       mutatedMatch = stubMatch()
+      const player = mutatedMatch.table.players[stubPlayer1.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
 
       // eslint-disable-next-line functional/immutable-data
-      mutatedMatch.table.players[stubPlayer1.id].field.crops[0] =
-        factory.buildPlayedCrop(stubCarrot)
+      player.field.crops[0] = factory.buildPlayedCrop(stubCarrot)
     })
 
     test('returns card from field', () => {
@@ -182,11 +192,17 @@ describe('Lookup', () => {
     })
 
     test('throws an error when specified card is not in field', () => {
+      const player = mutatedMatch.table.players[stubPlayer1.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
       expect(() => {
         lookup.getPlayedCropFromField(
           mutatedMatch,
           stubPlayer1.id,
-          mutatedMatch.table.players[stubPlayer1.id].field.crops.length
+          player.field.crops.length
         )
       }).toThrow()
     })

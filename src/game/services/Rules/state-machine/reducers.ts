@@ -7,6 +7,7 @@ import {
 } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { MatchStateCorruptError } from '../errors'
+import { lookup } from '../../Lookup'
 
 /**
  * Performs state reductions that are common to any event in which a card is
@@ -27,7 +28,8 @@ export const recordCardPlayEvents = (
       const { currentPlayerId } = match
       assertCurrentPlayer(currentPlayerId)
 
-      const card = match.table.players[currentPlayerId].hand[event.cardIdx]
+      const player = lookup.getPlayer(match, currentPlayerId)
+      const card = player.hand[event.cardIdx]
 
       if (!card) {
         throw new MatchStateCorruptError(

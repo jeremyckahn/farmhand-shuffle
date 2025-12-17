@@ -10,7 +10,8 @@ export const moveCropFromHandToField = (
   playerId: IPlayer['id'],
   cropCardIdx: number
 ) => {
-  const { hand } = match.table.players[playerId]
+  const player = lookup.getPlayer(match, playerId)
+  const { hand } = player
   const cardId = hand[cropCardIdx]
 
   if (!cardId) {

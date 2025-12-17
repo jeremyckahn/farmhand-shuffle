@@ -1,6 +1,7 @@
-import { array } from '../../../services/Array'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
+import { lookup } from '../../services/Lookup'
 import { IMatch, IPlayer } from '../../types'
+import { array } from '../../../services/Array'
 import { addToDiscardPile } from '../add-to-discard-pile'
 import { updatePlayer } from '../update-player'
 
@@ -9,7 +10,8 @@ export const moveFromHandToDiscardPile = (
   playerId: IPlayer['id'],
   cardIdx: number
 ) => {
-  const { hand } = match.table.players[playerId]
+  const player = lookup.getPlayer(match, playerId)
+  const { hand } = player
   const cardId = hand[cardIdx]
 
   if (!cardId) {

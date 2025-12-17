@@ -15,22 +15,36 @@ describe('harvestCrop', () => {
     match = stubMatch()
 
     stubPlayedCrop = factory.buildPlayedCrop(stubCarrot)
+    const player = match.table.players[stubPlayer1.id]
+
+    if (!player) {
+      throw new Error('Player not found in test setup')
+    }
 
     // eslint-disable-next-line functional/immutable-data
-    match.table.players[stubPlayer1.id].field.crops[0] = stubPlayedCrop
+    player.field.crops[0] = stubPlayedCrop
   })
 
   it('should harvest the crop and return its sale value', () => {
+    const playerBefore = match.table.players[stubPlayer1.id]
+
+    if (!playerBefore) {
+      throw new Error('Player not found in test setup')
+    }
+
     const saleValue = pricing.getCropSaleValue(match, stubPlayedCrop.instance)
     const initialCommunityFund = match.table.communityFund
-    const initialPlayerFunds = match.table.players[stubPlayer1.id].funds
+    const initialPlayerFunds = playerBefore.funds
 
     match = harvestCrop(match, stubPlayer1.id, 0)
+    const playerAfter = match.table.players[stubPlayer1.id]
+
+    if (!playerAfter) {
+      throw new Error('Player not found after harvesting')
+    }
 
     expect(match.table.communityFund).toEqual(initialCommunityFund - saleValue)
-    expect(match.table.players[stubPlayer1.id].field.crops).toEqual([undefined])
-    expect(match.table.players[stubPlayer1.id].funds).toBe(
-      initialPlayerFunds + saleValue
-    )
+    expect(playerAfter.field.crops).toEqual([undefined])
+    expect(playerAfter.funds).toBe(initialPlayerFunds + saleValue)
   })
 })

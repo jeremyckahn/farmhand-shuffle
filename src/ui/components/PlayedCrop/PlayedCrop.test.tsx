@@ -58,6 +58,7 @@ describe('PlayedCrop', () => {
 
     const waterIndicators = screen.getAllByAltText('Water card indicator')
 
+    // @ts-expect-error TODO: Fix this type error
     expect(getComputedStyle(waterIndicators[0]).opacity).toEqual('1')
   })
 
@@ -66,9 +67,11 @@ describe('PlayedCrop', () => {
 
     const waterIndicators = screen.getAllByAltText('Water card indicator')
 
+    // @ts-expect-error TODO: Fix this type error
     expect(getComputedStyle(waterIndicators[1]).opacity).toEqual(
       String(unfilledWaterIndicatorOpacity)
     )
+    // @ts-expect-error TODO: Fix this type error
     expect(getComputedStyle(waterIndicators[2]).opacity).toEqual(
       String(unfilledWaterIndicatorOpacity)
     )
