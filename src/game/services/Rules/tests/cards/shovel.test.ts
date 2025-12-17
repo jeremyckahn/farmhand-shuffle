@@ -35,7 +35,6 @@ describe('shovel', () => {
     })
 
     const playerBefore = matchBeforePlayingShovel.table.players[player1.id]
-
     if (!playerBefore) throw new Error('Player not found in test setup')
 
     {
@@ -43,7 +42,6 @@ describe('shovel', () => {
         context: { match: matchResult },
       } = matchActor.getSnapshot()
       const player = matchResult.table.players[player1.id]
-
       if (!player) throw new Error('Player not found after playing shovel')
 
       // NOTE: Asserts that cards were drawn
@@ -65,7 +63,6 @@ describe('shovel', () => {
     } = matchActor.getSnapshot()
 
     const player = matchResult.table.players[player1.id]
-
     if (!player) throw new Error('Player not found after bot turn')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
@@ -122,7 +119,6 @@ describe('shovel', () => {
     // (planting crops, playing events, etc.) state can be evaluated
 
     const playerAfterShovel = matchAfterPlayingShovel.table.players[player2.id]
-
     if (!playerAfterShovel) {
       throw new Error('Player not found after playing shovel')
     }
@@ -132,7 +128,6 @@ describe('shovel', () => {
         context: { match: matchResult },
       } = matchActor.getSnapshot()
       const player = matchResult.table.players[player2.id]
-
       if (!player) throw new Error('Player not found after bot turn')
 
       // NOTE: Indicates that the card draw has been skipped
@@ -142,7 +137,9 @@ describe('shovel', () => {
       )
 
       // NOTE: Indicates that the bot's turn has started properly
-      expect(player.cardsPlayedDuringTurn).toEqual<IPlayer['discardPile']>([])
+      expect(player.cardsPlayedDuringTurn).toEqual<
+        IPlayer['discardPile']
+      >([])
     }
   })
 })

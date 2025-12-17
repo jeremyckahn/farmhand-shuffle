@@ -14,6 +14,8 @@ export const payFromPlayerToPlayer = (
     return payFromPlayerToPlayer(match, -amount, targetPlayerId, sourcePlayerId)
 
   const sourcePlayer = lookup.getPlayer(match, sourcePlayerId)
+  lookup.getPlayer(match, targetPlayerId)
+
   const { funds: sourcePlayerFunds } = sourcePlayer
   const adjustedAmount = Math.min(sourcePlayerFunds, amount)
 

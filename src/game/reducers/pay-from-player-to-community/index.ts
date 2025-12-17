@@ -11,6 +11,7 @@ export const payFromPlayerToCommunity = (
   sourcePlayerId: IPlayer['id']
 ) => {
   const sourcePlayer = lookup.getPlayer(match, sourcePlayerId)
+
   const { funds: sourcePlayerFunds } = sourcePlayer
   const { communityFund } = match.table
   const clampedAmount = clamp(amount, -communityFund, sourcePlayerFunds)

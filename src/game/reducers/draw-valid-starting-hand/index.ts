@@ -14,6 +14,7 @@ export const drawValidStartingHand = (
   playerId: IPlayer['id']
 ) => {
   const player = lookup.getPlayer(match, playerId)
+
   const cropIdxs = lookup.findCropIndexesInDeck(
     match,
     playerId,
@@ -28,7 +29,9 @@ export const drawValidStartingHand = (
   }
 
   match = pullCardFromDeck(match, playerId, randomCropIdx)
+
   const playerAfterPull = lookup.getPlayer(match, playerId)
+
   match = updatePlayer(match, playerId, {
     hand: shuffle(playerAfterPull.hand),
   })

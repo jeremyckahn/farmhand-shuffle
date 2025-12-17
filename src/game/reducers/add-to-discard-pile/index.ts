@@ -8,6 +8,7 @@ export const addToDiscardPile = (
   cardInstance: CardInstance
 ) => {
   const player = lookup.getPlayer(match, playerId)
+
   const discardPile = [cardInstance, ...player.discardPile]
 
   match = updatePlayer(match, playerId, { discardPile })

@@ -19,9 +19,7 @@ export const updatePrices = (match: IMatch) => {
       ...player.hand,
       ...player.discardPile,
       ...player.field.crops
-        .filter(
-          (playedCrop): playedCrop is IPlayedCrop => playedCrop !== undefined
-        )
+        .filter((playedCrop): playedCrop is IPlayedCrop => playedCrop !== undefined)
         .map(playedCrop => playedCrop.instance),
     ]
   }, [] as CardInstance[])
@@ -41,7 +39,7 @@ export const updatePrices = (match: IMatch) => {
   // so we must ensure we handle undefined values safely.
   const [cropToBuff, cropToNerf] = shuffle(availableCrops) as [
     ICrop | undefined,
-    ICrop | undefined
+    ICrop | undefined,
   ]
 
   // TODO: Make the buff/nerf multipliers variable

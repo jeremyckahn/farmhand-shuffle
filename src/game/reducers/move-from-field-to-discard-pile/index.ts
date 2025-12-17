@@ -20,6 +20,7 @@ export const moveFromFieldToDiscardPile = (
   cardIdx: number
 ) => {
   const player = lookup.getPlayer(match, playerId)
+
   const { field } = player
   const playedCrop = field.crops[cardIdx]
 

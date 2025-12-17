@@ -10,21 +10,16 @@ describe('payFromPlayerToCommunity', () => {
 
   beforeAll(() => {
     match = stubMatch()
-    const maybePlayer1Id = Object.keys(match.table.players)[0]
-
-    if (!maybePlayer1Id) throw new Error('Player not found in test setup')
-
-    player1Id = maybePlayer1Id
+    const p1Id = Object.keys(match.table.players)[0]
+    if (!p1Id) throw new Error('Player not found in test setup')
+    player1Id = p1Id
   })
 
   test('transfers money from player to community fund', () => {
     const playerBefore = match.table.players[player1Id]
-
     if (!playerBefore) throw new Error('Player not found in test setup')
-
     const newMatch = payFromPlayerToCommunity(match, 5, player1Id)
     const playerAfter = newMatch.table.players[player1Id]
-
     if (!playerAfter) throw new Error('Player not found after payment')
 
     expect(newMatch.table.communityFund).toEqual(match.table.communityFund + 5)
@@ -34,12 +29,9 @@ describe('payFromPlayerToCommunity', () => {
   test('transfers money from community fund to player', () => {
     match = updateTable(match, { communityFund: 50 })
     const playerBefore = match.table.players[player1Id]
-
     if (!playerBefore) throw new Error('Player not found in test setup')
-
     const newMatch = payFromPlayerToCommunity(match, -5, player1Id)
     const playerAfter = newMatch.table.players[player1Id]
-
     if (!playerAfter) throw new Error('Player not found after payment')
 
     expect(newMatch.table.communityFund).toEqual(match.table.communityFund - 5)
@@ -48,16 +40,13 @@ describe('payFromPlayerToCommunity', () => {
 
   test('does not transfer more money from player than they have', () => {
     const playerBefore = match.table.players[player1Id]
-
     if (!playerBefore) throw new Error('Player not found in test setup')
-
     const newMatch = payFromPlayerToCommunity(
       match,
       playerBefore.funds + 1,
       player1Id
     )
     const playerAfter = newMatch.table.players[player1Id]
-
     if (!playerAfter) throw new Error('Player not found after payment')
 
     expect(newMatch.table.communityFund).toEqual(
@@ -68,16 +57,13 @@ describe('payFromPlayerToCommunity', () => {
 
   test('does not transfer more money from community fund than it has', () => {
     const playerBefore = match.table.players[player1Id]
-
     if (!playerBefore) throw new Error('Player not found in test setup')
-
     const newMatch = payFromPlayerToCommunity(
       match,
       -(match.table.communityFund + 1),
       player1Id
     )
     const playerAfter = newMatch.table.players[player1Id]
-
     if (!playerAfter) throw new Error('Player not found after payment')
 
     expect(newMatch.table.communityFund).toEqual(0)

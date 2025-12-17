@@ -17,6 +17,7 @@ export const removeTurnCardsPlayed = (
   howMany = Infinity
 ) => {
   const player = lookup.getPlayer(match, playerId)
+
   const cardsPlayedDuringTurn = player.cardsPlayedDuringTurn.slice(howMany)
 
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn })

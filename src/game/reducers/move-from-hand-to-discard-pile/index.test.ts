@@ -22,7 +22,6 @@ describe('moveFromHandToDiscardPile', () => {
 
     // eslint-disable-next-line functional/immutable-data
     player.hand[0] = stubCarrot
-
     const newMatch = moveFromHandToDiscardPile(match, player1Id, 0)
     const newPlayer = newMatch.table.players[player1Id]
 

@@ -11,6 +11,7 @@ export const addCropToField = (
   newCrop: IPlayedCrop
 ) => {
   const player = lookup.getPlayer(match, playerId)
+
   const { field } = player
   let { crops } = field
 

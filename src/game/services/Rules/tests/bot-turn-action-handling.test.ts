@@ -219,7 +219,9 @@ describe('bot turn action handling', () => {
           throw new Error('Player not found')
         }
 
-        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.field.crops).toEqual<IField['crops']>(
+          resultingFieldCrops
+        )
         expect(player.hand).toEqual(resultingHand)
         expect(player.deck).toEqual(resultingDeck)
         expect(cropsToPlayDuringTurn).toEqual(0)
@@ -353,7 +355,9 @@ describe('bot turn action handling', () => {
           throw new Error('Player not found')
         }
 
-        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.field.crops).toEqual<IField['crops']>(
+          resultingFieldCrops
+        )
         expect(player.discardPile).toEqual<IPlayer['discardPile']>(
           resultingDiscardPile
         )
@@ -411,8 +415,9 @@ describe('bot turn action handling', () => {
       matchActor.send({ type: MatchEvent.START_TURN })
 
       // NOTE: Indicates that another Carrot was drawn
-      let player =
-        matchActor.getSnapshot().context.match.table.players[player2.id]
+      let player = matchActor.getSnapshot().context.match.table.players[
+        player2.id
+      ]
 
       if (!player) {
         throw new Error('Player not found')

@@ -30,6 +30,7 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
 
         if (cropCardIdxToHarvest !== undefined) {
           const player = lookup.getPlayer(match, currentPlayerId)
+
           const plantedCrop = player.field.crops[cropCardIdxToHarvest]
 
           assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)

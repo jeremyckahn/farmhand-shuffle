@@ -33,6 +33,7 @@ describe('moveCropFromHandToField', () => {
     }
 
     expect(newPlayer.hand).toEqual(player.hand.slice(1))
+
     expect(newPlayer.field.crops).toEqual<IPlayedCrop[]>([
       { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
     ])

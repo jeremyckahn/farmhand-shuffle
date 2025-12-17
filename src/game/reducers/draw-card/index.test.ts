@@ -24,13 +24,13 @@ describe('drawCard', () => {
 
     beforeAll(() => {
       match = stubMatch()
-      const maybePlayer1Id = Object.keys(match.table.players)[0]
+      const p1Id = Object.keys(match.table.players)[0]
 
-      if (!maybePlayer1Id) {
+      if (!p1Id) {
         throw new Error('Player not found')
       }
+      player1Id = p1Id
 
-      player1Id = maybePlayer1Id
       newMatch = drawCard(match, player1Id)
     })
 
@@ -70,13 +70,13 @@ describe('drawCard', () => {
 
     beforeAll(() => {
       match = stubMatch()
-      const maybePlayer1Id = Object.keys(match.table.players)[0]
+      const p1Id = Object.keys(match.table.players)[0]
 
-      if (!maybePlayer1Id) {
+      if (!p1Id) {
         throw new Error('Player not found')
       }
+      player1Id = p1Id
 
-      player1Id = maybePlayer1Id
       newMatch = drawCard(match, player1Id, 2)
     })
 
@@ -110,13 +110,12 @@ describe('drawCard', () => {
 
     beforeAll(() => {
       match = stubMatch()
-      const maybePlayer1Id = Object.keys(match.table.players)[0]
-
-      if (!maybePlayer1Id) {
+      const p1Id = Object.keys(match.table.players)[0]
+      if (!p1Id) {
         throw new Error('Player not found')
       }
+      player1Id = p1Id
 
-      player1Id = maybePlayer1Id
       const player = match.table.players[player1Id]
 
       if (!player) {
@@ -163,6 +162,7 @@ describe('drawCard', () => {
       }
 
       const newMatch = drawCard(match, player1Id, player.deck.length + 1)
+
       const newPlayer = newMatch.table.players[player1Id]
 
       if (!newPlayer) {

@@ -13,6 +13,7 @@ describe('addToDiscardPile', () => {
     }
 
     const newMatch = addToDiscardPile(match, player1Id, stubCarrot)
+
     const newPlayer = newMatch.table.players[player1Id]
 
     if (!newPlayer) {

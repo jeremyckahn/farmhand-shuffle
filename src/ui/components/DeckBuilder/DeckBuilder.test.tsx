@@ -87,7 +87,6 @@ describe('DeckBuilder', () => {
 
     // Add 2 Pumpkins (limit reached)
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-
     if (pumpkinAdd) {
       fireEvent.click(pumpkinAdd)
       fireEvent.click(pumpkinAdd)
@@ -96,7 +95,6 @@ describe('DeckBuilder', () => {
 
     // Add 2 Water (limit not reached because Water is exception)
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-
     if (waterAdd) {
       fireEvent.click(waterAdd)
       fireEvent.click(waterAdd)
@@ -114,7 +112,6 @@ describe('DeckBuilder', () => {
 
     // Add 1 Pumpkin
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-
     if (pumpkinAdd) {
       fireEvent.click(pumpkinAdd)
     }
@@ -124,7 +121,6 @@ describe('DeckBuilder', () => {
 
     // Add 1 Carrot
     const carrotAdd = screen.getAllByLabelText('increase quantity')[1]
-
     if (carrotAdd) {
       fireEvent.click(carrotAdd)
     }
@@ -134,7 +130,6 @@ describe('DeckBuilder', () => {
 
     // Add 3 Water
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-
     if (waterAdd) {
       fireEvent.click(waterAdd)
       fireEvent.click(waterAdd)
@@ -151,7 +146,6 @@ describe('DeckBuilder', () => {
 
     // Remove 1 Pumpkin
     const pumpkinRemove = screen.getAllByLabelText('decrease quantity')[0]
-
     if (pumpkinRemove) {
       fireEvent.click(pumpkinRemove)
     }
@@ -166,7 +160,6 @@ describe('DeckBuilder', () => {
 
     // Add 5 Water cards (Valid deck size, but no crops)
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-
     if (waterAdd) {
       for (let i = 0; i < 5; i++) {
         fireEvent.click(waterAdd)
@@ -178,13 +171,11 @@ describe('DeckBuilder', () => {
 
     // Remove 1 Water and add 1 Pumpkin
     const waterRemove = screen.getAllByLabelText('decrease quantity')[2]
-
     if (waterRemove) {
       fireEvent.click(waterRemove)
     }
 
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-
     if (pumpkinAdd) {
       fireEvent.click(pumpkinAdd)
     }
@@ -197,7 +188,6 @@ describe('DeckBuilder', () => {
 
     // Add 2 Pumpkins
     const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
-
     if (pumpkinAdd) {
       fireEvent.click(pumpkinAdd)
       fireEvent.click(pumpkinAdd)
@@ -205,7 +195,6 @@ describe('DeckBuilder', () => {
 
     // Add 3 Water
     const waterAdd = screen.getAllByLabelText('increase quantity')[2]
-
     if (waterAdd) {
       fireEvent.click(waterAdd)
       fireEvent.click(waterAdd)
@@ -218,9 +207,7 @@ describe('DeckBuilder', () => {
     expect(onDone).toHaveBeenCalledTimes(1)
 
     const call = onDone.mock.calls[0]
-
     if (!call) throw new Error('onDone not called')
-
     const deckMap = call[0] as Map<ICard, number>
 
     expect(deckMap.get(mockPumpkin as ICard)).toBe(2)

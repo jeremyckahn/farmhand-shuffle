@@ -27,7 +27,6 @@ describe('harvestCrop', () => {
 
   it('should harvest the crop and return its sale value', () => {
     const playerBefore = match.table.players[stubPlayer1.id]
-
     if (!playerBefore) {
       throw new Error('Player not found in test setup')
     }
@@ -38,7 +37,6 @@ describe('harvestCrop', () => {
 
     match = harvestCrop(match, stubPlayer1.id, 0)
     const playerAfter = match.table.players[stubPlayer1.id]
-
     if (!playerAfter) {
       throw new Error('Player not found after harvesting')
     }

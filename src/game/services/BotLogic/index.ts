@@ -28,7 +28,8 @@ export class BotLogicService {
       Math.round(randomNumber.generate() * cropCardIdxsInPlayerHand.length)
     )
 
-    const availableFieldSpace = STANDARD_FIELD_SIZE - player.field.crops.length
+    const availableFieldSpace =
+      STANDARD_FIELD_SIZE - player.field.crops.length
 
     const safeNumberOfCropsToPlay = Math.min(
       availableFieldSpace,

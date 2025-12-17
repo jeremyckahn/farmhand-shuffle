@@ -40,24 +40,21 @@ describe('startTurn', () => {
   beforeEach(() => {
     match = factory.buildMatchForSession([player1Stub, player2Stub])
     const playerIds = Object.keys(match.table.players)
-    const maybePlayer1Id = playerIds[0]
-
-    if (!maybePlayer1Id) throw new Error('Player not found in test setup')
-
-    player1Id = maybePlayer1Id
+    const p1Id = playerIds[0]
+    if (!p1Id) throw new Error('Player not found in test setup')
+    player1Id = p1Id
   })
 
   test('pays tax to community fund', () => {
-    const player1 = match.table.players[player1Id]
-
-    if (!player1) throw new Error('Player not found in test setup')
+    const p1 = match.table.players[player1Id]
+    if (!p1) throw new Error('Player not found in test setup')
 
     const newMatch = startTurn(match, player1Id)
-    const newPlayer1 = newMatch.table.players[player1Id]
 
-    if (!newPlayer1) throw new Error('Player not found after reducer')
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
 
-    expect(newPlayer1.funds).toEqual(player1.funds - STANDARD_TAX_AMOUNT)
+    expect(newP1.funds).toEqual(p1.funds - STANDARD_TAX_AMOUNT)
     expect(newMatch.table.communityFund).toEqual(
       match.table.communityFund + STANDARD_TAX_AMOUNT
     )
@@ -80,20 +77,18 @@ describe('startTurn', () => {
   ])(
     'draws $numberOfCardsToDraw card(s) from deck',
     ({ numberOfCardsToDraw }) => {
-      const player1 = match.table.players[player1Id]
-
-      if (!player1) throw new Error('Player not found in test setup')
+      const p1 = match.table.players[player1Id]
+      if (!p1) throw new Error('Player not found in test setup')
 
       const newMatch = startTurn(match, player1Id, numberOfCardsToDraw)
-      const newPlayer1 = newMatch.table.players[player1Id]
+      const newP1 = newMatch.table.players[player1Id]
+      if (!newP1) throw new Error('Player not found after reducer')
 
-      if (!newPlayer1) throw new Error('Player not found after reducer')
-
-      expect(newPlayer1.hand).toEqual([
-        ...player1.hand,
-        ...player1.deck.slice(0, numberOfCardsToDraw),
+      expect(newP1.hand).toEqual([
+        ...p1.hand,
+        ...p1.deck.slice(0, numberOfCardsToDraw),
       ])
-      expect(newPlayer1.deck).toEqual(player1.deck.slice(numberOfCardsToDraw))
+      expect(newP1.deck).toEqual(p1.deck.slice(numberOfCardsToDraw))
     }
   )
 
@@ -113,11 +108,11 @@ describe('startTurn', () => {
     })
 
     newMatch = startTurn(newMatch, player1Id)
-    const newPlayer1 = newMatch.table.players[player1Id]
 
-    if (!newPlayer1) throw new Error('Player not found after reducer')
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
 
-    expect(newPlayer1.field.crops).toEqual<IPlayedCrop[]>([
+    expect(newP1.field.crops).toEqual<IPlayedCrop[]>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot3, wasWateredDuringTurn: false, waterCards: 1 },
@@ -139,11 +134,11 @@ describe('startTurn', () => {
     })
 
     newMatch = startTurn(newMatch, player1Id)
-    const newPlayer1 = newMatch.table.players[player1Id]
 
-    if (!newPlayer1) throw new Error('Player not found after reducer')
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
 
-    expect(newPlayer1.field.crops).toEqual<IField['crops']>([
+    expect(newP1.field.crops).toEqual<IField['crops']>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
       undefined,
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 1 },
@@ -163,10 +158,10 @@ describe('startTurn', () => {
     })
 
     newMatch = startTurn(newMatch, player1Id)
-    const newPlayer1 = newMatch.table.players[player1Id]
 
-    if (!newPlayer1) throw new Error('Player not found after reducer')
+    const newP1 = newMatch.table.players[player1Id]
+    if (!newP1) throw new Error('Player not found after reducer')
 
-    expect(newPlayer1.cardsPlayedDuringTurn).toEqual([])
+    expect(newP1.cardsPlayedDuringTurn).toEqual([])
   })
 })

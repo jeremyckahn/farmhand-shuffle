@@ -10,6 +10,7 @@ export const drawCard = (
   howMany = 1
 ) => {
   const player = lookup.getPlayer(match, playerId)
+
   let newHand = [...player.hand]
   let newDeck = [...player.deck]
   let newDiscardPile = [...player.discardPile]
