@@ -1,20 +1,15 @@
-import shuffle from 'lodash.shuffle'
-import { MockInstance } from 'vitest'
-
 import { randomNumber } from '../../../services/RandomNumber'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
-import { ICard, IPlayedCrop } from '../../types'
+import { IPlayedCrop } from '../../types'
 import { isField, isMatch, isPlayer, isTable } from '../../types/guards'
 
 import { factory } from '.'
 
-vitest.mock('lodash.shuffle')
-
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation(
-    (arr: ICard[]) => arr
+  vi.spyOn(randomNumber, 'shuffle').mockImplementation(
+    <T>(arr: T[] | null | undefined) => arr || []
   )
 })
 
@@ -64,9 +59,16 @@ describe('Factory', () => {
     test('shuffles decks', () => {
       factory.buildMatchForSession([player1, player2])
 
-      expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player1.deck))
-      expect(shuffle).toHaveBeenCalledWith(expect.arrayContaining(player2.deck))
-      expect(shuffle).toHaveBeenCalled()
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(randomNumber.shuffle).toHaveBeenCalledWith(
+        expect.arrayContaining(player1.deck)
+      )
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(randomNumber.shuffle).toHaveBeenCalledWith(
+        expect.arrayContaining(player2.deck)
+      )
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(randomNumber.shuffle).toHaveBeenCalled()
     })
 
     test('sets up player hands', () => {

@@ -1,5 +1,4 @@
-import shuffle from 'lodash.shuffle'
-
+import { randomNumber } from '../../../services/RandomNumber'
 import { IMatch, IPlayer } from '../../types'
 import { lookup } from '../../services/Lookup'
 import { updatePlayer } from '../update-player'
@@ -20,7 +19,7 @@ export const drawCard = (
   newHand = [...newHand, ...drawnCards]
 
   if (newDeck.length === 0) {
-    newDeck = shuffle(newDiscardPile)
+    newDeck = randomNumber.shuffle(newDiscardPile)
     newDiscardPile = []
   }
 

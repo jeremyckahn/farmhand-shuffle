@@ -1,13 +1,11 @@
-import shuffle from 'lodash.shuffle'
-
+import { randomNumber } from '../../../services/RandomNumber'
 import { stubMatch } from '../../../test-utils/stubs/match'
 
 import { shuffleDeck } from '.'
 
-vitest.mock('lodash.shuffle')
-
 describe('shuffleDeck', () => {
   test('shuffles deck', () => {
+    const spy = vi.spyOn(randomNumber, 'shuffle')
     const match = stubMatch()
     const [player1Id] = Object.keys(match.table.players)
 
@@ -23,7 +21,7 @@ describe('shuffleDeck', () => {
       throw new Error('Player not found')
     }
 
-    expect(shuffle).toHaveBeenCalledWith(player.deck)
-    expect(shuffle).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(player.deck)
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 })

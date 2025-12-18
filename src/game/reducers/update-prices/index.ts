@@ -1,5 +1,4 @@
-import shuffle from 'lodash.shuffle'
-
+import { randomNumber } from '../../../services/RandomNumber'
 import * as crops from '../../cards/crops'
 import {
   CardInstance,
@@ -39,7 +38,7 @@ export const updatePrices = (match: IMatch) => {
   // TypeScript assumes the array elements are defined (ICrop).
   // However, availableCrops can be empty or have fewer than 2 elements,
   // so we must ensure we handle undefined values safely.
-  const [cropToBuff, cropToNerf] = shuffle(availableCrops) as [
+  const [cropToBuff, cropToNerf] = randomNumber.shuffle(availableCrops) as [
     ICrop | undefined,
     ICrop | undefined
   ]
