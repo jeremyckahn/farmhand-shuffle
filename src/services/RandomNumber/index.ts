@@ -1,10 +1,18 @@
+import seedrandom from 'seedrandom'
+
 export class RandomNumberService {
+  private readonly rng: () => number
+
+  constructor(seed?: string | null) {
+    this.rng = seed ? seedrandom(seed) : () => Math.random()
+  }
+
   /**
    * Generates a random number between 0 (inclusive) and 1 (exclusive).
    * @returns A random number.
    */
   generate() {
-    return Math.random()
+    return this.rng()
   }
 
   /**
@@ -58,4 +66,5 @@ export class RandomNumberService {
   }
 }
 
-export const randomNumber = new RandomNumberService()
+const seed = new URLSearchParams(window.location.search).get('seed')
+export const randomNumber = new RandomNumberService(seed)
