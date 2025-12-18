@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import { stubDeck } from './test-utils/stubs/deck'
 import { stubPlayer } from './test-utils/stubs/players'
-import { DeckBuilder } from './ui/pages/DeckBuilder'
+import { BuildDeck } from './ui/pages/BuildDeck'
 import { MainMenu } from './ui/pages/MainMenu'
 import { MatchPage } from './ui/pages/MatchPage'
 import { AppRoute } from './ui/types'
@@ -28,8 +28,8 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: AppRoute.DECK_BUILDER,
-    element: <DeckBuilder />,
+    path: AppRoute.BUILD_DECK,
+    element: <BuildDeck />,
   },
 ])
 

@@ -28,7 +28,7 @@ export const MainMenu = () => {
           </Button>
           <Button
             component={Link}
-            to={AppRoute.DECK_BUILDER}
+            to={AppRoute.BUILD_DECK}
             variant="outlined"
             size="large"
           >
