@@ -14,8 +14,6 @@ export const player2 = stubPlayer2
 
 export const playerSeeds = [player1, player2]
 
-vi.mock('lodash.shuffle')
-
 beforeEach(() => {
   vi.useFakeTimers()
 })
@@ -83,4 +81,7 @@ export const createSetUpMatchActor = () => {
 
 beforeEach(() => {
   vi.spyOn(randomNumber, 'generate').mockReturnValue(0)
+  vi.spyOn(randomNumber, 'shuffle').mockImplementation(
+    <T>(arr: T[] | null | undefined) => arr || []
+  )
 })

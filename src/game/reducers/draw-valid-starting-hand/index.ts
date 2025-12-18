@@ -1,5 +1,3 @@
-import shuffle from 'lodash.shuffle'
-
 import { randomNumber } from '../../../services/RandomNumber'
 import { INITIAL_HAND_SIZE } from '../../config'
 import { lookup } from '../../services/Lookup'
@@ -30,7 +28,7 @@ export const drawValidStartingHand = (
   match = pullCardFromDeck(match, playerId, randomCropIdx)
   const playerAfterPull = lookup.getPlayer(match, playerId)
   match = updatePlayer(match, playerId, {
-    hand: shuffle(playerAfterPull.hand),
+    hand: randomNumber.shuffle(playerAfterPull.hand),
   })
   match = drawCard(match, playerId, INITIAL_HAND_SIZE - 1)
 

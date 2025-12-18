@@ -1,3 +1,4 @@
+import shuffle from 'lodash.shuffle'
 import seedrandom from 'seedrandom'
 
 export class RandomNumberService {
@@ -13,6 +14,15 @@ export class RandomNumberService {
    */
   generate() {
     return this.rng()
+  }
+
+  /**
+   * Shuffles a list using Lodash's shuffle function.
+   * @param list - The list to shuffle.
+   * @returns A shuffled copy of the list.
+   */
+  shuffle<T>(list: T[] | null | undefined): T[] {
+    return shuffle(list)
   }
 
   /**

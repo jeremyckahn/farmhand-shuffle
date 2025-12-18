@@ -1,20 +1,16 @@
-import shuffle from 'lodash.shuffle'
-import { MockInstance } from 'vitest'
-
+import { randomNumber } from '../../../services/RandomNumber'
 import { stubPumpkin, stubWater } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { ICard, IPlayer } from '../../types'
+import { IPlayer } from '../../types'
 import { updatePlayer } from '../update-player'
 
 import { pullCardFromDeck } from '.'
 
-vitest.mock('lodash.shuffle')
-
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation(
-    (arr: ICard[]) => arr
+  vi.spyOn(randomNumber, 'shuffle').mockImplementation(
+    <T>(arr: T[] | null | undefined) => arr || []
   )
 })
 
@@ -88,7 +84,8 @@ describe('pullCardFromDeck', () => {
         throw new Error('Player not found')
       }
 
-      expect(shuffle).toHaveBeenCalledWith(discardPile)
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(randomNumber.shuffle).toHaveBeenCalledWith(discardPile)
       expect(newPlayer).toMatchObject({
         hand: [...hand, ...deck],
         discardPile: [],

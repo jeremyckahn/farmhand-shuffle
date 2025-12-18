@@ -1,13 +1,11 @@
-import shuffle from 'lodash.shuffle'
-import { MockInstance } from 'vitest'
-
+import { randomNumber } from '../../../services/RandomNumber'
 import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { carrot, instantiate } from '../../cards'
 import { DECK_SIZE, STANDARD_TAX_AMOUNT } from '../../config'
 import { updatePlayer } from '../../reducers/update-player'
 import { factory } from '../../services/Factory'
-import { ICard, IField, IMatch, IPlayedCrop, IPlayer } from '../../types'
+import { IField, IMatch, IPlayedCrop, IPlayer } from '../../types'
 
 import { startTurn } from '.'
 
@@ -20,11 +18,9 @@ vitest.mock('../../cards/crops/handlePlayFromHand', () => {
   }
 })
 
-vitest.mock('lodash.shuffle')
-
 beforeEach(() => {
-  ;(shuffle as unknown as MockInstance).mockImplementation(
-    (arr: ICard[]) => arr
+  vi.spyOn(randomNumber, 'shuffle').mockImplementation(
+    <T>(arr: T[] | null | undefined) => arr || []
   )
 })
 
