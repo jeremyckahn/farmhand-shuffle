@@ -1,4 +1,3 @@
-import shuffle from 'lodash.shuffle'
 import seedrandom from 'seedrandom'
 
 export class RandomNumberService {
@@ -17,12 +16,26 @@ export class RandomNumberService {
   }
 
   /**
-   * Shuffles a list using Lodash's shuffle function.
+   * Shuffles a list using the Fisher-Yates algorithm.
    * @param list - The list to shuffle.
    * @returns A shuffled copy of the list.
    */
-  shuffle<T>(list: T[] | null | undefined): T[] {
-    return shuffle(list)
+  shuffle<T>(list: T[]): T[] {
+    const copy = [...list]
+
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(this.generate() * (i + 1))
+      // NOTE: The following line suppresses TypeScript errors related to noUncheckedIndexedAccess.
+      // Since i and j are guaranteed to be within the bounds of the array, these accesses are safe.
+      // We use 'as T' casting instead of '!' to avoid non-null assertion lint errors while satisfying the compiler.
+      const temp = copy[i] as T
+      // eslint-disable-next-line functional/immutable-data
+      copy[i] = copy[j] as T
+      // eslint-disable-next-line functional/immutable-data
+      copy[j] = temp
+    }
+
+    return copy
   }
 
   /**
@@ -33,6 +46,7 @@ export class RandomNumberService {
   randomIndex<T>(list: T[]) {
     if (list.length === 0) return
 
+    // TODO: Fix potential off-by-one error (potentially excluding the last element)
     return Math.floor(this.generate() * (list.length - 1))
   }
 
@@ -72,6 +86,7 @@ export class RandomNumberService {
       )
     }
 
+    // TODO: Fix use of Math.round which introduces bias
     return Math.round(this.generate() * (maximum - minimum)) + minimum
   }
 }

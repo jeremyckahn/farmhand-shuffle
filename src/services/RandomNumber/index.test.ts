@@ -36,6 +36,53 @@ describe('RandomNumber', () => {
     })
   })
 
+  describe('shuffle', () => {
+    test('produces the same shuffled order when the same seed is used', () => {
+      const list = [1, 2, 3, 4, 5]
+      const service1 = new RandomNumberService('test-seed')
+      const shuffled1 = service1.shuffle(list)
+
+      const service2 = new RandomNumberService('test-seed')
+      const shuffled2 = service2.shuffle(list)
+
+      expect(shuffled1).toEqual(shuffled2)
+    })
+
+    test('produces different shuffled orders for unseeded instances (mocked)', () => {
+      const list = [1, 2, 3, 4, 5]
+      const service1 = new RandomNumberService()
+      const service2 = new RandomNumberService()
+
+      // Mock generate to produce different values
+      vitest
+        .spyOn(service1, 'generate')
+        .mockReturnValueOnce(0.1)
+        .mockReturnValueOnce(0.2)
+        .mockReturnValueOnce(0.3)
+        .mockReturnValueOnce(0.4)
+      vitest
+        .spyOn(service2, 'generate')
+        .mockReturnValueOnce(0.9)
+        .mockReturnValueOnce(0.8)
+        .mockReturnValueOnce(0.7)
+        .mockReturnValueOnce(0.6)
+
+      const shuffled1 = service1.shuffle(list)
+      const shuffled2 = service2.shuffle(list)
+
+      expect(shuffled1).not.toEqual(shuffled2)
+    })
+
+    test('returns a new array reference (immutability)', () => {
+      const list = [1, 2, 3]
+      const service = new RandomNumberService()
+      const shuffled = service.shuffle(list)
+
+      expect(shuffled).not.toBe(list)
+      expect(list).toEqual([1, 2, 3])
+    })
+  })
+
   describe('randomIndex', () => {
     test.each([
       { generateMock: 0.5, list: [1, 2, 3], result: 1 },
