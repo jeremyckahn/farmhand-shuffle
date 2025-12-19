@@ -25,7 +25,7 @@ export class BotLogicService {
 
     const unboundedNumberOfCropsToPlay = Math.max(
       minimumCropsToPlay,
-      Math.round(randomNumber.generate() * cropCardIdxsInPlayerHand.length)
+      randomNumber.chooseIntegerBetween(0, cropCardIdxsInPlayerHand.length)
     )
 
     const availableFieldSpace = STANDARD_FIELD_SIZE - player.field.crops.length

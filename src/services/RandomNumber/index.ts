@@ -85,8 +85,7 @@ export class RandomNumberService {
       )
     }
 
-    // TODO: Fix use of Math.round which introduces bias
-    return Math.round(this.generate() * (maximum - minimum)) + minimum
+    return Math.floor(this.generate() * (maximum - minimum + 1)) + minimum
   }
 }
 
