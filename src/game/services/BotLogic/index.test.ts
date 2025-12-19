@@ -89,20 +89,20 @@ describe('BotLogicService', () => {
         minimumCropsToPlay: 1,
         expectedResult: 0, // No room for more crops in field
       },
-      // New test case to verify Math.round behavior
+      // New test case to verify uniform distribution behavior (was Math.round, now Math.floor)
       {
-        rngStub: 0.75, // 0.75 * 2 = 1.5 -> Math.round(1.5) = 2. Math.floor would be 1.
+        rngStub: 0.75, // Range 0-2 (size 3). 0.75 maps to 2.
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
         expectedResult: 2,
       },
       {
-        rngStub: 0.25, // 0.25 * 2 = 0.5 -> Math.round(0.5) = 1. Math.floor would be 0.
+        rngStub: 0.25, // Range 0-2 (size 3). 0.25 maps to 0.
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 0,
-        expectedResult: 1,
+        expectedResult: 0,
       },
     ])(
       'determines amount of crops to play for stable random number $rngStub, hand $hand, crops $fieldCrops, and minimumCropsToPlay $minimumCropsToPlay',
@@ -340,9 +340,13 @@ describe('BotLogicService', () => {
   describe('getNumberOfToolCardsToPlay', () => {
     it.each([
       { hand: [], rngStub: 0.1, expectedResult: 0 },
+      // Range 0-1 (size 2). 0.4 maps to 0.
       { hand: [stubShovel], rngStub: 0.4, expectedResult: 0 },
+      // Range 0-1 (size 2). 0.5 maps to 1.
       { hand: [stubShovel], rngStub: 0.5, expectedResult: 1 },
+      // Range 0-2 (size 3). 0 maps to 0.
       { hand: [stubShovel, stubShovel], rngStub: 0, expectedResult: 0 },
+      // Range 0-2 (size 3). 0.5 maps to 1.
       { hand: [stubShovel, stubShovel], rngStub: 0.5, expectedResult: 1 },
       {
         hand: [stubShovel, stubShovel],
