@@ -8,6 +8,7 @@ import { carrot } from '../../../game/cards'
 import { updateMatch } from '../../../game/reducers/update-match'
 import {
   MatchEvent,
+  MatchEvents,
   IMatch,
   ShellNotificationPayload,
   ShellNotificationType,
@@ -99,10 +100,9 @@ describe('useSnackbar Hook', () => {
           }
 
         const send = actorRef.send as unknown as MockInstance<
-          typeof actorRef.send
+          (event: MatchEvents) => void
         >
-        // @ts-expect-error TODO: Fix this type error
-        const matchEventPayload = send.mock.calls[0][0]
+        const matchEventPayload = send.mock.calls[0]![0]
         assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
@@ -140,10 +140,9 @@ describe('useSnackbar Hook', () => {
           }
 
         const send = actorRef.send as unknown as MockInstance<
-          typeof actorRef.send
+          (event: MatchEvents) => void
         >
-        // @ts-expect-error TODO: Fix this type error
-        const matchEventPayload = send.mock.calls[0][0]
+        const matchEventPayload = send.mock.calls[0]![0]
         assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
@@ -174,10 +173,9 @@ describe('useSnackbar Hook', () => {
         }
 
       const send = actorRef.send as unknown as MockInstance<
-        typeof actorRef.send
+        (event: MatchEvents) => void
       >
-      // @ts-expect-error TODO: Fix this type error
-      const matchEventPayload = send.mock.calls[0][0]
+      const matchEventPayload = send.mock.calls[0]![0]
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -213,10 +211,9 @@ describe('useSnackbar Hook', () => {
         }
 
       const send = actorRef.send as unknown as MockInstance<
-        typeof actorRef.send
+        (event: MatchEvents) => void
       >
-      // @ts-expect-error TODO: Fix this type error
-      const matchEventPayload = send.mock.calls[0][0]
+      const matchEventPayload = send.mock.calls[0]![0]
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -246,10 +243,9 @@ describe('useSnackbar Hook', () => {
         }
 
       const send = actorRef.send as unknown as MockInstance<
-        typeof actorRef.send
+        (event: MatchEvents) => void
       >
-      // @ts-expect-error TODO: Fix this type error
-      const matchEventPayload = send.mock.calls[0][0]
+      const matchEventPayload = send.mock.calls[0]![0]
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -285,10 +281,9 @@ describe('useSnackbar Hook', () => {
         }
 
       const send = actorRef.send as unknown as MockInstance<
-        typeof actorRef.send
+        (event: MatchEvents) => void
       >
-      // @ts-expect-error TODO: Fix this type error
-      const matchEventPayload = send.mock.calls[0][0]
+      const matchEventPayload = send.mock.calls[0]![0]
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -318,10 +313,9 @@ describe('useSnackbar Hook', () => {
         }
 
       const send = actorRef.send as unknown as MockInstance<
-        typeof actorRef.send
+        (event: MatchEvents) => void
       >
-      // @ts-expect-error TODO: Fix this type error
-      const matchEventPayload = send.mock.calls[0][0]
+      const matchEventPayload = send.mock.calls[0]![0]
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -357,10 +351,9 @@ describe('useSnackbar Hook', () => {
         }
 
       const send = actorRef.send as unknown as MockInstance<
-        typeof actorRef.send
+        (event: MatchEvents) => void
       >
-      // @ts-expect-error TODO: Fix this type error
-      const matchEventPayload = send.mock.calls[0][0]
+      const matchEventPayload = send.mock.calls[0]![0]
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -390,9 +383,10 @@ describe('useSnackbar Hook', () => {
         toolCard: stubShovel,
       }
 
-    const send = actorRef.send as unknown as MockInstance<typeof actorRef.send>
-    // @ts-expect-error TODO: Fix this type error
-    const matchEventPayload = send.mock.calls[0][0]
+    const send = actorRef.send as unknown as MockInstance<
+      (event: MatchEvents) => void
+    >
+    const matchEventPayload = send.mock.calls[0]![0]
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
@@ -427,9 +421,10 @@ describe('useSnackbar Hook', () => {
         toolCard: stubShovel,
       }
 
-    const send = actorRef.send as unknown as MockInstance<typeof actorRef.send>
-    // @ts-expect-error TODO: Fix this type error
-    const matchEventPayload = send.mock.calls[0][0]
+    const send = actorRef.send as unknown as MockInstance<
+      (event: MatchEvents) => void
+    >
+    const matchEventPayload = send.mock.calls[0]![0]
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
