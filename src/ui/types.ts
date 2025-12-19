@@ -7,4 +7,5 @@ export enum CardSize {
 export enum AppRoute {
   ROOT = '/',
   MATCH = '/match',
+  BUILD_DECK = '/build-deck',
 }
