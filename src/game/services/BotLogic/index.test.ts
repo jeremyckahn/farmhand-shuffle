@@ -34,7 +34,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: 0.999999,
         hand: [instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
@@ -42,7 +42,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: 0.999999,
         hand: [instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
@@ -58,7 +58,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: 0.999999,
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
@@ -66,7 +66,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: 0.999999,
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE - 1).fill({
           instance: instantiate(carrot),
@@ -78,7 +78,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: 0.999999,
         hand: [instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill({
           instance: instantiate(carrot),
@@ -343,7 +343,7 @@ describe('BotLogicService', () => {
       { hand: [stubShovel], rngStub: 0.5, expectedResult: 1 },
       { hand: [stubShovel, stubShovel], rngStub: 0, expectedResult: 0 },
       { hand: [stubShovel, stubShovel], rngStub: 0.5, expectedResult: 1 },
-      { hand: [stubShovel, stubShovel], rngStub: 1, expectedResult: 2 },
+      { hand: [stubShovel, stubShovel], rngStub: 0.999999, expectedResult: 2 },
     ])(
       'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
       ({ hand, rngStub, expectedResult }) => {
@@ -367,7 +367,7 @@ describe('BotLogicService', () => {
   describe('getEventCardIndexToPlay', () => {
     it.each([
       { hand: [], rngStub: 0, expectedResult: undefined },
-      { hand: [], rngStub: 1, expectedResult: undefined },
+      { hand: [], rngStub: 0.999999, expectedResult: undefined },
       { hand: [stubRain], rngStub: 0, expectedResult: 0 },
       {
         hand: [stubCarrot, stubRain, stubWater, stubRain],
@@ -376,7 +376,7 @@ describe('BotLogicService', () => {
       },
       {
         hand: [stubCarrot, stubRain, stubWater, stubRain],
-        rngStub: 1,
+        rngStub: 0.999999,
         expectedResult: 3,
       },
     ])(
@@ -399,7 +399,7 @@ describe('BotLogicService', () => {
   describe('getToolCardIndexToPlay', () => {
     it.each([
       { hand: [], rngStub: 0, expectedResult: undefined },
-      { hand: [], rngStub: 1, expectedResult: undefined },
+      { hand: [], rngStub: 0.999999, expectedResult: undefined },
       { hand: [stubShovel], rngStub: 0, expectedResult: 0 },
       {
         hand: [stubCarrot, stubShovel, stubWater, stubShovel],
@@ -408,7 +408,7 @@ describe('BotLogicService', () => {
       },
       {
         hand: [stubCarrot, stubRain, stubWater, stubShovel],
-        rngStub: 1,
+        rngStub: 0.999999,
         expectedResult: 3,
       },
     ])(

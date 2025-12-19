@@ -83,7 +83,7 @@ describe('shovel', () => {
 
     // NOTE: This causes the maximum amount of tools in the hand to be
     // played.
-    vi.spyOn(randomNumber, 'generate').mockReturnValue(1)
+    vi.spyOn(randomNumber, 'generate').mockReturnValue(0.999999)
 
     const matchActor = createSetUpMatchActor()
 

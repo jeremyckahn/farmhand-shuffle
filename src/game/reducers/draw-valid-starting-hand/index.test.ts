@@ -11,7 +11,7 @@ import { drawValidStartingHand } from '.'
 
 describe('drawValidStartingHand', () => {
   test('ensures a hand with at least one crop is pulled', () => {
-    vitest.spyOn(randomNumber, 'generate').mockReturnValue(1)
+    vitest.spyOn(randomNumber, 'generate').mockReturnValue(0.999999)
 
     let match = stubMatch()
 

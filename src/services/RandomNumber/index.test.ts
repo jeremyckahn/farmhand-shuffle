@@ -86,6 +86,7 @@ describe('RandomNumber', () => {
   describe('randomIndex', () => {
     test.each([
       { generateMock: 0.5, list: [1, 2, 3], result: 1 },
+      { generateMock: 0.999999, list: [1, 2, 3], result: 2 },
       { generateMock: 0, list: [], result: undefined },
     ])(
       'choses a random index ($result) from an array $list',
