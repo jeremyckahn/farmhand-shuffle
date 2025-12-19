@@ -58,8 +58,7 @@ describe('PlayedCrop', () => {
 
     const waterIndicators = screen.getAllByAltText('Water card indicator')
 
-    // @ts-expect-error TODO: Fix this type error
-    expect(getComputedStyle(waterIndicators[0]).opacity).toEqual('1')
+    expect(getComputedStyle(waterIndicators[0]!).opacity).toEqual('1')
   })
 
   test('unfilled foreground water card icons are partially opaque', () => {
@@ -67,12 +66,10 @@ describe('PlayedCrop', () => {
 
     const waterIndicators = screen.getAllByAltText('Water card indicator')
 
-    // @ts-expect-error TODO: Fix this type error
-    expect(getComputedStyle(waterIndicators[1]).opacity).toEqual(
+    expect(getComputedStyle(waterIndicators[1]!).opacity).toEqual(
       String(unfilledWaterIndicatorOpacity)
     )
-    // @ts-expect-error TODO: Fix this type error
-    expect(getComputedStyle(waterIndicators[2]).opacity).toEqual(
+    expect(getComputedStyle(waterIndicators[2]!).opacity).toEqual(
       String(unfilledWaterIndicatorOpacity)
     )
   })
