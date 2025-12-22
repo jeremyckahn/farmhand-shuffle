@@ -1,4 +1,5 @@
 import { randomNumber } from '../../../services/RandomNumber'
+import { MAX_RANDOM_VALUE } from '../../../test-utils/mocks/constants'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
@@ -11,7 +12,7 @@ import { drawValidStartingHand } from '.'
 
 describe('drawValidStartingHand', () => {
   test('ensures a hand with at least one crop is pulled', () => {
-    vitest.spyOn(randomNumber, 'generate').mockReturnValue(0.999999)
+    vitest.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
 
     let match = stubMatch()
 

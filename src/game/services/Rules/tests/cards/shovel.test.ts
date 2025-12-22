@@ -1,4 +1,5 @@
 import { randomNumber } from '../../../../../services/RandomNumber'
+import { MAX_RANDOM_VALUE } from '../../../../../test-utils/mocks/constants'
 import { stubShovel, stubWater } from '../../../../../test-utils/stubs/cards'
 import { DECK_SIZE } from '../../../../config'
 import { updatePlayer } from '../../../../reducers/update-player'
@@ -83,7 +84,7 @@ describe('shovel', () => {
 
     // NOTE: This causes the maximum amount of tools in the hand to be
     // played.
-    vi.spyOn(randomNumber, 'generate').mockReturnValue(0.999999)
+    vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
 
     const matchActor = createSetUpMatchActor()
 
