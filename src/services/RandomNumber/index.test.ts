@@ -87,6 +87,7 @@ describe('RandomNumber', () => {
 
   describe('randomIndex', () => {
     test.each([
+      { generateMock: 0, list: [1, 2, 3], result: 0 },
       { generateMock: 0.5, list: [1, 2, 3], result: 1 },
       { generateMock: MAX_RANDOM_VALUE, list: [1, 2, 3], result: 2 },
       { generateMock: 0, list: [], result: undefined },
