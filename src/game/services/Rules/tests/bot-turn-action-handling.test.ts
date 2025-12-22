@@ -1,23 +1,3 @@
-import { botLogic } from '../../BotLogic'
-import {
-  CardInstance,
-  MatchEvent,
-  MatchState,
-  IField,
-  IPlayedCrop,
-  IPlayer,
-  ShellNotification,
-  ShellNotificationType,
-} from '../../../types'
-import {
-  carrot,
-  instantiate,
-  pumpkin,
-  rain,
-  shovel,
-  water,
-} from '../../../cards'
-import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../../config'
 import { randomNumber } from '../../../../services/RandomNumber'
 import { MAX_RANDOM_VALUE } from '../../../../test-utils/constants'
 import {
@@ -27,15 +7,36 @@ import {
   stubShovel,
   stubWater,
 } from '../../../../test-utils/stubs/cards'
+import {
+  carrot,
+  instantiate,
+  pumpkin,
+  rain,
+  shovel,
+  water,
+} from '../../../cards'
+import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../../config'
 import { updateField } from '../../../reducers/update-field'
 import { updatePlayer } from '../../../reducers/update-player'
+import {
+  CardInstance,
+  IField,
+  IPlayedCrop,
+  IPlayer,
+  MatchEvent,
+  MatchState,
+  ShellNotification,
+  ShellNotificationType,
+} from '../../../types'
+import { botLogic } from '../../BotLogic'
+import { isPlayedCrop } from '../../../types/guards'
 
 import {
+  carrot1,
   createSetUpMatchActor,
   expectInstance,
   player1,
   player2,
-  carrot1,
   pumpkin1,
 } from './helpers'
 
@@ -227,7 +228,7 @@ describe('bot turn action handling', () => {
         expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
         const wereAnyCropsWatered = resultingFieldCrops.some(
-          crop => crop && crop.wasWateredDuringTurn
+          crop => isPlayedCrop(crop) && crop.wasWateredDuringTurn
         )
 
         const shellNotification: ShellNotification = {

@@ -40,6 +40,17 @@ export const isCropCardInstance = (
   return cardInstance.type === CardType.CROP
 }
 
+// FIXME: Test this
+export const isPlantableCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance => {
+  if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
+    return true
+  }
+
+  return isCropCardInstance(cardInstance)
+}
+
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
@@ -58,6 +69,13 @@ export interface IPlayedCrop {
    * Whether or not the crop has been watered during the current turn.
    */
   wasWateredDuringTurn: boolean
+}
+
+export interface IPlayedTool {
+  /**
+   * The card instance of this crop.
+   */
+  instance: ToolInstance
 }
 
 export interface MatchMachineContext {
@@ -99,6 +117,8 @@ export interface ITool extends IEffect {
  */
 export interface ITool extends ICard {
   readonly type: CardType.TOOL
+
+  readonly isPlantable?: boolean
 }
 
 /**
@@ -139,7 +159,7 @@ export const isToolCardInstance = (
 }
 
 export interface IField {
-  readonly crops: (IPlayedCrop | undefined)[]
+  readonly crops: (IPlayedCrop | IPlayedTool | undefined)[]
 }
 
 export interface IPlayer {

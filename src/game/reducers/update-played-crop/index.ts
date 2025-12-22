@@ -1,5 +1,7 @@
-import { IMatch, IPlayedCrop, IPlayer } from '../../types'
 import { lookup } from '../../services/Lookup'
+import { InvalidCardError } from '../../services/Rules/errors'
+import { IMatch, IPlayedCrop, IPlayer } from '../../types'
+import { isPlayedCrop } from '../../types/guards'
 import { updateField } from '../update-field'
 
 export const updatePlayedCrop = (
@@ -15,6 +17,13 @@ export const updatePlayedCrop = (
   if (!playedCrop) {
     throw new RangeError(
       `cropIdx ${cropIdx} references a crop that is not in the field.`
+    )
+  }
+
+  if (!isPlayedCrop(playedCrop)) {
+    // FIXME: Test this
+    throw new InvalidCardError(
+      `${playedCrop.instance.id}, at player ${playerId}'s field in position ${cropIdx}, is not an IPlayedCrop`
     )
   }
 

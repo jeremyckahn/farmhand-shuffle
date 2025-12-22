@@ -1,5 +1,6 @@
 import { updateField } from '../../reducers/update-field'
 import { CardType, IEvent, ShellNotificationType } from '../../types'
+import { isPlayedCrop } from '../../types/guards'
 
 export const rain: IEvent = Object.freeze<IEvent>({
   type: CardType.EVENT,
@@ -22,20 +23,25 @@ export const rain: IEvent = Object.freeze<IEvent>({
 
       if (!player) continue
 
-      const crops = player.field.crops.map(crop => {
-        if (!crop) return crop
+      const crops = player.field.crops.map(card => {
+        if (!card) return card
+
+        if (!isPlayedCrop(card)) {
+          // FIXME: Validate that planted tools aren't watered
+          return card
+        }
 
         // NOTE: Always water all of the opponent's crops, even if they were
         // watered during the previous turn. This is achieved by only early
         // returning if the current crop belongs to the current player.
-        if (playerId === match.currentPlayerId && crop.wasWateredDuringTurn) {
-          return crop
+        if (playerId === match.currentPlayerId && card.wasWateredDuringTurn) {
+          return card
         }
 
         return {
-          ...crop,
+          ...card,
           wasWateredDuringTurn: true,
-          waterCards: crop?.waterCards + 1,
+          waterCards: card.waterCards + 1,
         }
       })
 

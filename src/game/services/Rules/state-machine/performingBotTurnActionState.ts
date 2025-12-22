@@ -158,6 +158,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   )
                 }
 
+                // FIXME: Bots must select a position for where cards are placed.
                 enqueue.raise(
                   {
                     type: MatchEvent.PLAY_CROP,

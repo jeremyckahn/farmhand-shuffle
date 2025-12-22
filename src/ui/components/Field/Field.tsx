@@ -10,6 +10,7 @@ import {
 } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
+import { isPlayedCrop } from '../../../game/types/guards'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { PlayedCrop, playedCropClassName } from '../PlayedCrop'
@@ -172,7 +173,8 @@ export const Field = ({
       >
         {!isSessionOwnerPlayer && emptyCardSlots}
         {crops.map((playedCrop, idx) => {
-          if (!playedCrop) {
+          // FIXME: Needs to support showing planted tools
+          if (!isPlayedCrop(playedCrop)) {
             return <EmptyPlot key={idx} cardSize={cardSize} />
           }
 

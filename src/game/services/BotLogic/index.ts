@@ -3,12 +3,8 @@ import {
   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
   STANDARD_FIELD_SIZE,
 } from '../../config'
-import {
-  IMatch,
-  isCropCardInstance,
-  isWaterCardInstance,
-  WaterInstance,
-} from '../../types'
+import { IMatch, isWaterCardInstance, WaterInstance } from '../../types'
+import { isPlayedCrop } from '../../types/guards'
 import { lookup } from '../Lookup'
 
 export class BotLogicService {
@@ -99,13 +95,12 @@ export class BotLogicService {
 
       const plantedCrop = crops[i]
 
-      if (plantedCrop && isCropCardInstance(plantedCrop.instance)) {
-        if (
-          plantedCrop.waterCards < plantedCrop.instance.waterToMature &&
-          plantedCrop.wasWateredDuringTurn === false
-        ) {
-          fieldCropIdxsThatNeedWater = [...fieldCropIdxsThatNeedWater, i]
-        }
+      if (
+        isPlayedCrop(plantedCrop) &&
+        plantedCrop.waterCards < plantedCrop.instance.waterToMature &&
+        plantedCrop.wasWateredDuringTurn === false
+      ) {
+        fieldCropIdxsThatNeedWater = [...fieldCropIdxsThatNeedWater, i]
       }
     }
 
@@ -123,10 +118,11 @@ export class BotLogicService {
     for (let i = 0; i < crops.length; i++) {
       const plantedCrop = crops[i]
 
-      if (plantedCrop && isCropCardInstance(plantedCrop.instance)) {
-        if (plantedCrop.waterCards >= plantedCrop.instance.waterToMature) {
-          fieldCropIdxsToHarvest = [...fieldCropIdxsToHarvest, i]
-        }
+      if (
+        isPlayedCrop(plantedCrop) &&
+        plantedCrop.waterCards >= plantedCrop.instance.waterToMature
+      ) {
+        fieldCropIdxsToHarvest = [...fieldCropIdxsToHarvest, i]
       }
     }
 
