@@ -19,6 +19,7 @@ import {
 } from '../../../cards'
 import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../../config'
 import { randomNumber } from '../../../../services/RandomNumber'
+import { MAX_RANDOM_VALUE } from '../../../../test-utils/constants'
 import {
   stubCarrot,
   stubPumpkin,
@@ -188,7 +189,7 @@ describe('bot turn action handling', () => {
 
         // NOTE: This causes the maximum amount of crops in the hand to be
         // played. It plays from the back of the hand to the front.
-        vi.spyOn(randomNumber, 'generate').mockReturnValue(1)
+        vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
 
         match = updatePlayer(match, player2.id, {
           deck: startingDeck,
@@ -399,7 +400,7 @@ describe('bot turn action handling', () => {
 
       // NOTE: This causes the maximum amount of crops in the hand to be
       // played. It plays from the back of the hand to the front.
-      vi.spyOn(randomNumber, 'generate').mockReturnValue(1)
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
 
       match = updatePlayer(match, player2.id, {
         deck: startingDeck,
@@ -614,7 +615,7 @@ describe('bot turn action handling', () => {
       }) => {
         // NOTE: This causes the maximum amount of tools in the hand to be
         // played.
-        vi.spyOn(randomNumber, 'generate').mockReturnValue(1)
+        vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
 
         const matchActor = createSetUpMatchActor()
 

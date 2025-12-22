@@ -46,8 +46,7 @@ export class RandomNumberService {
   randomIndex<T>(list: T[]) {
     if (list.length === 0) return
 
-    // TODO: Fix potential off-by-one error (potentially excluding the last element)
-    return Math.floor(this.generate() * (list.length - 1))
+    return Math.floor(this.generate() * list.length)
   }
 
   /**

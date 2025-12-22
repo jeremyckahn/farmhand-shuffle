@@ -1,3 +1,5 @@
+import { MAX_RANDOM_VALUE } from '../../test-utils/constants'
+
 import { RandomNumberService } from '.'
 
 describe('RandomNumber', () => {
@@ -85,7 +87,9 @@ describe('RandomNumber', () => {
 
   describe('randomIndex', () => {
     test.each([
+      { generateMock: 0, list: [1, 2, 3], result: 0 },
       { generateMock: 0.5, list: [1, 2, 3], result: 1 },
+      { generateMock: MAX_RANDOM_VALUE, list: [1, 2, 3], result: 2 },
       { generateMock: 0, list: [], result: undefined },
     ])(
       'choses a random index ($result) from an array $list',
