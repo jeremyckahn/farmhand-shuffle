@@ -1,5 +1,5 @@
 import { randomNumber } from '../../../../../services/RandomNumber'
-import { MAX_RANDOM_VALUE } from '../../../../../test-utils/mocks/constants'
+import { MAX_RANDOM_VALUE } from '../../../../../test-utils/constants'
 import { stubShovel, stubWater } from '../../../../../test-utils/stubs/cards'
 import { DECK_SIZE } from '../../../../config'
 import { updatePlayer } from '../../../../reducers/update-player'

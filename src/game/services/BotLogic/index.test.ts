@@ -1,5 +1,5 @@
 import { randomNumber } from '../../../services/RandomNumber'
-import { MAX_RANDOM_VALUE } from '../../../test-utils/mocks/constants'
+import { MAX_RANDOM_VALUE } from '../../../test-utils/constants'
 import {
   stubCarrot,
   stubRain,
@@ -344,7 +344,11 @@ describe('BotLogicService', () => {
       { hand: [stubShovel], rngStub: 0.5, expectedResult: 1 },
       { hand: [stubShovel, stubShovel], rngStub: 0, expectedResult: 0 },
       { hand: [stubShovel, stubShovel], rngStub: 0.5, expectedResult: 1 },
-      { hand: [stubShovel, stubShovel], rngStub: MAX_RANDOM_VALUE, expectedResult: 2 },
+      {
+        hand: [stubShovel, stubShovel],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: 2,
+      },
     ])(
       'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
       ({ hand, rngStub, expectedResult }) => {

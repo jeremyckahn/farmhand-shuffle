@@ -1,5 +1,5 @@
 import { randomNumber } from '../../../services/RandomNumber'
-import { MAX_RANDOM_VALUE } from '../../../test-utils/mocks/constants'
+import { MAX_RANDOM_VALUE } from '../../../test-utils/constants'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'

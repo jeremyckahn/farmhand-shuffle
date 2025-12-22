@@ -1,4 +1,4 @@
-import { MAX_RANDOM_VALUE } from '../../test-utils/mocks/constants'
+import { MAX_RANDOM_VALUE } from '../../test-utils/constants'
 
 import { RandomNumberService } from '.'
 

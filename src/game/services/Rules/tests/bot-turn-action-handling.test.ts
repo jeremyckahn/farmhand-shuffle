@@ -19,7 +19,7 @@ import {
 } from '../../../cards'
 import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../../config'
 import { randomNumber } from '../../../../services/RandomNumber'
-import { MAX_RANDOM_VALUE } from '../../../../test-utils/mocks/constants'
+import { MAX_RANDOM_VALUE } from '../../../../test-utils/constants'
 import {
   stubCarrot,
   stubPumpkin,
