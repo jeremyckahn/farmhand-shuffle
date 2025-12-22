@@ -1,5 +1,6 @@
 /* eslint-disable functional/immutable-data */
 import { carrot, instantiate, pumpkin, rain, shovel } from '../../game/cards'
+import { sprinkler } from '../../game/cards/tools/sprinkler'
 import { water } from '../../game/cards/water'
 import { DECK_SIZE } from '../../game/config'
 import { CardInstance } from '../../game/types'
@@ -28,7 +29,7 @@ export const stubDeck = () => {
 
   // Populate second half with Rain and Shovels
   for (let i = deck.length / 2 - 1; i < deck.length; i += 2) {
-    deck[i] = instantiate(rain)
+    deck[i] = instantiate(sprinkler)
   }
 
   for (let i = deck.length / 2; i < deck.length; i += 2) {

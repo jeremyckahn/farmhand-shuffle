@@ -5,6 +5,8 @@ import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import { assertCurrentPlayer, assertIsToolCard } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
+import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
+
 import { RulesMachineConfig } from './types'
 
 export const playingToolCard: RulesMachineConfig['states'] = {
@@ -45,6 +47,14 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         })
 
         match = card.applyEffect(context).match
+
+        if (card.isPlantable) {
+          match = moveCropFromHandToField(match, playerId, cardIdx)
+          console.log('PLANTED TOOL')
+        } else {
+          console.log('DID NOT PLANT')
+        }
+
         match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdx)
 
         if (currentPlayerId === sessionOwnerPlayerId) {

@@ -6,7 +6,7 @@ import { factory } from '../../services/Factory'
 import { FieldFullError } from '../../services/Rules/errors'
 import { updateField } from '../update-field'
 
-import { addCropToField } from '.'
+import { addCardToField } from '.'
 
 describe('addCropToField', () => {
   test('adds crop to field', () => {
@@ -19,7 +19,7 @@ describe('addCropToField', () => {
 
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
 
-    const newMatch = addCropToField(match, player1Id, playedCrop)
+    const newMatch = addCardToField(match, player1Id, playedCrop)
 
     const newPlayer = newMatch.table.players[player1Id]
 
@@ -46,7 +46,7 @@ describe('addCropToField', () => {
     const sparseField = stubField({ crops: initialCrops })
     const matchWithSparseField = updateField(match, player1Id, sparseField)
 
-    const newMatch = addCropToField(
+    const newMatch = addCardToField(
       matchWithSparseField,
       player1Id,
       insertedCrop
@@ -79,7 +79,7 @@ describe('addCropToField', () => {
     const newMatch = updateField(match, player1Id, fullField)
 
     expect(() => {
-      addCropToField(newMatch, player1Id, playedCrop)
+      addCardToField(newMatch, player1Id, playedCrop)
     }).toThrow(FieldFullError)
   })
 })

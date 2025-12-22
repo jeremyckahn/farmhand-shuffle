@@ -1,10 +1,18 @@
 import { array } from '../../../services/Array'
 import { lookup } from '../../services/Lookup'
 import { InvalidCardIndexError } from '../../services/Rules/errors'
-import { IMatch, IPlayedCrop, IPlayer } from '../../types'
-import { addCropToField } from '../add-crop-to-field'
+import {
+  IMatch,
+  IPlayedCrop,
+  IPlayedTool,
+  IPlayer,
+  isCropCardInstance,
+  isToolCardInstance,
+} from '../../types'
+import { addCardToField } from '../add-crop-to-field'
 import { updatePlayer } from '../update-player'
 
+// FIXME:: Rename this to moveCardFromHandToField
 export const moveCropFromHandToField = (
   match: IMatch,
   playerId: IPlayer['id'],
@@ -19,16 +27,26 @@ export const moveCropFromHandToField = (
   }
 
   const newHand = array.removeAt(hand, cropCardIdx)
-  const cropInstance = lookup.getCropFromHand(match, playerId, cropCardIdx)
+  const cardInstance = lookup.getCardFromHand(match, playerId, cropCardIdx)
 
-  const playedCropCard: IPlayedCrop = {
-    instance: cropInstance,
-    wasWateredDuringTurn: false,
-    waterCards: 0,
+  // FIXME: Make this less repetitive
+  if (isCropCardInstance(cardInstance)) {
+    const playedCropCard: IPlayedCrop = {
+      instance: cardInstance,
+      wasWateredDuringTurn: false,
+      waterCards: 0,
+    }
+
+    match = addCardToField(match, playerId, playedCropCard)
+    match = updatePlayer(match, playerId, { hand: newHand })
+  } else if (isToolCardInstance(cardInstance)) {
+    const playedToolCard: IPlayedTool = {
+      instance: cardInstance,
+    }
+
+    match = addCardToField(match, playerId, playedToolCard)
+    match = updatePlayer(match, playerId, { hand: newHand })
   }
-
-  match = addCropToField(match, playerId, playedCropCard)
-  match = updatePlayer(match, playerId, { hand: newHand })
 
   return match
 }

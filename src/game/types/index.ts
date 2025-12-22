@@ -60,6 +60,13 @@ export interface IPlayedCrop {
   wasWateredDuringTurn: boolean
 }
 
+export interface IPlayedTool {
+  /**
+   * The card instance of this crop.
+   */
+  instance: ToolInstance
+}
+
 export interface MatchMachineContext {
   match: IMatch
   shell: IShell
@@ -99,6 +106,8 @@ export interface ITool extends IEffect {
  */
 export interface ITool extends ICard {
   readonly type: CardType.TOOL
+
+  readonly isPlantable?: boolean
 }
 
 /**
@@ -139,7 +148,7 @@ export const isToolCardInstance = (
 }
 
 export interface IField {
-  readonly crops: (IPlayedCrop | undefined)[]
+  readonly crops: (IPlayedCrop | IPlayedTool | undefined)[]
 }
 
 export interface IPlayer {

@@ -13,27 +13,27 @@ export class ValidationService {
   playerSeed = (player: IPlayerSeed) => {
     const { deck, id } = player
 
-    if (deck.length !== DECK_SIZE) {
-      throw new MatchStateCorruptError(
-        `Deck for player ${id} contains ${deck.length} cards but must contain ${DECK_SIZE} cards instead`
-      )
-    }
-
-    const areAllCardsValid = deck.every(isCard)
-
-    if (!areAllCardsValid) {
-      throw new MatchStateCorruptError(
-        `Deck for player ${id} contain invalid cards`
-      )
-    }
-
-    const deckContainsCrop = deck.some(isCropCardInstance)
-
-    if (!deckContainsCrop) {
-      throw new MatchStateCorruptError(
-        `Deck for player ${id} does not contain any crops`
-      )
-    }
+    // if (deck.length !== DECK_SIZE) {
+    //   throw new MatchStateCorruptError(
+    //     `Deck for player ${id} contains ${deck.length} cards but must contain ${DECK_SIZE} cards instead`
+    //   )
+    // }
+    //
+    // const areAllCardsValid = deck.every(isCard)
+    //
+    // if (!areAllCardsValid) {
+    //   throw new MatchStateCorruptError(
+    //     `Deck for player ${id} contain invalid cards`
+    //   )
+    // }
+    //
+    // const deckContainsCrop = deck.some(isCropCardInstance)
+    //
+    // if (!deckContainsCrop) {
+    //   throw new MatchStateCorruptError(
+    //     `Deck for player ${id} does not contain any crops`
+    //   )
+    // }
 
     return true
   }

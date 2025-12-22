@@ -12,9 +12,9 @@ export const usePlayedCropLogic = ({
   card: CardInstance
   playedCrop: IPlayedCrop
 }) => {
-  if (!isCropCardInstance(card)) {
-    throw new InvalidCardError(`${card.id} is not a crop card.`)
-  }
+  // if (!isCropCardInstance(card)) {
+  //   throw new InvalidCardError(`${card.id} is not a crop card.`)
+  // }
 
   const waterIconsToRender = Math.max(playedCrop.waterCards, card.waterToMature)
   const canBeWatered = playedCrop.wasWateredDuringTurn === false

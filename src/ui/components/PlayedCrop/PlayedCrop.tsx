@@ -21,6 +21,7 @@ export const unfilledWaterIndicatorOpacity = 0.25
 
 export const playedCropClassName = 'PlayedCrop'
 
+// FIXME: Rename this to PlayedTool
 export const PlayedCrop = ({
   isInBackground,
   cropCardProps: { ref, ...cropCardProps },
