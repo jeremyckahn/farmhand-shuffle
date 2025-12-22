@@ -1,4 +1,4 @@
-import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { stubCarrot, stubSprinkler } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { factory } from '../../services/Factory'
 import { updateField } from '../update-field'
@@ -42,5 +42,19 @@ describe('updatePlayedCrop', () => {
     expect(() => {
       updatePlayedCrop(newMatch, player1Id, -1, { waterCards: 1 })
     }).toThrow('cropIdx -1 references a crop that is not in the field.')
+  })
+
+  test('throws an error if the card at the given index is not a played crop (e.g., a tool card)', () => {
+    const field = {
+      crops: [{ instance: stubSprinkler }],
+    }
+
+    const newMatch = updateField(match, player1Id, field)
+
+    expect(() => {
+      updatePlayedCrop(newMatch, player1Id, 0, { waterCards: 1 })
+    }).toThrow(
+      `[InvalidCardError] ${stubSprinkler.id}, at player ${player1Id}'s field in position 0, is not an IPlayedCrop`
+    )
   })
 })

@@ -6,7 +6,7 @@ import {
   isToolCardInstance,
   isWaterCardInstance,
 } from '../../types'
-import { assertCurrentPlayer, isCrop } from '../../types/guards'
+import { assertCurrentPlayer, isCrop, isPlayedCrop } from '../../types/guards'
 import {
   InvalidCardError,
   InvalidCardIndexError,
@@ -56,6 +56,12 @@ export class LookupService {
 
     if (!cardInstance) {
       throw new InvalidCardIndexError(cardIdx, playerId)
+    }
+
+    if (!isPlayedCrop(cardInstance)) {
+      throw new InvalidCardError(
+        `${cardInstance.instance.id} is not IPlayedCrop`
+      )
     }
 
     return cardInstance

@@ -68,6 +68,9 @@ export const playingToolCard: RulesMachineConfig['states'] = {
             cardIdx,
             openFieldPositionIdx
           )
+          console.log('PLANTED TOOL')
+        } else {
+          console.log('DID NOT PLANT')
         }
 
         match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdx)

@@ -44,7 +44,7 @@ export const isCropCardInstance = (
 export const isPlantableCardInstance = (
   cardInstance: CardInstance
 ): cardInstance is CropInstance => {
-  if (cardInstance.type === CardType.TOOL && (cardInstance as any).isPlantable) {
+  if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
     return true
   }
 

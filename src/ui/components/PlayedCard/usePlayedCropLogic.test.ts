@@ -1,7 +1,13 @@
 import { factory } from '../../../game/services/Factory'
+
 import { InvalidCardError } from '../../../game/services/Rules/errors'
-import { CardInstance, IPlayedCrop } from '../../../game/types'
-import { stubCarrot } from '../../../test-utils/stubs/cards'
+
+import { IPlayedCrop } from '../../../game/types'
+import {
+  stubCarrot,
+  stubRain,
+  stubShovel,
+} from '../../../test-utils/stubs/cards'
 
 import { usePlayedCropLogic } from './usePlayedCropLogic'
 
@@ -23,14 +29,14 @@ describe('usePlayedCropLogic', () => {
     waterCards: validCard.waterToMature + 1,
   }
 
-  it('should throw InvalidCardError if card is not a crop card', () => {
-    // @ts-expect-error Intentially incorrect
-    const invalidCard: CardInstance = { id: '2', type: 'non-crop' }
-
-    expect(() =>
-      usePlayedCropLogic({ card: invalidCard, playedCrop: playedCropNoWater })
-    ).toThrow(InvalidCardError)
-  })
+  it.each([{ invalidCard: stubRain }, { invalidCard: stubShovel }])(
+    'should throw InvalidCardError if card is not plantable',
+    ({ invalidCard }) => {
+      expect(() =>
+        usePlayedCropLogic({ card: invalidCard, playedCrop: playedCropNoWater })
+      ).toThrow(InvalidCardError)
+    }
+  )
 
   it('should calculate waterIconsToRender correctly when not enough water', () => {
     const result = usePlayedCropLogic({
