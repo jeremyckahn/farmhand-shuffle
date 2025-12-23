@@ -119,8 +119,8 @@ describe('RandomNumber', () => {
     test.each([
       { a: 1, b: 2, rngStub: 0, expected: 1 },
       // rngStub 0.999... should map to max value in uniform distribution
-      { a: 1, b: 2, rngStub: 0.999999, expected: 2 },
-      { a: 2, b: 1, rngStub: 0.999999, expected: 2 },
+      { a: 1, b: 2, rngStub: MAX_RANDOM_VALUE, expected: 2 },
+      { a: 2, b: 1, rngStub: MAX_RANDOM_VALUE, expected: 2 },
       { a: 1, b: 2, rngStub: 0.5, expected: 2 },
       { a: 2, b: 1, rngStub: 0.5, expected: 2 },
       { a: 0, b: 10, rngStub: 0.5, expected: 5 },
@@ -131,11 +131,11 @@ describe('RandomNumber', () => {
       // Boundary and Distribution checks for Uniform Distribution
       // Range [1, 3] (size 3). Uniform intervals: [0, 0.33), [0.33, 0.66), [0.66, 1)
       { a: 1, b: 3, rngStub: 0.0, expected: 1 },
-      { a: 1, b: 3, rngStub: 0.3, expected: 1 }, // Previously biased to 2
+      { a: 1, b: 3, rngStub: 0.3, expected: 1 },
       { a: 1, b: 3, rngStub: 0.4, expected: 2 },
       { a: 1, b: 3, rngStub: 0.6, expected: 2 },
-      { a: 1, b: 3, rngStub: 0.7, expected: 3 }, // Previously biased to 2
-      { a: 1, b: 3, rngStub: 0.999999, expected: 3 },
+      { a: 1, b: 3, rngStub: 0.7, expected: 3 },
+      { a: 1, b: 3, rngStub: MAX_RANDOM_VALUE, expected: 3 },
     ])(
       'chooses a random number between $a and $b',
       ({ a, b, rngStub, expected }) => {
