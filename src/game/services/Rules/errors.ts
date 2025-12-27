@@ -24,6 +24,13 @@ export class MatchStateCorruptError extends Error {
   }
 }
 
+export class GameStateCorruptError extends Error {
+  constructor(message: string) {
+    super(...arguments)
+    this.message = `[GameStateCorruptError] ${message}`
+  }
+}
+
 export class FieldFullError extends Error {
   constructor(playerId: IPlayer['id']) {
     super(...arguments)
