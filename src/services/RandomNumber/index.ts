@@ -77,7 +77,8 @@ export class RandomNumberService {
       )
     }
 
-    const [minimum, maximum] = [a, b].sort()
+    const minimum = Math.min(a, b)
+    const maximum = Math.max(a, b)
 
     if (minimum === undefined || maximum === undefined) {
       throw new TypeError(
