@@ -5,7 +5,13 @@ import { allCards } from '../../game/cards'
 import { GameStateCorruptError } from '../../game/services/Rules/errors'
 import { ICard } from '../../game/types'
 
-import { StorageService, StorageKey, storage } from './index'
+import {
+  StorageService,
+  StorageKey,
+  storage,
+  DeserializedDeck,
+  SerializedDeck,
+} from './index'
 
 vi.mock('localforage', () => ({
   default: {
@@ -24,7 +30,7 @@ describe('StorageService', () => {
 
   describe('serializeDeck', () => {
     it('should serialize a deck map to a plain object', () => {
-      const deck = new Map<ICard, number>([
+      const deck: DeserializedDeck = new Map([
         [mockCard1, 2],
         [mockCard2, 1],
       ])
@@ -38,7 +44,7 @@ describe('StorageService', () => {
     })
 
     it('should ignore cards with zero quantity', () => {
-      const deck = new Map<ICard, number>([
+      const deck: DeserializedDeck = new Map([
         [mockCard1, 2],
         [mockCard2, 0],
       ])
@@ -53,7 +59,7 @@ describe('StorageService', () => {
 
   describe('deserializeDeck', () => {
     it('should deserialize a plain object back to a deck map', () => {
-      const data = {
+      const data: SerializedDeck = {
         [mockCard1.id]: 2,
         [mockCard2.id]: 1,
       }
@@ -66,7 +72,7 @@ describe('StorageService', () => {
     })
 
     it('should throw GameStateCorruptError if an unknown card ID is encountered', () => {
-      const data = {
+      const data: SerializedDeck = {
         [mockCard1.id]: 2,
         'unknown-card-id': 5,
       }
@@ -79,8 +85,8 @@ describe('StorageService', () => {
 
   describe('saveDeck', () => {
     it('should serialize and save the deck to localforage', async () => {
-      const deck = new Map<ICard, number>([[mockCard1, 3]])
-      const expectedSerialized = { [mockCard1.id]: 3 }
+      const deck: DeserializedDeck = new Map([[mockCard1, 3]])
+      const expectedSerialized: SerializedDeck = { [mockCard1.id]: 3 }
 
       await storage.saveDeck(deck)
 
@@ -106,7 +112,7 @@ describe('StorageService', () => {
     })
 
     it('should deserialize and return the deck if found', async () => {
-      const storedData = { [mockCard1.id]: 2 }
+      const storedData: SerializedDeck = { [mockCard1.id]: 2 }
       // eslint-disable-next-line @typescript-eslint/unbound-method
       vi.mocked(localforage.getItem).mockResolvedValue(storedData)
 
