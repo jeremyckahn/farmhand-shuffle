@@ -77,7 +77,8 @@ export class RandomNumberService {
       )
     }
 
-    const [minimum, maximum] = [a, b].sort()
+    const minimum = Math.min(a, b)
+    const maximum = Math.max(a, b)
 
     if (minimum === undefined || maximum === undefined) {
       throw new TypeError(
@@ -85,8 +86,7 @@ export class RandomNumberService {
       )
     }
 
-    // TODO: Fix use of Math.round which introduces bias
-    return Math.round(this.generate() * (maximum - minimum)) + minimum
+    return Math.floor(this.generate() * (maximum - minimum + 1)) + minimum
   }
 }
 
