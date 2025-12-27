@@ -9,6 +9,7 @@ export const BuildDeck = () => {
   return (
     <DeckBuilder
       onDone={deck => {
+        // TODO: Change onDone to be async/Promise-based
         void (async () => {
           await storage.saveDeck(deck)
           void navigate('/')

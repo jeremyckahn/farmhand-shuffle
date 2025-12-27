@@ -2,6 +2,7 @@ import localforage from 'localforage'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import { allCards } from '../../game/cards'
+import { GameStateCorruptError } from '../../game/services/Rules/errors'
 import { ICard } from '../../game/types'
 
 import { StorageService, StorageKey, storage } from './index'
@@ -64,16 +65,15 @@ describe('StorageService', () => {
       expect(deck.get(mockCard2)).toBe(1)
     })
 
-    it('should ignore unknown card IDs', () => {
+    it('should throw GameStateCorruptError if an unknown card ID is encountered', () => {
       const data = {
         [mockCard1.id]: 2,
         'unknown-card-id': 5,
       }
 
-      const deck = StorageService.deserializeDeck(data)
-
-      expect(deck.size).toBe(1)
-      expect(deck.get(mockCard1)).toBe(2)
+      expect(() => StorageService.deserializeDeck(data)).toThrow(
+        GameStateCorruptError
+      )
     })
   })
 

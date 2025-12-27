@@ -1,11 +1,15 @@
 import localforage from 'localforage'
 
 import { allCards } from '../../game/cards'
+import { GameStateCorruptError } from '../../game/services/Rules/errors'
 import { ICard } from '../../game/types'
 
 export enum StorageKey {
   PLAYER_DECK = 'PLAYER_DECK',
 }
+
+export type DeserializedDeck = Map<ICard, number>
+export type SerializedDeck = Record<string, number>
 
 export class StorageService {
   /**
@@ -13,8 +17,8 @@ export class StorageService {
    * @param deck - The deck to serialize.
    * @returns A plain object suitable for JSON storage.
    */
-  static serializeDeck(deck: Map<ICard, number>): Record<string, number> {
-    const serialized: Record<string, number> = {}
+  static serializeDeck(deck: DeserializedDeck): SerializedDeck {
+    const serialized: SerializedDeck = {}
     for (const [card, count] of deck) {
       if (count > 0) {
         // eslint-disable-next-line functional/immutable-data
@@ -28,26 +32,34 @@ export class StorageService {
    * Deserializes a plain object into a deck map.
    * @param data - The serialized deck data.
    * @returns A Map of ICard to quantity.
+   * @throws {GameStateCorruptError} If a card ID is not found.
    */
-  static deserializeDeck(data: Record<string, number>): Map<ICard, number> {
-    const entries: [ICard, number][] = Object.entries(data)
-      .map(([cardId, count]): [ICard | undefined, number] => [
-        allCards[cardId],
-        count,
-      ])
-      .filter(
-        (entry): entry is [ICard, number] =>
-          entry[0] !== undefined && entry[1] > 0
-      )
+  static deserializeDeck(data: SerializedDeck): DeserializedDeck {
+    const deck: DeserializedDeck = new Map()
 
-    return new Map(entries)
+    for (const [cardId, count] of Object.entries(data)) {
+      const card = allCards[cardId]
+
+      if (!card) {
+        throw new GameStateCorruptError(
+          `Card with ID "${cardId}" not found in card definitions.`
+        )
+      }
+
+      if (count > 0) {
+        // eslint-disable-next-line functional/immutable-data
+        deck.set(card, count)
+      }
+    }
+
+    return deck
   }
 
   /**
    * Saves the player's deck to local storage.
    * @param deck - The deck to save.
    */
-  async saveDeck(deck: Map<ICard, number>): Promise<void> {
+  async saveDeck(deck: DeserializedDeck): Promise<void> {
     const serialized = StorageService.serializeDeck(deck)
     await localforage.setItem(StorageKey.PLAYER_DECK, serialized)
   }
@@ -56,8 +68,8 @@ export class StorageService {
    * Loads the player's deck from local storage.
    * @returns The loaded deck, or null if no deck is found.
    */
-  async loadDeck(): Promise<Map<ICard, number> | null> {
-    const data = await localforage.getItem<Record<string, number>>(
+  async loadDeck(): Promise<DeserializedDeck | null> {
+    const data = await localforage.getItem<SerializedDeck>(
       StorageKey.PLAYER_DECK
     )
     if (!data) {
