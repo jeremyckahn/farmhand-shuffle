@@ -61,14 +61,6 @@ describe('BotLogicService', () => {
       {
         rngStub: MAX_RANDOM_VALUE,
         hand: [instantiate(carrot), instantiate(carrot)],
-        fieldCrops: [],
-        minimumCropsToPlay: 1,
-        expectedResult: 2,
-      },
-
-      {
-        rngStub: MAX_RANDOM_VALUE,
-        hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE - 1).fill({
           instance: instantiate(carrot),
           wasWateredDuringTurn: false,
@@ -89,6 +81,23 @@ describe('BotLogicService', () => {
         minimumCropsToPlay: 1,
         expectedResult: 0, // No room for more crops in field
       },
+
+      {
+        rngStub: 0.25,
+        hand: [instantiate(carrot), instantiate(carrot)],
+        fieldCrops: [],
+        minimumCropsToPlay: 0,
+        expectedResult: 0,
+      },
+
+      {
+        rngStub: 0.5,
+        hand: [instantiate(carrot), instantiate(carrot)],
+        fieldCrops: [],
+        minimumCropsToPlay: 0,
+        expectedResult: 1,
+      },
+
       {
         rngStub: 0.75,
         hand: [instantiate(carrot), instantiate(carrot)],
@@ -96,12 +105,13 @@ describe('BotLogicService', () => {
         minimumCropsToPlay: 1,
         expectedResult: 2,
       },
+
       {
-        rngStub: 0.25,
+        rngStub: MAX_RANDOM_VALUE,
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
-        minimumCropsToPlay: 0,
-        expectedResult: 0,
+        minimumCropsToPlay: 1,
+        expectedResult: 2,
       },
     ])(
       'determines amount of crops to play for stable random number $rngStub, hand $hand, crops $fieldCrops, and minimumCropsToPlay $minimumCropsToPlay',
