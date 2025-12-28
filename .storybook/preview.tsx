@@ -3,6 +3,7 @@ import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 import { CssBaseline, Theme, ThemeProvider } from '@mui/material'
+import { unstable_ClassNameGenerator as ClassNameGenerator } from '@mui/material/className'
 import type { Preview, ReactRenderer } from '@storybook/react-vite'
 import { useMemo } from 'react'
 import { DecoratorFunction } from 'storybook/internal/csf'
@@ -10,6 +11,10 @@ import { fn, spyOn } from 'storybook/test'
 
 import { ActorContext } from '../src/ui/components/Match/ActorContext'
 import { darkTheme, lightTheme } from '../src/ui/theme'
+
+ClassNameGenerator.configure((componentName) =>
+  componentName.replace('Mui', '')
+)
 
 const THEMES = {
   light: lightTheme,
