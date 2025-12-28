@@ -53,6 +53,7 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
   const hasAtLeastOneCrop = useMemo(() => {
     return sortedCards.some(card => {
       const quantity = quantities[card.id] || 0
+
       return card.type === CardType.CROP && quantity > 0
     })
   }, [quantities])

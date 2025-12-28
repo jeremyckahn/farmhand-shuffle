@@ -34,6 +34,7 @@ export const { createMachine } = setup({
       context: { match },
     }) => {
       const { currentPlayerId } = match
+
       assertCurrentPlayer(currentPlayerId)
 
       switch (event.type) {

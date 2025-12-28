@@ -28,6 +28,7 @@ export const moveFromFieldToDiscardPile = (
   }
 
   let { crops } = field
+
   crops = array.replaceAt(crops, cardIdx, undefined)
 
   match = updateField(match, playerId, { crops })

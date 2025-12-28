@@ -31,6 +31,7 @@ const EmptyPlot = ({
   cardSize = CardSize.SMALL,
 }: Pick<FieldProps, 'cardSize'>) => {
   const theme = useTheme()
+
   return (
     <Grid item xs={6} sm={4} md={2}>
       <Box

@@ -26,6 +26,7 @@ export const recordCardPlayEvents = (
     case MatchEvent.PLAY_TOOL:
     case MatchEvent.PLAY_WATER: {
       const { currentPlayerId } = match
+
       assertCurrentPlayer(currentPlayerId)
 
       const player = lookup.getPlayer(match, currentPlayerId)

@@ -13,6 +13,7 @@ describe('useRejectingTimeout', () => {
     const { setRejectingTimeout } = result.current
 
     const resolveSpy = vi.fn()
+
     setRejectingTimeout(100)
       .then(resolveSpy)
       .catch(() => {})
@@ -32,6 +33,7 @@ describe('useRejectingTimeout', () => {
     const { setRejectingTimeout } = result.current
 
     const rejectSpy = vi.fn()
+
     setRejectingTimeout(100)
       .then(() => {})
       .catch(rejectSpy)

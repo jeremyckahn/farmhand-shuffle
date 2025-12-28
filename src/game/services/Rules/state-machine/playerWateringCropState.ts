@@ -30,6 +30,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
       switch (event.type) {
         case MatchEvent.PLAY_WATER: {
           const { cardIdx } = event
+
           match = {
             ...match,
             selectedWaterCardInHandIdx: cardIdx,

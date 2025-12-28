@@ -13,6 +13,7 @@ describe('incrementCommunityFund', () => {
 
   test('adds funds', () => {
     const newMatch = incrementCommunityFund(match, 5)
+
     expect(newMatch.table.communityFund).toEqual(match.table.communityFund + 5)
   })
 
@@ -20,6 +21,7 @@ describe('incrementCommunityFund', () => {
     match = updateTable(match, { communityFund: 50 })
 
     const newMatch = incrementCommunityFund(match, -5)
+
     expect(newMatch.table.communityFund).toEqual(match.table.communityFund - 5)
   })
 

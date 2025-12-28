@@ -19,6 +19,7 @@ describe('incrementPlayer', () => {
     const [player1Id, player2Id] = Object.keys(match.table.players)
 
     let newMatch = updateMatch(match, { currentPlayerId: player2Id })
+
     newMatch = incrementPlayer(newMatch)
 
     expect(newMatch.currentPlayerId).toEqual(player1Id)

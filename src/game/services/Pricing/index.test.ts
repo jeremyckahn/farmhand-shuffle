@@ -15,6 +15,7 @@ describe('PricingService', () => {
   describe('getCropSaleValue', () => {
     it('should return the community fund if it is less than base value', () => {
       let match = stubMatch()
+
       match = updateTable(match, { communityFund: 2 })
 
       expect(pricing.getCropSaleValue(match, carrot)).toBe(2)
@@ -22,6 +23,7 @@ describe('PricingService', () => {
 
     it('should return the base value if it is equal to community fund', () => {
       let match = stubMatch()
+
       match = updateTable(match, { communityFund: 10 })
 
       expect(pricing.getCropSaleValue(match, carrot)).toBe(6)

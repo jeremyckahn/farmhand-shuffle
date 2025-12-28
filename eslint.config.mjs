@@ -1,6 +1,7 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from 'eslint-plugin-storybook'
 
+import stylistic from '@stylistic/eslint-plugin'
 import pluginJs from '@eslint/js'
 import functionalPlugin from 'eslint-plugin-functional'
 import importPlugin from 'eslint-plugin-import'
@@ -10,6 +11,11 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default [
+  {
+    plugins: {
+      '@stylistic': stylistic,
+    },
+  },
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
@@ -68,6 +74,15 @@ export default [
         },
       ],
       'functional/immutable-data': ['error'],
+      '@stylistic/padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
+        {
+          blankLine: 'any',
+          prev: ['const', 'let', 'var'],
+          next: ['const', 'let', 'var'],
+        },
+      ],
     },
     ignores: ['dist'],
   },

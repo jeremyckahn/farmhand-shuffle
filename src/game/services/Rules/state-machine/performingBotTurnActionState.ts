@@ -55,9 +55,11 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               switch (event.type) {
                 case MatchEvent.START_TURN: {
                   const previousTurnMatchState = match
+
                   match = incrementPlayer(match)
 
                   const { currentPlayerId } = match
+
                   assertCurrentPlayer(currentPlayerId)
 
                   const previousTurnStateForCurrentPlayer =
@@ -141,6 +143,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
               if (areCropsToPlay) {
                 const { currentPlayerId } = match
+
                 assertCurrentPlayer(currentPlayerId)
 
                 const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
@@ -179,6 +182,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         entry: enqueueActions(
           withBotErrorHandling(({ context: { botState, match }, enqueue }) => {
             const { currentPlayerId } = match
+
             assertCurrentPlayer(currentPlayerId)
 
             const fieldCropIndicesToWaterDuringTurn =
@@ -227,6 +231,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
             if (areEventCardsToPlay) {
               const { currentPlayerId } = match
+
               assertCurrentPlayer(currentPlayerId)
 
               const eventCardIdxToPlay = botLogic.getEventCardIndexToPlay(
@@ -268,6 +273,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
             if (areToolsToPlay) {
               const { currentPlayerId } = match
+
               assertCurrentPlayer(currentPlayerId)
 
               const toolCardIdxToPlay = botLogic.getToolCardIndexToPlay(
@@ -305,6 +311,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         entry: enqueueActions(
           withBotErrorHandling(({ context: { botState, match }, enqueue }) => {
             const { currentPlayerId } = match
+
             assertCurrentPlayer(currentPlayerId)
 
             const cropCardIndicesToHarvest =

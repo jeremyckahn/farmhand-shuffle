@@ -369,6 +369,7 @@ describe('player turn action handling', () => {
     const matchActor = createSetUpMatchActor()
 
     const startPlayerTurn = vi.spyOn(startTurnModule, 'startTurn')
+
     matchActor.send({ type: MatchEvent.START_TURN })
 
     vi.runAllTimers()

@@ -82,6 +82,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
 
               match = incrementPlayer(match)
               const { currentPlayerId } = match
+
               assertCurrentPlayer(currentPlayerId)
 
               const previousTurnStateForCurrentPlayer = lookup.getPlayer(
@@ -100,6 +101,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
                     // that the stale context.match reference is not used.
                     match,
                   })
+
                   match = newContext.match
                 }
               }
@@ -121,6 +123,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
 
             case MatchEvent.OPERATION_ABORTED: {
               const { currentPlayerId } = match
+
               assertCurrentPlayer(currentPlayerId)
 
               match = removeTurnCardsPlayed(match, currentPlayerId, 1)
@@ -133,6 +136,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
         } catch (error) {
           if (error instanceof PlayerOutOfFundsError) {
             const { currentPlayerId } = match
+
             assertCurrentPlayer(currentPlayerId)
 
             enqueue.raise({

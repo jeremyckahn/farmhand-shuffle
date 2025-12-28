@@ -35,6 +35,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             assertEvent(event, MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION)
 
             const { currentPlayerId } = match
+
             assertCurrentPlayer(currentPlayerId)
 
             const player = lookup.getPlayer(match, currentPlayerId)
@@ -105,6 +106,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             const { cardIdx, playerId } = event
 
             const { currentPlayerId } = match
+
             assertCurrentPlayer(currentPlayerId)
 
             match = recordCardPlayEvents(match, event)
@@ -128,6 +130,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
     entry: enqueueActions(({ context: { match }, enqueue }) => {
       const { currentPlayerId } = match
+
       assertCurrentPlayer(currentPlayerId)
 
       match = incrementPlayer(match)

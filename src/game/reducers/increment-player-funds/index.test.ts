@@ -10,6 +10,7 @@ describe('incrementPlayerFunds', () => {
   beforeEach(() => {
     match = stubMatch()
     const p1Id = Object.keys(match.table.players)[0]
+
     if (!p1Id) {
       throw new Error('Player not found in test setup')
     }
@@ -18,10 +19,12 @@ describe('incrementPlayerFunds', () => {
 
   test('adds funds', () => {
     const playerBefore = match.table.players[player1Id]
+
     if (!playerBefore) throw new Error('Player not found in test setup')
 
     const newMatch = incrementPlayerFunds(match, player1Id, 5)
     const playerAfter = newMatch.table.players[player1Id]
+
     if (!playerAfter)
       throw new Error('Player not found after incrementing funds')
 
@@ -30,10 +33,12 @@ describe('incrementPlayerFunds', () => {
 
   test('removes funds', () => {
     const playerBefore = match.table.players[player1Id]
+
     if (!playerBefore) throw new Error('Player not found in test setup')
 
     const newMatch = incrementPlayerFunds(match, player1Id, -5)
     const playerAfter = newMatch.table.players[player1Id]
+
     if (!playerAfter)
       throw new Error('Player not found after incrementing funds')
 
@@ -42,6 +47,7 @@ describe('incrementPlayerFunds', () => {
 
   test('does not remove more funds than the player has', () => {
     const playerBefore = match.table.players[player1Id]
+
     if (!playerBefore) throw new Error('Player not found in test setup')
 
     const newMatch = incrementPlayerFunds(
@@ -50,6 +56,7 @@ describe('incrementPlayerFunds', () => {
       -playerBefore.funds - 1
     )
     const playerAfter = newMatch.table.players[player1Id]
+
     if (!playerAfter)
       throw new Error('Player not found after incrementing funds')
 

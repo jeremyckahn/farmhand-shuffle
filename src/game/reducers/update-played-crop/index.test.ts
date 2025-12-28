@@ -20,6 +20,7 @@ describe('updatePlayedCrop', () => {
     }
 
     let newMatch = updateField(match, player1Id, field)
+
     newMatch = updatePlayedCrop(newMatch, player1Id, 0, { waterCards: 1 })
     const newPlayer = newMatch.table.players[player1Id]
 

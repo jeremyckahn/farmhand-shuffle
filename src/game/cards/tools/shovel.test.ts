@@ -17,6 +17,7 @@ describe('shovel', () => {
     test('draws two cards', () => {
       let match = stubMatch()
       const { currentPlayerId } = match
+
       assertCurrentPlayer(currentPlayerId)
 
       match = updatePlayer(match, currentPlayerId, {
@@ -25,6 +26,7 @@ describe('shovel', () => {
       })
 
       const context = createMatchStateMachineContext()
+
       vi.spyOn(context.shell, 'triggerNotification')
 
       const { match: updatedMatch } = shovel.applyEffect({
@@ -55,6 +57,7 @@ describe('shovel', () => {
     test('sets match.cardsToDrawAtTurnStart to 0', () => {
       let match = stubMatch()
       const { currentPlayerId } = match
+
       assertCurrentPlayer(currentPlayerId)
 
       match = updatePlayer(match, currentPlayerId, {

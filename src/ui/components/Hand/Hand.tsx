@@ -151,6 +151,7 @@ export const Hand = ({
         const isSelected = selectedCardIdx === idx
 
         let transform = ''
+
         if (!isSelected) {
           const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
           const translateY =
@@ -162,6 +163,7 @@ export const Hand = ({
             selectedCardIdx === deselectedIdx
               ? foregroundCardScale
               : backgroundCardScale
+
           transform = `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
         }
 

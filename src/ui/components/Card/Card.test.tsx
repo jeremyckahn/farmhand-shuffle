@@ -147,6 +147,7 @@ describe('Card', () => {
     )
 
     const playCardButton = screen.getByText('Play crop')
+
     expect(playCardButton).toBeDisabled()
   })
 
@@ -158,6 +159,7 @@ describe('Card', () => {
     ({ matchState }) => {
       const send = mockSend()
       const match = stubMatch()
+
       vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
         matchState,
         match: {
@@ -192,6 +194,7 @@ describe('Card', () => {
     'allows player to start watering sequence in match state $matchState',
     ({ matchState }) => {
       const send = mockSend()
+
       vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
         matchState,
         match: stubMatch({
@@ -290,6 +293,7 @@ describe('Card', () => {
 
   test('allows player to play event card', () => {
     const send = mockSend()
+
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
       match: stubMatch({
@@ -317,6 +321,7 @@ describe('Card', () => {
 
   test('allows player to play tool card', () => {
     const send = mockSend()
+
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
       match: stubMatch({
