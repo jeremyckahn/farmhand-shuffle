@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 
@@ -9,7 +10,7 @@ import { DeckBuilderSection } from './DeckBuilderSection'
 import { DeckBuilderProps } from './types'
 import { useDeckBuilder } from './useDeckBuilder'
 
-export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
+export const DeckBuilder = ({ onDone, isLoading }: DeckBuilderProps) => {
   const {
     groupedCards,
     quantities,
@@ -43,6 +44,7 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
           quantities={quantities}
           onQuantityChange={handleQuantityChange}
           totalCards={totalCards}
+          disabled={isLoading}
         />
         <DeckBuilderSection
           title="Water"
@@ -51,6 +53,7 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
           quantities={quantities}
           onQuantityChange={handleQuantityChange}
           totalCards={totalCards}
+          disabled={isLoading}
         />
         <DeckBuilderSection
           title="Tools"
@@ -59,6 +62,7 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
           quantities={quantities}
           onQuantityChange={handleQuantityChange}
           totalCards={totalCards}
+          disabled={isLoading}
         />
         <DeckBuilderSection
           title="Events"
@@ -67,6 +71,7 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
           quantities={quantities}
           onQuantityChange={handleQuantityChange}
           totalCards={totalCards}
+          disabled={isLoading}
         />
       </Box>
 
@@ -75,9 +80,9 @@ export const DeckBuilder = ({ onDone }: DeckBuilderProps) => {
           variant="contained"
           size="large"
           onClick={handleDone}
-          disabled={!isDeckValid}
+          disabled={!isDeckValid || isLoading}
         >
-          Done
+          {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Done'}
         </Button>
       </Box>
     </Paper>

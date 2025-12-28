@@ -21,6 +21,7 @@ export const CardQuantityControl = ({
   onChange,
   cardSize = CardSize.SMALL,
   isIncreaseDisabled = false,
+  disabled = false,
 }: CardQuantityControlProps) => {
   const dummyCardInstance = useMemo<CardInstance>(
     () =>
@@ -35,13 +36,13 @@ export const CardQuantityControl = ({
   )
 
   const handleDecrease = () => {
-    if (quantity > 0) {
+    if (quantity > 0 && !disabled) {
       onChange(prev => prev - 1)
     }
   }
 
   const handleIncrease = () => {
-    if (quantity < DECK_SIZE && !isIncreaseDisabled) {
+    if (quantity < DECK_SIZE && !isIncreaseDisabled && !disabled) {
       onChange(prev => prev + 1)
     }
   }
@@ -67,7 +68,7 @@ export const CardQuantityControl = ({
               size="small"
               color="secondary"
               onClick={handleDecrease}
-              disabled={quantity <= 0}
+              disabled={quantity <= 0 || disabled}
               aria-label="decrease quantity"
             >
               <RemoveIcon />
@@ -86,7 +87,7 @@ export const CardQuantityControl = ({
               size="small"
               color="primary"
               onClick={handleIncrease}
-              disabled={quantity >= DECK_SIZE || isIncreaseDisabled}
+              disabled={quantity >= DECK_SIZE || isIncreaseDisabled || disabled}
               aria-label="increase quantity"
             >
               <AddIcon />

@@ -98,6 +98,7 @@
     "react-markdown": "^10.1.0",
     "react-node-to-string": "^0.1.2",
     "react-router-dom": "^7.10.0",
+    "react-use": "^17.6.0",
     "seedrandom": "^3.0.5",
     "typeface-roboto": "^1.1.13",
     "usehooks-ts": "^2.16.0",

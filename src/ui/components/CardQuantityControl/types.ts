@@ -9,4 +9,5 @@ export interface CardQuantityControlProps {
   onChange: Dispatch<SetStateAction<number>>
   cardSize?: CardSize
   isIncreaseDisabled?: boolean
+  disabled?: boolean
 }
