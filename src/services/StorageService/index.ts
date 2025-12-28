@@ -55,6 +55,7 @@ export class StorageService {
    */
   async saveDeck(deck: DeserializedDeck): Promise<void> {
     const serialized = StorageService.serializeDeck(deck)
+
     await localforage.setItem(StorageKey.PLAYER_DECK, serialized)
   }
 
@@ -66,6 +67,7 @@ export class StorageService {
     const data = await localforage.getItem<SerializedDeck>(
       StorageKey.PLAYER_DECK
     )
+
     if (!data) {
       return null
     }

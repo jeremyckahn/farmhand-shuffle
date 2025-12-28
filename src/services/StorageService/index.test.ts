@@ -113,6 +113,7 @@ describe('StorageService', () => {
 
     it('should deserialize and return the deck if found', async () => {
       const storedData: SerializedDeck = { [mockCard1.id]: 2 }
+
       // eslint-disable-next-line @typescript-eslint/unbound-method
       vi.mocked(localforage.getItem).mockResolvedValue(storedData)
 
