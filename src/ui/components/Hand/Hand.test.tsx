@@ -38,12 +38,14 @@ vi.mock('../Card/Card', async () => {
         ...props
       }: CardProps) => {
         const style: React.CSSProperties = {}
+
         if (sx) {
           const sxObject = isSxArray(sx)
             ? // @ts-expect-error This is enough for the mock
               // eslint-disable-next-line @typescript-eslint/no-unsafe-return
               sx.reduce((acc, curr) => ({ ...acc, ...curr }), {})
             : sx
+
           // @ts-expect-error This is enough for the mock
           if (sxObject?.transform) {
             // @ts-expect-error This is enough for the mock
@@ -92,6 +94,7 @@ describe('Hand', () => {
       const card = screen.getByText(name).closest(`.${cardClassName}`)
 
       const { transform } = getComputedStyle(card!)
+
       expect(transform).toMatchSnapshot()
     }
   })
@@ -102,9 +105,11 @@ describe('Hand', () => {
     const card1 = screen
       .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
+
     await userEvent.click(card1!)
 
     const { transform: card1Transform } = getComputedStyle(card1!)
+
     expect(card1Transform).toMatchInlineSnapshot(
       `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
     )
@@ -113,6 +118,7 @@ describe('Hand', () => {
       const card = screen.getByText(name).closest(`.${cardClassName}`)
 
       const { transform } = getComputedStyle(card!)
+
       expect(transform).toMatchSnapshot()
     }
   })
@@ -131,6 +137,7 @@ describe('Hand', () => {
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)
+
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
     )
@@ -153,11 +160,13 @@ describe('Hand', () => {
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)
+
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`
     )
 
     const { transform: card2Transform } = getComputedStyle(card2!)
+
     expect(card2Transform).toMatchInlineSnapshot(
       `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
     )
@@ -177,6 +186,7 @@ describe('Hand', () => {
     })
 
     const { transform: card1Transform } = getComputedStyle(card1!)
+
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
     )
@@ -200,6 +210,7 @@ describe('Hand', () => {
     render(<StubHand match={newMatch} />)
 
     const { transform: card1Transform } = getComputedStyle(card1!)
+
     expect(card1Transform).toMatchInlineSnapshot(
       `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
     )

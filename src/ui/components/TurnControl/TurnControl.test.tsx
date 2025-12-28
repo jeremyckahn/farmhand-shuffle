@@ -126,6 +126,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let match = stubMatch()
+
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [
@@ -153,6 +154,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_TURN_ACTION
 
     let match = stubMatch()
+
     match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -174,6 +176,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let match = stubMatch()
+
     match = updatePlayer(match, stubPlayer1.id, {
       field: { crops: [] },
     })
@@ -197,6 +200,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.UNINITIALIZED
 
     let match = stubMatch()
+
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [
@@ -225,6 +229,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let match = stubMatch()
+
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [
@@ -246,6 +251,7 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl match={match} />)
 
     const button = screen.getByRole('button', { name: /Complete setup/i })
+
     fireEvent.click(button)
 
     expect(send).toHaveBeenCalledWith({
@@ -257,6 +263,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_TURN_ACTION
 
     let match = stubMatch()
+
     match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -272,6 +279,7 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl match={match} />)
 
     const button = screen.getByRole('button', { name: /End turn/i })
+
     fireEvent.click(button)
 
     expect(send).toHaveBeenCalledWith({
@@ -283,6 +291,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.UNINITIALIZED
 
     let match = stubMatch()
+
     match = updatePlayer(match, stubPlayer1.id, {
       field: { crops: [] },
     })
@@ -308,6 +317,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
     let match = stubMatch()
+
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
         crops: [

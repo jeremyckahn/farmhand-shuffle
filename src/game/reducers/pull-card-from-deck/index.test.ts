@@ -75,6 +75,7 @@ describe('pullCardFromDeck', () => {
       const deck = [stubPumpkin]
       const discardPile = [stubWater]
       const hand: IPlayer['hand'] = []
+
       match = updatePlayer(match, player1Id, { deck, discardPile, hand })
 
       const newMatch = pullCardFromDeck(match, player1Id, 0)

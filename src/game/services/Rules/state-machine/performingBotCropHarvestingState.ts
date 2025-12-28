@@ -26,6 +26,7 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
         enqueue,
       }) => {
         const { currentPlayerId } = match
+
         assertCurrentPlayer(currentPlayerId)
 
         if (cropCardIdxToHarvest !== undefined) {

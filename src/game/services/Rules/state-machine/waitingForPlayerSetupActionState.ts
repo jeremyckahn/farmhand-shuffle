@@ -21,6 +21,7 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
           const { cardIdx, playerId } = event
 
           const { currentPlayerId } = match
+
           assertCurrentPlayer(currentPlayerId)
 
           const player = lookup.getPlayer(match, playerId)

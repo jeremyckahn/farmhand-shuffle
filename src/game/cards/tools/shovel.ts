@@ -19,6 +19,7 @@ export const shovel: ITool = Object.freeze<ITool>({
   applyEffect: context => {
     let { match } = context
     const { currentPlayerId } = match
+
     assertCurrentPlayer(currentPlayerId)
 
     match = drawCard(match, currentPlayerId, SHOVEL_CARDS_TO_DRAW)

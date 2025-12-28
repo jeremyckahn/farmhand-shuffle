@@ -14,6 +14,7 @@ export const drawCard = (
   let newDiscardPile = [...player.discardPile]
 
   const drawnCards = newDeck.slice(0, howMany)
+
   newDeck = newDeck.slice(howMany)
 
   newHand = [...newHand, ...drawnCards]

@@ -10,6 +10,7 @@ export const useRejectingTimeout = () => {
 
   useEffect(() => {
     const { current } = timeoutPool
+
     return () => {
       current.forEach(reject => {
         reject()

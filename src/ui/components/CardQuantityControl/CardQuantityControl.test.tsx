@@ -64,6 +64,7 @@ describe('CardQuantityControl', () => {
     )
 
     const button = screen.getByLabelText('decrease quantity')
+
     expect(button).toBeDisabled()
     fireEvent.click(button)
     expect(onChange).not.toHaveBeenCalled()
@@ -79,6 +80,7 @@ describe('CardQuantityControl', () => {
     )
 
     const button = screen.getByLabelText('increase quantity')
+
     expect(button).toBeDisabled()
     fireEvent.click(button)
     expect(onChange).not.toHaveBeenCalled()

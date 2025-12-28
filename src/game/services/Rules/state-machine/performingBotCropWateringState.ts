@@ -32,6 +32,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
         enqueue,
       }) => {
         const { currentPlayerId } = match
+
         assertCurrentPlayer(currentPlayerId)
 
         const player = lookup.getPlayer(match, currentPlayerId)

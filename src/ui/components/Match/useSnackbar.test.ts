@@ -58,6 +58,7 @@ describe('useSnackbar Hook', () => {
         match,
       })
     )
+
     expect(result.current.snackbarProps.message).toBe('')
   })
 
@@ -103,6 +104,7 @@ describe('useSnackbar Hook', () => {
           (event: MatchEvents) => void
         >
         const matchEventPayload = send.mock.calls[0]![0]
+
         assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
@@ -143,6 +145,7 @@ describe('useSnackbar Hook', () => {
           (event: MatchEvents) => void
         >
         const matchEventPayload = send.mock.calls[0]![0]
+
         assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
@@ -176,6 +179,7 @@ describe('useSnackbar Hook', () => {
         (event: MatchEvents) => void
       >
       const matchEventPayload = send.mock.calls[0]![0]
+
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -201,6 +205,7 @@ describe('useSnackbar Hook', () => {
       )
 
       const showNotification = vi.fn()
+
       vi.spyOn(result.current, 'showNotification').mockImplementation(
         showNotification
       )
@@ -214,6 +219,7 @@ describe('useSnackbar Hook', () => {
         (event: MatchEvents) => void
       >
       const matchEventPayload = send.mock.calls[0]![0]
+
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -246,6 +252,7 @@ describe('useSnackbar Hook', () => {
         (event: MatchEvents) => void
       >
       const matchEventPayload = send.mock.calls[0]![0]
+
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -271,6 +278,7 @@ describe('useSnackbar Hook', () => {
       )
 
       const showNotification = vi.fn()
+
       vi.spyOn(result.current, 'showNotification').mockImplementation(
         showNotification
       )
@@ -284,6 +292,7 @@ describe('useSnackbar Hook', () => {
         (event: MatchEvents) => void
       >
       const matchEventPayload = send.mock.calls[0]![0]
+
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -316,6 +325,7 @@ describe('useSnackbar Hook', () => {
         (event: MatchEvents) => void
       >
       const matchEventPayload = send.mock.calls[0]![0]
+
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -341,6 +351,7 @@ describe('useSnackbar Hook', () => {
       )
 
       const showNotification = vi.fn()
+
       vi.spyOn(result.current, 'showNotification').mockImplementation(
         showNotification
       )
@@ -354,6 +365,7 @@ describe('useSnackbar Hook', () => {
         (event: MatchEvents) => void
       >
       const matchEventPayload = send.mock.calls[0]![0]
+
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
@@ -387,6 +399,7 @@ describe('useSnackbar Hook', () => {
       (event: MatchEvents) => void
     >
     const matchEventPayload = send.mock.calls[0]![0]
+
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
@@ -412,6 +425,7 @@ describe('useSnackbar Hook', () => {
     )
 
     const showNotification = vi.fn()
+
     vi.spyOn(result.current, 'showNotification').mockImplementation(
       showNotification
     )
@@ -425,6 +439,7 @@ describe('useSnackbar Hook', () => {
       (event: MatchEvents) => void
     >
     const matchEventPayload = send.mock.calls[0]![0]
+
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {

@@ -56,6 +56,7 @@ export const ToolCard: Story = {
 export const Interactive = {
   render: () => {
     const [quantity, setQuantity] = useState(0)
+
     return (
       <CardQuantityControl
         card={stubCarrot}

@@ -12,6 +12,7 @@ describe('rain card', () => {
   describe('applyEffect', () => {
     it('should increment water cards for all crops in all players fields and show a notification', () => {
       let match = stubMatch()
+
       match = updateMatch(match, {
         table: {
           ...stubMatch().table,

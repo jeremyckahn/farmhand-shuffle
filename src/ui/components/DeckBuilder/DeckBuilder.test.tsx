@@ -77,6 +77,7 @@ describe('DeckBuilder', () => {
       'Shovel',
       'Rain',
     ]
+
     expect(textContent).toEqual(expectedTextContent)
 
     expect(container).toMatchSnapshot()
@@ -174,6 +175,7 @@ describe('DeckBuilder', () => {
     }
 
     const doneButton = screen.getByRole('button', { name: 'Done' })
+
     expect(doneButton).toBeDisabled()
 
     // Remove 1 Water and add 1 Pumpkin
@@ -213,6 +215,7 @@ describe('DeckBuilder', () => {
     }
 
     const doneButton = screen.getByRole('button', { name: 'Done' })
+
     fireEvent.click(doneButton)
 
     expect(onDone).toHaveBeenCalledTimes(1)

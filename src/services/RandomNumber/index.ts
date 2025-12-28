@@ -29,6 +29,7 @@ export class RandomNumberService {
       // Since i and j are guaranteed to be within the bounds of the array, these accesses are safe.
       // We use 'as T' casting instead of '!' to avoid non-null assertion lint errors while satisfying the compiler.
       const temp = copy[i] as T
+
       // eslint-disable-next-line functional/immutable-data
       copy[i] = copy[j] as T
       // eslint-disable-next-line functional/immutable-data
@@ -91,4 +92,5 @@ export class RandomNumberService {
 }
 
 const seed = new URLSearchParams(window.location.search).get('seed')
+
 export const randomNumber = new RandomNumberService(seed)

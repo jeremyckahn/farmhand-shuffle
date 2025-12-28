@@ -20,9 +20,11 @@ describe('RandomNumber', () => {
 
     test('defaults to standard non-deterministic behavior when no seed is provided', () => {
       const service = new RandomNumberService()
+
       vitest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
 
       const generatedNumber = service.generate()
+
       expect(generatedNumber).toEqual(0.5)
     })
   })
@@ -30,6 +32,7 @@ describe('RandomNumber', () => {
   describe('generate', () => {
     test('generates random number', () => {
       const service = new RandomNumberService()
+
       vitest.spyOn(Math, 'random').mockReturnValueOnce(0.5)
 
       const generatedNumber = service.generate()
@@ -95,6 +98,7 @@ describe('RandomNumber', () => {
       'choses a random index ($result) from an array $list',
       ({ generateMock, list, result }) => {
         const service = new RandomNumberService()
+
         vitest.spyOn(service, 'generate').mockReturnValueOnce(generateMock)
 
         const selectedIndex = service.randomIndex(list)
@@ -107,6 +111,7 @@ describe('RandomNumber', () => {
   describe('chooseElement', () => {
     test('choses a random element from an array', () => {
       const service = new RandomNumberService()
+
       vitest.spyOn(service, 'generate').mockReturnValueOnce(0.5)
 
       const selectedIndex = service.chooseElement([1, 2, 3])
@@ -138,6 +143,7 @@ describe('RandomNumber', () => {
       'chooses a random number between $a and $b',
       ({ a, b, rngStub, expected }) => {
         const service = new RandomNumberService()
+
         vitest.spyOn(service, 'generate').mockReturnValueOnce(rngStub)
 
         const selectedNumber = service.chooseIntegerBetween(a, b)
@@ -151,6 +157,7 @@ describe('RandomNumber', () => {
       { a: 1.2, b: 2 },
     ])('throws an error if provided a floating point', ({ a, b }) => {
       const service = new RandomNumberService()
+
       expect(() => {
         service.chooseIntegerBetween(a, b)
       }).toThrow()

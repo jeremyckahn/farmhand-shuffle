@@ -151,6 +151,7 @@ describe('drawCard', () => {
       ]
       const discardPile = [instantiate(water), instantiate(carrot)]
       const hand = [instantiate(pumpkin)]
+
       match = updatePlayer(match, player1Id, { deck, discardPile, hand })
       const player = match.table.players[player1Id]
 

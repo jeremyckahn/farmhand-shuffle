@@ -32,6 +32,7 @@ describe('drawValidStartingHand', () => {
     match = drawValidStartingHand(match, stubPlayer1.id)
 
     const player = match.table.players[stubPlayer1.id]
+
     if (!player) {
       throw new Error('Player not found')
     }

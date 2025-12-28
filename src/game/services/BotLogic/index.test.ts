@@ -119,6 +119,7 @@ describe('BotLogicService', () => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
         let match = stubMatch()
+
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
@@ -241,6 +242,7 @@ describe('BotLogicService', () => {
       'returns indices of crop cards that need water for hand $hand and crops $fieldCrops',
       ({ hand, fieldCrops, expectedResult }) => {
         let match = stubMatch()
+
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
@@ -307,6 +309,7 @@ describe('BotLogicService', () => {
       'returns indices of crop cards that are ready to harvest for crops $fieldCrops',
       ({ fieldCrops, expectedResult }) => {
         let match = stubMatch()
+
         match = updatePlayer(match, stubPlayer1.id, {
           field: {
             crops: fieldCrops,
@@ -332,6 +335,7 @@ describe('BotLogicService', () => {
       'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
       ({ hand, expectedResult }) => {
         let match = stubMatch()
+
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
@@ -364,6 +368,7 @@ describe('BotLogicService', () => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
         let match = stubMatch()
+
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
@@ -399,6 +404,7 @@ describe('BotLogicService', () => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
         let match = stubMatch()
+
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })
@@ -431,6 +437,7 @@ describe('BotLogicService', () => {
         vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
 
         let match = stubMatch()
+
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
         })

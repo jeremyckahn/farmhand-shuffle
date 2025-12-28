@@ -32,6 +32,7 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
       const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
       let match = stubMatch()
+
       match = updatePlayer(match, stubPlayer1.id, {
         field: {
           crops: [
