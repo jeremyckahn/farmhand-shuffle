@@ -1,4 +1,5 @@
 import { randomNumber } from '../../../services/RandomNumber'
+import { MAX_RANDOM_VALUE } from '../../../test-utils/constants'
 import {
   stubCarrot,
   stubRain,
@@ -34,7 +35,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: MAX_RANDOM_VALUE,
         hand: [instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
@@ -42,7 +43,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: MAX_RANDOM_VALUE,
         hand: [instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
@@ -58,15 +59,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
-        hand: [instantiate(carrot), instantiate(carrot)],
-        fieldCrops: [],
-        minimumCropsToPlay: 1,
-        expectedResult: 2,
-      },
-
-      {
-        rngStub: 1,
+        rngStub: MAX_RANDOM_VALUE,
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE - 1).fill({
           instance: instantiate(carrot),
@@ -78,7 +71,7 @@ describe('BotLogicService', () => {
       },
 
       {
-        rngStub: 1,
+        rngStub: MAX_RANDOM_VALUE,
         hand: [instantiate(carrot)],
         fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill({
           instance: instantiate(carrot),
@@ -88,20 +81,37 @@ describe('BotLogicService', () => {
         minimumCropsToPlay: 1,
         expectedResult: 0, // No room for more crops in field
       },
-      // New test case to verify Math.round behavior
+
       {
-        rngStub: 0.75, // 0.75 * 2 = 1.5 -> Math.round(1.5) = 2. Math.floor would be 1.
+        rngStub: 0.25,
+        hand: [instantiate(carrot), instantiate(carrot)],
+        fieldCrops: [],
+        minimumCropsToPlay: 0,
+        expectedResult: 0,
+      },
+
+      {
+        rngStub: 0.5,
+        hand: [instantiate(carrot), instantiate(carrot)],
+        fieldCrops: [],
+        minimumCropsToPlay: 0,
+        expectedResult: 1,
+      },
+
+      {
+        rngStub: 0.75,
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
         minimumCropsToPlay: 1,
         expectedResult: 2,
       },
+
       {
-        rngStub: 0.25, // 0.25 * 2 = 0.5 -> Math.round(0.5) = 1. Math.floor would be 0.
+        rngStub: MAX_RANDOM_VALUE,
         hand: [instantiate(carrot), instantiate(carrot)],
         fieldCrops: [],
-        minimumCropsToPlay: 0,
-        expectedResult: 1,
+        minimumCropsToPlay: 1,
+        expectedResult: 2,
       },
     ])(
       'determines amount of crops to play for stable random number $rngStub, hand $hand, crops $fieldCrops, and minimumCropsToPlay $minimumCropsToPlay',
@@ -343,7 +353,11 @@ describe('BotLogicService', () => {
       { hand: [stubShovel], rngStub: 0.5, expectedResult: 1 },
       { hand: [stubShovel, stubShovel], rngStub: 0, expectedResult: 0 },
       { hand: [stubShovel, stubShovel], rngStub: 0.5, expectedResult: 1 },
-      { hand: [stubShovel, stubShovel], rngStub: 1, expectedResult: 2 },
+      {
+        hand: [stubShovel, stubShovel],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: 2,
+      },
     ])(
       'chooses a number of event cards to play for hand $hand and rngStub $rngStub',
       ({ hand, rngStub, expectedResult }) => {
@@ -367,7 +381,7 @@ describe('BotLogicService', () => {
   describe('getEventCardIndexToPlay', () => {
     it.each([
       { hand: [], rngStub: 0, expectedResult: undefined },
-      { hand: [], rngStub: 1, expectedResult: undefined },
+      { hand: [], rngStub: MAX_RANDOM_VALUE, expectedResult: undefined },
       { hand: [stubRain], rngStub: 0, expectedResult: 0 },
       {
         hand: [stubCarrot, stubRain, stubWater, stubRain],
@@ -376,7 +390,7 @@ describe('BotLogicService', () => {
       },
       {
         hand: [stubCarrot, stubRain, stubWater, stubRain],
-        rngStub: 1,
+        rngStub: MAX_RANDOM_VALUE,
         expectedResult: 3,
       },
     ])(
@@ -399,7 +413,7 @@ describe('BotLogicService', () => {
   describe('getToolCardIndexToPlay', () => {
     it.each([
       { hand: [], rngStub: 0, expectedResult: undefined },
-      { hand: [], rngStub: 1, expectedResult: undefined },
+      { hand: [], rngStub: MAX_RANDOM_VALUE, expectedResult: undefined },
       { hand: [stubShovel], rngStub: 0, expectedResult: 0 },
       {
         hand: [stubCarrot, stubShovel, stubWater, stubShovel],
@@ -408,7 +422,7 @@ describe('BotLogicService', () => {
       },
       {
         hand: [stubCarrot, stubRain, stubWater, stubShovel],
-        rngStub: 1,
+        rngStub: MAX_RANDOM_VALUE,
         expectedResult: 3,
       },
     ])(

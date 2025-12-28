@@ -1,3 +1,5 @@
+import { MAX_RANDOM_VALUE } from '../../test-utils/constants'
+
 import { RandomNumberService } from '.'
 
 describe('RandomNumber', () => {
@@ -85,7 +87,9 @@ describe('RandomNumber', () => {
 
   describe('randomIndex', () => {
     test.each([
+      { generateMock: 0, list: [1, 2, 3], result: 0 },
       { generateMock: 0.5, list: [1, 2, 3], result: 1 },
+      { generateMock: MAX_RANDOM_VALUE, list: [1, 2, 3], result: 2 },
       { generateMock: 0, list: [], result: undefined },
     ])(
       'choses a random index ($result) from an array $list',
@@ -114,9 +118,8 @@ describe('RandomNumber', () => {
   describe('chooseInteger', () => {
     test.each([
       { a: 1, b: 2, rngStub: 0, expected: 1 },
-      { a: 1, b: 2, rngStub: 1, expected: 2 },
-      { a: 1, b: 2, rngStub: 1, expected: 2 },
-      { a: 2, b: 1, rngStub: 1, expected: 2 },
+      { a: 1, b: 2, rngStub: MAX_RANDOM_VALUE, expected: 2 },
+      { a: 2, b: 1, rngStub: MAX_RANDOM_VALUE, expected: 2 },
       { a: 1, b: 2, rngStub: 0.5, expected: 2 },
       { a: 2, b: 1, rngStub: 0.5, expected: 2 },
       { a: 0, b: 10, rngStub: 0.5, expected: 5 },
@@ -124,6 +127,13 @@ describe('RandomNumber', () => {
       { a: 10, b: 1, rngStub: 0.5, expected: 6 },
       { a: 5, b: 5, rngStub: 0.5, expected: 5 },
       { a: -5, b: 5, rngStub: 0.5, expected: 0 },
+      { a: 1, b: 3, rngStub: 0.0, expected: 1 },
+      { a: 1, b: 3, rngStub: 0.3, expected: 1 },
+      { a: 1, b: 3, rngStub: 0.4, expected: 2 },
+      { a: 1, b: 3, rngStub: 0.6, expected: 2 },
+      { a: 1, b: 3, rngStub: 0.7, expected: 3 },
+      { a: 1, b: 3, rngStub: MAX_RANDOM_VALUE, expected: 3 },
+      { a: 2, b: 10, rngStub: 0.5, expected: 6 },
     ])(
       'chooses a random number between $a and $b',
       ({ a, b, rngStub, expected }) => {

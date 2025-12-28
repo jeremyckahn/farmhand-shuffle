@@ -13,8 +13,6 @@ export const startTurn = (
   playerId: IPlayer['id'],
   cardsToDraw = 1
 ): IMatch => {
-  lookup.getPlayer(match, playerId)
-
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn: [] })
   match = payFromPlayerToCommunity(match, STANDARD_TAX_AMOUNT, playerId)
 
