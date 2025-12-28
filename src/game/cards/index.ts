@@ -21,11 +21,11 @@ export const instantiate = <T = ICard>(card: T): T & Instance => {
   return { ...card, instanceId: uuid() }
 }
 
-export const allCards: Record<string, ICard> = Object.values({
-  ...cropCards,
-  ...eventCards,
-  ...toolCards,
-  ...waterCards,
-}).reduce((acc, card) => {
-  return { ...acc, [card.id]: card }
-}, {})
+export const allCards: Record<string, ICard> = Object.fromEntries(
+  Object.values({
+    ...cropCards,
+    ...eventCards,
+    ...toolCards,
+    ...waterCards,
+  }).map(card => [card.id, card])
+)

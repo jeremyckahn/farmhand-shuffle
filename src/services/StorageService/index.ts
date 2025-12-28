@@ -18,14 +18,11 @@ export class StorageService {
    * @returns A plain object suitable for JSON storage.
    */
   static serializeDeck(deck: DeserializedDeck): SerializedDeck {
-    const serialized: SerializedDeck = {}
-    for (const [card, count] of deck) {
-      if (count > 0) {
-        // eslint-disable-next-line functional/immutable-data
-        serialized[card.id] = count
-      }
-    }
-    return serialized
+    return Object.fromEntries(
+      Array.from(deck.entries())
+        .filter(([, count]) => count > 0)
+        .map(([card, count]) => [card.id, count])
+    )
   }
 
   /**
@@ -35,24 +32,21 @@ export class StorageService {
    * @throws {GameStateCorruptError} If a card ID is not found.
    */
   static deserializeDeck(data: SerializedDeck): DeserializedDeck {
-    const deck: DeserializedDeck = new Map()
+    return new Map(
+      Object.entries(data)
+        .filter(([, count]) => count > 0)
+        .map(([cardId, count]) => {
+          const card = allCards[cardId]
 
-    for (const [cardId, count] of Object.entries(data)) {
-      const card = allCards[cardId]
+          if (!card) {
+            throw new GameStateCorruptError(
+              `Card with ID "${cardId}" not found in card definitions.`
+            )
+          }
 
-      if (!card) {
-        throw new GameStateCorruptError(
-          `Card with ID "${cardId}" not found in card definitions.`
-        )
-      }
-
-      if (count > 0) {
-        // eslint-disable-next-line functional/immutable-data
-        deck.set(card, count)
-      }
-    }
-
-    return deck
+          return [card, count]
+        })
+    )
   }
 
   /**
