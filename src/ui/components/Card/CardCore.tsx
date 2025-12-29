@@ -132,7 +132,6 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                 <Paper
                   ref={cardRef}
                   {...paperProps}
-                  data-chromatic="ignore"
                   sx={[
                     {
                       backfaceVisibility: 'hidden',

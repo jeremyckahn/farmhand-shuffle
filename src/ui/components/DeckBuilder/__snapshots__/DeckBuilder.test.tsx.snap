@@ -50,7 +50,6 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                 >
                   <div
                     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
-                    data-chromatic="ignore"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -163,7 +162,6 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                 >
                   <div
                     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
-                    data-chromatic="ignore"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -292,7 +290,6 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                 >
                   <div
                     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
-                    data-chromatic="ignore"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -421,7 +418,6 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                 >
                   <div
                     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
-                    data-chromatic="ignore"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -550,7 +546,6 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                 >
                   <div
                     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
-                    data-chromatic="ignore"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
