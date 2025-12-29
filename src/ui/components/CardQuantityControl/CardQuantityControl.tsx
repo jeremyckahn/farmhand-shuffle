@@ -36,13 +36,13 @@ export const CardQuantityControl = ({
   )
 
   const handleDecrease = () => {
-    if (quantity > 0 && !disabled) {
+    if (quantity > 0) {
       onChange(prev => prev - 1)
     }
   }
 
   const handleIncrease = () => {
-    if (quantity < DECK_SIZE && !isIncreaseDisabled && !disabled) {
+    if (quantity < DECK_SIZE && !isIncreaseDisabled) {
       onChange(prev => prev + 1)
     }
   }
