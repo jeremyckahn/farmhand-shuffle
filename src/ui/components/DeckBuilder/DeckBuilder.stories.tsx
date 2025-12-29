@@ -24,6 +24,15 @@ export const Default: Story = {
       alert(
         `Deck selected with ${selectedCards} cards. Check console for details.`
       )
+
+      return Promise.resolve()
     },
+  },
+}
+
+export const Loading: Story = {
+  args: {
+    onDone: async () => new Promise(resolve => setTimeout(resolve, 3000)),
+    isLoading: true,
   },
 }

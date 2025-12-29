@@ -230,4 +230,23 @@ describe('DeckBuilder', () => {
     expect(deckMap.get(mockWater as ICard)).toBe(3)
     expect(deckMap.has(mockCarrot as ICard)).toBe(false)
   })
+
+  test('renders loading state correctly', () => {
+    render(<DeckBuilder onDone={onDone} isLoading={true} />)
+
+    const doneButton = screen.getByRole('button', { name: '' }) // Name is empty because it contains only spinner
+
+    // Expect loading spinner (MUI CircularProgress usually has role "progressbar")
+    expect(screen.getByRole('progressbar')).toBeInTheDocument()
+
+    // Button should be disabled
+    expect(doneButton).toBeDisabled()
+    expect(doneButton).toContainElement(screen.getByRole('progressbar'))
+
+    // All quantity controls should be disabled
+    // We can check one to verify propagation
+    const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
+
+    expect(pumpkinAdd).toBeDisabled()
+  })
 })

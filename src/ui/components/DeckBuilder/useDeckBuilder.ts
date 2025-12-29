@@ -11,7 +11,7 @@ import { pricing } from '../../../game/services/Pricing'
 import { CardType, ICard } from '../../../game/types'
 
 interface UseDeckBuilderProps {
-  onDone: (deck: Map<ICard, number>) => void | Promise<void>
+  onDone: (deck: Map<ICard, number>) => Promise<void>
 }
 
 export const groupedCards = (() => {
