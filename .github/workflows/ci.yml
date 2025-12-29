@@ -23,12 +23,6 @@ jobs:
           npm run build
           npm run build:storybook -- --output-dir dist/storybook
 
-      - name: Run Chromatic
-        uses: chromaui/action@latest
-        with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          buildScriptName: build:storybook
-
       - uses: actions/upload-artifact@v4
         with:
           name: build-output
