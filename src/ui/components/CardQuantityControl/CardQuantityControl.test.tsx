@@ -85,4 +85,26 @@ describe('CardQuantityControl', () => {
     fireEvent.click(button)
     expect(onChange).not.toHaveBeenCalled()
   })
+
+  test('disables all buttons when disabled prop is true', () => {
+    render(
+      <CardQuantityControl
+        card={stubCarrot}
+        quantity={2}
+        onChange={onChange}
+        disabled
+      />
+    )
+
+    const decreaseButton = screen.getByLabelText('decrease quantity')
+    const increaseButton = screen.getByLabelText('increase quantity')
+
+    expect(decreaseButton).toBeDisabled()
+    expect(increaseButton).toBeDisabled()
+
+    fireEvent.click(decreaseButton)
+    fireEvent.click(increaseButton)
+
+    expect(onChange).not.toHaveBeenCalled()
+  })
 })

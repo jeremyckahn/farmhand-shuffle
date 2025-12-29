@@ -17,6 +17,7 @@ interface DeckBuilderSectionProps {
     cardId: string
   ) => (action: React.SetStateAction<number>) => void
   totalCards: number
+  disabled?: boolean
 }
 
 export const DeckBuilderSection = ({
@@ -26,6 +27,7 @@ export const DeckBuilderSection = ({
   quantities,
   onQuantityChange,
   totalCards,
+  disabled,
 }: DeckBuilderSectionProps) => {
   return (
     <Box key={title}>
@@ -47,6 +49,7 @@ export const DeckBuilderSection = ({
               onChange={onQuantityChange(card.id)}
               cardSize={CardSize.SMALL}
               isIncreaseDisabled={isIncreaseDisabled}
+              disabled={disabled}
             />
           )
         })}

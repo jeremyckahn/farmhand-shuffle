@@ -79,7 +79,7 @@ describe('DeckBuilder', () => {
     ]
 
     expect(textContent).toEqual(expectedTextContent)
-
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
     expect(container).toMatchSnapshot()
   })
 
@@ -229,5 +229,22 @@ describe('DeckBuilder', () => {
     expect(deckMap.get(mockPumpkin as ICard)).toBe(2)
     expect(deckMap.get(mockWater as ICard)).toBe(3)
     expect(deckMap.has(mockCarrot as ICard)).toBe(false)
+  })
+
+  test('renders loading state correctly', () => {
+    render(<DeckBuilder onDone={onDone} isLoading={true} />)
+
+    // NOTE: Name is empty because it contains only spinner
+    const doneButton = screen.getByRole('button', { name: '' })
+
+    // NOTE: MUI CircularProgress has role "progressbar"
+    expect(screen.getByRole('progressbar')).toBeInTheDocument()
+
+    expect(doneButton).toBeDisabled()
+    expect(doneButton).toContainElement(screen.getByRole('progressbar'))
+
+    const pumpkinAdd = screen.getAllByLabelText('increase quantity')[0]
+
+    expect(pumpkinAdd).toBeDisabled()
   })
 })

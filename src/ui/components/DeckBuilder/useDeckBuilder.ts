@@ -10,9 +10,9 @@ import { DECK_SIZE } from '../../../game/config'
 import { pricing } from '../../../game/services/Pricing'
 import { CardType, ICard } from '../../../game/types'
 
-interface UseDeckBuilderProps {
-  onDone: (deck: Map<ICard, number>) => void
-}
+import { DeckBuilderProps } from './types'
+
+type UseDeckBuilderProps = Pick<DeckBuilderProps, 'onDone'>
 
 export const groupedCards = (() => {
   const sortedCrops = Object.values(cropCards).sort(
@@ -89,7 +89,7 @@ export const useDeckBuilder = ({ onDone }: UseDeckBuilderProps) => {
 
     const deck = new Map(deckEntries)
 
-    onDone(deck)
+    void onDone(deck)
   }, [isDeckValid, quantities, onDone])
 
   return {

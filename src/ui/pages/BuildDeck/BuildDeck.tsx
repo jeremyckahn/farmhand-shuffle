@@ -1,22 +1,21 @@
 import { useNavigate } from 'react-router-dom'
+import { useAsyncFn } from 'react-use'
 
-import { storage } from '../../../services/StorageService'
+import { DeserializedDeck, storage } from '../../../services/StorageService'
 import { DeckBuilder } from '../../components/DeckBuilder'
 
 export const BuildDeck = () => {
   const navigate = useNavigate()
 
-  return (
-    <DeckBuilder
-      onDone={deck => {
-        // TODO: Change onDone to be async/Promise-based
-        void (async () => {
-          await storage.saveDeck(deck)
-          void navigate('/')
-          // TODO: Show a success notification
-          // TODO: Handle errors
-        })()
-      }}
-    />
+  const [state, saveDeck] = useAsyncFn(
+    async (deck: DeserializedDeck) => {
+      await storage.saveDeck(deck)
+      void navigate('/')
+      // TODO: Show a success notification
+      // TODO: Handle errors
+    },
+    [navigate]
   )
+
+  return <DeckBuilder onDone={saveDeck} isLoading={state.loading} />
 }
