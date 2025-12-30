@@ -116,7 +116,8 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     case MatchState.PERFORMING_BOT_CROP_WATERING: {
       assertCurrentPlayer(currentPlayerId)
 
-      stateInfo = `${funAnimalName(currentPlayerId)} is watering crops}`
+      // TODO: This message never seems to actually appear in the game when the bot is watering crops. This may be due to a timing issue (it may be shown faster than it can be seen).
+      stateInfo = `${funAnimalName(currentPlayerId)} is watering crops`
 
       break
     }
