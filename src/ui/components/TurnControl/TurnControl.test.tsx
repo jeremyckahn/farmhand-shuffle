@@ -1,6 +1,6 @@
 import { ButtonProps } from '@mui/material'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { ReactNode } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { describe, expect, it } from 'vitest'
 
 import { updateMatch } from '../../../game/reducers/update-match'
@@ -10,9 +10,10 @@ import { MatchEvent, MatchState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
-import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import * as useMatchRulesModule from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
+import { ShellContext } from '../Match/ShellContext'
 
 import { TurnControl, TurnControlProps } from './TurnControl'
 
@@ -113,15 +114,33 @@ vi.mock('fun-animal-names', () => ({
   funAnimalName: (id: string) => `fun-animal-${id}`,
 }))
 
+const mockSetIsHandInViewport = vi.fn()
+
 const StubTurnControl = (overrides: Partial<TurnControlProps>) => {
+  const shellContextValue = useMemo(
+    () => ({
+      setIsHandInViewport: mockSetIsHandInViewport,
+      blockingOperation: vi.fn(),
+      isHandInViewport: true,
+      showNotification: vi.fn(),
+    }),
+    []
+  )
+
   return (
     <ActorContext.Provider>
-      <TurnControl match={stubMatch()} {...overrides} />
+      <ShellContext.Provider value={shellContextValue}>
+        <TurnControl match={stubMatch()} {...overrides} />
+      </ShellContext.Provider>
     </ActorContext.Provider>
   )
 }
 
 describe('TurnControl Component', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('renders a "Complete setup" button when in WAITING_FOR_PLAYER_SETUP_ACTION state and current player has crops', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
 
@@ -148,6 +167,7 @@ describe('TurnControl Component', () => {
     expect(
       screen.getByRole('button', { name: /Complete setup/i })
     ).toBeInTheDocument()
+    expect(screen.getByText('Set up your Field')).toBeInTheDocument()
   })
 
   it('renders an "End turn" button when it is the current player turn', () => {
@@ -169,6 +189,118 @@ describe('TurnControl Component', () => {
 
     expect(
       screen.getByRole('button', { name: /End turn/i })
+    ).toBeInTheDocument()
+    expect(screen.getByText('Your turn')).toBeInTheDocument()
+  })
+
+  it('renders "Select a crop to water" and "Cancel watering" when in PLAYER_WATERING_CROP state', () => {
+    const matchState = MatchState.PLAYER_WATERING_CROP
+
+    let match = stubMatch()
+    match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
+
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      },
+    })
+
+    render(<StubTurnControl match={match} />)
+
+    expect(
+      screen.getByRole('button', { name: /Cancel watering/i })
+    ).toBeInTheDocument()
+    expect(screen.getByText('Select a crop to water')).toBeInTheDocument()
+  })
+
+  it('handles cancelling watering', () => {
+    const matchState = MatchState.PLAYER_WATERING_CROP
+
+    let match = stubMatch()
+    match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
+
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      },
+    })
+
+    const send = mockSend()
+
+    render(<StubTurnControl match={match} />)
+
+    const button = screen.getByRole('button', { name: /Cancel watering/i })
+    fireEvent.click(button)
+
+    expect(send).toHaveBeenCalledWith({
+      type: MatchEvent.OPERATION_ABORTED,
+    })
+    expect(mockSetIsHandInViewport).toHaveBeenCalledWith(true)
+  })
+
+  it('renders correct text for PERFORMING_BOT_TURN_ACTION', () => {
+    const matchState = MatchState.PERFORMING_BOT_TURN_ACTION
+    let match = stubMatch()
+    // Use stubPlayer2 as the bot/opponent
+    const botId = stubPlayer2.id
+    match = updateMatch(match, { currentPlayerId: botId })
+
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      },
+    })
+
+    render(<StubTurnControl match={match} />)
+
+    expect(screen.getByText(`fun-animal-${botId}'s turn`)).toBeInTheDocument()
+  })
+
+  it('renders correct text for PERFORMING_BOT_SETUP_ACTION', () => {
+    const matchState = MatchState.PERFORMING_BOT_SETUP_ACTION
+    let match = stubMatch()
+    const botId = stubPlayer2.id
+    match = updateMatch(match, { currentPlayerId: botId })
+
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      },
+    })
+
+    render(<StubTurnControl match={match} />)
+
+    expect(
+      screen.getByText(`fun-animal-${botId} is setting their field up`)
+    ).toBeInTheDocument()
+  })
+
+  it('renders correct text for PERFORMING_BOT_CROP_WATERING', () => {
+    const matchState = MatchState.PERFORMING_BOT_CROP_WATERING
+    let match = stubMatch()
+    const botId = stubPlayer2.id
+    match = updateMatch(match, { currentPlayerId: botId })
+
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      },
+    })
+
+    render(<StubTurnControl match={match} />)
+
+    expect(
+      screen.getByText(`fun-animal-${botId} is watering crops`)
     ).toBeInTheDocument()
   })
 

@@ -116,7 +116,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     case MatchState.PERFORMING_BOT_CROP_WATERING: {
       assertCurrentPlayer(currentPlayerId)
 
-      stateInfo = `${funAnimalName(currentPlayerId)} is watering crops}`
+      stateInfo = `${funAnimalName(currentPlayerId)} is watering crops`
 
       break
     }
