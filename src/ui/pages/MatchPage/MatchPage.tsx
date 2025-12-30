@@ -5,7 +5,6 @@ import { v4 as uuid } from 'uuid'
 
 import { instantiate } from '../../../game/cards'
 import { CardInstance, IPlayerSeed } from '../../../game/types'
-import { isCardId } from '../../../game/types/guards'
 import { storage } from '../../../services/StorageService'
 import { stubDeck } from '../../../test-utils/stubs/deck'
 import { Match } from '../../components/Match'
@@ -16,7 +15,7 @@ let deckCache: {
 } | null = null
 
 const createDeckResource = () => {
-  let status = 'pending'
+  let status: 'pending' | 'error' | 'success' = 'pending'
   let result: CardInstance[]
   let error: unknown
 
@@ -25,11 +24,9 @@ const createDeckResource = () => {
       const savedDeck = await storage.loadDeck()
 
       if (savedDeck) {
+        // FIXME: Move this to a StorageService method called hydrateDeserializedDeck and add test coverage for it
         result = Array.from(savedDeck.entries()).reduce<CardInstance[]>(
           (acc, [card, count]) => {
-            if (!isCardId(card.id)) {
-              throw new Error(`Invalid card ID encountered: ${card.id}`)
-            }
             const newInstances = Array.from({ length: count }).map(() =>
               instantiate(card)
             ) as CardInstance[]
