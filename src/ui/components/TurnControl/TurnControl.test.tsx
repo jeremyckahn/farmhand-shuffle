@@ -197,6 +197,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.PLAYER_WATERING_CROP
 
     let match = stubMatch()
+
     match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -219,6 +220,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.PLAYER_WATERING_CROP
 
     let match = stubMatch()
+
     match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -234,6 +236,7 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl match={match} />)
 
     const button = screen.getByRole('button', { name: /Cancel watering/i })
+
     fireEvent.click(button)
 
     expect(send).toHaveBeenCalledWith({
@@ -247,6 +250,7 @@ describe('TurnControl Component', () => {
     let match = stubMatch()
     // Use stubPlayer2 as the bot/opponent
     const botId = stubPlayer2.id
+
     match = updateMatch(match, { currentPlayerId: botId })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -266,6 +270,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.PERFORMING_BOT_SETUP_ACTION
     let match = stubMatch()
     const botId = stubPlayer2.id
+
     match = updateMatch(match, { currentPlayerId: botId })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -287,6 +292,7 @@ describe('TurnControl Component', () => {
     const matchState = MatchState.PERFORMING_BOT_CROP_WATERING
     let match = stubMatch()
     const botId = stubPlayer2.id
+
     match = updateMatch(match, { currentPlayerId: botId })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
