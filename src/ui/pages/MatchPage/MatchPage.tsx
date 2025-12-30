@@ -15,23 +15,26 @@ export const MatchPage = () => {
     const savedDeck = await storage.loadDeck()
 
     if (savedDeck) {
-      const deckInstances: CardInstance[] = []
-      for (const [card, count] of savedDeck.entries()) {
-        for (let i = 0; i < count; i++) {
-          // Cast card to any to satisfy the CardInstance union requirement,
-          // assuming the stored card definitions (from allCards) are complete.
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          deckInstances.push(instantiate(card as any) as CardInstance)
-        }
-      }
-      return deckInstances
+      return Array.from(savedDeck.entries()).reduce<CardInstance[]>(
+        (acc, [card, count]) => {
+          const newInstances = Array.from({ length: count }).map(() =>
+            // Cast card to any to satisfy the CardInstance union requirement,
+            // assuming the stored card definitions (from allCards) are complete.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
+            instantiate(card as any)
+          ) as CardInstance[]
+
+          return acc.concat(newInstances)
+        },
+        []
+      )
     }
 
     return stubDeck()
   }, [])
 
   useEffect(() => {
-    loadDeck()
+    void loadDeck()
   }, [loadDeck])
 
   // Memoize player IDs and seeds to prevent re-creation on renders unless data changes

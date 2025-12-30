@@ -1,4 +1,6 @@
-import CircularProgress from '@mui/material/CircularProgress'
+// Need React for the class component
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -20,13 +22,10 @@ vi.mock('../../components/Match', () => ({
   Match: vi.fn(() => <div>Match Component</div>),
 }))
 
-// We need to mock ErrorPage if we were testing it directly, but since we throw error,
-// we might want to wrap MatchPage in an ErrorBoundary for the error test.
-// However, typically unit tests for a component that throws will fail unless wrapped.
-
 describe('MatchPage', () => {
-  it('shows loading spinner initially', async () => {
+  it('shows loading spinner initially', () => {
     // Make loadDeck hang or resolve slowly
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(storage.loadDeck).mockReturnValue(new Promise(() => {}))
 
     render(<MatchPage />)
@@ -36,6 +35,8 @@ describe('MatchPage', () => {
 
   it('renders Match component with loaded deck data', async () => {
     const mockDeck = new Map<ICard, number>([[carrot, 2]])
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(storage.loadDeck).mockResolvedValue(mockDeck)
 
     render(<MatchPage />)
@@ -65,6 +66,7 @@ describe('MatchPage', () => {
   })
 
   it('falls back to stubDeck if storage returns null', async () => {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(storage.loadDeck).mockResolvedValue(null)
 
     render(<MatchPage />)
@@ -93,20 +95,9 @@ describe('MatchPage', () => {
       .mockImplementation(() => {})
 
     const error = new Error('Failed to load')
-    vi.mocked(storage.loadDeck).mockRejectedValue(error)
 
-    // Helper to catch the error
-    const ErrorCatcher = () => {
-      try {
-        return <MatchPage />
-      } catch (e) {
-        return <div>Caught: {(e as Error).message}</div>
-      }
-    }
-    // Note: Standard try/catch around render doesn't catch async errors or errors in effects easily without boundaries.
-    // However, react-use's useAsyncFn catches the promise rejection and returns state.error.
-    // MatchPage then explicitly throws.
-    // So we can wrap in a boundary.
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    vi.mocked(storage.loadDeck).mockRejectedValue(error)
 
     class TestBoundary extends React.Component<
       { children: React.ReactNode },
@@ -140,6 +131,3 @@ describe('MatchPage', () => {
     consoleErrorSpy.mockRestore()
   })
 })
-
-// Need React for the class component
-import React from 'react'

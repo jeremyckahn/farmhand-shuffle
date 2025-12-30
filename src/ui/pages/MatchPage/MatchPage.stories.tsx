@@ -1,10 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { v4 as uuid } from 'uuid'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { carrot, instantiate } from '../../../game/cards'
-import { CardInstance } from '../../../game/types'
-import { storage } from '../../../services/StorageService'
-import { stubDeck } from '../../../test-utils/stubs/deck'
 import { MatchPage } from './MatchPage'
 
 // Mock the Match component since we don't want to render the full game in the page story,
