@@ -1,90 +1,117 @@
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
-import { useEffect, useMemo } from 'react'
-import { useAsyncFn } from 'react-use'
+import { Suspense } from 'react'
 import { v4 as uuid } from 'uuid'
 
 import { instantiate } from '../../../game/cards'
 import { CardInstance, IPlayerSeed } from '../../../game/types'
+import { isCardId } from '../../../game/types/guards'
 import { storage } from '../../../services/StorageService'
 import { stubDeck } from '../../../test-utils/stubs/deck'
 import { Match } from '../../components/Match'
 
-export const MatchPage = () => {
-  const [state, loadDeck] = useAsyncFn(async () => {
-    const savedDeck = await storage.loadDeck()
+// Simple Suspense resource implementation
+let deckCache: {
+  read: () => CardInstance[]
+} | null = null
 
-    if (savedDeck) {
-      return Array.from(savedDeck.entries()).reduce<CardInstance[]>(
-        (acc, [card, count]) => {
-          const newInstances = Array.from({ length: count }).map(() =>
-            // Cast card to any to satisfy the CardInstance union requirement,
-            // assuming the stored card definitions (from allCards) are complete.
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
-            instantiate(card as any)
-          ) as CardInstance[]
+const createDeckResource = () => {
+  let status = 'pending'
+  let result: CardInstance[]
+  let error: unknown
 
-          return acc.concat(newInstances)
-        },
-        []
-      )
-    }
+  const suspender = storage
+    .loadDeck()
+    .then(savedDeck => {
+      if (savedDeck) {
+        return Array.from(savedDeck.entries()).reduce<CardInstance[]>(
+          (acc, [card, count]) => {
+            if (!isCardId(card.id)) {
+              throw new Error(`Invalid card ID encountered: ${card.id}`)
+            }
+            const newInstances = Array.from({ length: count }).map(() =>
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
+              instantiate(card as any)
+            ) as CardInstance[]
 
-    return stubDeck()
-  }, [])
-
-  useEffect(() => {
-    void loadDeck()
-  }, [loadDeck])
-
-  // Memoize player IDs and seeds to prevent re-creation on renders unless data changes
-  const { playerSeeds, userPlayerId } = useMemo(() => {
-    if (!state.value) {
-      return { playerSeeds: [], userPlayerId: '' }
-    }
-
-    const player1Id = uuid()
-    const player2Id = uuid()
-
-    const player1: IPlayerSeed = {
-      id: player1Id,
-      deck: state.value,
-    }
-
-    const player2: IPlayerSeed = {
-      id: player2Id,
-      deck: stubDeck(),
-    }
-
-    return {
-      playerSeeds: [player1, player2],
-      userPlayerId: player1Id,
-    }
-  }, [state.value])
-
-  if (state.loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
+            return acc.concat(newInstances)
+          },
+          []
+        )
+      }
+      return stubDeck()
+    })
+    .then(
+      r => {
+        status = 'success'
+        result = r
+      },
+      e => {
+        status = 'error'
+        error = e
+      }
     )
+
+  return {
+    read() {
+      if (status === 'pending') {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw suspender
+      } else if (status === 'error') {
+        throw error
+      } else {
+        return result
+      }
+    },
+  }
+}
+
+const getDeckResource = () => {
+  if (!deckCache) {
+    deckCache = createDeckResource()
+  }
+  return deckCache
+}
+
+const MatchPageContent = () => {
+  const deck = getDeckResource().read()
+
+  const player1Id = uuid()
+  const player2Id = uuid()
+
+  const player1: IPlayerSeed = {
+    id: player1Id,
+    deck,
   }
 
-  if (state.error) {
-    throw state.error
+  const player2: IPlayerSeed = {
+    id: player2Id,
+    deck: stubDeck(),
   }
 
-  // Ensure we have data before rendering Match
-  if (!state.value) {
-    return null
-  }
+  const playerSeeds: IPlayerSeed[] = [player1, player2]
+  const userPlayerId = player1Id
 
   return (
     <Match fullHeight playerSeeds={playerSeeds} userPlayerId={userPlayerId} />
+  )
+}
+
+export const MatchPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="100vh"
+        >
+          <CircularProgress />
+        </Box>
+      }
+    >
+      <MatchPageContent />
+    </Suspense>
   )
 }

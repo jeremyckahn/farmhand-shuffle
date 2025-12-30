@@ -1,7 +1,10 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 
 export const ErrorPage = () => {
+  const theme = useTheme()
+
   return (
     <Box
       display="flex"
@@ -9,8 +12,8 @@ export const ErrorPage = () => {
       justifyContent="center"
       alignItems="center"
       height="100vh"
-      bgcolor="background.default"
-      color="error.main"
+      bgcolor={theme.palette.background.default}
+      color={theme.palette.error.main}
       p={3}
     >
       <Typography variant="h4" component="h1" gutterBottom>

@@ -76,6 +76,7 @@ Avoid variable name abbreviations (e.g., use `quantity` instead of `qty`) to imp
   - Use object destructuring to access props.
 - **State:** Prefer lifting state up. Components should be as stateless as possible. When local state is necessary, use `useState` or `useReducer`.
 - **Styling:** Styling is handled via a global MUI theme and inline `sx` prop styles as necessary.
+- **Theme Access:** Use the `useTheme` hook to access theme properties (e.g., `theme.palette.primary.main`) rather than using theme string literals (e.g., `'primary.main'`).
 
 ## State Management (Reducers)
 
