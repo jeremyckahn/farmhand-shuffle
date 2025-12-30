@@ -20,37 +20,33 @@ const createDeckResource = () => {
   let result: CardInstance[]
   let error: unknown
 
-  const suspender = storage
-    .loadDeck()
-    .then(savedDeck => {
+  const suspender = (async () => {
+    try {
+      const savedDeck = await storage.loadDeck()
+
       if (savedDeck) {
-        return Array.from(savedDeck.entries()).reduce<CardInstance[]>(
+        result = Array.from(savedDeck.entries()).reduce<CardInstance[]>(
           (acc, [card, count]) => {
             if (!isCardId(card.id)) {
               throw new Error(`Invalid card ID encountered: ${card.id}`)
             }
             const newInstances = Array.from({ length: count }).map(() =>
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
-              instantiate(card as any)
+              instantiate(card)
             ) as CardInstance[]
 
             return acc.concat(newInstances)
           },
           []
         )
+      } else {
+        result = stubDeck()
       }
-      return stubDeck()
-    })
-    .then(
-      r => {
-        status = 'success'
-        result = r
-      },
-      e => {
-        status = 'error'
-        error = e
-      }
-    )
+      status = 'success'
+    } catch (e) {
+      error = e
+      status = 'error'
+    }
+  })()
 
   return {
     read() {
