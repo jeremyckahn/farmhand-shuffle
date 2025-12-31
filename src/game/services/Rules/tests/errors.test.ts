@@ -20,6 +20,7 @@ describe('Rules/errors', () => {
   describe('PlayerOutOfFundsError', () => {
     it('should create an error with the correct message and playerId', () => {
       const error = new PlayerOutOfFundsError(playerId)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(PlayerOutOfFundsError)
       expect(error.message).toBe(
@@ -32,6 +33,7 @@ describe('Rules/errors', () => {
   describe('PlayerOutOfCropsError', () => {
     it('should create an error with the correct message', () => {
       const error = new PlayerOutOfCropsError(playerId)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(PlayerOutOfCropsError)
       expect(error.message).toBe(
@@ -43,6 +45,7 @@ describe('Rules/errors', () => {
   describe('MatchStateCorruptError', () => {
     it('should create an error with the correct message', () => {
       const error = new MatchStateCorruptError(message)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(MatchStateCorruptError)
       expect(error.message).toBe(`[MatchStateCorruptError] ${message}`)
@@ -52,6 +55,7 @@ describe('Rules/errors', () => {
   describe('GameStateCorruptError', () => {
     it('should create an error with the correct message', () => {
       const error = new GameStateCorruptError(message)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(GameStateCorruptError)
       expect(error.message).toBe(`[GameStateCorruptError] ${message}`)
@@ -61,6 +65,7 @@ describe('Rules/errors', () => {
   describe('FieldFullError', () => {
     it('should create an error with the correct message', () => {
       const error = new FieldFullError(playerId)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(FieldFullError)
       expect(error.message).toBe(
@@ -72,6 +77,7 @@ describe('Rules/errors', () => {
   describe('FieldEmptyError', () => {
     it('should create an error with the correct message', () => {
       const error = new FieldEmptyError(playerId)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(FieldEmptyError)
       expect(error.message).toBe(
@@ -84,6 +90,7 @@ describe('Rules/errors', () => {
     it('should create an error with the correct message', () => {
       const cardIdx = 5
       const error = new InvalidCardIndexError(cardIdx, playerId)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(InvalidCardIndexError)
       expect(error.message).toBe(
@@ -95,6 +102,7 @@ describe('Rules/errors', () => {
   describe('InvalidCardError', () => {
     it('should create an error with the correct message', () => {
       const error = new InvalidCardError(message)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(InvalidCardError)
       expect(error.message).toBe(`[InvalidCardError] ${message}`)
@@ -104,6 +112,7 @@ describe('Rules/errors', () => {
   describe('InvalidIdError', () => {
     it('should create an error with the correct message', () => {
       const error = new InvalidIdError(message)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(InvalidIdError)
       expect(error.message).toBe(`[InvalidIdError] ${message}`)
@@ -113,6 +122,7 @@ describe('Rules/errors', () => {
   describe('PlayerNotFoundError', () => {
     it('should create an error with the correct message', () => {
       const error = new PlayerNotFoundError(playerId)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(PlayerNotFoundError)
       expect(error.message).toBe(`[PlayerNotFoundError] Player ${playerId} not found.`)
@@ -122,6 +132,7 @@ describe('Rules/errors', () => {
   describe('PlayerAbortError', () => {
     it('should create an error with the correct message', () => {
       const error = new PlayerAbortError()
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(PlayerAbortError)
       expect(error.message).toBe(`[PlayerAbortError] The player cancelled the operation.`)
@@ -131,6 +142,7 @@ describe('Rules/errors', () => {
   describe('UnimplementedError', () => {
     it('should create an error with the correct message', () => {
       const error = new UnimplementedError(message)
+
       expect(error).toBeInstanceOf(Error)
       expect(error).toBeInstanceOf(UnimplementedError)
       expect(error.message).toBe(`[UnimplementedError] ${message}`)
