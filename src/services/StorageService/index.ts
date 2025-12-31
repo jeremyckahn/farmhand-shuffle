@@ -1,8 +1,8 @@
 import localforage from 'localforage'
 
-import { allCards } from '../../game/cards'
+import { allCards, instantiate } from '../../game/cards'
 import { GameStateCorruptError } from '../../game/services/Rules/errors'
-import { ICard } from '../../game/types'
+import { CardInstance, ICard } from '../../game/types'
 
 export enum StorageKey {
   PLAYER_DECK = 'PLAYER_DECK',
@@ -46,6 +46,24 @@ export class StorageService {
 
           return [card, count]
         })
+    )
+  }
+
+  /**
+   * Hydrates a DeserializedDeck (Map) into a flat array of CardInstances.
+   * @param deck - The deck map to hydrate.
+   * @returns An array of CardInstance objects.
+   */
+  static hydrateDeserializedDeck(deck: DeserializedDeck): CardInstance[] {
+    return Array.from(deck.entries()).reduce<CardInstance[]>(
+      (acc, [card, count]) => {
+        const newInstances = Array.from({ length: count }).map(() =>
+          instantiate(card)
+        ) as CardInstance[]
+
+        return acc.concat(newInstances)
+      },
+      []
     )
   }
 

@@ -3,9 +3,8 @@ import Box from '@mui/material/Box'
 import { Suspense } from 'react'
 import { v4 as uuid } from 'uuid'
 
-import { instantiate } from '../../../game/cards'
 import { CardInstance, IPlayerSeed } from '../../../game/types'
-import { storage } from '../../../services/StorageService'
+import { StorageService, storage } from '../../../services/StorageService'
 import { stubDeck } from '../../../test-utils/stubs/deck'
 import { Match } from '../../components/Match'
 
@@ -24,17 +23,7 @@ const createDeckResource = () => {
       const savedDeck = await storage.loadDeck()
 
       if (savedDeck) {
-        // FIXME: Move this to a StorageService method called hydrateDeserializedDeck and add test coverage for it
-        result = Array.from(savedDeck.entries()).reduce<CardInstance[]>(
-          (acc, [card, count]) => {
-            const newInstances = Array.from({ length: count }).map(() =>
-              instantiate(card)
-            ) as CardInstance[]
-
-            return acc.concat(newInstances)
-          },
-          []
-        )
+        result = StorageService.hydrateDeserializedDeck(savedDeck)
       } else {
         result = stubDeck()
       }
