@@ -1,6 +1,6 @@
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
 import { CardInstance, IPlayerSeed } from '../../../game/types'
@@ -8,12 +8,12 @@ import { StorageService, storage } from '../../../services/StorageService'
 import { stubDeck } from '../../../test-utils/stubs/deck'
 import { Match } from '../../components/Match'
 
-// Simple Suspense resource implementation
-let deckCache: {
+// Resource type definition
+interface DeckResource {
   read: () => CardInstance[]
-} | null = null
+}
 
-const createDeckResource = () => {
+const createDeckResource = (): DeckResource => {
   let status: 'pending' | 'error' | 'success' = 'pending'
   let result: CardInstance[]
   let error: unknown
@@ -23,7 +23,7 @@ const createDeckResource = () => {
       const savedDeck = await storage.loadDeck()
 
       if (savedDeck) {
-        result = StorageService.hydrateDeserializedDeck(savedDeck)
+        result = StorageService.instantiateDeserializedDeck(savedDeck)
       } else {
         result = stubDeck()
       }
@@ -48,16 +48,17 @@ const createDeckResource = () => {
   }
 }
 
-const getDeckResource = () => {
-  if (!deckCache) {
-    deckCache = createDeckResource()
-  }
-  return deckCache
-}
+const MatchPageContent = ({ resource }: { resource: DeckResource }) => {
+  const deck = resource.read()
 
-const MatchPageContent = () => {
-  const deck = getDeckResource().read()
+  // Generate IDs once per mount of content (safe if suspender resolves once)
+  // Or memoize if deck reference is stable.
+  // Since this component only renders when resource is ready, it is fine.
+  // Ideally, useMemo here to avoid regenerating IDs on re-renders of this component
+  // (though MatchPageContent probably won't re-render unless parent does).
+  // But strictly, IDs should be stable for the match session.
 
+  // We can just execute logic directly as render is synchronous here (after suspense).
   const player1Id = uuid()
   const player2Id = uuid()
 
@@ -80,6 +81,10 @@ const MatchPageContent = () => {
 }
 
 export const MatchPage = () => {
+  // Lazily create the resource so it persists across renders but is unique to this component instance.
+  // If MatchPage unmounts and remounts, a new resource is created (new fetch).
+  const [resource] = useState(createDeckResource)
+
   return (
     <Suspense
       fallback={
@@ -93,7 +98,7 @@ export const MatchPage = () => {
         </Box>
       }
     >
-      <MatchPageContent />
+      <MatchPageContent resource={resource} />
     </Suspense>
   )
 }

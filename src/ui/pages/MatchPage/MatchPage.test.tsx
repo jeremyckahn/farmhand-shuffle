@@ -2,12 +2,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { Suspense } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { carrot } from '../../../game/cards'
 import { ICard } from '../../../game/types'
 import { storage } from '../../../services/StorageService'
 import { Match } from '../../components/Match'
+
+import { MatchPage } from './MatchPage'
 
 // Mock dependencies
 vi.mock('../../../services/StorageService', async (importOriginal) => {
@@ -25,16 +27,8 @@ vi.mock('../../components/Match', () => ({
   Match: vi.fn(() => <div>Match Component</div>),
 }))
 
-// Since we use a module-level cache variable, we need to reset it between tests.
 describe('MatchPage', () => {
-  beforeEach(() => {
-    vi.resetModules()
-  })
-
-  it('shows loading spinner initially', async () => {
-    // Re-import component for isolation
-    const { MatchPage } = await import('./MatchPage')
-
+  it('shows loading spinner initially', () => {
     // Make loadDeck hang
     // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(storage.loadDeck).mockReturnValue(new Promise(() => {}))
@@ -45,8 +39,6 @@ describe('MatchPage', () => {
   })
 
   it('renders Match component with loaded deck data', async () => {
-    const { MatchPage } = await import('./MatchPage')
-
     const mockDeck = new Map<ICard, number>([[carrot, 2]])
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -79,8 +71,6 @@ describe('MatchPage', () => {
   })
 
   it('falls back to stubDeck if storage returns null', async () => {
-    const { MatchPage } = await import('./MatchPage')
-
     // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(storage.loadDeck).mockResolvedValue(null)
 
@@ -104,8 +94,6 @@ describe('MatchPage', () => {
   })
 
   it('throws error when loading fails', async () => {
-    const { MatchPage } = await import('./MatchPage')
-
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})

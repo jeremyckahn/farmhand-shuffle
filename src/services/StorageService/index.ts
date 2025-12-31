@@ -50,11 +50,11 @@ export class StorageService {
   }
 
   /**
-   * Hydrates a DeserializedDeck (Map) into a flat array of CardInstances.
-   * @param deck - The deck map to hydrate.
+   * Instantiates a DeserializedDeck (Map) into a flat array of CardInstances.
+   * @param deck - The deck map to instantiate.
    * @returns An array of CardInstance objects.
    */
-  static hydrateDeserializedDeck(deck: DeserializedDeck): CardInstance[] {
+  static instantiateDeserializedDeck(deck: DeserializedDeck): CardInstance[] {
     return Array.from(deck.entries()).reduce<CardInstance[]>(
       (acc, [card, count]) => {
         const newInstances = Array.from({ length: count }).map(() =>

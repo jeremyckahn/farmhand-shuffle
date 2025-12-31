@@ -83,14 +83,14 @@ describe('StorageService', () => {
     })
   })
 
-  describe('hydrateDeserializedDeck', () => {
-    it('should hydrate a deck map into a flat array of instances', () => {
+  describe('instantiateDeserializedDeck', () => {
+    it('should instantiate a deck map into a flat array of instances', () => {
       const deck: DeserializedDeck = new Map([
         [mockCard1, 2],
         [mockCard2, 1],
       ])
 
-      const instances = StorageService.hydrateDeserializedDeck(deck)
+      const instances = StorageService.instantiateDeserializedDeck(deck)
 
       expect(instances).toHaveLength(3)
       expect(instances.filter(c => c.id === mockCard1.id)).toHaveLength(2)
@@ -100,7 +100,7 @@ describe('StorageService', () => {
 
     it('should return an empty array for an empty deck', () => {
       const deck: DeserializedDeck = new Map()
-      const instances = StorageService.hydrateDeserializedDeck(deck)
+      const instances = StorageService.instantiateDeserializedDeck(deck)
 
       expect(instances).toEqual([])
     })
