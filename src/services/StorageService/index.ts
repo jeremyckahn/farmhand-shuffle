@@ -55,15 +55,9 @@ export class StorageService {
    * @returns An array of CardInstance objects.
    */
   static instantiateDeserializedDeck(deck: DeserializedDeck): CardInstance[] {
-    return Array.from(deck.entries()).reduce<CardInstance[]>(
-      (acc, [card, count]) => {
-        const newInstances = Array.from({ length: count }).map(() =>
-          instantiate(card)
-        ) as CardInstance[]
-
-        return acc.concat(newInstances)
-      },
-      []
+    return Array.from(deck.entries()).flatMap(([card, count]) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Array.from({ length: count }, () => instantiate(card as any) as CardInstance)
     )
   }
 

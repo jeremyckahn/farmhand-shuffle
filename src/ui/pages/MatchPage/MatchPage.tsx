@@ -1,6 +1,6 @@
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
-import { Suspense, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
 import { CardInstance, IPlayerSeed } from '../../../game/types'
@@ -51,29 +51,25 @@ const createDeckResource = (): DeckResource => {
 const MatchPageContent = ({ resource }: { resource: DeckResource }) => {
   const deck = resource.read()
 
-  // Generate IDs once per mount of content (safe if suspender resolves once)
-  // Or memoize if deck reference is stable.
-  // Since this component only renders when resource is ready, it is fine.
-  // Ideally, useMemo here to avoid regenerating IDs on re-renders of this component
-  // (though MatchPageContent probably won't re-render unless parent does).
-  // But strictly, IDs should be stable for the match session.
+  const { playerSeeds, userPlayerId } = useMemo(() => {
+    const player1Id = uuid()
+    const player2Id = uuid()
 
-  // We can just execute logic directly as render is synchronous here (after suspense).
-  const player1Id = uuid()
-  const player2Id = uuid()
+    const player1: IPlayerSeed = {
+      id: player1Id,
+      deck,
+    }
 
-  const player1: IPlayerSeed = {
-    id: player1Id,
-    deck,
-  }
+    const player2: IPlayerSeed = {
+      id: player2Id,
+      deck: stubDeck(),
+    }
 
-  const player2: IPlayerSeed = {
-    id: player2Id,
-    deck: stubDeck(),
-  }
-
-  const playerSeeds: IPlayerSeed[] = [player1, player2]
-  const userPlayerId = player1Id
+    return {
+      playerSeeds: [player1, player2],
+      userPlayerId: player1Id,
+    }
+  }, [deck])
 
   return (
     <Match fullHeight playerSeeds={playerSeeds} userPlayerId={userPlayerId} />
