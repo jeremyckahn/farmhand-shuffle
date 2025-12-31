@@ -83,6 +83,29 @@ describe('StorageService', () => {
     })
   })
 
+  describe('instantiateDeserializedDeck', () => {
+    it('should instantiate a deck map into a flat array of instances', () => {
+      const deck: DeserializedDeck = new Map([
+        [mockCard1, 2],
+        [mockCard2, 1],
+      ])
+
+      const instances = StorageService.instantiateDeserializedDeck(deck)
+
+      expect(instances).toHaveLength(3)
+      expect(instances.filter(c => c.id === mockCard1.id)).toHaveLength(2)
+      expect(instances.filter(c => c.id === mockCard2.id)).toHaveLength(1)
+      expect(instances[0]).toHaveProperty('instanceId')
+    })
+
+    it('should return an empty array for an empty deck', () => {
+      const deck: DeserializedDeck = new Map()
+      const instances = StorageService.instantiateDeserializedDeck(deck)
+
+      expect(instances).toEqual([])
+    })
+  })
+
   describe('saveDeck', () => {
     it('should serialize and save the deck to localforage', async () => {
       const deck: DeserializedDeck = new Map([[mockCard1, 3]])
