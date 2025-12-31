@@ -49,7 +49,7 @@ const createDeckResource = (): DeckResource => {
 }
 
 const MatchPageContent = ({ resource }: { resource: DeckResource }) => {
-  const deck = resource.read()
+  const player1Deck = resource.read()
 
   const { playerSeeds, userPlayerId } = useMemo(() => {
     const player1Id = uuid()
@@ -57,7 +57,7 @@ const MatchPageContent = ({ resource }: { resource: DeckResource }) => {
 
     const player1: IPlayerSeed = {
       id: player1Id,
-      deck,
+      deck: player1Deck,
     }
 
     const player2: IPlayerSeed = {
@@ -69,7 +69,7 @@ const MatchPageContent = ({ resource }: { resource: DeckResource }) => {
       playerSeeds: [player1, player2],
       userPlayerId: player1Id,
     }
-  }, [deck])
+  }, [player1Deck])
 
   return (
     <Match fullHeight playerSeeds={playerSeeds} userPlayerId={userPlayerId} />
@@ -79,6 +79,9 @@ const MatchPageContent = ({ resource }: { resource: DeckResource }) => {
 export const MatchPage = () => {
   // Lazily create the resource so it persists across renders but is unique to this component instance.
   // If MatchPage unmounts and remounts, a new resource is created (new fetch).
+  // Note: Using useState for lazy initialization is the standard React pattern for creating a stable value
+  // once per component lifecycle. We do not need the setter.
+  // We avoid useRef here because accessing ref.current during render is flagged by strict linting rules.
   const [resource] = useState(createDeckResource)
 
   return (
