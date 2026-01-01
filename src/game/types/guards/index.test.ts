@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import * as guards from './index'
+
 import { CardType, MatchState } from '../'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
+
+import * as guards from './index'
 
 // Mock data for testing
 const mockCard = {
@@ -193,6 +195,8 @@ describe('Type Guards', () => {
   describe('assertIsEventCard', () => {
     it('does not throw for valid Event card', () => {
       const eventCard = { ...mockCardInstance, type: CardType.EVENT }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
       expect(() => guards.assertIsEventCard(eventCard as any)).not.toThrow()
     })
 
@@ -204,6 +208,8 @@ describe('Type Guards', () => {
   describe('assertIsToolCard', () => {
     it('does not throw for valid Tool card', () => {
         const toolCard = { ...mockCardInstance, type: CardType.TOOL }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
         expect(() => guards.assertIsToolCard(toolCard as any)).not.toThrow()
     })
 

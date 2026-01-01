@@ -1,8 +1,10 @@
 import { renderHook } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
-import { useMatchRules } from './useMatchRules'
+
 import { ActorContext } from '../components/Match/ActorContext'
 import { MatchState } from '../../game/types'
+
+import { useMatchRules } from './useMatchRules'
 
 // Mock ActorContext
 vi.mock('../components/Match/ActorContext', () => ({
@@ -16,6 +18,7 @@ describe('useMatchRules', () => {
     const mockMatch = { some: 'match data' }
     const mockState = MatchState.WAITING_FOR_PLAYER_TURN_ACTION;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     (ActorContext.useSelector as any).mockReturnValue({
       match: mockMatch,
       matchState: mockState,
@@ -31,6 +34,7 @@ describe('useMatchRules', () => {
     const mockMatch = { some: 'match data' }
     const mockState = { [MatchState.PERFORMING_BOT_TURN_ACTION]: 'some substate' };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     (ActorContext.useSelector as any).mockReturnValue({
       match: mockMatch,
       matchState: mockState,
@@ -46,6 +50,7 @@ describe('useMatchRules', () => {
      const mockMatch = { some: 'match data' }
      const mockState = { 'UNEXPECTED_KEY': 'val' };
 
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
      (ActorContext.useSelector as any).mockReturnValue({
        match: mockMatch,
        matchState: mockState,
@@ -60,6 +65,7 @@ describe('useMatchRules', () => {
       const mockMatch = { some: 'match data' }
       const mockState = 123;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       (ActorContext.useSelector as any).mockReturnValue({
         match: mockMatch,
         matchState: mockState,
@@ -73,6 +79,7 @@ describe('useMatchRules', () => {
       const mockMatch = { some: 'match data' }
       const mockState = 'INVALID_STATE_STRING';
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       (ActorContext.useSelector as any).mockReturnValue({
         match: mockMatch,
         matchState: mockState,

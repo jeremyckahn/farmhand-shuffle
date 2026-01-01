@@ -1,19 +1,24 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
-import { DiscardPile } from './DiscardPile'
-import { IMatch, IPlayer, CardType } from '../../../game/types'
-import { CardSize } from '../../types'
+
 import { ThemeProvider, createTheme } from '@mui/material/styles'
+
+import { IMatch, IPlayer, CardType } from '../../../game/types'
+
+import { DiscardPile } from './DiscardPile'
+
 
 const theme = createTheme()
 
-const mockCardInstance = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockCardInstance: any = {
   id: 'carrot',
   name: 'Carrot',
   type: CardType.CROP,
   instanceId: '123',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mockPlayer: IPlayer = {
   id: 'player1',
   funds: 0,
@@ -22,8 +27,10 @@ const mockPlayer: IPlayer = {
   discardPile: [mockCardInstance],
   field: { crops: [] },
   cardsPlayedDuringTurn: [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mockMatch: IMatch = {
   sessionOwnerPlayerId: 'player1',
   table: {
@@ -31,9 +38,11 @@ const mockMatch: IMatch = {
       player1: mockPlayer,
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any
 
 vi.mock('../Card', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
   Card: ({ cardInstance, ...rest }: any) => <div data-testid="mock-card" {...rest}>{cardInstance.name}</div>
 }))
 
@@ -51,6 +60,7 @@ describe('DiscardPile', () => {
 
   it('rotates opponent discard pile', () => {
     const opponentId = 'player2'
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const mockMatchOpponent = {
       ...mockMatch,
       table: {
@@ -58,10 +68,12 @@ describe('DiscardPile', () => {
           player2: { ...mockPlayer, id: opponentId },
         },
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     renderWithTheme(<DiscardPile match={mockMatchOpponent} playerId={opponentId} />)
-    const pile = screen.getByTestId(`discard-pile_${opponentId}`)
+    screen.getByTestId(`discard-pile_${opponentId}`)
 
     // Check computed style or sx prop effect.
     // Testing sx directly is hard, but we can check if the style attribute contains the rotation.
@@ -69,7 +81,6 @@ describe('DiscardPile', () => {
     // Better: check if the logic path is covered.
 
     // Since we are running in jsdom, we might not see the exact styles applied via sx easily without getting computed styles.
-    const styles = window.getComputedStyle(pile);
     // expect(styles.transform).toBe('rotate(180deg)') // JSDOM might not process MUI sx to style fully like a browser?
     // Actually MUI puts classes or inline styles.
   })

@@ -1,7 +1,9 @@
 import { render, screen, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { Snackbar, emptyNotificationMessage, notificationDuration } from './Snackbar'
+
 import { ThemeProvider, createTheme } from '@mui/material/styles'
+
+import { Snackbar, emptyNotificationMessage, notificationDuration } from './Snackbar'
 
 const theme = createTheme()
 
@@ -20,7 +22,8 @@ describe('Snackbar', () => {
 
   it('does not render when message is empty', () => {
     renderWithTheme(<Snackbar message={emptyNotificationMessage} severity="info" onClose={vi.fn()} />)
-    const alert = screen.queryByRole('alert')
+    screen.queryByRole('alert')
+
     // MuiSnackbar might render but be hidden. The Alert inside is conditionally rendered or effectively hidden?
     // Actually MuiSnackbar manages open state. If open=false, it typically doesn't render content or is hidden.
     // Let's check if the text is visible.
@@ -35,6 +38,7 @@ describe('Snackbar', () => {
 
   it('closes after duration', () => {
     const onClose = vi.fn()
+
     renderWithTheme(<Snackbar message="Test Message" severity="info" onClose={onClose} />)
 
     expect(screen.getByText('Test Message')).toBeInTheDocument()
@@ -70,7 +74,7 @@ describe('Snackbar', () => {
     expect(onClose).toHaveBeenCalled()
   })
 
-  it('displays previous message while closing/transitioning if current message is empty', async () => {
+  it('displays previous message while closing/transitioning if current message is empty', () => {
      // This test targets the logic: {message || previousMessage} and the effect setting previousMessage
      const onClose = vi.fn()
      const { rerender } = renderWithTheme(<Snackbar message="Initial Message" severity="info" onClose={onClose} />)
