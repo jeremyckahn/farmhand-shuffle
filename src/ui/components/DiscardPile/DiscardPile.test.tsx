@@ -1,3 +1,4 @@
+import React from 'react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -40,15 +41,28 @@ const mockMatch: IMatch = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any
 
-vi.mock('../Card', () => ({
+vi.mock('../Card', async () => {
+  const React = await import('react')
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Card: ({ cardInstance, ...rest }: any) => (
-    <div data-testid="mock-card" {...rest}>
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
-      {cardInstance.name}
-    </div>
-  ),
-}))
+  const Card = React.forwardRef(function Card({ cardInstance, cardIdx, playerId, size, ...rest }: any, ref: any) {
+    return (
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      <div ref={ref} data-testid="mock-card" {...rest}>
+        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
+        {cardInstance.name}
+      </div>
+    )
+  })
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+  const cardAny = Card as any
+
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    Card: cardAny,
+  }
+})
 
 const renderWithTheme = (ui: React.ReactElement) => {
   return render(<ThemeProvider theme={theme}>{ui}</ThemeProvider>)

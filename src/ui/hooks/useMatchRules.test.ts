@@ -50,49 +50,66 @@ describe('useMatchRules', () => {
     )
   })
 
-  it('throws TypeError for unexpected object state', () => {
-    const mockMatch = { some: 'match data' }
-    const mockState = { UNEXPECTED_KEY: 'val' }
+  describe('error handling', () => {
+    const preventDefault = (e: ErrorEvent) => e.preventDefault()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let consoleSpy: any
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    ;(ActorContext.useSelector as any).mockReturnValue({
-      match: mockMatch,
-      matchState: mockState,
+    beforeEach(() => {
+      consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      window.addEventListener('error', preventDefault)
     })
 
-    expect(() => renderHook(() => useMatchRules())).toThrow(
-      'Unexpected matchState shape'
-    )
-  })
-
-  it('throws TypeError if resolved state is not a string (e.g. number)', () => {
-    // This case might be hard to reach if typescript is doing its job, but good for runtime safety check
-    const mockMatch = { some: 'match data' }
-    const mockState = 123
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    ;(ActorContext.useSelector as any).mockReturnValue({
-      match: mockMatch,
-      matchState: mockState,
+    afterEach(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      consoleSpy.mockRestore()
+      window.removeEventListener('error', preventDefault)
     })
 
-    expect(() => renderHook(() => useMatchRules())).toThrow(
-      'Actor state is not a string'
-    )
-  })
+    it('throws TypeError for unexpected object state', () => {
+      const mockMatch = { some: 'match data' }
+      const mockState = { UNEXPECTED_KEY: 'val' }
 
-  it('throws TypeError if resolved state string is not a valid MatchState', () => {
-    const mockMatch = { some: 'match data' }
-    const mockState = 'INVALID_STATE_STRING'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      ;(ActorContext.useSelector as any).mockReturnValue({
+        match: mockMatch,
+        matchState: mockState,
+      })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    ;(ActorContext.useSelector as any).mockReturnValue({
-      match: mockMatch,
-      matchState: mockState,
+      expect(() => renderHook(() => useMatchRules())).toThrow(
+        'Unexpected matchState shape'
+      )
     })
 
-    expect(() => renderHook(() => useMatchRules())).toThrow(
-      'is not a MatchState'
-    )
+    it('throws TypeError if resolved state is not a string (e.g. number)', () => {
+      // This case might be hard to reach if typescript is doing its job, but good for runtime safety check
+      const mockMatch = { some: 'match data' }
+      const mockState = 123
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      ;(ActorContext.useSelector as any).mockReturnValue({
+        match: mockMatch,
+        matchState: mockState,
+      })
+
+      expect(() => renderHook(() => useMatchRules())).toThrow(
+        'Actor state is not a string'
+      )
+    })
+
+    it('throws TypeError if resolved state string is not a valid MatchState', () => {
+      const mockMatch = { some: 'match data' }
+      const mockState = 'INVALID_STATE_STRING'
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      ;(ActorContext.useSelector as any).mockReturnValue({
+        match: mockMatch,
+        matchState: mockState,
+      })
+
+      expect(() => renderHook(() => useMatchRules())).toThrow(
+        'is not a MatchState'
+      )
+    })
   })
 })

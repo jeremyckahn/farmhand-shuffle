@@ -99,6 +99,9 @@ describe('MatchPage', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
+    const preventDefault = (e: ErrorEvent) => e.preventDefault()
+
+    window.addEventListener('error', preventDefault)
 
     const error = new Error('Failed to load')
 
@@ -134,6 +137,7 @@ describe('MatchPage', () => {
       expect(screen.getByText('Caught: Failed to load')).toBeInTheDocument()
     })
 
+    window.removeEventListener('error', preventDefault)
     consoleErrorSpy.mockRestore()
   })
 })
