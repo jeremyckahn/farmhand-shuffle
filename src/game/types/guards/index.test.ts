@@ -9,7 +9,8 @@ import * as guards from './index'
 const mockCard = {
   id: 'carrot',
   name: 'Carrot',
-  type: CardType.CROP,
+  type: CardType.CROP as const,
+  waterToMature: 1,
 }
 
 const mockCardInstance = {
