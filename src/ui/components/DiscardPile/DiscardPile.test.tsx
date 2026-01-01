@@ -43,14 +43,24 @@ const mockMatch: IMatch = {
 
 vi.mock('../Card', async () => {
   const React = await import('react')
-  return {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Card: React.forwardRef(({ cardInstance, cardIdx, playerId, size, ...rest }: any, ref: any) => (
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Card = React.forwardRef(function Card({ cardInstance, cardIdx, playerId, size, ...rest }: any, ref: any) {
+    return (
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       <div ref={ref} data-testid="mock-card" {...rest}>
         {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
         {cardInstance.name}
       </div>
-    )),
+    )
+  })
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+  const cardAny = Card as any
+
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    Card: cardAny,
   }
 })
 

@@ -52,7 +52,8 @@ describe('useMatchRules', () => {
 
   describe('error handling', () => {
     const preventDefault = (e: ErrorEvent) => e.preventDefault()
-    let consoleSpy: ReturnType<typeof vi.spyOn>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let consoleSpy: any
 
     beforeEach(() => {
       consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -60,6 +61,7 @@ describe('useMatchRules', () => {
     })
 
     afterEach(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       consoleSpy.mockRestore()
       window.removeEventListener('error', preventDefault)
     })

@@ -100,6 +100,7 @@ describe('MatchPage', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => {})
     const preventDefault = (e: ErrorEvent) => e.preventDefault()
+
     window.addEventListener('error', preventDefault)
 
     const error = new Error('Failed to load')
