@@ -105,7 +105,9 @@ describe('Rules/errors', () => {
     it('should create an error with the correct message', () => {
       const error = new PlayerNotFoundError(playerId)
 
-      expect(error.message).toBe(`[PlayerNotFoundError] Player ${playerId} not found.`)
+      expect(error.message).toBe(
+        `[PlayerNotFoundError] Player ${playerId} not found.`
+      )
     })
   })
 
@@ -113,7 +115,9 @@ describe('Rules/errors', () => {
     it('should create an error with the correct message', () => {
       const error = new PlayerAbortError()
 
-      expect(error.message).toBe(`[PlayerAbortError] The player cancelled the operation.`)
+      expect(error.message).toBe(
+        `[PlayerAbortError] The player cancelled the operation.`
+      )
     })
   })
 

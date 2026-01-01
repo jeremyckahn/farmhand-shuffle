@@ -12,8 +12,10 @@ import { Match } from '../../components/Match'
 import { MatchPage } from './MatchPage'
 
 // Mock dependencies
-vi.mock('../../../services/StorageService', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../services/StorageService')>()
+vi.mock('../../../services/StorageService', async importOriginal => {
+  const actual = await importOriginal<
+    typeof import('../../../services/StorageService')
+  >()
 
   return {
     ...actual,
@@ -118,11 +120,7 @@ describe('MatchPage', () => {
         if (this.state.hasError) {
           return <div>Caught: {this.state.error?.message}</div>
         }
-        return (
-          <Suspense fallback="loading">
-            {this.props.children}
-          </Suspense>
-        )
+        return <Suspense fallback="loading">{this.props.children}</Suspense>
       }
     }
 

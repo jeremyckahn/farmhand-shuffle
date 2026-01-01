@@ -56,8 +56,7 @@ export class StorageService {
    */
   static instantiateDeserializedDeck(deck: DeserializedDeck): CardInstance[] {
     return Array.from(deck.entries()).flatMap(([card, count]) =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      Array.from({ length: count }, () => instantiate(card as any) as CardInstance)
+      Array.from({ length: count }, () => instantiate(card) as CardInstance)
     )
   }
 
