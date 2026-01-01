@@ -83,12 +83,14 @@ describe('Type Guards', () => {
     })
 
     it('returns false for non-crop card', () => {
-      expect(guards.isCrop({ ...mockCard, type: CardType.EVENT })).toBe(false)
+      expect(
+        guards.isCrop({ ...mockCard, type: CardType.EVENT })
+      ).toBe(false)
     })
 
     it('returns false for invalid input', () => {
-      expect(guards.isCrop(null)).toBe(false)
-      expect(guards.isCrop({})).toBe(false)
+        expect(guards.isCrop(null)).toBe(false)
+        expect(guards.isCrop({})).toBe(false)
     })
   })
 
@@ -133,10 +135,8 @@ describe('Type Guards', () => {
     })
 
     it('returns false for invalid input', () => {
-      expect(guards.isTable(null)).toBe(false)
-      expect(guards.isTable({ ...mockTable, communityFund: 'string' })).toBe(
-        false
-      )
+        expect(guards.isTable(null)).toBe(false)
+        expect(guards.isTable({ ...mockTable, communityFund: 'string' })).toBe(false)
     })
   })
 
@@ -146,10 +146,8 @@ describe('Type Guards', () => {
     })
 
     it('returns false for invalid input', () => {
-      expect(guards.isCropPriceFluctuation(null)).toBe(false)
-      expect(guards.isCropPriceFluctuation({ crop: {}, multiplier: 1 })).toBe(
-        false
-      )
+        expect(guards.isCropPriceFluctuation(null)).toBe(false)
+        expect(guards.isCropPriceFluctuation({ crop: {}, multiplier: 1 })).toBe(false)
     })
   })
 
@@ -158,9 +156,9 @@ describe('Type Guards', () => {
       expect(guards.isMatch(mockMatch)).toBe(true)
     })
 
-    it('returns false for invalid input', () => {
-      expect(guards.isMatch(null)).toBe(false)
-      expect(guards.isMatch({ ...mockMatch, table: null })).toBe(false)
+     it('returns false for invalid input', () => {
+        expect(guards.isMatch(null)).toBe(false)
+        expect(guards.isMatch({ ...mockMatch, table: null })).toBe(false)
     })
   })
 
@@ -175,16 +173,14 @@ describe('Type Guards', () => {
   })
 
   describe('isCard', () => {
-    it('returns true for valid ICard', () => {
-      expect(guards.isCard(mockCard)).toBe(true)
-    })
+      it('returns true for valid ICard', () => {
+          expect(guards.isCard(mockCard)).toBe(true)
+      })
 
-    it('returns false for invalid input', () => {
-      expect(guards.isCard(null)).toBe(false)
-      expect(guards.isCard({ id: 'invalid', name: 'name', type: 'CROP' })).toBe(
-        false
-      )
-    })
+      it('returns false for invalid input', () => {
+          expect(guards.isCard(null)).toBe(false)
+          expect(guards.isCard({ id: 'invalid', name: 'name', type: 'CROP' })).toBe(false)
+      })
   })
 
   describe('assertIsCardId', () => {
@@ -193,9 +189,7 @@ describe('Type Guards', () => {
     })
 
     it('throws MatchStateCorruptError for invalid card ID', () => {
-      expect(() => guards.assertIsCardId('invalid')).toThrow(
-        MatchStateCorruptError
-      )
+      expect(() => guards.assertIsCardId('invalid')).toThrow(MatchStateCorruptError)
     })
   })
 
@@ -208,24 +202,20 @@ describe('Type Guards', () => {
     })
 
     it('throws MatchStateCorruptError for non-Event card', () => {
-      expect(() => guards.assertIsEventCard(mockCardInstance)).toThrow(
-        MatchStateCorruptError
-      )
+      expect(() => guards.assertIsEventCard(mockCardInstance)).toThrow(MatchStateCorruptError)
     })
   })
 
   describe('assertIsToolCard', () => {
     it('does not throw for valid Tool card', () => {
-      const toolCard = { ...mockCardInstance, type: CardType.TOOL }
+        const toolCard = { ...mockCardInstance, type: CardType.TOOL }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      expect(() => guards.assertIsToolCard(toolCard as any)).not.toThrow()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+        expect(() => guards.assertIsToolCard(toolCard as any)).not.toThrow()
     })
 
     it('throws MatchStateCorruptError for non-Tool card', () => {
-      expect(() => guards.assertIsToolCard(mockCardInstance)).toThrow(
-        MatchStateCorruptError
-      )
+        expect(() => guards.assertIsToolCard(mockCardInstance)).toThrow(MatchStateCorruptError)
     })
   })
 
@@ -241,15 +231,11 @@ describe('Type Guards', () => {
 
   describe('assertStringIsMatchState', () => {
     it('does not throw for valid MatchState string', () => {
-      expect(() =>
-        guards.assertStringIsMatchState(MatchState.PLANTING_CROP)
-      ).not.toThrow()
+      expect(() => guards.assertStringIsMatchState(MatchState.PLANTING_CROP)).not.toThrow()
     })
 
     it('throws TypeError for invalid string', () => {
-      expect(() => guards.assertStringIsMatchState('INVALID_STATE')).toThrow(
-        TypeError
-      )
+      expect(() => guards.assertStringIsMatchState('INVALID_STATE')).toThrow(TypeError)
     })
   })
 

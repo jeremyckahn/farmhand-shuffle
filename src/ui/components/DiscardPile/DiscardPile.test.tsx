@@ -1,24 +1,24 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
+
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
-import { IMatch, IPlayer, CardType, CardInstance } from '../../../game/types'
-import { CardProps } from '../Card/types'
-import { stubTable } from '../../../test-utils/stubs/table'
-import { stubMatch } from '../../../test-utils/stubs/match'
+import { IMatch, IPlayer, CardType } from '../../../game/types'
 
 import { DiscardPile } from './DiscardPile'
 
+
 const theme = createTheme()
 
-const mockCardInstance: CardInstance = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockCardInstance: any = {
   id: 'carrot',
   name: 'Carrot',
   type: CardType.CROP,
   instanceId: '123',
-  waterToMature: 0,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const mockPlayer: IPlayer = {
   id: 'player1',
   funds: 0,
@@ -27,21 +27,23 @@ const mockPlayer: IPlayer = {
   discardPile: [mockCardInstance],
   field: { crops: [] },
   cardsPlayedDuringTurn: [],
-}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any
 
-const mockMatch: IMatch = stubMatch({
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const mockMatch: IMatch = {
   sessionOwnerPlayerId: 'player1',
-  table: stubTable({
+  table: {
     players: {
       player1: mockPlayer,
     },
-  }),
-})
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any
 
 vi.mock('../Card', () => ({
-  Card: ({ cardInstance }: CardProps) => (
-    <div data-testid="mock-card">{cardInstance.name}</div>
-  ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+  Card: ({ cardInstance, ...rest }: any) => <div data-testid="mock-card" {...rest}>{cardInstance.name}</div>
 }))
 
 const renderWithTheme = (ui: React.ReactElement) => {
@@ -54,5 +56,46 @@ describe('DiscardPile', () => {
     expect(screen.getByTestId('discard-pile_player1')).toBeInTheDocument()
     expect(screen.getByTestId('mock-card')).toBeInTheDocument()
     expect(screen.getByText('Carrot')).toBeInTheDocument()
+  })
+
+  it('renders correctly with an empty discard pile', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const mockMatchEmpty = {
+      ...mockMatch,
+      table: {
+        players: {
+          player1: { ...mockPlayer, discardPile: [] },
+        },
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    renderWithTheme(<DiscardPile match={mockMatchEmpty} playerId="player1" />)
+    expect(screen.getByTestId('discard-pile_player1')).toBeInTheDocument()
+    expect(screen.queryByTestId('mock-card')).not.toBeInTheDocument()
+  })
+
+  it('rotates opponent discard pile', () => {
+    const opponentId = 'player2'
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const mockMatchOpponent = {
+      ...mockMatch,
+      table: {
+        players: {
+          player2: { ...mockPlayer, id: opponentId },
+        },
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    renderWithTheme(<DiscardPile match={mockMatchOpponent} playerId={opponentId} />)
+    const pile = screen.getByTestId(`discard-pile_${opponentId}`)
+
+    // Check that the transform property contains the rotation
+    const computedStyle = window.getComputedStyle(pile)
+
+    expect(computedStyle.transform).toContain('rotate(180deg)')
   })
 })
