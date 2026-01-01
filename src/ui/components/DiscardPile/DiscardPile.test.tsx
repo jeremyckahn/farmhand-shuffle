@@ -1,3 +1,4 @@
+import React from 'react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -40,15 +41,18 @@ const mockMatch: IMatch = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any
 
-vi.mock('../Card', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Card: ({ cardInstance, ...rest }: any) => (
-    <div data-testid="mock-card" {...rest}>
-      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
-      {cardInstance.name}
-    </div>
-  ),
-}))
+vi.mock('../Card', async () => {
+  const React = await import('react')
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Card: React.forwardRef(({ cardInstance, cardIdx, playerId, size, ...rest }: any, ref: any) => (
+      <div ref={ref} data-testid="mock-card" {...rest}>
+        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
+        {cardInstance.name}
+      </div>
+    )),
+  }
+})
 
 const renderWithTheme = (ui: React.ReactElement) => {
   return render(<ThemeProvider theme={theme}>{ui}</ThemeProvider>)
