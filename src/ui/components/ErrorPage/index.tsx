@@ -20,7 +20,8 @@ export const ErrorPage = () => {
         Oops! Something went wrong.
       </Typography>
       <Typography variant="body1">
-        We encountered an error while loading the game. Please try refreshing the page.
+        We encountered an error while loading the game. Please try refreshing
+        the page.
       </Typography>
     </Box>
   )

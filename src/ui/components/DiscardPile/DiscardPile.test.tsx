@@ -1,12 +1,11 @@
-import { render, screen } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
-
 import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
 
 import { IMatch, IPlayer, CardType } from '../../../game/types'
+import { stubTable } from '../../../test-utils/stubs/table'
 
 import { DiscardPile } from './DiscardPile'
-
 
 const theme = createTheme()
 
@@ -42,8 +41,13 @@ const mockMatch: IMatch = {
 } as any
 
 vi.mock('../Card', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-  Card: ({ cardInstance, ...rest }: any) => <div data-testid="mock-card" {...rest}>{cardInstance.name}</div>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Card: ({ cardInstance, ...rest }: any) => (
+    <div data-testid="mock-card" {...rest}>
+      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
+      {cardInstance.name}
+    </div>
+  ),
 }))
 
 const renderWithTheme = (ui: React.ReactElement) => {
@@ -78,19 +82,19 @@ describe('DiscardPile', () => {
 
   it('rotates opponent discard pile', () => {
     const opponentId = 'player2'
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const mockMatchOpponent = {
+
+    const mockMatchOpponent: IMatch = {
       ...mockMatch,
-      table: {
+      table: stubTable({
         players: {
           player2: { ...mockPlayer, id: opponentId },
         },
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any
+      }),
+    }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    renderWithTheme(<DiscardPile match={mockMatchOpponent} playerId={opponentId} />)
+    renderWithTheme(
+      <DiscardPile match={mockMatchOpponent} playerId={opponentId} />
+    )
     const pile = screen.getByTestId(`discard-pile_${opponentId}`)
 
     // Check that the transform property contains the rotation
