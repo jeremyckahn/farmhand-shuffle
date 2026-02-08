@@ -40,6 +40,17 @@ export const isCropCardInstance = (
   return cardInstance.type === CardType.CROP
 }
 
+// FIXME: Test this
+export const isPlantableCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance => {
+  if (cardInstance.type === CardType.TOOL && (cardInstance as any).isPlantable) {
+    return true
+  }
+
+  return isCropCardInstance(cardInstance)
+}
+
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
@@ -58,6 +69,13 @@ export interface IPlayedCrop {
    * Whether or not the crop has been watered during the current turn.
    */
   wasWateredDuringTurn: boolean
+}
+
+export interface IPlayedTool {
+  /**
+   * The card instance of this crop.
+   */
+  instance: ToolInstance
 }
 
 export interface MatchMachineContext {
@@ -99,6 +117,8 @@ export interface ITool extends IEffect {
  */
 export interface ITool extends ICard {
   readonly type: CardType.TOOL
+
+  readonly isPlantable?: boolean
 }
 
 /**
@@ -139,7 +159,8 @@ export const isToolCardInstance = (
 }
 
 export interface IField {
-  readonly crops: (IPlayedCrop | undefined)[]
+  // FIXME: Rename this to cards
+  readonly crops: (IPlayedCrop | IPlayedTool | undefined)[]
 }
 
 export interface IPlayer {
@@ -209,6 +230,12 @@ export interface IMatch {
   readonly table: ITable
 
   /**
+   * The number of the current turn. This is incremented at the start of each
+   * player's turn. This is 0 during the setup phase.
+   */
+  readonly turn: number
+
+  /**
    * The IPlayer['id'] of the player whose turn it is.
    */
   readonly currentPlayerId: IPlayer['id'] | null
@@ -268,6 +295,7 @@ export enum MatchEvent {
   PROMPT_PLAYER_FOR_SETUP_ACTION = 'PROMPT_PLAYER_FOR_SETUP_ACTION',
   PROMPT_PLAYER_FOR_TURN_ACTION = 'PROMPT_PLAYER_FOR_TURN_ACTION',
   SELECT_CROP_TO_WATER = 'SELECT_CROP_TO_WATER',
+  SELECT_CARD_POSITION = 'SELECT_CARD_POSITION',
   SET_SHELL = 'SET_SHELL',
   START_TURN = 'START_TURN',
   BOT_TURN_INITIALIZED = 'BOT_TURN_INITIALIZED',
@@ -277,6 +305,7 @@ export enum MatchEvent {
 export enum BotTurnActionState {
   INITIALIZING = 'INITIALIZING',
   HARVESTING_CROPS = 'HARVESTING_CROPS',
+  PLACING_CROP = 'PLACING_CROP',
   PLAYING_CROPS = 'PLAYING_CROPS',
   PLAYING_EVENTS = 'PLAYING_EVENTS',
   PLAYING_TOOLS = 'PLAYING_TOOLS',
@@ -296,6 +325,7 @@ interface PlayCardEventPayload<T = MatchEvent.PLAY_CARD> {
 export enum MatchState {
   UNINITIALIZED = 'UNINITIALIZED',
 
+  CHOOSING_CARD_POSITION = 'CHOOSING_CARD_POSITION',
   GAME_OVER = 'GAME_OVER',
   PERFORMING_BOT_CROP_WATERING = 'PERFORMING_BOT_CROP_WATERING',
   PERFORMING_BOT_CROP_HARVESTING = 'PERFORMING_BOT_CROP_HARVESTING',
@@ -311,8 +341,8 @@ export enum MatchState {
 }
 
 export enum MatchStateGuard {
-  HAVE_PLAYERS_COMPLETED_SETUP = 'HAVE_PLAYERS_COMPLETED_SETUP',
   IS_SELECTED_IDX_VALID = 'IS_SELECTED_IDX_VALID',
+  IS_SETUP_PHASE = 'IS_SETUP_PHASE',
 }
 
 export enum ShellNotificationType {
@@ -390,6 +420,13 @@ export interface MatchEventPayload {
   [MatchEvent.SET_SHELL]: {
     type: MatchEvent.SET_SHELL
     shell: IShell
+  }
+
+  [MatchEvent.SELECT_CARD_POSITION]: {
+    type: MatchEvent.SELECT_CARD_POSITION
+    cardIdxInHand: number
+    fieldIdxToPlace: number
+    playerId: IPlayer['id']
   }
 
   [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP>

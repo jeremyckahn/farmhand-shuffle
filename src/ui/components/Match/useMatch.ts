@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MatchEvent, MatchState } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
 import { useMatchRules } from '../../hooks/useMatchRules'
+import { deselectedHandIdx } from '../constants'
 
 import { ActorContext } from './ActorContext'
 import { ShellContextProps } from './ShellContext'
@@ -52,14 +53,26 @@ export const useMatch = ({
 
   const { showNotification, snackbarProps } = useSnackbar({ actorRef, match })
 
+  const [selectedHandCardIdx, setSelectedHandCardIdx] =
+    useState(deselectedHandIdx)
+
   const shellContextValue: ShellContextProps = useMemo(
     () => ({
       blockingOperation,
       isHandInViewport,
       setIsHandInViewport,
       showNotification,
+      selectedHandCardIdx,
+      setSelectedHandCardIdx,
     }),
-    [blockingOperation, isHandInViewport, setIsHandInViewport, showNotification]
+    [
+      blockingOperation,
+      isHandInViewport,
+      setIsHandInViewport,
+      showNotification,
+      selectedHandCardIdx,
+      setSelectedHandCardIdx,
+    ]
   )
 
   const isSessionOwnersTurn =

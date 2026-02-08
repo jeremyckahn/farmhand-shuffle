@@ -1,4 +1,4 @@
-import { assertEvent, setup } from 'xstate'
+import { setup } from 'xstate'
 
 import {
   MatchEvent,
@@ -17,18 +17,6 @@ export const { createMachine } = setup({
   },
 
   guards: {
-    [MatchStateGuard.HAVE_PLAYERS_COMPLETED_SETUP]: ({
-      event,
-      context: { match },
-    }) => {
-      assertEvent(event, MatchEvent.START_TURN)
-      assertCurrentPlayer(match.currentPlayerId)
-
-      return Object.values(match.table.players).every(
-        player => player.field.crops.length > 0
-      )
-    },
-
     [MatchStateGuard.IS_SELECTED_IDX_VALID]: ({
       event,
       context: { match },
@@ -50,6 +38,10 @@ export const { createMachine } = setup({
       }
 
       return true
+    },
+
+    [MatchStateGuard.IS_SETUP_PHASE]: ({ context: { match } }) => {
+      return match.turn === 0
     },
   },
 })

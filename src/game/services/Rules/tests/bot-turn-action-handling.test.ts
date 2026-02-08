@@ -29,6 +29,7 @@ import {
 } from '../../../../test-utils/stubs/cards'
 import { updateField } from '../../../reducers/update-field'
 import { updatePlayer } from '../../../reducers/update-player'
+import { isPlayedCrop } from '../../../types/guards'
 
 import {
   createSetUpMatchActor,
@@ -40,6 +41,24 @@ import {
 } from './helpers'
 
 describe('bot turn action handling', () => {
+  beforeEach(() => {
+    vi.spyOn(botLogic, 'getOpenFieldPosition').mockImplementation(
+      (match, playerId) => {
+        const player = match.table.players[playerId]
+
+        if (!player) {
+          throw new Error(`Player with ID ${playerId} not found`)
+        }
+
+        const firstEmptyIdx = player.field.crops.findIndex(
+          crop => typeof crop === 'undefined'
+        )
+
+        return firstEmptyIdx === -1 ? player.field.crops.length : firstEmptyIdx
+      }
+    )
+  })
+
   describe('crop management', () => {
     // NOTE: For each of these test cases, there was already a carrot in the
     // field as a result of createSetUpMatchActor.
@@ -227,7 +246,7 @@ describe('bot turn action handling', () => {
         expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
         const wereAnyCropsWatered = resultingFieldCrops.some(
-          crop => crop && crop.wasWateredDuringTurn
+          crop => crop && isPlayedCrop(crop) && crop.wasWateredDuringTurn
         )
 
         const shellNotification: ShellNotification = {
@@ -456,6 +475,113 @@ describe('bot turn action handling', () => {
       expect(shell.triggerNotification).not.toHaveBeenCalledWith<
         ShellNotification[]
       >(shellNotification)
+    })
+
+    // NOTE: For this test case, there was already a carrot in the field as a
+    // result of createSetUpMatchActor.
+    test('allows planting crops if field only has space in the middle', () => {
+      // NOTE: When the turn starts, the player will draw a Carrot from the
+      // deck.
+      const startingHand: IPlayer['hand'] = []
+
+      const startingDeck = new Array<CardInstance>(DECK_SIZE).fill(stubCarrot)
+
+      // NOTE: Field is bookended by crops, but otherwise empty
+      const startingFieldCrops: Array<IPlayedCrop | undefined> = [
+        {
+          instance: expectInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+        ...new Array<undefined>(STANDARD_FIELD_SIZE - 2).fill(undefined),
+        {
+          instance: expectInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+      ]
+
+      const resultingFieldCrops: Array<IPlayedCrop | undefined> = [
+        {
+          instance: expectInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+        {
+          instance: expectInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+        ...new Array<undefined>(STANDARD_FIELD_SIZE - 3).fill(undefined),
+        {
+          instance: expectInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+      ]
+
+      const resultingHand: IPlayer['hand'] = []
+      const playedCards = [expectInstance(carrot)]
+      const matchActor = createSetUpMatchActor()
+
+      const snapshot = matchActor.getSnapshot()
+      let {
+        context: { match },
+      } = snapshot
+      const {
+        context: { shell },
+      } = snapshot
+
+      vi.spyOn(shell, 'triggerNotification')
+
+      // NOTE: This causes the maximum amount of crops in the hand to be
+      // played. It plays from the back of the hand to the front.
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
+
+      match = updatePlayer(match, player2.id, {
+        deck: startingDeck,
+        hand: startingHand,
+        field: {
+          crops: startingFieldCrops,
+        },
+      })
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+      // NOTE: Prompts bot player
+      matchActor.send({ type: MatchEvent.START_TURN })
+
+      // NOTE: Indicates that another Carrot was drawn
+      let player =
+        matchActor.getSnapshot().context.match.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      // NOTE: Performs all bot turn logic
+      vi.runAllTimers()
+
+      const {
+        value,
+        context: {
+          match: matchResult,
+          botState: { cropsToPlayDuringTurn },
+        },
+      } = matchActor.getSnapshot()
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(matchResult.currentPlayerId).toBe(player1.id)
+
+      player = matchResult.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      expect(player.hand).toEqual(resultingHand)
+      expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+      expect(cropsToPlayDuringTurn).toEqual(0)
+      expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
     })
   })
 

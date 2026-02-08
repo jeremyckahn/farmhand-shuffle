@@ -14,7 +14,15 @@ export class ArrayService {
    * Replaces an element in an array at the given index. Returns a new copy of the modified array.
    */
   replaceAt<T>(array: T[], idx: number, element: T): T[] {
-    return [...array.slice(0, idx), element, ...array.slice(idx + 1)]
+    const head = array.slice(0, idx)
+    const tail = array.slice(idx + 1)
+
+    // NOTE: This is necessary to support dynamic array resizing
+    const paddedHead = Array.from({ length: idx }, (_, idx) => {
+      return head[idx] as T
+    })
+
+    return [...paddedHead, element, ...tail]
   }
 }
 

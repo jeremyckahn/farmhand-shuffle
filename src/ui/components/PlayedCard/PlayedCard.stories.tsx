@@ -3,11 +3,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 
-import { PlayedCrop } from './PlayedCrop'
+import { PlayedCard } from './PlayedCard'
 
 const meta = {
-  title: 'Farmhand Shuffle/PlayedCrop',
-  component: PlayedCrop,
+  title: 'Farmhand Shuffle/PlayedCard',
+  component: PlayedCard,
   parameters: {
     layout: 'centered',
   },
@@ -22,7 +22,7 @@ const meta = {
       )
     },
   ],
-} satisfies Meta<typeof PlayedCrop>
+} satisfies Meta<typeof PlayedCard>
 
 export default meta
 type Story = StoryObj<typeof meta>

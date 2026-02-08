@@ -7,12 +7,14 @@ import { payFromPlayerToCommunity } from '../pay-from-player-to-community'
 import { updatePlayedCrop } from '../update-played-crop'
 import { updatePlayer } from '../update-player'
 import { updatePrices } from '../update-prices'
+import { updateMatch } from '../update-match'
 
 export const startTurn = (
   match: IMatch,
   playerId: IPlayer['id'],
   cardsToDraw = 1
 ): IMatch => {
+  match = updateMatch(match, { turn: match.turn + 1 })
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn: [] })
   match = payFromPlayerToCommunity(match, STANDARD_TAX_AMOUNT, playerId)
 

@@ -1,6 +1,6 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef } from 'react'
 
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
@@ -14,7 +14,8 @@ import { CardSize } from '../../types'
 import { Card } from '../Card'
 import { ShellContext } from '../Match/ShellContext'
 
-const deselectedIdx = -1
+import { deselectedHandIdx } from '../constants'
+
 const foregroundCardScale = 1
 const backgroundCardScale = 0.65
 
@@ -47,8 +48,13 @@ export const Hand = ({
   sx = [],
   ...rest
 }: HandProps) => {
-  const { blockingOperation, isHandInViewport, setIsHandInViewport } =
-    useContext(ShellContext)
+  const {
+    blockingOperation,
+    isHandInViewport,
+    setIsHandInViewport,
+    selectedHandCardIdx,
+    setSelectedHandCardIdx,
+  } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
@@ -58,15 +64,23 @@ export const Hand = ({
   const player = lookup.getPlayer(match, playerId)
 
   const theme = useTheme()
-  const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
 
-  const resetSelectedCard = () => {
-    setSelectedCardIdx(deselectedIdx)
+  const selectedCardRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    // NOTE: Regains card focus when the player cancels placement
+    if (isHandInViewport && selectedHandCardIdx !== deselectedHandIdx) {
+      selectedCardRef.current?.focus()
+    }
+  }, [isHandInViewport, selectedCardRef, selectedHandCardIdx])
+
+  const resetSelectedCard = useCallback(() => {
+    setSelectedHandCardIdx(deselectedHandIdx)
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
-  }
+  }, [setSelectedHandCardIdx])
 
   useEffect(() => {
     resetSelectedCard()
@@ -77,10 +91,11 @@ export const Hand = ({
     player.hand,
 
     setIsHandInViewport,
+    resetSelectedCard,
   ])
 
   const handleCardFocus = (cardIdx: number) => {
-    setSelectedCardIdx(cardIdx)
+    setSelectedHandCardIdx(cardIdx)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -109,11 +124,7 @@ export const Hand = ({
     }
 
   const handleBeforePlay = async () => {
-    // NOTE: Moves the card back to the player's hand before unmounting it to
-    // prevent the wrong card from briefly being rendered in the "selected"
-    // position.
     await blockingOperation(async () => {
-      resetSelectedCard()
       await setRejectingTimeout(theme.transitions.duration.shortest)
     })
   }
@@ -148,21 +159,21 @@ export const Hand = ({
           gapWidthTotal
         )
         const xOffsetPx = containerWidth / 2 + multipliedGap
-        const isSelected = selectedCardIdx === idx
+        const isSelected = selectedHandCardIdx === idx && isHandInViewport
+        const isVisuallySelected =
+          selectedHandCardIdx !== deselectedHandIdx && isHandInViewport
 
         let transform = ''
 
         if (!isSelected) {
           const translateX = `calc(-50% + ${gapWidthPx}px + ${xOffsetPx}px)`
-          const translateY =
-            selectedCardIdx === deselectedIdx
-              ? '0rem'
-              : `calc(${CARD_DIMENSIONS[cardSize].height} / 2)`
+          const translateY = !isVisuallySelected
+            ? '0rem'
+            : `calc(${CARD_DIMENSIONS[cardSize].height} / 2)`
           const rotationDeg = -5
-          const scale =
-            selectedCardIdx === deselectedIdx
-              ? foregroundCardScale
-              : backgroundCardScale
+          const scale = !isVisuallySelected
+            ? foregroundCardScale
+            : backgroundCardScale
 
           transform = `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
         }
@@ -191,6 +202,7 @@ export const Hand = ({
             onFocus={() => handleCardFocus(idx)}
             tabIndex={isHandInViewport ? 0 : -1}
             isFocused={isSelected}
+            ref={isSelected ? selectedCardRef : undefined}
           />
         )
       })}

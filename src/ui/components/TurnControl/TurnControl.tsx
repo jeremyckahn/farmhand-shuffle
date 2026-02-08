@@ -54,6 +54,11 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     setIsHandInViewport(true)
   }
 
+  const handleCancelCardPositioning = () => {
+    actorRef.send({ type: MatchEvent.OPERATION_ABORTED })
+    setIsHandInViewport(true)
+  }
+
   let control: ReactNode = null
 
   const currentPlayer = currentPlayerId
@@ -63,6 +68,20 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   let stateInfo = ''
 
   switch (matchState) {
+    case MatchState.CHOOSING_CARD_POSITION: {
+      stateInfo = 'Select a position in the field'
+
+      if (currentPlayer && currentPlayer.id === match.sessionOwnerPlayerId) {
+        control = (
+          <Button onClick={handleCancelCardPositioning} color="warning">
+            Cancel placement
+          </Button>
+        )
+      }
+
+      break
+    }
+
     case MatchState.WAITING_FOR_PLAYER_SETUP_ACTION: {
       stateInfo = 'Set up your Field'
 

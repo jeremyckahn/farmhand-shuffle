@@ -2,6 +2,7 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { MatchEvent, MatchState } from '../../../types'
 
+import { choosingCardPositon } from './choosingCardPosition'
 import { gameOverState } from './gameOverState'
 import { performingBotCropHarvestingState } from './performingBotCropHarvestingState'
 import { performingBotCropWateringState } from './performingBotCropWateringState'
@@ -47,6 +48,7 @@ export const machineConfig: RulesMachineConfig = {
     ...uninitializedState,
     ...gameOverState,
 
+    ...choosingCardPositon,
     ...performingBotCropWateringState,
     ...performingBotCropHarvestingState,
     ...performingBotSetupActionState,

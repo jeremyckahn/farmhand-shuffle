@@ -28,7 +28,8 @@ export class BotLogicService {
       randomNumber.chooseIntegerBetween(0, cropCardIdxsInPlayerHand.length)
     )
 
-    const availableFieldSpace = STANDARD_FIELD_SIZE - player.field.crops.length
+    const availableFieldSpace =
+      STANDARD_FIELD_SIZE - player.field.crops.filter(crop => !!crop).length
 
     const safeNumberOfCropsToPlay = Math.min(
       availableFieldSpace,
@@ -131,6 +132,24 @@ export class BotLogicService {
     }
 
     return fieldCropIdxsToHarvest
+  }
+
+  getOpenFieldPosition(match: IMatch, playerId: string) {
+    const player = lookup.getPlayer(match, playerId)
+    const { field } = player
+    const { crops } = field
+
+    let availableIdxs: number[] = []
+
+    for (let i = 0; i < Math.max(STANDARD_FIELD_SIZE, crops.length); i++) {
+      if (typeof crops[i] === 'undefined') {
+        availableIdxs = [...availableIdxs, i]
+      }
+    }
+
+    const selectedIdx = randomNumber.chooseElement(availableIdxs)
+
+    return selectedIdx
   }
 }
 

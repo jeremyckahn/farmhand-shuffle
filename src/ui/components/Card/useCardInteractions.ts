@@ -1,18 +1,18 @@
 import { useContext } from 'react'
 
 import { STANDARD_FIELD_SIZE } from '../../../game/config'
+import { lookup } from '../../../game/services/Lookup'
 import {
   CardType,
   MatchEvent,
   MatchState,
   isCropCardInstance,
 } from '../../../game/types'
-import { lookup } from '../../../game/services/Lookup'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
 
-import { CardProps, CardInteractions } from './types'
+import { CardInteractions, CardProps } from './types'
 
 export const useCardInteractions = (props: CardProps): CardInteractions => {
   const {
@@ -41,7 +41,12 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
 
     switch (cardInstance.type) {
       case CardType.CROP: {
-        actorRef.send({ type: MatchEvent.PLAY_CROP, cardIdx, playerId })
+        actorRef.send({
+          type: MatchEvent.PLAY_CROP,
+          cardIdx,
+          playerId,
+        })
+        setIsHandInViewport(false)
 
         break
       }

@@ -43,6 +43,12 @@ describe('startTurn', () => {
     player1Id = maybePlayer1Id
   })
 
+  test('increments turn', () => {
+    const newMatch = startTurn(match, player1Id)
+
+    expect(newMatch.turn).toEqual(match.turn + 1)
+  })
+
   test('pays tax to community fund', () => {
     const player1 = match.table.players[player1Id]
 

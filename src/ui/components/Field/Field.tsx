@@ -10,9 +10,11 @@ import {
 } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
-import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { isPlayedCrop } from '../../../game/types/guards'
 import { CardSize } from '../../types'
-import { PlayedCrop, playedCropClassName } from '../PlayedCrop'
+import { PlayedCard, playedCropClassName } from '../PlayedCard'
+
+import { EmptyPlot } from './EmptyPlot'
 
 const deselectedIdx = -1
 const selectedCardYOffset = -25
@@ -26,28 +28,6 @@ export interface FieldProps extends BoxProps {
 export const rotationTransform = 'rotate(180deg)'
 export const selectedCardLabel = 'Selected field card'
 export const unselectedCardLabel = 'Unselected field card'
-
-const EmptyPlot = ({
-  cardSize = CardSize.SMALL,
-}: Pick<FieldProps, 'cardSize'>) => {
-  const theme = useTheme()
-
-  return (
-    <Grid item xs={6} sm={4} md={2}>
-      <Box
-        height={CARD_DIMENSIONS[cardSize].height}
-        width={CARD_DIMENSIONS[cardSize].width}
-        sx={{
-          mx: 'auto',
-          outlineStyle: 'solid',
-          outlineWidth: '2px',
-          outlineColor: theme.palette.divider,
-          borderRadius: theme.shape.borderRadius,
-        }}
-      />
-    </Grid>
-  )
-}
 
 export const Field = ({
   playerId,
@@ -108,7 +88,7 @@ export const Field = ({
     const { target } = event
 
     // NOTE: This event handler gets triggered by UI elements within the
-    // CardCore component (which is rendered by PlayedCrop). So, this handler
+    // CardCore component (which is rendered by PlayedCard). So, this handler
     // needs to check to see if that would happen and abort its execution if
     // so.
     if (!target.classList.contains(playedCropClassName)) {
@@ -146,15 +126,13 @@ export const Field = ({
     }
   }
 
-  const crops = isSessionOwnerPlayer
-    ? player.field.crops
-    : [...player.field.crops].reverse()
+  const paddedCrops = new Array(STANDARD_FIELD_SIZE)
+    .fill(undefined)
+    .map((_, idx) => player.field.crops[idx])
 
-  const emptyCardSlots = new Array(STANDARD_FIELD_SIZE - crops.length)
-    .fill(null)
-    .map((_, idx) => {
-      return <EmptyPlot key={idx} cardSize={cardSize} />
-    })
+  const displayedCrops = isSessionOwnerPlayer
+    ? paddedCrops
+    : [...paddedCrops].reverse()
 
   return (
     <Box
@@ -170,28 +148,39 @@ export const Field = ({
         alignItems={isSessionOwnerPlayer ? 'flex-start' : 'flex-end'}
         justifyContent="center"
       >
-        {!isSessionOwnerPlayer && emptyCardSlots}
-        {crops.map((playedCrop, idx) => {
-          if (!playedCrop) {
-            return <EmptyPlot key={idx} cardSize={cardSize} />
+        {displayedCrops.map((playedCrop, renderedIdx) => {
+          const fieldIdx = isSessionOwnerPlayer
+            ? renderedIdx
+            : STANDARD_FIELD_SIZE - 1 - renderedIdx
+
+          // FIXME: Needs to support showing planted tools
+          if (!playedCrop || !isPlayedCrop(playedCrop)) {
+            return (
+              <EmptyPlot
+                key={renderedIdx}
+                cardSize={cardSize}
+                playerId={playerId}
+                fieldIdx={fieldIdx}
+              />
+            )
           }
 
           const { instance: cardInstance } = playedCrop
 
-          const isSelected = selectedCardIdx === idx
+          const isSelected = selectedCardIdx === fieldIdx
           const isInBackground =
             selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
             <Grid key={cardInstance.instanceId} item xs={6} sm={4} md={2}>
-              <PlayedCrop
+              <PlayedCard
                 aria-label={
                   isSelected ? selectedCardLabel : unselectedCardLabel
                 }
                 tabIndex={0}
                 cropCardProps={{
                   cardInstance,
-                  cardIdx: idx,
+                  cardIdx: fieldIdx,
                   isInField: true,
                   isFocused: isSelected,
                   playerId: player.id,
@@ -207,8 +196,9 @@ export const Field = ({
                   },
                 }}
                 isInBackground={isInBackground}
-                onFocus={event => handleCardFocus(event, idx)}
+                onFocus={event => handleCardFocus(event, fieldIdx)}
                 sx={{
+                  mx: 'auto',
                   position: 'relative',
                   transition: theme.transitions.create(['transform']),
                   outline: 'none',
@@ -230,7 +220,6 @@ export const Field = ({
             </Grid>
           )
         })}
-        {isSessionOwnerPlayer && emptyCardSlots}
       </Grid>
     </Box>
   )

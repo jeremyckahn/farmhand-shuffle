@@ -1,9 +1,12 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
+import { moveCardFromHandToField } from '../../../reducers/move-card-from-hand-to-field'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import { assertCurrentPlayer, assertIsToolCard } from '../../../types/guards'
+import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
+import { GameStateCorruptError } from '../errors'
 
 import { RulesMachineConfig } from './types'
 
@@ -45,6 +48,28 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         })
 
         match = card.applyEffect(context).match
+
+        if (card.isPlantable && currentPlayerId !== sessionOwnerPlayerId) {
+          const openFieldPositionIdx = botLogic.getOpenFieldPosition(
+            match,
+            currentPlayerId
+          )
+
+          if (typeof openFieldPositionIdx === 'undefined') {
+            // FIXME: Ensure this scenario is prevented
+            throw new GameStateCorruptError(
+              `${MatchEvent.PLAY_TOOL} event occurred for a full field`
+            )
+          }
+
+          match = moveCardFromHandToField(
+            match,
+            playerId,
+            cardIdx,
+            openFieldPositionIdx
+          )
+        }
+
         match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdx)
 
         if (currentPlayerId === sessionOwnerPlayerId) {

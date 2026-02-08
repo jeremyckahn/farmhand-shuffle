@@ -1,14 +1,21 @@
 import { array } from '../../../services/Array'
 import { STANDARD_FIELD_SIZE } from '../../config'
-import { FieldFullError } from '../../services/Rules/errors'
+import {
+  FieldFullError,
+  GameStateCorruptError,
+} from '../../services/Rules/errors'
 import { lookup } from '../../services/Lookup'
-import { IMatch, IPlayedCrop, IPlayer } from '../../types'
+import { IMatch, IPlayedCrop, IPlayedTool, IPlayer } from '../../types'
 import { updateField } from '../update-field'
 
-export const addCropToField = (
+/**
+ * NOTE: fieldIdxToPlace must not be -1
+ */
+export const addCardToField = (
   match: IMatch,
   playerId: IPlayer['id'],
-  newCrop: IPlayedCrop
+  newCrop: IPlayedCrop | IPlayedTool,
+  fieldIdxToPlace: number
 ) => {
   const player = lookup.getPlayer(match, playerId)
   const { field } = player
@@ -20,14 +27,10 @@ export const addCropToField = (
     throw new FieldFullError(playerId)
   }
 
-  const emptyPlotIdx = crops.findIndex(
-    (crop: IPlayedCrop | undefined) => crop === undefined
-  )
-
-  if (emptyPlotIdx === -1) {
-    crops = [...crops, newCrop]
+  if (fieldIdxToPlace === -1) {
+    throw new GameStateCorruptError('fieldIdxToPlace must not be -1')
   } else {
-    crops = array.replaceAt(crops, emptyPlotIdx, newCrop)
+    crops = array.replaceAt(crops, fieldIdxToPlace, newCrop)
   }
 
   match = updateField(match, playerId, { crops })

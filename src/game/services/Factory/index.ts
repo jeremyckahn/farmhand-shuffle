@@ -57,6 +57,7 @@ export class FactoryService {
     let match: IMatch = {
       sessionOwnerPlayerId,
       table,
+      turn: 0,
       currentPlayerId,
       buffedCrop: null,
       nerfedCrop: null,

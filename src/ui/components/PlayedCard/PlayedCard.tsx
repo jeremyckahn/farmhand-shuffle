@@ -19,9 +19,9 @@ export interface PlayedCropProps extends BoxProps {
 
 export const unfilledWaterIndicatorOpacity = 0.25
 
-export const playedCropClassName = 'PlayedCrop'
+export const playedCropClassName = 'PlayedCard'
 
-export const PlayedCrop = ({
+export const PlayedCard = ({
   isInBackground,
   cropCardProps: { ref, ...cropCardProps },
   ...props

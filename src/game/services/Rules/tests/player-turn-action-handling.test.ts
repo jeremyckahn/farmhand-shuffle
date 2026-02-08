@@ -22,7 +22,7 @@ import {
 } from './helpers'
 
 describe('player turn action handling', () => {
-  test('player can play a crop card', () => {
+  test('player can play and place a crop card', () => {
     const matchActor = createSetUpMatchActor()
 
     let {
@@ -38,6 +38,12 @@ describe('player turn action handling', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 1,
     })
 
     const {
@@ -59,6 +65,47 @@ describe('player turn action handling', () => {
       { instance: pumpkin1, wasWateredDuringTurn: false, waterCards: 0 },
     ])
     expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([pumpkin1])
+  })
+
+  test('player can abort placing a crop card', () => {
+    const matchActor = createSetUpMatchActor()
+
+    let {
+      context: { match },
+    } = matchActor.getSnapshot()
+
+    match = updatePlayer(match, player1.id, {
+      hand: [pumpkin1],
+    })
+
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
+      playerId: player1.id,
+      cardIdx: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.OPERATION_ABORTED,
+    })
+
+    const {
+      value,
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
+    const maybePlayer1 = matchResult.table.players[player1.id]
+
+    if (!maybePlayer1) throw new Error('Player not found')
+
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(maybePlayer1.hand).toEqual([pumpkin1])
+    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([
+      {
+        instance: expectInstance(carrot),
+        wasWateredDuringTurn: false,
+        waterCards: 0,
+      },
+    ])
+    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([])
   })
 
   test('player can harvest a crop card', () => {
@@ -125,6 +172,13 @@ describe('player turn action handling', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
+    })
+
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 1,
     })
 
     const latestSnapshot = matchActor.getSnapshot()

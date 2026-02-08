@@ -448,4 +448,87 @@ describe('BotLogicService', () => {
       }
     )
   })
+
+  describe('getOpenFieldPosition', () => {
+    it.each([
+      {
+        fieldCrops: [],
+        rngStub: 0,
+        expectedResult: 0,
+      },
+      {
+        fieldCrops: [],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: STANDARD_FIELD_SIZE - 1,
+      },
+      {
+        fieldCrops: [
+          undefined,
+          {
+            instance: instantiate(carrot),
+            wasWateredDuringTurn: false,
+            waterCards: 0,
+          },
+          undefined,
+        ],
+        rngStub: 0,
+        expectedResult: 0,
+      },
+      {
+        fieldCrops: [
+          undefined,
+          {
+            instance: instantiate(carrot),
+            wasWateredDuringTurn: false,
+            waterCards: 0,
+          },
+          undefined,
+        ],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: STANDARD_FIELD_SIZE - 1,
+      },
+      {
+        fieldCrops: [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          {
+            instance: instantiate(carrot),
+            wasWateredDuringTurn: false,
+            waterCards: 0,
+          },
+        ],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: 4,
+      },
+      {
+        fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill({
+          instance: instantiate(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        }),
+        rngStub: 0,
+        expectedResult: undefined,
+      },
+    ])(
+      'returns an open field position for field crops $fieldCrops and rngStub $rngStub',
+      ({ fieldCrops, rngStub, expectedResult }) => {
+        vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
+
+        let match = stubMatch()
+
+        match = updatePlayer(match, stubPlayer1.id, {
+          field: {
+            crops: fieldCrops,
+          },
+        })
+
+        const result = botLogic.getOpenFieldPosition(match, stubPlayer1.id)
+
+        expect(result).toBe(expectedResult)
+      }
+    )
+  })
 })

@@ -54,7 +54,9 @@ if (!opponentPlayerId) {
 }
 
 const cropsStub = [
+  undefined,
   { ...factory.buildPlayedCrop(stubCarrot), waterCards: 1 },
+  undefined,
   { ...factory.buildPlayedCrop(stubPumpkin), waterCards: 3 },
 ]
 

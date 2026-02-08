@@ -1,7 +1,7 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
-import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
-import { MatchEvent, MatchState } from '../../../types'
+import { moveCardFromHandToField } from '../../../reducers/move-card-from-hand-to-field'
+import { MatchEvent, MatchState, MatchStateGuard } from '../../../types'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
 import { RulesMachineConfig } from './types'
@@ -9,8 +9,13 @@ import { RulesMachineConfig } from './types'
 export const plantingCropState: RulesMachineConfig['states'] = {
   [MatchState.PLANTING_CROP]: {
     on: {
-      [MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION]:
-        MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      [MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION]: [
+        {
+          guard: MatchStateGuard.IS_SETUP_PHASE,
+          target: MatchState.WAITING_FOR_PLAYER_SETUP_ACTION,
+        },
+        { target: MatchState.WAITING_FOR_PLAYER_TURN_ACTION },
+      ],
 
       [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
         MatchState.PERFORMING_BOT_TURN_ACTION,
@@ -28,17 +33,24 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         },
         enqueue,
       }) => {
-        assertEvent(event, MatchEvent.PLAY_CROP)
+        assertEvent(event, MatchEvent.SELECT_CARD_POSITION)
 
-        const { playerId, cardIdx } = event
+        const { playerId, cardIdxInHand, fieldIdxToPlace } = event
 
         try {
-          match = moveCropFromHandToField(match, playerId, cardIdx)
+          match = moveCardFromHandToField(
+            match,
+            playerId,
+            cardIdxInHand,
+            fieldIdxToPlace
+          )
 
           const { currentPlayerId, sessionOwnerPlayerId } = match
 
           if (currentPlayerId === sessionOwnerPlayerId) {
-            enqueue.raise({ type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
+            enqueue.raise({
+              type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION,
+            })
           } else {
             if (cropsToPlayDuringTurn > 0) {
               cropsToPlayDuringTurn--
