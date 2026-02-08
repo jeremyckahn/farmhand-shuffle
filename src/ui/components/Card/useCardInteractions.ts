@@ -34,7 +34,6 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
   const { eventCardsThatCanBePlayed, selectedWaterCardInHandIdx } = match
   const canEventCardsBePlayed = eventCardsThatCanBePlayed > 0
 
-  // FIXME: The player must be prompted to select a position for the card.
   const handlePlayCard = async () => {
     if (onBeforePlay) {
       await onBeforePlay()

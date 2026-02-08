@@ -31,7 +31,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
-      [MatchEvent.PLAY_CROP]: MatchState.PLANTING_CROP,
+      [MatchEvent.PLAY_CROP]: MatchState.CHOOSING_CARD_POSITION,
 
       [MatchEvent.PLAY_WATER]: MatchState.PERFORMING_BOT_CROP_WATERING,
 

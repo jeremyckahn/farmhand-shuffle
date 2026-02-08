@@ -28,7 +28,7 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         },
         enqueue,
       }) => {
-        assertEvent(event, MatchEvent.PLAY_CROP)
+        assertEvent(event, MatchEvent.SELECT_CARD_POSITION)
 
         const { playerId, cardIdx } = event
 
