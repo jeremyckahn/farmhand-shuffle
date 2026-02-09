@@ -15,7 +15,7 @@ import {
 import { addCardToField } from '../add-crop-to-field'
 import { updatePlayer } from '../update-player'
 
-// FIXME:: Rename this to moveCardFromHandToField
+// FIXME: Rename this to moveCardFromHandToField
 export const moveCropFromHandToField = (
   match: IMatch,
   playerId: IPlayer['id'],
@@ -32,26 +32,27 @@ export const moveCropFromHandToField = (
   const newHand = array.removeAt(hand, cropCardIdx)
   const cardInstance = lookup.getCardFromHand(match, playerId, cropCardIdx)
 
+  let playedCard: IPlayedCrop | IPlayedTool | undefined
+
   // FIXME: Make this less repetitive
   if (isCropCardInstance(cardInstance)) {
-    const playedCropCard: IPlayedCrop = {
+    playedCard = {
       instance: cardInstance,
       wasWateredDuringTurn: false,
       waterCards: 0,
     }
-
-    match = addCardToField(match, playerId, playedCropCard)
-    match = updatePlayer(match, playerId, { hand: newHand })
   } else if (isToolCardInstance(cardInstance)) {
-    const playedToolCard: IPlayedTool = {
+    playedCard = {
       instance: cardInstance,
     }
-
-    match = addCardToField(match, playerId, playedToolCard)
-    match = updatePlayer(match, playerId, { hand: newHand })
-  } else {
-    throw new InvalidCardError(`${cardInstance.id} is not a crop card.`)
   }
+
+  if (!playedCard) {
+    throw new InvalidCardError(`${cardInstance.id} is not a plantable card.`)
+  }
+
+  match = addCardToField(match, playerId, playedCard)
+  match = updatePlayer(match, playerId, { hand: newHand })
 
   return match
 }

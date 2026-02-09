@@ -26,7 +26,6 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
-      // FIXME: The player must be prompted to select a position for the card.
       [MatchEvent.PLAY_CROP]: MatchState.CHOOSING_CARD_POSITION,
 
       [MatchEvent.PLAY_EVENT]: MatchState.PLAYING_EVENT,
