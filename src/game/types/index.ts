@@ -416,7 +416,7 @@ export interface MatchEventPayload {
 
   [MatchEvent.SELECT_CARD_POSITION]: {
     type: MatchEvent.SELECT_CARD_POSITION
-    cardIdx: number
+    cardIdxInHand: number
     playerId: IPlayer['id']
   }
 

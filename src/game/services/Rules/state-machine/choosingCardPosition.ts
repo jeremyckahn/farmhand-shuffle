@@ -24,7 +24,7 @@ export const choosingCardPositon: RulesMachineConfig['states'] = {
         // FIXME: Implement this function, the .raise is a placeholder
         enqueue.raise({
           type: MatchEvent.SELECT_CARD_POSITION,
-          cardIdx,
+          cardIdxInHand: cardIdx,
           playerId,
         })
       }
