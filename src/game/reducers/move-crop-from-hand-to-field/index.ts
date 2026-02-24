@@ -19,18 +19,19 @@ import { updatePlayer } from '../update-player'
 export const moveCropFromHandToField = (
   match: IMatch,
   playerId: IPlayer['id'],
-  cropCardIdx: number
+  cardIdxInHand: number,
+  fieldIdxToPlace: number
 ) => {
   const player = lookup.getPlayer(match, playerId)
   const { hand } = player
-  const cardId = hand[cropCardIdx]
+  const cardId = hand[cardIdxInHand]
 
   if (!cardId) {
-    throw new InvalidCardIndexError(cropCardIdx, playerId)
+    throw new InvalidCardIndexError(cardIdxInHand, playerId)
   }
 
-  const newHand = array.removeAt(hand, cropCardIdx)
-  const cardInstance = lookup.getCardFromHand(match, playerId, cropCardIdx)
+  const newHand = array.removeAt(hand, cardIdxInHand)
+  const cardInstance = lookup.getCardFromHand(match, playerId, cardIdxInHand)
 
   let playedCard: IPlayedCrop | IPlayedTool | undefined
 
@@ -51,7 +52,7 @@ export const moveCropFromHandToField = (
     throw new InvalidCardError(`${cardInstance.id} is not a plantable card.`)
   }
 
-  match = addCardToField(match, playerId, playedCard)
+  match = addCardToField(match, playerId, playedCard, fieldIdxToPlace)
   match = updatePlayer(match, playerId, { hand: newHand })
 
   return match

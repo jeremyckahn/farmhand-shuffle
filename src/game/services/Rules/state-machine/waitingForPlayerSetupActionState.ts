@@ -2,7 +2,12 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { STANDARD_FIELD_SIZE } from '../../../config'
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
-import { MatchEvent, MatchState } from '../../../types'
+import {
+  IPlayedCrop,
+  IPlayedTool,
+  MatchEvent,
+  MatchState,
+} from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
@@ -34,8 +39,23 @@ export const waitingForPlayerSetupActionState: RulesMachineConfig['states'] = {
               `Player ${playerId} attempted to play a crop but the field is full.`
             )
           } else {
+            // FIXME: This is a temporary shim
+            const player = lookup.getPlayer(match, playerId)
+            const { field } = player
+            const { crops } = field
+            const emptyPlotIdx = crops.findIndex(
+              (crop: IPlayedCrop | IPlayedTool | undefined) =>
+                crop === undefined
+            )
+            // End temporary shim
+
             match = recordCardPlayEvents(match, event)
-            match = moveCropFromHandToField(match, playerId, cardIdx)
+            match = moveCropFromHandToField(
+              match,
+              playerId,
+              cardIdx,
+              emptyPlotIdx
+            )
           }
 
           enqueue.assign({ match })

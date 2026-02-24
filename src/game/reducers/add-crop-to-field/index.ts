@@ -8,7 +8,8 @@ import { updateField } from '../update-field'
 export const addCardToField = (
   match: IMatch,
   playerId: IPlayer['id'],
-  newCrop: IPlayedCrop | IPlayedTool
+  newCrop: IPlayedCrop | IPlayedTool,
+  fieldIdxToPlace: number
 ) => {
   const player = lookup.getPlayer(match, playerId)
   const { field } = player
@@ -20,14 +21,11 @@ export const addCardToField = (
     throw new FieldFullError(playerId)
   }
 
-  const emptyPlotIdx = crops.findIndex(
-    (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
-  )
-
-  if (emptyPlotIdx === -1) {
+  if (fieldIdxToPlace === -1) {
+    // FIXME: Validate that this branch is necessary
     crops = [...crops, newCrop]
   } else {
-    crops = array.replaceAt(crops, emptyPlotIdx, newCrop)
+    crops = array.replaceAt(crops, fieldIdxToPlace, newCrop)
   }
 
   match = updateField(match, playerId, { crops })

@@ -8,6 +8,8 @@ import { updateField } from '../update-field'
 
 import { addCardToField } from '.'
 
+// FIXME: Rename this file to add-card-to-field
+
 describe('addCardToField', () => {
   test('adds crop to field', () => {
     const match = stubMatch()
@@ -19,7 +21,7 @@ describe('addCardToField', () => {
 
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
 
-    const newMatch = addCardToField(match, player1Id, playedCrop)
+    const newMatch = addCardToField(match, player1Id, playedCrop, 0)
 
     const newPlayer = newMatch.table.players[player1Id]
 
@@ -49,7 +51,8 @@ describe('addCardToField', () => {
     const newMatch = addCardToField(
       matchWithSparseField,
       player1Id,
-      insertedCrop
+      insertedCrop,
+      1
     )
 
     const expectedCrops = [playedCrop, insertedCrop, playedCrop, undefined]
@@ -79,7 +82,7 @@ describe('addCardToField', () => {
     const newMatch = updateField(match, player1Id, fullField)
 
     expect(() => {
-      addCardToField(newMatch, player1Id, playedCrop)
+      addCardToField(newMatch, player1Id, playedCrop, 0)
     }).toThrow(FieldFullError)
   })
 })

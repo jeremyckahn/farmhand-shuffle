@@ -30,10 +30,15 @@ export const plantingCropState: RulesMachineConfig['states'] = {
       }) => {
         assertEvent(event, MatchEvent.SELECT_CARD_POSITION)
 
-        const { playerId, cardIdxInHand } = event
+        const { playerId, cardIdxInHand, fieldIdxToPlace } = event
 
         try {
-          match = moveCropFromHandToField(match, playerId, cardIdxInHand)
+          match = moveCropFromHandToField(
+            match,
+            playerId,
+            cardIdxInHand,
+            fieldIdxToPlace
+          )
 
           const { currentPlayerId, sessionOwnerPlayerId } = match
 

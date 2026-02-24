@@ -25,7 +25,7 @@ describe('moveCropFromHandToField', () => {
 
     // eslint-disable-next-line functional/immutable-data
     player.hand[0] = stubCarrot
-    const newMatch = moveCropFromHandToField(match, player1Id, 0)
+    const newMatch = moveCropFromHandToField(match, player1Id, 0, 0)
     const newPlayer = newMatch.table.players[player1Id]
 
     if (!newPlayer) {
@@ -53,7 +53,7 @@ describe('moveCropFromHandToField', () => {
     }
 
     expect(() => {
-      moveCropFromHandToField(match, player1Id, player.hand.length)
+      moveCropFromHandToField(match, player1Id, player.hand.length, 0)
     }).toThrow(InvalidCardIndexError)
   })
 
@@ -75,7 +75,7 @@ describe('moveCropFromHandToField', () => {
     player.hand[0] = stubWater
 
     expect(() => {
-      moveCropFromHandToField(match, player1Id, 0)
+      moveCropFromHandToField(match, player1Id, 0, 0)
     }).toThrow(InvalidCardError)
   })
 })

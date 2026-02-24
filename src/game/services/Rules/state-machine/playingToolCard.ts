@@ -1,7 +1,13 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
-import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
+import {
+  IPlayedCrop,
+  IPlayedTool,
+  MatchEvent,
+  MatchState,
+  ShellNotificationType,
+} from '../../../types'
 import { assertCurrentPlayer, assertIsToolCard } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
@@ -49,7 +55,21 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         match = card.applyEffect(context).match
 
         if (card.isPlantable) {
-          match = moveCropFromHandToField(match, playerId, cardIdx)
+          // FIXME: This is a temporary shim
+          const player = lookup.getPlayer(match, playerId)
+          const { field } = player
+          const { crops } = field
+          const emptyPlotIdx = crops.findIndex(
+            (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
+          )
+          // End temporary shim
+
+          match = moveCropFromHandToField(
+            match,
+            playerId,
+            cardIdx,
+            emptyPlotIdx
+          )
           console.log('PLANTED TOOL')
         } else {
           console.log('DID NOT PLANT')

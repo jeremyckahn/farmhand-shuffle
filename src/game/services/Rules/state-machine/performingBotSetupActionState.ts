@@ -4,7 +4,13 @@ import { randomNumber } from '../../../../services/RandomNumber'
 import { BOT_ACTION_DELAY } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
-import { MatchEvent, MatchState, MatchStateGuard } from '../../../types'
+import {
+  IPlayedCrop,
+  IPlayedTool,
+  MatchEvent,
+  MatchState,
+  MatchStateGuard,
+} from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
@@ -109,8 +115,23 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
             assertCurrentPlayer(currentPlayerId)
 
+            // FIXME: This is a temporary shim
+            const player = lookup.getPlayer(match, playerId)
+            const { field } = player
+            const { crops } = field
+            const emptyPlotIdx = crops.findIndex(
+              (crop: IPlayedCrop | IPlayedTool | undefined) =>
+                crop === undefined
+            )
+            // End temporary shim
+
             match = recordCardPlayEvents(match, event)
-            match = moveCropFromHandToField(match, playerId, cardIdx)
+            match = moveCropFromHandToField(
+              match,
+              playerId,
+              cardIdx,
+              emptyPlotIdx
+            )
             cropsToPlayDuringTurn--
 
             enqueue.raise({
