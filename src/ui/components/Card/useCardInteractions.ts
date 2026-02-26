@@ -66,6 +66,13 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
           fieldIdxToPlace: emptyPlotIdx,
         })
 
+        actorRef.send({
+          type: MatchEvent.SELECT_CARD_POSITION,
+          cardIdxInHand: cardIdx,
+          playerId,
+          fieldIdxToPlace: emptyPlotIdx,
+        })
+
         break
       }
 

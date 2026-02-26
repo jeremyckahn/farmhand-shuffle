@@ -1,8 +1,10 @@
-import { assertEvent, enqueueActions } from 'xstate'
+import { enqueueActions } from 'xstate'
 
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
 import { MatchEvent, MatchState } from '../../../types'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
+
+import { GameStateCorruptError } from '../errors'
 
 import { RulesMachineConfig } from './types'
 
@@ -28,43 +30,94 @@ export const plantingCropState: RulesMachineConfig['states'] = {
         },
         enqueue,
       }) => {
-        assertEvent(event, MatchEvent.SELECT_CARD_POSITION)
+        switch (event.type) {
+          // FIXME: This must be moved into its own state machine slice
+          case MatchEvent.SELECT_CARD_POSITION: {
+            const { playerId, cardIdxInHand, fieldIdxToPlace } = event
 
-        const { playerId, cardIdxInHand, fieldIdxToPlace } = event
+            try {
+              match = moveCropFromHandToField(
+                match,
+                playerId,
+                cardIdxInHand,
+                fieldIdxToPlace
+              )
 
-        try {
-          match = moveCropFromHandToField(
-            match,
-            playerId,
-            cardIdxInHand,
-            fieldIdxToPlace
-          )
+              const { currentPlayerId, sessionOwnerPlayerId } = match
 
-          const { currentPlayerId, sessionOwnerPlayerId } = match
+              if (currentPlayerId === sessionOwnerPlayerId) {
+                enqueue.raise({
+                  type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION,
+                })
+              } else {
+                if (cropsToPlayDuringTurn > 0) {
+                  cropsToPlayDuringTurn--
+                }
 
-          if (currentPlayerId === sessionOwnerPlayerId) {
-            enqueue.raise({ type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
-          } else {
-            if (cropsToPlayDuringTurn > 0) {
-              cropsToPlayDuringTurn--
+                enqueue.raise({ type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION })
+              }
+            } catch (e) {
+              console.error(e)
+              enqueue.raise({ type: MatchEvent.OPERATION_ABORTED })
+
+              return
             }
 
-            enqueue.raise({ type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION })
+            enqueue.assign({
+              match,
+              botState: {
+                ...botState,
+                cropsToPlayDuringTurn,
+              },
+            })
+            break
           }
-        } catch (e) {
-          console.error(e)
-          enqueue.raise({ type: MatchEvent.OPERATION_ABORTED })
 
-          return
+          case MatchEvent.PLAY_CROP: {
+            const { playerId, cardIdx, fieldIdxToPlace } = event
+
+            try {
+              match = moveCropFromHandToField(
+                match,
+                playerId,
+                cardIdx,
+                fieldIdxToPlace
+              )
+
+              const { currentPlayerId, sessionOwnerPlayerId } = match
+
+              if (currentPlayerId === sessionOwnerPlayerId) {
+                enqueue.raise({
+                  type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION,
+                })
+              } else {
+                if (cropsToPlayDuringTurn > 0) {
+                  cropsToPlayDuringTurn--
+                }
+
+                enqueue.raise({ type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION })
+              }
+            } catch (e) {
+              console.error(e)
+              enqueue.raise({ type: MatchEvent.OPERATION_ABORTED })
+
+              return
+            }
+
+            enqueue.assign({
+              match,
+              botState: {
+                ...botState,
+                cropsToPlayDuringTurn,
+              },
+            })
+            break
+          }
+
+          default: {
+            throw new GameStateCorruptError(`Unexpected event: ${event.type}`)
+          }
         }
-
-        enqueue.assign({
-          match,
-          botState: {
-            ...botState,
-            cropsToPlayDuringTurn,
-          },
-        })
       }
     ),
 

@@ -110,6 +110,39 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
       },
 
       [MatchEvent.PLAY_CROP]: {
+        actions: enqueueActions(({ event, context: { match }, enqueue }) => {
+          assertEvent(event, MatchEvent.PLAY_CROP)
+          const { cardIdx, playerId } = event
+
+          const { currentPlayerId } = match
+
+          assertCurrentPlayer(currentPlayerId)
+
+          match = recordCardPlayEvents(match, event)
+
+          // FIXME: This is a temporary shim
+          const player = lookup.getPlayer(match, playerId)
+          const { field } = player
+          const { crops } = field
+          const emptyPlotIdx = crops.findIndex(
+            (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
+          )
+          // End temporary shim
+
+          enqueue.raise({
+            type: MatchEvent.SELECT_CARD_POSITION,
+            playerId: currentPlayerId,
+            cardIdxInHand: cardIdx,
+            fieldIdxToPlace: emptyPlotIdx === -1 ? 0 : emptyPlotIdx,
+          })
+
+          enqueue.assign({
+            match,
+          })
+        }),
+      },
+
+      [MatchEvent.SELECT_CARD_POSITION]: {
         actions: enqueueActions(
           ({
             event,
@@ -120,30 +153,22 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             },
             enqueue,
           }) => {
-            assertEvent(event, MatchEvent.PLAY_CROP)
-            const { cardIdx, playerId } = event
+            assertEvent(event, MatchEvent.SELECT_CARD_POSITION)
+
+            const { cardIdxInHand, playerId, fieldIdxToPlace } = event
 
             const { currentPlayerId } = match
 
             assertCurrentPlayer(currentPlayerId)
 
-            // FIXME: This is a temporary shim
-            const player = lookup.getPlayer(match, playerId)
-            const { field } = player
-            const { crops } = field
-            const emptyPlotIdx = crops.findIndex(
-              (crop: IPlayedCrop | IPlayedTool | undefined) =>
-                crop === undefined
-            )
-            // End temporary shim
-
             match = recordCardPlayEvents(match, event)
             match = moveCropFromHandToField(
               match,
               playerId,
-              cardIdx,
-              emptyPlotIdx
+              cardIdxInHand,
+              fieldIdxToPlace
             )
+
             cropsToPlayDuringTurn--
 
             enqueue.raise({

@@ -298,6 +298,7 @@ export enum MatchEvent {
 export enum BotTurnActionState {
   INITIALIZING = 'INITIALIZING',
   HARVESTING_CROPS = 'HARVESTING_CROPS',
+  PLACING_CROP = 'PLACING_CROP',
   PLAYING_CROPS = 'PLAYING_CROPS',
   PLAYING_EVENTS = 'PLAYING_EVENTS',
   PLAYING_TOOLS = 'PLAYING_TOOLS',
@@ -422,6 +423,7 @@ export interface MatchEventPayload {
   }
 
   [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP> & {
+    // FIXME: Remove this, it is a temporary shim
     fieldIdxToPlace: number
   }
 

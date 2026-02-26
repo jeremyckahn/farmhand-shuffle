@@ -33,7 +33,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
-      [MatchEvent.PLAY_CROP]: MatchState.CHOOSING_CARD_POSITION,
+      [MatchEvent.SELECT_CARD_POSITION]: MatchState.PLANTING_CROP,
 
       [MatchEvent.PLAY_WATER]: MatchState.PERFORMING_BOT_CROP_WATERING,
 
@@ -129,6 +129,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
       [BotTurnActionState.PLAYING_CROPS]: {
         on: {
+          [MatchEvent.PLAY_CROP]: BotTurnActionState.PLACING_CROP,
+
           [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
             BotTurnActionState.PLAYING_WATER,
         },
@@ -177,6 +179,68 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                     type: MatchEvent.PLAY_CROP,
                     playerId: currentPlayerId,
                     cardIdx,
+                    fieldIdxToPlace: emptyPlotIdx,
+                  },
+                  { delay: BOT_ACTION_DELAY }
+                )
+              } else {
+                enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
+              }
+            }
+          )
+        ),
+      },
+
+      [BotTurnActionState.PLACING_CROP]: {
+        on: {
+          [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
+            BotTurnActionState.PLAYING_CROPS,
+        },
+        entry: enqueueActions(
+          withBotErrorHandling(
+            ({
+              context: {
+                botState: { cropsToPlayDuringTurn },
+                match,
+              },
+              enqueue,
+            }) => {
+              const areCropsToPlay = cropsToPlayDuringTurn > 0
+
+              if (areCropsToPlay) {
+                const { currentPlayerId } = match
+
+                assertCurrentPlayer(currentPlayerId)
+
+                const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
+                  match,
+                  currentPlayerId
+                )
+                const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
+
+                if (cardIdx === undefined) {
+                  throw new MatchStateCorruptError(
+                    `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
+                  )
+                }
+
+                // FIXME: This is a temporary shim
+                const player = lookup.getPlayer(match, currentPlayerId)
+                const { field } = player
+                const { crops } = field
+
+                const emptyPlotIdx = crops.findIndex(
+                  (crop: IPlayedCrop | IPlayedTool | undefined) =>
+                    crop === undefined
+                )
+                // End temporary shim
+
+                // FIXME: Bots must select a position for where cards are placed.
+                enqueue.raise(
+                  {
+                    type: MatchEvent.SELECT_CARD_POSITION,
+                    playerId: currentPlayerId,
+                    cardIdxInHand: cardIdx,
                     fieldIdxToPlace: emptyPlotIdx,
                   },
                   { delay: BOT_ACTION_DELAY }

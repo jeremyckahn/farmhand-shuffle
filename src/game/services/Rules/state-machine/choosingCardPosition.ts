@@ -1,15 +1,9 @@
-import { assertEvent, enqueueActions } from 'xstate'
+import { enqueueActions } from 'xstate'
 
-import {
-  IPlayedCrop,
-  IPlayedTool,
-  MatchEvent,
-  MatchState,
-} from '../../../types'
-
-import { lookup } from '../../Lookup'
+import { MatchEvent, MatchState } from '../../../types'
 
 import { RulesMachineConfig } from './types'
+import { recordCardPlayEvents } from './reducers'
 
 export const choosingCardPositon: RulesMachineConfig['states'] = {
   [MatchState.CHOOSING_CARD_POSITION]: {
@@ -22,30 +16,16 @@ export const choosingCardPositon: RulesMachineConfig['states'] = {
       ],
     },
 
-    entry: enqueueActions(({ event, enqueue, context: { match } }) => {
-      {
-        assertEvent(event, MatchEvent.PLAY_CROP)
+    exit: enqueueActions(({ event, enqueue, context: { match } }) => {
+      switch (event.type) {
+        case MatchEvent.SELECT_CARD_POSITION: {
+          match = recordCardPlayEvents(match, event)
 
-        const { playerId, cardIdx } = event
-
-        // FIXME: This is a temporary shim
-        const player = lookup.getPlayer(match, playerId)
-        const { field } = player
-        const { crops } = field
-
-        const emptyPlotIdx = crops.findIndex(
-          (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
-        )
-        // End temporary shim
-
-        // FIXME: Implement this function, the .raise is a placeholder
-        enqueue.raise({
-          type: MatchEvent.SELECT_CARD_POSITION,
-          cardIdxInHand: cardIdx,
-          fieldIdxToPlace: emptyPlotIdx,
-          playerId,
-        })
+          break
+        }
       }
+
+      enqueue.assign({ match })
     }),
   },
 }
