@@ -421,7 +421,9 @@ export interface MatchEventPayload {
     playerId: IPlayer['id']
   }
 
-  [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP>
+  [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP> & {
+    fieldIdxToPlace: number
+  }
 
   [MatchEvent.PLAY_EVENT]: PlayCardEventPayload<MatchEvent.PLAY_EVENT>
 

@@ -1,6 +1,6 @@
-import { MatchEvent, MatchState, IPlayedCrop } from '../../../types'
 import { rules } from '..'
 import { updatePlayer } from '../../../reducers/update-player'
+import { IPlayedCrop, MatchEvent, MatchState } from '../../../types'
 
 import { carrot1, carrot2, player1, player2, playerSeeds } from './helpers'
 
@@ -36,12 +36,14 @@ describe('match setup', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
+      fieldIdxToPlace: 0,
     })
     // NOTE: Plays second carrot card
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
+      fieldIdxToPlace: 1,
     })
 
     const {
@@ -86,6 +88,7 @@ describe('match setup', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
+      fieldIdxToPlace: 0,
     })
     // NOTE: Prompts player 2
     matchActor.send({
@@ -134,6 +137,7 @@ describe('match setup', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
+      fieldIdxToPlace: 0,
     })
 
     const previousSnapshot = matchActor.getSnapshot()

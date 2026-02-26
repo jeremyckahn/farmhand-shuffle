@@ -3,6 +3,8 @@ import { useContext } from 'react'
 import { STANDARD_FIELD_SIZE } from '../../../game/config'
 import {
   CardType,
+  IPlayedCrop,
+  IPlayedTool,
   MatchEvent,
   MatchState,
   isCropCardInstance,
@@ -11,6 +13,8 @@ import { lookup } from '../../../game/services/Lookup'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
+
+import { assertCurrentPlayer } from '../../../game/types/guards'
 
 import { CardProps, CardInteractions } from './types'
 
@@ -41,7 +45,26 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
 
     switch (cardInstance.type) {
       case CardType.CROP: {
-        actorRef.send({ type: MatchEvent.PLAY_CROP, cardIdx, playerId })
+        // FIXME: This is a temporary shim
+        const { currentPlayerId } = match
+
+        assertCurrentPlayer(currentPlayerId)
+        const player = lookup.getPlayer(match, currentPlayerId)
+        const { field } = player
+        const { crops } = field
+
+        const emptyPlotIdx =
+          crops.findIndex(
+            (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
+          ) && 0
+        // End temporary shim
+
+        actorRef.send({
+          type: MatchEvent.PLAY_CROP,
+          cardIdx,
+          playerId,
+          fieldIdxToPlace: emptyPlotIdx,
+        })
 
         break
       }

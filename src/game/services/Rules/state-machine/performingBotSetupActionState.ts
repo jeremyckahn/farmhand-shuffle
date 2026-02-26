@@ -76,11 +76,23 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
                 )
               }
 
+              // FIXME: This is a temporary shim
+              const player = lookup.getPlayer(match, currentPlayerId)
+              const { field } = player
+              const { crops } = field
+
+              const emptyPlotIdx = crops.findIndex(
+                (crop: IPlayedCrop | IPlayedTool | undefined) =>
+                  crop === undefined
+              )
+              // End temporary shim
+
               enqueue.raise(
                 {
                   type: MatchEvent.PLAY_CROP,
                   playerId: currentPlayerId,
                   cardIdx,
+                  fieldIdxToPlace: emptyPlotIdx,
                 },
                 { delay: BOT_ACTION_DELAY }
               )
