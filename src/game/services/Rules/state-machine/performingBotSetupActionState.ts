@@ -96,6 +96,14 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
                 },
                 { delay: BOT_ACTION_DELAY }
               )
+
+              // FIXME: This is wrong. The PLAY_CROP and SELECT_CARD_POSITION events need to be decoupled somehow.
+              enqueue.raise({
+                type: MatchEvent.SELECT_CARD_POSITION,
+                playerId: currentPlayerId,
+                cardIdxInHand: cardIdx,
+                fieldIdxToPlace: emptyPlotIdx,
+              })
             }
 
             enqueue.assign({

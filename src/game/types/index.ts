@@ -422,6 +422,7 @@ export interface MatchEventPayload {
   }
 
   [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP> & {
+    // FIXME: Remove this, it is a temporary shim
     fieldIdxToPlace: number
   }
 

@@ -90,6 +90,12 @@ describe('match setup', () => {
       cardIdx: 0,
       fieldIdxToPlace: 0,
     })
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 0,
+    })
     // NOTE: Prompts player 2
     matchActor.send({
       type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION,

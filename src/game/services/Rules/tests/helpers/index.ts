@@ -65,6 +65,13 @@ export const createSetUpMatchActor = () => {
   })
 
   matchActor.send({
+    type: MatchEvent.SELECT_CARD_POSITION,
+    playerId: player1.id,
+    cardIdxInHand: 0,
+    fieldIdxToPlace: 0,
+  })
+
+  matchActor.send({
     // NOTE: Prompts bot player
     type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION,
   })

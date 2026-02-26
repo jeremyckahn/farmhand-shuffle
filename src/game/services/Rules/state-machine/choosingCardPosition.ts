@@ -22,30 +22,30 @@ export const choosingCardPositon: RulesMachineConfig['states'] = {
       ],
     },
 
-    entry: enqueueActions(({ event, enqueue, context: { match } }) => {
-      {
-        assertEvent(event, MatchEvent.PLAY_CROP)
-
-        const { playerId, cardIdx } = event
-
-        // FIXME: This is a temporary shim
-        const player = lookup.getPlayer(match, playerId)
-        const { field } = player
-        const { crops } = field
-
-        const emptyPlotIdx = crops.findIndex(
-          (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
-        )
-        // End temporary shim
-
-        // FIXME: Implement this function, the .raise is a placeholder
-        enqueue.raise({
-          type: MatchEvent.SELECT_CARD_POSITION,
-          cardIdxInHand: cardIdx,
-          fieldIdxToPlace: emptyPlotIdx,
-          playerId,
-        })
-      }
-    }),
+    // entry: enqueueActions(({ event, enqueue, context: { match } }) => {
+    //   {
+    //     assertEvent(event, MatchEvent.PLAY_CROP)
+    //
+    //     const { playerId, cardIdx } = event
+    //
+    //     // FIXME: This is a temporary shim
+    //     const player = lookup.getPlayer(match, playerId)
+    //     const { field } = player
+    //     const { crops } = field
+    //
+    //     const emptyPlotIdx = crops.findIndex(
+    //       (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
+    //     )
+    //     // End temporary shim
+    //
+    //     // FIXME: Implement this function, the .raise is a placeholder
+    //     enqueue.raise({
+    //       type: MatchEvent.SELECT_CARD_POSITION,
+    //       cardIdxInHand: cardIdx,
+    //       fieldIdxToPlace: emptyPlotIdx,
+    //       playerId,
+    //     })
+    //   }
+    // }),
   },
 }

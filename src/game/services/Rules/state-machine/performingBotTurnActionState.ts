@@ -181,6 +181,13 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   },
                   { delay: BOT_ACTION_DELAY }
                 )
+
+                enqueue.raise({
+                  type: MatchEvent.SELECT_CARD_POSITION,
+                  playerId: currentPlayerId,
+                  cardIdxInHand: cardIdx,
+                  fieldIdxToPlace: emptyPlotIdx,
+                })
               } else {
                 enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
               }
