@@ -8,8 +8,6 @@ import { updateField } from '../update-field'
 
 import { addCardToField } from '.'
 
-// FIXME: Rename this file to add-card-to-field
-
 describe('addCardToField', () => {
   test('adds crop to field', () => {
     const match = stubMatch()

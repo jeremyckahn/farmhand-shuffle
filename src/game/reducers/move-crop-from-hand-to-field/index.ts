@@ -12,7 +12,7 @@ import {
   isCropCardInstance,
   isToolCardInstance,
 } from '../../types'
-import { addCardToField } from '../add-crop-to-field'
+import { addCardToField } from '../add-card-to-field'
 import { updatePlayer } from '../update-player'
 
 // FIXME: Rename this to moveCardFromHandToField
