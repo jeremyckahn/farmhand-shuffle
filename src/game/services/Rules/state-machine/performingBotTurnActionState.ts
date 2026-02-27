@@ -33,7 +33,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
-      [MatchEvent.PLAY_CROP]: MatchState.CHOOSING_CARD_POSITION,
+      [MatchEvent.PLAY_CROP]: MatchState.PLANTING_CROP,
 
       [MatchEvent.PLAY_WATER]: MatchState.PERFORMING_BOT_CROP_WATERING,
 
@@ -182,12 +182,15 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   { delay: BOT_ACTION_DELAY }
                 )
 
-                enqueue.raise({
-                  type: MatchEvent.SELECT_CARD_POSITION,
-                  playerId: currentPlayerId,
-                  cardIdxInHand: cardIdx,
-                  fieldIdxToPlace: emptyPlotIdx,
-                })
+                // FIXME: This state machine slice probably needs to select a
+                // position in the field with something like the following:
+                //
+                // enqueue.raise({
+                //   type: MatchEvent.SELECT_CARD_POSITION,
+                //   playerId: currentPlayerId,
+                //   cardIdxInHand: cardIdx,
+                //   fieldIdxToPlace: emptyPlotIdx,
+                // })
               } else {
                 enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
               }
