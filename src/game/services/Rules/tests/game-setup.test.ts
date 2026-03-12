@@ -38,23 +38,11 @@ describe('match setup', () => {
       cardIdx: 0,
       fieldIdxToPlace: 0,
     })
-    matchActor.send({
-      type: MatchEvent.SELECT_CARD_POSITION,
-      playerId: player1.id,
-      cardIdxInHand: 0,
-      fieldIdxToPlace: 0,
-    })
     // NOTE: Plays second carrot card
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
-      fieldIdxToPlace: 1,
-    })
-    matchActor.send({
-      type: MatchEvent.SELECT_CARD_POSITION,
-      playerId: player1.id,
-      cardIdxInHand: 0,
       fieldIdxToPlace: 1,
     })
 
