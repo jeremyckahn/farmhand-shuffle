@@ -186,7 +186,6 @@ describe('Card', () => {
         type: MatchEvent.PLAY_CROP,
         cardIdx: 0,
         playerId: stubPlayer1.id,
-        fieldIdxToPlace: 0,
       })
     }
   )

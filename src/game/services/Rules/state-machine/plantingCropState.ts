@@ -1,10 +1,19 @@
 import { enqueueActions } from 'xstate'
 
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
-import { MatchEvent, MatchState } from '../../../types'
+import {
+  IPlayedCrop,
+  IPlayedTool,
+  MatchEvent,
+  MatchState,
+} from '../../../types'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
 
 import { GameStateCorruptError } from '../errors'
+
+import { lookup } from '../../Lookup'
+
+import { assertCurrentPlayer } from '../../../types/guards'
 
 import { RulesMachineConfig } from './types'
 
@@ -74,14 +83,28 @@ export const plantingCropState: RulesMachineConfig['states'] = {
           }
 
           case MatchEvent.PLAY_CROP: {
-            const { playerId, cardIdx, fieldIdxToPlace } = event
+            const { playerId, cardIdx } = event
+
+            // FIXME: This is a temporary shim
+            const { currentPlayerId } = match
+
+            assertCurrentPlayer(currentPlayerId)
+            const player = lookup.getPlayer(match, currentPlayerId)
+            const { field } = player
+            const { crops } = field
+
+            const emptyPlotIdx = crops.findIndex(
+              (crop: IPlayedCrop | IPlayedTool | undefined) =>
+                crop === undefined
+            )
+            // End temporary shim
 
             try {
               match = moveCropFromHandToField(
                 match,
                 playerId,
                 cardIdx,
-                fieldIdxToPlace
+                emptyPlotIdx === -1 ? 0 : emptyPlotIdx
               )
 
               const { currentPlayerId, sessionOwnerPlayerId } = match

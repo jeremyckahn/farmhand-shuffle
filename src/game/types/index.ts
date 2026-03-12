@@ -422,10 +422,7 @@ export interface MatchEventPayload {
     playerId: IPlayer['id']
   }
 
-  [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP> & {
-    // FIXME: Remove this, it is a temporary shim
-    fieldIdxToPlace: number
-  }
+  [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP>
 
   [MatchEvent.PLAY_EVENT]: PlayCardEventPayload<MatchEvent.PLAY_EVENT>
 

@@ -61,7 +61,6 @@ export const createSetUpMatchActor = () => {
     type: MatchEvent.PLAY_CROP,
     playerId: player1.id,
     cardIdx: 0,
-    fieldIdxToPlace: 0,
   })
 
   matchActor.send({

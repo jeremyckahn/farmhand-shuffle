@@ -38,7 +38,6 @@ describe('player turn action handling', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
-      fieldIdxToPlace: 1,
     })
     matchActor.send({
       type: MatchEvent.SELECT_CARD_POSITION,
@@ -132,7 +131,6 @@ describe('player turn action handling', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
-      fieldIdxToPlace: 1,
     })
 
     matchActor.send({

@@ -36,14 +36,12 @@ describe('match setup', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
-      fieldIdxToPlace: 0,
     })
     // NOTE: Plays second carrot card
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
-      fieldIdxToPlace: 1,
     })
 
     const {
@@ -88,7 +86,6 @@ describe('match setup', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
-      fieldIdxToPlace: 0,
     })
     // NOTE: Prompts player 2
     matchActor.send({
@@ -137,7 +134,6 @@ describe('match setup', () => {
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
       cardIdx: 0,
-      fieldIdxToPlace: 0,
     })
 
     const previousSnapshot = matchActor.getSnapshot()
