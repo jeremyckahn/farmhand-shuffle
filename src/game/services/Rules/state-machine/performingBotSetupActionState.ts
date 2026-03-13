@@ -1,7 +1,7 @@
 import { assertEvent, enqueueActions } from 'xstate'
 
 import { randomNumber } from '../../../../services/RandomNumber'
-import { BOT_ACTION_DELAY } from '../../../config'
+import { BOT_ACTION_DELAY, STANDARD_FIELD_SIZE } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
 import {
@@ -112,7 +112,16 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
           const player = lookup.getPlayer(match, playerId)
           const { field } = player
           const { crops } = field
-          const emptyPlotIdx = crops.findIndex(
+
+          const cropsPadding = new Array<typeof undefined>(
+            STANDARD_FIELD_SIZE
+          ).fill(undefined)
+
+          const paddedCrops = [...crops, ...cropsPadding].slice(
+            0,
+            STANDARD_FIELD_SIZE
+          )
+          const emptyPlotIdx = paddedCrops.findIndex(
             (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
           )
           // End temporary shim

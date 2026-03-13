@@ -13,6 +13,8 @@ import { lookup } from '../../Lookup'
 
 import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
 
+import { STANDARD_FIELD_SIZE } from '../../../config'
+
 import { RulesMachineConfig } from './types'
 
 export const playingToolCard: RulesMachineConfig['states'] = {
@@ -59,7 +61,16 @@ export const playingToolCard: RulesMachineConfig['states'] = {
           const player = lookup.getPlayer(match, playerId)
           const { field } = player
           const { crops } = field
-          const emptyPlotIdx = crops.findIndex(
+
+          const cropsPadding = new Array<typeof undefined>(
+            STANDARD_FIELD_SIZE
+          ).fill(undefined)
+
+          const paddedCrops = [...crops, ...cropsPadding].slice(
+            0,
+            STANDARD_FIELD_SIZE
+          )
+          const emptyPlotIdx = paddedCrops.findIndex(
             (crop: IPlayedCrop | IPlayedTool | undefined) => crop === undefined
           )
           // End temporary shim

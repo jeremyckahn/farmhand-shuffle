@@ -15,6 +15,8 @@ import { lookup } from '../../Lookup'
 
 import { assertCurrentPlayer } from '../../../types/guards'
 
+import { STANDARD_FIELD_SIZE } from '../../../config'
+
 import { RulesMachineConfig } from './types'
 
 export const plantingCropState: RulesMachineConfig['states'] = {
@@ -93,7 +95,15 @@ export const plantingCropState: RulesMachineConfig['states'] = {
             const { field } = player
             const { crops } = field
 
-            const emptyPlotIdx = crops.findIndex(
+            const cropsPadding = new Array<typeof undefined>(
+              STANDARD_FIELD_SIZE
+            ).fill(undefined)
+
+            const paddedCrops = [...crops, ...cropsPadding].slice(
+              0,
+              STANDARD_FIELD_SIZE
+            )
+            const emptyPlotIdx = paddedCrops.findIndex(
               (crop: IPlayedCrop | IPlayedTool | undefined) =>
                 crop === undefined
             )
