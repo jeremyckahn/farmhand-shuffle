@@ -229,6 +229,12 @@ export interface IMatch {
   readonly table: ITable
 
   /**
+   * The number of the current turn. This is incremented at the start of each
+   * player's turn. This is 0 during the setup phase.
+   */
+  readonly turn: number
+
+  /**
    * The IPlayer['id'] of the player whose turn it is.
    */
   readonly currentPlayerId: IPlayer['id'] | null
