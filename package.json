@@ -73,7 +73,7 @@
     "storybook": "^10.2.13",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.2",
+    "vite": "^7.3.2",
     "vitest": "^4.0.10",
     "vitest-mock-extended": "^2.0.2"
   },
