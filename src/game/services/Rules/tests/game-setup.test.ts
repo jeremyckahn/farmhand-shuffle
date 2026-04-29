@@ -66,7 +66,7 @@ describe('match setup', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_SETUP_ACTION)
     expect(maybePlayer1.hand).toEqual([])
-    expect(maybePlayer1.field.crops).toEqual<IPlayedCrop[]>([
+    expect(maybePlayer1.field.cards).toEqual<IPlayedCrop[]>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
     ])
@@ -111,7 +111,7 @@ describe('match setup', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_SETUP_ACTION)
     expect(maybePlayer1.hand).toEqual([carrot1, carrot2])
-    expect(maybePlayer1.field.crops).toEqual<IPlayedCrop[]>([])
+    expect(maybePlayer1.field.cards).toEqual<IPlayedCrop[]>([])
     expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([])
   })
 
@@ -166,7 +166,7 @@ describe('match setup', () => {
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
     expect(matchResult.currentPlayerId).toEqual(player1.id)
-    expect(maybePlayer2.field.crops).toEqual<IPlayedCrop[]>([
+    expect(maybePlayer2.field.cards).toEqual<IPlayedCrop[]>([
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
     ])
     expect(maybePlayer2.cardsPlayedDuringTurn).toEqual([carrot2])

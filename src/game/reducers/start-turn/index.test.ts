@@ -106,7 +106,7 @@ describe('startTurn', () => {
 
     let newMatch = updatePlayer(match, player1Id, {
       field: {
-        crops: [
+        cards: [
           { instance: carrot1, wasWateredDuringTurn: true, waterCards: 1 },
           { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
           { instance: carrot3, wasWateredDuringTurn: true, waterCards: 1 },
@@ -119,7 +119,7 @@ describe('startTurn', () => {
 
     if (!newPlayer1) throw new Error('Player not found after reducer')
 
-    expect(newPlayer1.field.crops).toEqual<IPlayedCrop[]>([
+    expect(newPlayer1.field.cards).toEqual<IPlayedCrop[]>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot3, wasWateredDuringTurn: false, waterCards: 1 },
@@ -132,7 +132,7 @@ describe('startTurn', () => {
 
     let newMatch = updatePlayer(match, player1Id, {
       field: {
-        crops: [
+        cards: [
           { instance: carrot1, wasWateredDuringTurn: true, waterCards: 1 },
           undefined,
           { instance: carrot2, wasWateredDuringTurn: true, waterCards: 1 },
@@ -145,7 +145,7 @@ describe('startTurn', () => {
 
     if (!newPlayer1) throw new Error('Player not found after reducer')
 
-    expect(newPlayer1.field.crops).toEqual<IField['crops']>([
+    expect(newPlayer1.field.cards).toEqual<IField['cards']>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 1 },
       undefined,
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 1 },

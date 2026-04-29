@@ -25,7 +25,7 @@ export class BotLogicService {
     )
 
     const availableFieldSpace =
-      STANDARD_FIELD_SIZE - player.field.crops.filter(crop => !!crop).length
+      STANDARD_FIELD_SIZE - player.field.cards.filter(crop => !!crop).length
 
     const safeNumberOfCropsToPlay = Math.min(
       availableFieldSpace,
@@ -77,7 +77,7 @@ export class BotLogicService {
   getCropCardIndicesToWater(match: IMatch, playerId: string) {
     const player = lookup.getPlayer(match, playerId)
     const {
-      field: { crops },
+      field: { cards },
       hand,
     } = player
 
@@ -88,13 +88,13 @@ export class BotLogicService {
       }
     )
 
-    for (let i = 0; i < crops.length; i++) {
+    for (let i = 0; i < cards.length; i++) {
       // NOTE: Prevents playing more water cards than there are in the player's hand
       if (fieldCropIdxsThatNeedWater.length === numberOfWaterCardsInHand) {
         break
       }
 
-      const plantedCrop = crops[i]
+      const plantedCrop = cards[i]
 
       if (
         isPlayedCrop(plantedCrop) &&
@@ -111,13 +111,13 @@ export class BotLogicService {
   getCropCardIndicesToHarvest(match: IMatch, playerId: string) {
     const player = lookup.getPlayer(match, playerId)
     const {
-      field: { crops },
+      field: { cards },
     } = player
 
     let fieldCropIdxsToHarvest: number[] = []
 
-    for (let i = 0; i < crops.length; i++) {
-      const plantedCrop = crops[i]
+    for (let i = 0; i < cards.length; i++) {
+      const plantedCrop = cards[i]
 
       if (
         isPlayedCrop(plantedCrop) &&
@@ -133,12 +133,12 @@ export class BotLogicService {
   getOpenFieldPosition(match: IMatch, playerId: string) {
     const player = lookup.getPlayer(match, playerId)
     const { field } = player
-    const { crops } = field
+    const { cards } = field
 
     let availableIdxs: number[] = []
 
-    for (let i = 0; i < Math.max(STANDARD_FIELD_SIZE, crops.length); i++) {
-      if (typeof crops[i] === 'undefined') {
+    for (let i = 0; i < Math.max(STANDARD_FIELD_SIZE, cards.length); i++) {
+      if (typeof cards[i] === 'undefined') {
         availableIdxs = [...availableIdxs, i]
       }
     }

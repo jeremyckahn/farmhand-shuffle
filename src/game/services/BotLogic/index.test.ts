@@ -79,7 +79,7 @@ describe('BotLogicService', () => {
           waterCards: 0,
         }),
         minimumCropsToPlay: 1,
-        expectedResult: 0, // No room for more crops in field
+        expectedResult: 0, // No room for more cards in field
       },
 
       {
@@ -123,7 +123,7 @@ describe('BotLogicService', () => {
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
-            crops: fieldCrops,
+            cards: fieldCrops,
           },
         })
 
@@ -143,7 +143,7 @@ describe('BotLogicService', () => {
   describe('getCropCardIndicesToWater', () => {
     it.each<{
       hand: IPlayer['hand']
-      fieldCrops: IField['crops']
+      fieldCrops: IField['cards']
       expectedResult: number[]
     }>([
       { hand: [], fieldCrops: [], expectedResult: [] },
@@ -246,7 +246,7 @@ describe('BotLogicService', () => {
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
-            crops: fieldCrops,
+            cards: fieldCrops,
           },
         })
 
@@ -259,7 +259,7 @@ describe('BotLogicService', () => {
 
   describe('getCropCardIndicesToHarvest', () => {
     it.each<{
-      fieldCrops: IField['crops']
+      fieldCrops: IField['cards']
       expectedResult: number[]
     }>([
       { fieldCrops: [], expectedResult: [] },
@@ -312,7 +312,7 @@ describe('BotLogicService', () => {
 
         match = updatePlayer(match, stubPlayer1.id, {
           field: {
-            crops: fieldCrops,
+            cards: fieldCrops,
           },
         })
 
@@ -521,7 +521,7 @@ describe('BotLogicService', () => {
 
         match = updatePlayer(match, stubPlayer1.id, {
           field: {
-            crops: fieldCrops,
+            cards: fieldCrops,
           },
         })
 

@@ -16,7 +16,7 @@ describe('updatePlayedCrop', () => {
   test('updates crop in field', () => {
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
     const field = {
-      crops: [playedCrop],
+      cards: [playedCrop],
     }
 
     let newMatch = updateField(match, player1Id, field)
@@ -28,13 +28,13 @@ describe('updatePlayedCrop', () => {
       throw new Error('Player not found')
     }
 
-    expect(newPlayer.field.crops).toEqual([{ ...playedCrop, waterCards: 1 }])
+    expect(newPlayer.field.cards).toEqual([{ ...playedCrop, waterCards: 1 }])
   })
 
   test('throws an error if invalid cropIdx is provided', () => {
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
     const field = {
-      crops: [playedCrop],
+      cards: [playedCrop],
     }
 
     const newMatch = updateField(match, player1Id, field)
@@ -46,7 +46,7 @@ describe('updatePlayedCrop', () => {
 
   test('throws an error if the card at the given index is not a played crop (e.g., a tool card)', () => {
     const field = {
-      crops: [{ instance: stubSprinkler }],
+      cards: [{ instance: stubSprinkler }],
     }
 
     const newMatch = updateField(match, player1Id, field)

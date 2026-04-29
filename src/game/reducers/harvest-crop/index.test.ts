@@ -22,7 +22,7 @@ describe('harvestCrop', () => {
     }
 
     // eslint-disable-next-line functional/immutable-data
-    player.field.crops[0] = stubPlayedCrop
+    player.field.cards[0] = stubPlayedCrop
   })
 
   it('should harvest the crop and return its sale value', () => {
@@ -44,7 +44,7 @@ describe('harvestCrop', () => {
     }
 
     expect(match.table.communityFund).toEqual(initialCommunityFund - saleValue)
-    expect(playerAfter.field.crops).toEqual([undefined])
+    expect(playerAfter.field.cards).toEqual([undefined])
     expect(playerAfter.funds).toBe(initialPlayerFunds + saleValue)
   })
 })

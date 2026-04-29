@@ -51,8 +51,8 @@ export class LookupService {
     cardIdx: number
   ) => {
     const player = this.getPlayer(match, playerId)
-    const { crops } = player.field
-    const cardInstance = crops[cardIdx]
+    const { cards } = player.field
+    const cardInstance = cards[cardIdx]
 
     if (!cardInstance) {
       throw new InvalidCardIndexError(cardIdx, playerId)

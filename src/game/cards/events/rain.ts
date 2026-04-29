@@ -23,7 +23,7 @@ export const rain: IEvent = Object.freeze<IEvent>({
 
       if (!player) continue
 
-      const crops = player.field.crops.map(card => {
+      const cards = player.field.cards.map(card => {
         if (!card) return card
 
         if (!isPlayedCrop(card)) {
@@ -45,7 +45,7 @@ export const rain: IEvent = Object.freeze<IEvent>({
         }
       })
 
-      match = updateField(match, playerId, { crops })
+      match = updateField(match, playerId, { cards })
     }
 
     context.shell.triggerNotification({

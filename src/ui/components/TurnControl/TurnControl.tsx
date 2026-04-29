@@ -85,7 +85,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     case MatchState.WAITING_FOR_PLAYER_SETUP_ACTION: {
       stateInfo = 'Set up your Field'
 
-      if (currentPlayer && currentPlayer.field.crops.length > 0) {
+      if (currentPlayer && currentPlayer.field.cards.length > 0) {
         control = <Button onClick={handleCompleteSetup}>Complete setup</Button>
       }
 

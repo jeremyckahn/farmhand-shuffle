@@ -65,9 +65,9 @@ export const isField = (obj: unknown): obj is IField => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
-    'crops' in obj &&
-    Array.isArray(obj.crops) &&
-    obj.crops.every(crop => isPlayedCrop(crop) || crop === undefined)
+    'cards' in obj &&
+    Array.isArray(obj.cards) &&
+    obj.cards.every(crop => isPlayedCrop(crop) || crop === undefined)
   )
 }
 
@@ -203,7 +203,7 @@ export function assertStringIsMatchState(
 }
 
 export function assertIsPlayedCrop(
-  plotContents: IField['crops'][0],
+  plotContents: IField['cards'][0],
   fieldCropIdx: number
 ): asserts plotContents is IPlayedCrop {
   if (plotContents === undefined) {

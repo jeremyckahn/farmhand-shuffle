@@ -62,7 +62,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
               event
 
             const player = lookup.getPlayer(match, playerId)
-            const playedCrop = player.field.crops[cropIdxInFieldToWater]
+            const playedCrop = player.field.cards[cropIdxInFieldToWater]
 
             assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 

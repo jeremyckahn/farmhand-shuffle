@@ -116,7 +116,7 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
         const player = lookup.getPlayer(match, playerId)
 
         if (
-          player.field.crops.filter(crop => crop !== undefined).length >=
+          player.field.cards.filter(crop => crop !== undefined).length >=
           STANDARD_FIELD_SIZE
         ) {
           playButtonDisabled = true

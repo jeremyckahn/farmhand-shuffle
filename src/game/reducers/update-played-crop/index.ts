@@ -11,8 +11,8 @@ export const updatePlayedCrop = (
   newPlayedCropProperties: Partial<IPlayedCrop>
 ) => {
   const player = lookup.getPlayer(match, playerId)
-  const { crops } = player.field
-  const playedCrop = crops[cropIdx]
+  const { cards } = player.field
+  const playedCrop = cards[cropIdx]
 
   if (!playedCrop) {
     throw new RangeError(
@@ -26,14 +26,14 @@ export const updatePlayedCrop = (
     )
   }
 
-  const newCrops = [
-    ...crops.slice(0, cropIdx),
+  const newCards = [
+    ...cards.slice(0, cropIdx),
     { ...playedCrop, ...newPlayedCropProperties },
-    ...crops.slice(cropIdx + 1),
+    ...cards.slice(cropIdx + 1),
   ]
 
   match = updateField(match, playerId, {
-    crops: newCrops,
+    cards: newCards,
   })
 
   return match

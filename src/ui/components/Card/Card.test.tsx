@@ -122,7 +122,7 @@ describe('Card', () => {
     const playerWithFullField: IPlayer = {
       ...player,
       field: {
-        crops: fullFieldCrops,
+        cards: fullFieldCrops,
       },
     }
 

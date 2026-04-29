@@ -61,11 +61,11 @@ const cropsStub = [
 ]
 
 matchStub = updateField(matchStub, matchStub.sessionOwnerPlayerId, {
-  crops: cropsStub,
+  cards: cropsStub,
 })
 
 matchStub = updateField(matchStub, opponentPlayerId, {
-  crops: cropsStub,
+  cards: cropsStub,
 })
 
 const StubField = (overrides: Partial<FieldProps>) => {

@@ -138,7 +138,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
@@ -335,7 +335,7 @@ describe('TurnControl Component', () => {
     let match = stubMatch()
 
     match = updatePlayer(match, stubPlayer1.id, {
-      field: { crops: [] },
+      field: { cards: [] },
     })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -360,7 +360,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
@@ -389,7 +389,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
@@ -450,7 +450,7 @@ describe('TurnControl Component', () => {
     let match = stubMatch()
 
     match = updatePlayer(match, stubPlayer1.id, {
-      field: { crops: [] },
+      field: { cards: [] },
     })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -477,7 +477,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },

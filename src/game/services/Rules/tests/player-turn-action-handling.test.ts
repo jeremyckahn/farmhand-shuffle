@@ -56,7 +56,7 @@ describe('player turn action handling', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
     expect(maybePlayer1.hand).toEqual([])
-    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
         instance: expectInstance(carrot),
         wasWateredDuringTurn: false,
@@ -98,7 +98,7 @@ describe('player turn action handling', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
     expect(maybePlayer1.hand).toEqual([pumpkin1])
-    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
         instance: expectInstance(carrot),
         wasWateredDuringTurn: false,
@@ -132,7 +132,7 @@ describe('player turn action handling', () => {
     if (!maybePlayer1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([undefined])
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([undefined])
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
         type: ShellNotificationType.CROP_HARVESTED,
@@ -154,7 +154,7 @@ describe('player turn action handling', () => {
     } = matchActor.getSnapshot()
 
     const filledField = {
-      crops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill(
+      cards: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill(
         factory.buildPlayedCrop(instantiate(carrot))
       ),
     }
@@ -228,7 +228,7 @@ describe('player turn action handling', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
     expect(maybePlayer1.hand).toEqual([])
-    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
         instance: expectInstance(carrot),
         wasWateredDuringTurn: true,

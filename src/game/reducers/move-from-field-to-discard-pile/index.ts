@@ -21,17 +21,17 @@ export const moveFromFieldToDiscardPile = (
 ) => {
   const player = lookup.getPlayer(match, playerId)
   const { field } = player
-  const playedCrop = field.crops[cardIdx]
+  const playedCrop = field.cards[cardIdx]
 
   if (!playedCrop) {
     throw new InvalidCardIndexError(cardIdx, playerId)
   }
 
-  let { crops } = field
+  let { cards } = field
 
-  crops = array.replaceAt(crops, cardIdx, undefined)
+  cards = array.replaceAt(cards, cardIdx, undefined)
 
-  match = updateField(match, playerId, { crops })
+  match = updateField(match, playerId, { cards })
   match = addToDiscardPile(match, playerId, playedCrop.instance)
 
   return match

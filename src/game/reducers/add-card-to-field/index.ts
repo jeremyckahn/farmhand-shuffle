@@ -19,9 +19,9 @@ export const addCardToField = (
 ) => {
   const player = lookup.getPlayer(match, playerId)
   const { field } = player
-  let { crops } = field
+  let { cards } = field
 
-  const fullPlots = crops.filter(Boolean)
+  const fullPlots = cards.filter(Boolean)
 
   if (fullPlots.length >= STANDARD_FIELD_SIZE) {
     throw new FieldFullError(playerId)
@@ -30,10 +30,10 @@ export const addCardToField = (
   if (fieldIdxToPlace === -1) {
     throw new GameStateCorruptError('fieldIdxToPlace must not be -1')
   } else {
-    crops = array.replaceAt(crops, fieldIdxToPlace, newCrop)
+    cards = array.replaceAt(cards, fieldIdxToPlace, newCrop)
   }
 
-  match = updateField(match, playerId, { crops })
+  match = updateField(match, playerId, { cards })
 
   return match
 }

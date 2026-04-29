@@ -35,7 +35,7 @@ export const WaitingForPlayerSetupActionTurnControl: Story = {
 
       match = updatePlayer(match, stubPlayer1.id, {
         field: {
-          crops: [
+          cards: [
             {
               instance: stubCarrot,
               wasWateredDuringTurn: false,

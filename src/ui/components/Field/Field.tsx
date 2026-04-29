@@ -128,7 +128,7 @@ export const Field = ({
 
   const paddedCrops = new Array(STANDARD_FIELD_SIZE)
     .fill(undefined)
-    .map((_, idx) => player.field.crops[idx])
+    .map((_, idx) => player.field.cards[idx])
 
   const displayedCrops = isSessionOwnerPlayer
     ? paddedCrops

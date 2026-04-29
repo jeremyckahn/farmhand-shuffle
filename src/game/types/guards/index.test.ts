@@ -25,7 +25,7 @@ const mockPlayedCrop = {
 }
 
 const mockField = {
-  crops: [mockPlayedCrop, undefined, undefined, undefined],
+  cards: [mockPlayedCrop, undefined, undefined, undefined],
 }
 
 const mockPlayer = {
@@ -111,8 +111,8 @@ describe('Type Guards', () => {
 
     it('returns false for invalid input', () => {
       expect(guards.isField(null)).toBe(false)
-      expect(guards.isField({ crops: 'not-array' })).toBe(false)
-      expect(guards.isField({ crops: [null] })).toBe(false) // null is not allowed in crops array (undefined is)
+      expect(guards.isField({ cards: 'not-array' })).toBe(false)
+      expect(guards.isField({ cards: [null] })).toBe(false) // null is not allowed in crops array (undefined is)
     })
   })
 

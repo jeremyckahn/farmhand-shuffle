@@ -159,8 +159,7 @@ export const isToolCardInstance = (
 }
 
 export interface IField {
-  // FIXME: Rename this to cards
-  readonly crops: (IPlayedCrop | IPlayedTool | undefined)[]
+  readonly cards: (IPlayedCrop | IPlayedTool | undefined)[]
 }
 
 export interface IPlayer {

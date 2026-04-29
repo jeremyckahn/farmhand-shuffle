@@ -178,7 +178,7 @@ describe('Lookup', () => {
       }
 
       // eslint-disable-next-line functional/immutable-data
-      player.field.crops[0] = factory.buildPlayedCrop(stubCarrot)
+      player.field.cards[0] = factory.buildPlayedCrop(stubCarrot)
     })
 
     test('returns card from field', () => {
@@ -202,7 +202,7 @@ describe('Lookup', () => {
         lookup.getPlayedCropFromField(
           mutatedMatch,
           stubPlayer1.id,
-          player.field.crops.length
+          player.field.cards.length
         )
       }).toThrow()
     })

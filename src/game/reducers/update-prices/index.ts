@@ -17,7 +17,7 @@ export const updatePrices = (match: IMatch) => {
       ...player.deck,
       ...player.hand,
       ...player.discardPile,
-      ...player.field.crops
+      ...player.field.cards
         .filter(
           (playedCrop): playedCrop is IPlayedCrop => playedCrop !== undefined
         )

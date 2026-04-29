@@ -50,11 +50,11 @@ describe('bot turn action handling', () => {
           throw new Error(`Player with ID ${playerId} not found`)
         }
 
-        const firstEmptyIdx = player.field.crops.findIndex(
+        const firstEmptyIdx = player.field.cards.findIndex(
           crop => typeof crop === 'undefined'
         )
 
-        return firstEmptyIdx === -1 ? player.field.crops.length : firstEmptyIdx
+        return firstEmptyIdx === -1 ? player.field.cards.length : firstEmptyIdx
       }
     )
   })
@@ -65,7 +65,7 @@ describe('bot turn action handling', () => {
     test.each<{
       startingHand: IPlayer['hand']
       startingDeck: IPlayer['deck']
-      resultingFieldCrops: IField['crops']
+      resultingFieldCrops: IField['cards']
       resultingHand: IPlayer['hand']
       resultingDeck: IPlayer['deck']
       playedCards: CardInstance[]
@@ -239,7 +239,7 @@ describe('bot turn action handling', () => {
           throw new Error('Player not found')
         }
 
-        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
         expect(player.hand).toEqual(resultingHand)
         expect(player.deck).toEqual(resultingDeck)
         expect(cropsToPlayDuringTurn).toEqual(0)
@@ -271,9 +271,9 @@ describe('bot turn action handling', () => {
     // NOTE: For each of these test cases, there was already a carrot in the
     // field as a result of createSetUpMatchActor.
     test.each<{
-      startingFieldCrops: IField['crops']
+      startingFieldCrops: IField['cards']
       startingDiscardPile: CardInstance[]
-      resultingFieldCrops: IField['crops']
+      resultingFieldCrops: IField['cards']
       resultingDiscardPile: CardInstance[]
       playedCards: CardInstance[]
     }>([
@@ -344,7 +344,7 @@ describe('bot turn action handling', () => {
         } = matchActor.getSnapshot()
 
         match = updateField(match, player2.id, {
-          crops: startingFieldCrops,
+          cards: startingFieldCrops,
         })
 
         match = updatePlayer(match, player2.id, {
@@ -373,7 +373,7 @@ describe('bot turn action handling', () => {
           throw new Error('Player not found')
         }
 
-        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
         expect(player.discardPile).toEqual<IPlayer['discardPile']>(
           resultingDiscardPile
         )
@@ -383,7 +383,7 @@ describe('bot turn action handling', () => {
 
     // NOTE: For this test case, there was already a carrot in the field as a
     // result of createSetUpMatchActor.
-    test('prevents planting crops if field is full', () => {
+    test('prevents planting cards if field is full', () => {
       // NOTE: When the turn starts, the player will draw an additional Carrot
       // from the deck. This would result in a hand that is the max size of the
       // field. With one Carrot already in the field, there would be only one
@@ -461,7 +461,7 @@ describe('bot turn action handling', () => {
       }
 
       expect(player.hand).toEqual(resultingHand)
-      expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+      expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
       expect(cropsToPlayDuringTurn).toEqual(0)
       expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
@@ -479,7 +479,7 @@ describe('bot turn action handling', () => {
 
     // NOTE: For this test case, there was already a carrot in the field as a
     // result of createSetUpMatchActor.
-    test('allows planting crops if field only has space in the middle', () => {
+    test('allows planting cards if field only has space in the middle', () => {
       // NOTE: When the turn starts, the player will draw a Carrot from the
       // deck.
       const startingHand: IPlayer['hand'] = []
@@ -542,7 +542,7 @@ describe('bot turn action handling', () => {
         deck: startingDeck,
         hand: startingHand,
         field: {
-          crops: startingFieldCrops,
+          cards: startingFieldCrops,
         },
       })
       matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
@@ -579,7 +579,7 @@ describe('bot turn action handling', () => {
       }
 
       expect(player.hand).toEqual(resultingHand)
-      expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+      expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
       expect(cropsToPlayDuringTurn).toEqual(0)
       expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
     })

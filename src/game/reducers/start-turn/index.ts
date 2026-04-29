@@ -28,10 +28,10 @@ export const startTurn = (
 
   const playerAfterDraw = lookup.getPlayer(match, playerId)
 
-  const crops = playerAfterDraw.field.crops
+  const cards = playerAfterDraw.field.cards
 
-  for (let i = 0; i < crops.length; i++) {
-    if (crops[i] === undefined) {
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i] === undefined) {
       continue
     }
 

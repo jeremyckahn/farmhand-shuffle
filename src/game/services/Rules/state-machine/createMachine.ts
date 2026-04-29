@@ -28,8 +28,8 @@ export const { createMachine } = setup({
       switch (event.type) {
         case MatchEvent.SELECT_CROP_TO_WATER: {
           const player = lookup.getPlayer(match, currentPlayerId)
-          const { crops } = player.field
-          const playedCrop = crops[event.cropIdxInFieldToWater]
+          const { cards } = player.field
+          const playedCrop = cards[event.cropIdxInFieldToWater]
 
           return playedCrop !== undefined
         }

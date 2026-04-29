@@ -69,7 +69,7 @@ describe('Rules/errors', () => {
       const error = new FieldEmptyError(playerId)
 
       expect(error.message).toBe(
-        `[FieldEmptyError] Player ${playerId} has no crops in the field.`
+        `[FieldEmptyError] Player ${playerId} has no cards in the field.`
       )
     })
   })

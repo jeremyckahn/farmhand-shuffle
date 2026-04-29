@@ -20,7 +20,7 @@ describe('rain card', () => {
             [stubPlayer1.id]: {
               ...stubPlayer1,
               field: {
-                crops: [
+                cards: [
                   undefined,
                   {
                     ...factory.buildPlayedCrop(stubCarrot),
@@ -43,7 +43,7 @@ describe('rain card', () => {
             [stubPlayer2.id]: {
               ...stubPlayer2,
               field: {
-                crops: [
+                cards: [
                   {
                     ...factory.buildPlayedCrop(stubCarrot),
                     wasWateredDuringTurn: false,
@@ -78,11 +78,11 @@ describe('rain card', () => {
         throw new Error('Player not found in test setup')
       }
 
-      const player1Crop1 = player1.field.crops[1]
-      const player1Crop2 = player1.field.crops[2]
-      const player1Crop3 = player1.field.crops[3]
-      const player2Crop0 = player2.field.crops[0]
-      const player2Crop2 = player2.field.crops[2]
+      const player1Crop1 = player1.field.cards[1]
+      const player1Crop2 = player1.field.cards[2]
+      const player1Crop3 = player1.field.cards[3]
+      const player2Crop0 = player2.field.cards[0]
+      const player2Crop2 = player2.field.cards[2]
 
       if (
         !player1Crop1 ||
