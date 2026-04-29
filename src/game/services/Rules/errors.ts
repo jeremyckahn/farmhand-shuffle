@@ -37,14 +37,6 @@ export class FieldFullError extends Error {
   }
 }
 
-// FIXME: Remove this
-export class FieldEmptyError extends Error {
-  constructor(playerId: IPlayer['id']) {
-    super(...arguments)
-    this.message = `[FieldEmptyError] Player ${playerId} has no cards in the field.`
-  }
-}
-
 export class InvalidCardIndexError extends Error {
   constructor(cardIdx: number, playerId: string) {
     super(...arguments)

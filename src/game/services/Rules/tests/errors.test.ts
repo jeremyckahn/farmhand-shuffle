@@ -4,7 +4,6 @@ import {
   MatchStateCorruptError,
   GameStateCorruptError,
   FieldFullError,
-  FieldEmptyError,
   InvalidCardIndexError,
   InvalidCardError,
   InvalidIdError,
@@ -60,16 +59,6 @@ describe('Rules/errors', () => {
 
       expect(error.message).toBe(
         `[FieldFullError] Player ${playerId} has no room in the field.`
-      )
-    })
-  })
-
-  describe('FieldEmptyError', () => {
-    it('should create an error with the correct message', () => {
-      const error = new FieldEmptyError(playerId)
-
-      expect(error.message).toBe(
-        `[FieldEmptyError] Player ${playerId} has no cards in the field.`
       )
     })
   })
