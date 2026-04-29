@@ -14,6 +14,7 @@ import {
   isToolCardInstance,
   ITable,
   ToolInstance,
+  CropInstance,
 } from '../'
 import * as cards from '../../cards'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
@@ -209,4 +210,21 @@ export function assertIsPlayedCrop(
   if (plotContents === undefined) {
     throw new TypeError(`Field plot at position ${fieldCropIdx} is undefined`)
   }
+}
+
+export const isCropCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance => {
+  return cardInstance.type === CardType.CROP
+}
+
+// FIXME: Test this
+export const isPlantableCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance => {
+  if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
+    return true
+  }
+
+  return isCropCardInstance(cardInstance)
 }

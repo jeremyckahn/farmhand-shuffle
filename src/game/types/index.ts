@@ -34,23 +34,6 @@ export interface ICrop extends ICard {
 
 export interface CropInstance extends ICrop, Instance {}
 
-export const isCropCardInstance = (
-  cardInstance: CardInstance
-): cardInstance is CropInstance => {
-  return cardInstance.type === CardType.CROP
-}
-
-// FIXME: Test this
-export const isPlantableCardInstance = (
-  cardInstance: CardInstance
-): cardInstance is CropInstance => {
-  if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
-    return true
-  }
-
-  return isCropCardInstance(cardInstance)
-}
-
 /**
  * A stateful representation of a Crop card that is in the Field.
  */

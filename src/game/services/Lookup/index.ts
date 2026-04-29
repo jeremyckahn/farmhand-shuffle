@@ -1,11 +1,11 @@
 import {
   IMatch,
   IPlayer,
-  isCropCardInstance,
   isEventCardInstance,
   isToolCardInstance,
   isWaterCardInstance,
 } from '../../types'
+import { isCropCardInstance } from '../../types/guards'
 import { assertCurrentPlayer, isCrop, isPlayedCrop } from '../../types/guards'
 import {
   InvalidCardError,

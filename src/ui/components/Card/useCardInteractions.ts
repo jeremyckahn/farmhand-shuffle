@@ -2,12 +2,8 @@ import { useContext } from 'react'
 
 import { STANDARD_FIELD_SIZE } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
-import {
-  CardType,
-  MatchEvent,
-  MatchState,
-  isCropCardInstance,
-} from '../../../game/types'
+import { CardType, MatchEvent, MatchState } from '../../../game/types'
+import { isCropCardInstance } from '../../../game/types/guards'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'

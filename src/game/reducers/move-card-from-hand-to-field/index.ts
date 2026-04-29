@@ -9,9 +9,9 @@ import {
   IPlayedCrop,
   IPlayedTool,
   IPlayer,
-  isCropCardInstance,
   isToolCardInstance,
 } from '../../types'
+import { isCropCardInstance } from '../../types/guards'
 import { addCardToField } from '../add-card-to-field'
 import { updatePlayer } from '../update-player'
 

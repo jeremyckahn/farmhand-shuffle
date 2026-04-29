@@ -1,9 +1,6 @@
 import { InvalidCardError } from '../../../game/services/Rules/errors'
-import {
-  CardInstance,
-  IPlayedCrop,
-  isCropCardInstance,
-} from '../../../game/types'
+import { CardInstance, IPlayedCrop } from '../../../game/types'
+import { isCropCardInstance } from '../../../game/types/guards'
 
 export const usePlayedCropLogic = ({
   card,

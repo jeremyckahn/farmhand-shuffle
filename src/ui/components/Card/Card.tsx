@@ -3,11 +3,11 @@ import ReactMarkdown from 'react-markdown'
 
 import { UnimplementedError } from '../../../game/services/Rules/errors'
 import {
-  isCropCardInstance,
   isEventCardInstance,
   isToolCardInstance,
   isWaterCardInstance,
 } from '../../../game/types'
+import { isCropCardInstance } from '../../../game/types/guards'
 import { isCrop } from '../../../game/types/guards'
 
 import { CardCore } from './CardCore'

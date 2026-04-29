@@ -1,5 +1,6 @@
 import { DECK_SIZE } from '../../config'
-import { IPlayerSeed, isCropCardInstance } from '../../types'
+import { IPlayerSeed } from '../../types'
+import { isCropCardInstance } from '../../types/guards'
 import { isCard } from '../../types/guards'
 import { MatchStateCorruptError } from '../Rules/errors'
 

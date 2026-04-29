@@ -13,11 +13,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import React, { useRef } from 'react'
 
 import {
-  isCropCardInstance,
   isEventCardInstance,
   isToolCardInstance,
   isWaterCardInstance,
 } from '../../../game/types'
+import { isCropCardInstance } from '../../../game/types/guards'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { ui } from '../../img'
