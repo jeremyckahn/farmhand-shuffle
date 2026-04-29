@@ -218,10 +218,10 @@ export const isCropCardInstance = (
   return cardInstance.type === CardType.CROP
 }
 
-// FIXME: Test this
+// FIXME: Remove this if unused before merging
 export const isPlantableCardInstance = (
   cardInstance: CardInstance
-): cardInstance is CropInstance => {
+): cardInstance is CropInstance | ToolInstance => {
   if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
     return true
   }

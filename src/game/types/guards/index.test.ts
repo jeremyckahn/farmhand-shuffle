@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { CardType, MatchState } from '../'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
+import { stubShovel, stubSprinkler } from '../../../test-utils/stubs/cards'
 
 import * as guards from './index'
 
@@ -260,6 +261,30 @@ describe('Type Guards', () => {
 
     it('throws TypeError for undefined', () => {
       expect(() => guards.assertIsPlayedCrop(undefined, 0)).toThrow(TypeError)
+    })
+  })
+
+  describe('isCropCardInstance', () => {
+    it('returns true for CROP card instance', () => {
+      expect(guards.isCropCardInstance(mockCardInstance)).toBe(true)
+    })
+
+    it('returns false for non-CROP card instance', () => {
+      expect(guards.isCropCardInstance(stubSprinkler)).toBe(false)
+    })
+  })
+
+  describe('isPlantableCardInstance', () => {
+    it('returns true for CROP card instance', () => {
+      expect(guards.isPlantableCardInstance(mockCardInstance)).toBe(true)
+    })
+
+    it('returns true for plantable TOOL card instance', () => {
+      expect(guards.isPlantableCardInstance(stubSprinkler)).toBe(true)
+    })
+
+    it('returns false for non-plantable TOOL card instance', () => {
+      expect(guards.isPlantableCardInstance(stubShovel)).toBe(false)
     })
   })
 })
