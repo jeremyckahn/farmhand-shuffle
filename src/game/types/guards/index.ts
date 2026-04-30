@@ -44,6 +44,23 @@ export const isCrop = (obj: unknown): obj is ICrop => {
   )
 }
 
+export const isCropCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance => {
+  return cardInstance.type === CardType.CROP
+}
+
+// FIXME: Remove this if unused before merging
+export const isPlantableCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance | ToolInstance => {
+  if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
+    return true
+  }
+
+  return isCropCardInstance(cardInstance)
+}
+
 export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
   if (!obj || typeof obj !== 'object') {
     return false
@@ -52,10 +69,9 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
   const o = obj
 
   return (
-    // FIXME: Ensure that instance is a crop instance and not a tool
     'instance' in o &&
-    typeof o.instance === 'object' &&
-    o.instance !== null &&
+    isCardInstance(o.instance) &&
+    isCropCardInstance(o.instance) &&
     'waterCards' in o &&
     typeof o.waterCards === 'number' &&
     'wasWateredDuringTurn' in o &&
@@ -211,21 +227,4 @@ export function assertIsPlayedCrop(
   if (plotContents === undefined) {
     throw new TypeError(`Field plot at position ${fieldCropIdx} is undefined`)
   }
-}
-
-export const isCropCardInstance = (
-  cardInstance: CardInstance
-): cardInstance is CropInstance => {
-  return cardInstance.type === CardType.CROP
-}
-
-// FIXME: Remove this if unused before merging
-export const isPlantableCardInstance = (
-  cardInstance: CardInstance
-): cardInstance is CropInstance | ToolInstance => {
-  if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
-    return true
-  }
-
-  return isCropCardInstance(cardInstance)
 }
