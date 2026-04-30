@@ -1,10 +1,10 @@
-import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { stubCarrot, stubSprinkler } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import { updateMatch } from '../../reducers/update-match'
 import { factory } from '../../services/Factory'
 import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
-import { IPlayedCrop, ShellNotificationType } from '../../types'
+import { IPlayedCrop, IPlayedTool, ShellNotificationType } from '../../types'
 
 import { rain } from './rain'
 
@@ -119,6 +119,70 @@ describe('rain card', () => {
       expect(triggerNotification).toHaveBeenCalledWith({
         type: ShellNotificationType.ALL_CROPS_WATERED,
         payload: {},
+      })
+    })
+
+    it('should not increment water cards for planted tools', () => {
+      let match = stubMatch()
+
+      match = updateMatch(match, {
+        table: {
+          ...stubMatch().table,
+          players: {
+            [stubPlayer1.id]: {
+              ...stubPlayer1,
+              field: {
+                cards: [
+                  {
+                    ...factory.buildPlayedCrop(stubCarrot),
+                    wasWateredDuringTurn: false,
+                    waterCards: 0,
+                  },
+                  {
+                    instance: stubSprinkler,
+                  },
+                  {
+                    instance: stubSprinkler,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      })
+
+      const { match: updatedMatch } = rain.applyEffect({
+        ...createMatchStateMachineContext(),
+        match,
+      })
+
+      const player1 = updatedMatch.table.players[stubPlayer1.id]
+
+      if (!player1) {
+        throw new Error('Player not found in test setup')
+      }
+
+      const player1PlantedCard0 = player1.field.cards[0]
+      const player1PlantedCard1 = player1.field.cards[1]
+      const player1PlantedCard2 = player1.field.cards[2]
+
+      if (
+        !player1PlantedCard0 ||
+        !player1PlantedCard1 ||
+        !player1PlantedCard2
+      ) {
+        throw new Error('Crop not found in test setup')
+      }
+
+      expect(player1PlantedCard0).toMatchObject<Partial<IPlayedCrop>>({
+        wasWateredDuringTurn: true,
+        waterCards: 1,
+      })
+      expect(player1PlantedCard1).toMatchObject<Partial<IPlayedTool>>({
+        instance: stubSprinkler,
+      })
+      expect(player1PlantedCard2).toMatchObject<Partial<IPlayedTool>>({
+        instance: stubSprinkler,
       })
     })
   })

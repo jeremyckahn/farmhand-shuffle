@@ -27,7 +27,6 @@ export const rain: IEvent = Object.freeze<IEvent>({
         if (!card) return card
 
         if (!isPlayedCrop(card)) {
-          // FIXME: Validate that planted tools aren't watered
           return card
         }
 

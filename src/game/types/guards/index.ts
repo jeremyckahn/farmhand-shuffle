@@ -52,6 +52,7 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
   const o = obj
 
   return (
+    // FIXME: Ensure that instance is a crop instance and not a tool
     'instance' in o &&
     typeof o.instance === 'object' &&
     o.instance !== null &&
