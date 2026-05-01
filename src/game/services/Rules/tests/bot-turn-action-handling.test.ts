@@ -34,7 +34,10 @@ import { botLogic } from '../../BotLogic'
 import {
   carrot1,
   createSetUpMatchActor,
-  expectInstance,
+  expectCropInstance,
+  expectEventInstance,
+  expectToolInstance,
+  expectWaterInstance,
   player1,
   player2,
   pumpkin1,
@@ -75,14 +78,14 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
         ],
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
-        playedCards: [expectInstance(water)],
+        playedCards: [expectWaterInstance(water)],
       },
 
       {
@@ -93,7 +96,7 @@ describe('bot turn action handling', () => {
         ],
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: false,
             waterCards: 0,
           },
@@ -105,7 +108,7 @@ describe('bot turn action handling', () => {
         ],
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 2).fill(stubWater),
-        playedCards: [expectInstance(carrot)],
+        playedCards: [expectCropInstance(carrot)],
       },
 
       {
@@ -113,7 +116,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -123,7 +126,7 @@ describe('bot turn action handling', () => {
         resultingHand: [stubWater],
 
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
-        playedCards: [expectInstance(water)],
+        playedCards: [expectWaterInstance(water)],
       },
 
       {
@@ -131,7 +134,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -139,7 +142,7 @@ describe('bot turn action handling', () => {
         ],
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
-        playedCards: [expectInstance(water), expectInstance(pumpkin)],
+        playedCards: [expectWaterInstance(water), expectCropInstance(pumpkin)],
       },
 
       {
@@ -147,7 +150,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -157,9 +160,9 @@ describe('bot turn action handling', () => {
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
         playedCards: [
-          expectInstance(water),
-          expectInstance(pumpkin),
-          expectInstance(carrot),
+          expectWaterInstance(water),
+          expectCropInstance(pumpkin),
+          expectCropInstance(carrot),
         ],
       },
 
@@ -168,7 +171,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -178,10 +181,10 @@ describe('bot turn action handling', () => {
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
         playedCards: [
-          expectInstance(water),
-          expectInstance(water),
-          expectInstance(pumpkin),
-          expectInstance(carrot),
+          expectWaterInstance(water),
+          expectWaterInstance(water),
+          expectCropInstance(pumpkin),
+          expectCropInstance(carrot),
         ],
       },
     ])(
@@ -252,7 +255,7 @@ describe('bot turn action handling', () => {
         const shellNotification: ShellNotification = {
           type: ShellNotificationType.CROP_WATERED,
           payload: {
-            cropWatered: expectInstance(carrot),
+            cropWatered: expectCropInstance(carrot),
           },
         }
 
@@ -324,9 +327,9 @@ describe('bot turn action handling', () => {
         ],
         resultingDiscardPile: [
           stubPumpkin,
-          expectInstance(water),
+          expectWaterInstance(water),
         ] as CardInstance[],
-        playedCards: [expectInstance(water)],
+        playedCards: [expectWaterInstance(water)],
       },
     ])(
       'harvests crops from starting field $startingFieldCrops',
@@ -396,14 +399,14 @@ describe('bot turn action handling', () => {
       const resultingFieldCrops = new Array<IPlayedCrop>(
         STANDARD_FIELD_SIZE
       ).fill({
-        instance: expectInstance(carrot),
+        instance: expectCropInstance(carrot),
         wasWateredDuringTurn: false,
         waterCards: 0,
       })
-      const resultingHand: IPlayer['hand'] = [expectInstance(carrot)]
+      const resultingHand: IPlayer['hand'] = [expectCropInstance(carrot)]
       const playedCards = new Array(STANDARD_FIELD_SIZE - 1)
         .fill(null)
-        .map(() => expectInstance(carrot))
+        .map(() => expectCropInstance(carrot))
 
       const matchActor = createSetUpMatchActor()
 
@@ -438,7 +441,7 @@ describe('bot turn action handling', () => {
         throw new Error('Player not found')
       }
 
-      expect(player.hand).toEqual([...startingHand, expectInstance(carrot)])
+      expect(player.hand).toEqual([...startingHand, expectCropInstance(carrot)])
 
       // NOTE: Performs all bot turn logic
       vi.runAllTimers()
@@ -468,7 +471,7 @@ describe('bot turn action handling', () => {
       const shellNotification: ShellNotification = {
         type: ShellNotificationType.CROP_WATERED,
         payload: {
-          cropWatered: expectInstance(carrot),
+          cropWatered: expectCropInstance(carrot),
         },
       }
 
@@ -489,13 +492,13 @@ describe('bot turn action handling', () => {
       // NOTE: Field is bookended by crops, but otherwise empty
       const startingFieldCrops: Array<IPlayedCrop | undefined> = [
         {
-          instance: expectInstance(carrot),
+          instance: expectCropInstance(carrot),
           wasWateredDuringTurn: false,
           waterCards: 0,
         },
         ...new Array<undefined>(STANDARD_FIELD_SIZE - 2).fill(undefined),
         {
-          instance: expectInstance(carrot),
+          instance: expectCropInstance(carrot),
           wasWateredDuringTurn: false,
           waterCards: 0,
         },
@@ -503,25 +506,25 @@ describe('bot turn action handling', () => {
 
       const resultingFieldCrops: Array<IPlayedCrop | undefined> = [
         {
-          instance: expectInstance(carrot),
+          instance: expectCropInstance(carrot),
           wasWateredDuringTurn: false,
           waterCards: 0,
         },
         {
-          instance: expectInstance(carrot),
+          instance: expectCropInstance(carrot),
           wasWateredDuringTurn: false,
           waterCards: 0,
         },
         ...new Array<undefined>(STANDARD_FIELD_SIZE - 3).fill(undefined),
         {
-          instance: expectInstance(carrot),
+          instance: expectCropInstance(carrot),
           wasWateredDuringTurn: false,
           waterCards: 0,
         },
       ]
 
       const resultingHand: IPlayer['hand'] = []
-      const playedCards = [expectInstance(carrot)]
+      const playedCards = [expectCropInstance(carrot)]
       const matchActor = createSetUpMatchActor()
 
       const snapshot = matchActor.getSnapshot()
@@ -610,7 +613,7 @@ describe('bot turn action handling', () => {
         startingHand: [stubRain],
         resultingHand: [stubPumpkin],
         resultingDiscardPile: [stubRain],
-        playedCards: [expectInstance(rain)],
+        playedCards: [expectEventInstance(rain)],
       },
       {
         numberOfEventCardsToPlay: 1,
@@ -618,7 +621,7 @@ describe('bot turn action handling', () => {
         startingHand: [stubRain, stubRain],
         resultingHand: [stubRain, stubPumpkin],
         resultingDiscardPile: [stubRain],
-        playedCards: [expectInstance(rain)],
+        playedCards: [expectEventInstance(rain)],
       },
     ])(
       'plays $numberOfEventCardsToPlay event cards from hand with $startingHandEvents.length of them',
@@ -715,7 +718,7 @@ describe('bot turn action handling', () => {
         // it is set in the field due to `generate` being mocked as 1.
         resultingHand: [stubPumpkin, stubPumpkin],
         resultingDiscardPile: [stubShovel],
-        playedCards: [expectInstance(shovel), expectInstance(pumpkin)],
+        playedCards: [expectToolInstance(shovel), expectCropInstance(pumpkin)],
       },
       {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubPumpkin),
@@ -725,9 +728,9 @@ describe('bot turn action handling', () => {
         resultingHand: [stubPumpkin, stubPumpkin, stubPumpkin, stubPumpkin],
         resultingDiscardPile: [stubShovel, stubShovel],
         playedCards: [
-          expectInstance(shovel),
-          expectInstance(shovel),
-          expectInstance(pumpkin),
+          expectToolInstance(shovel),
+          expectToolInstance(shovel),
+          expectCropInstance(pumpkin),
         ],
       },
     ])(

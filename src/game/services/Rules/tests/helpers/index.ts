@@ -5,7 +5,16 @@ import {
 } from '../../../../../test-utils/stubs/players'
 import { carrot, instantiate, pumpkin } from '../../../../cards'
 import { updatePlayer } from '../../../../reducers/update-player'
-import { CropInstance, MatchEvent, ICard, CardType } from '../../../../types'
+import {
+  CropInstance,
+  MatchEvent,
+  ICard,
+  CardType,
+  CardInstance,
+  WaterInstance,
+  EventInstance,
+  ToolInstance,
+} from '../../../../types'
 
 import { rules } from '../..'
 
@@ -22,21 +31,40 @@ afterEach(() => {
   vi.useRealTimers()
 })
 
-// FIXME: This needs to support non-crop card instances or be renamed to indicate it is specific to crops
-export const expectInstance = ({ id }: ICard): CropInstance => {
-  const expectedInstance = expect.objectContaining<Partial<CropInstance>>({
-    id,
+const expectInstance = (id: string, type: CardType): CardInstance => {
+  return Object.assign(
+    expect.objectContaining<Partial<CardInstance>>({
+      id,
+    }),
+    {
+      // NOTE: These properties are needed to satisfy type guards
+      id,
+      instanceId: stubInstanceId,
+      type,
+    }
+  ) as CardInstance
+}
+
+const stubInstanceId = 'stub-instance-id'
+
+export const expectCropInstance = ({ id }: ICard): CropInstance => {
+  const expectedInstance = Object.assign(expectInstance(id, CardType.CROP), {
+    type: CardType.CROP,
   }) as CropInstance
 
-  // eslint-disable-next-line functional/immutable-data
-  Object.assign(expectedInstance, {
-    // NOTE: Mocks properties to satisfy isCropCardInstance
-    type: CardType.CROP,
-    id,
-    instanceId: 'stub-instance-id',
-  })
-
   return expectedInstance
+}
+
+export const expectWaterInstance = ({ id }: ICard): WaterInstance => {
+  return expectInstance(id, CardType.WATER) as WaterInstance
+}
+
+export const expectEventInstance = ({ id }: ICard): EventInstance => {
+  return expectInstance(id, CardType.EVENT) as EventInstance
+}
+
+export const expectToolInstance = ({ id }: ICard): ToolInstance => {
+  return expectInstance(id, CardType.TOOL) as ToolInstance
 }
 
 export const carrot1 = instantiate(carrot)

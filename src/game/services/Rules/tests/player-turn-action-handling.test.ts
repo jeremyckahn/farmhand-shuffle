@@ -15,7 +15,8 @@ import { updatePlayer } from '../../../reducers/update-player'
 
 import {
   createSetUpMatchActor,
-  expectInstance,
+  expectCropInstance,
+  expectWaterInstance,
   player1,
   player2,
   pumpkin1,
@@ -58,7 +59,7 @@ describe('player turn action handling', () => {
     expect(maybePlayer1.hand).toEqual([])
     expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
-        instance: expectInstance(carrot),
+        instance: expectCropInstance(carrot),
         wasWateredDuringTurn: false,
         waterCards: 0,
       },
@@ -100,7 +101,7 @@ describe('player turn action handling', () => {
     expect(maybePlayer1.hand).toEqual([pumpkin1])
     expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
-        instance: expectInstance(carrot),
+        instance: expectCropInstance(carrot),
         wasWateredDuringTurn: false,
         waterCards: 0,
       },
@@ -137,7 +138,7 @@ describe('player turn action handling', () => {
       {
         type: ShellNotificationType.CROP_HARVESTED,
         payload: {
-          cropHarvested: expectInstance(carrot),
+          cropHarvested: expectCropInstance(carrot),
         },
       }
     )
@@ -230,18 +231,20 @@ describe('player turn action handling', () => {
     expect(maybePlayer1.hand).toEqual([])
     expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
-        instance: expectInstance(carrot),
+        instance: expectCropInstance(carrot),
         wasWateredDuringTurn: true,
         waterCards: 1,
       },
     ])
-    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([expectInstance(water)])
+    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([
+      expectWaterInstance(water),
+    ])
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
         type: ShellNotificationType.CROP_WATERED,
         payload: {
-          cropWatered: expectInstance(carrot),
+          cropWatered: expectCropInstance(carrot),
         },
       }
     )
