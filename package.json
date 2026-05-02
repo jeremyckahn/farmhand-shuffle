@@ -103,7 +103,7 @@
     "seedrandom": "^3.0.5",
     "typeface-roboto": "^1.1.13",
     "usehooks-ts": "^2.16.0",
-    "uuid": "^9.0.0",
+    "uuid": "^14.0.0",
     "xstate": "^5.19.1"
   }
 }
