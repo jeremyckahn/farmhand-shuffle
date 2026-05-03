@@ -56,7 +56,6 @@ export const playingToolCard: RulesMachineConfig['states'] = {
           )
 
           if (typeof openFieldPositionIdx === 'undefined') {
-            // FIXME: Ensure this scenario is prevented
             throw new GameStateCorruptError(
               `${MatchEvent.PLAY_TOOL} event occurred for a full field`
             )

@@ -1,12 +1,17 @@
 import {
   IMatch,
+  IPlayedCard,
   IPlayer,
   isEventCardInstance,
   isToolCardInstance,
   isWaterCardInstance,
 } from '../../types'
-import { isCropCardInstance } from '../../types/guards'
-import { assertCurrentPlayer, isCrop, isPlayedCrop } from '../../types/guards'
+import {
+  assertCurrentPlayer,
+  isCrop,
+  isCropCardInstance,
+  isPlayedCrop,
+} from '../../types/guards'
 import {
   InvalidCardError,
   InvalidCardIndexError,
@@ -195,6 +200,17 @@ export class LookupService {
     const nextPlayerIdx = (currentPlayerIdx + 1) % playerIds.length
 
     return nextPlayerIdx
+  }
+
+  // FIXME: Test this
+  fullPlots = (match: IMatch, playerId: IPlayer['id']) => {
+    const player = lookup.getPlayer(match, playerId)
+    const { field } = player
+    const { cards } = field
+
+    const fullPlots = cards.filter((card): card is IPlayedCard => Boolean(card))
+
+    return fullPlots
   }
 }
 

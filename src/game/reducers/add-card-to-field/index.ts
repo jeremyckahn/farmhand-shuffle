@@ -21,7 +21,7 @@ export const addCardToField = (
   const { field } = player
   let { cards } = field
 
-  const fullPlots = cards.filter(Boolean)
+  const fullPlots = lookup.fullPlots(match, playerId)
 
   if (fullPlots.length >= STANDARD_FIELD_SIZE) {
     throw new FieldFullError(playerId)

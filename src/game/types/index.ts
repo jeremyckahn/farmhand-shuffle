@@ -141,8 +141,10 @@ export const isToolCardInstance = (
   return cardInstance.type === CardType.TOOL
 }
 
+export type IPlayedCard = IPlayedCrop | IPlayedTool
+
 export interface IField {
-  readonly cards: (IPlayedCrop | IPlayedTool | undefined)[]
+  readonly cards: (IPlayedCard | undefined)[]
 }
 
 export interface IPlayer {

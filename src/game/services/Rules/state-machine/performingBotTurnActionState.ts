@@ -1,11 +1,13 @@
 import { enqueueActions } from 'xstate'
 
 import { randomNumber } from '../../../../services/RandomNumber'
-import { BOT_ACTION_DELAY } from '../../../config'
+import { allCards } from '../../../cards'
+import { BOT_ACTION_DELAY, STANDARD_FIELD_SIZE } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
 import {
   BotTurnActionState,
+  ITool,
   MatchEvent,
   MatchState,
   isToolCardInstance,
@@ -346,20 +348,38 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
               if (toolCardIdxToPlay === undefined) {
                 throw new MatchStateCorruptError(
-                  `areToolsToPlay is true but there are no tool in the hand of bot player ${currentPlayerId}`
+                  `areToolsToPlay is true but there are no tools in the hand of bot player ${currentPlayerId}`
                 )
               }
 
-              enqueue.raise(
-                {
-                  type: MatchEvent.PLAY_TOOL,
-                  cardIdx: toolCardIdxToPlay,
-                  playerId: currentPlayerId,
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
-              )
+              const toolCardInstance =
+                match.table.players[currentPlayerId]?.hand[toolCardIdxToPlay]
+
+              if (!toolCardInstance) {
+                throw new GameStateCorruptError('toolCardInstance is undefined')
+              }
+
+              // FIXME: Avoid use of `as`
+              const toolCard = allCards[toolCardInstance.id] as ITool
+
+              // FIXME: Test that skipping over a plantable tool cards in the case of full field does not cause a crash
+              if (
+                !toolCard.isPlantable ||
+                (toolCard.isPlantable &&
+                  lookup.fullPlots(match, currentPlayerId).length <
+                    STANDARD_FIELD_SIZE)
+              ) {
+                enqueue.raise(
+                  {
+                    type: MatchEvent.PLAY_TOOL,
+                    cardIdx: toolCardIdxToPlay,
+                    playerId: currentPlayerId,
+                  },
+                  {
+                    delay: BOT_ACTION_DELAY,
+                  }
+                )
+              }
             } else {
               enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
             }
