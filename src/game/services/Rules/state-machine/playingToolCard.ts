@@ -3,7 +3,10 @@ import { assertEvent, enqueueActions } from 'xstate'
 import { moveCardFromHandToField } from '../../../reducers/move-card-from-hand-to-field'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
-import { assertCurrentPlayer, assertIsToolCard } from '../../../types/guards'
+import {
+  assertCurrentPlayer,
+  assertIsToolCardInstance,
+} from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
 import { GameStateCorruptError } from '../errors'
@@ -37,7 +40,7 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         const { playerId, cardIdx } = event
         const card = lookup.getCardFromHand(match, playerId, cardIdx)
 
-        assertIsToolCard(card)
+        assertIsToolCardInstance(card)
         assertCurrentPlayer(currentPlayerId)
 
         triggerNotification({

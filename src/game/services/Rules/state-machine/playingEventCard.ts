@@ -2,7 +2,10 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
-import { assertCurrentPlayer, assertIsEventCard } from '../../../types/guards'
+import {
+  assertCurrentPlayer,
+  assertIsEventCardInstance,
+} from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
@@ -33,7 +36,7 @@ export const playingEventCard: RulesMachineConfig['states'] = {
         const { playerId, cardIdx } = event
         const card = lookup.getCardFromHand(match, playerId, cardIdx)
 
-        assertIsEventCard(card)
+        assertIsEventCardInstance(card)
         assertCurrentPlayer(currentPlayerId)
 
         triggerNotification({

@@ -200,31 +200,35 @@ describe('Type Guards', () => {
     })
   })
 
-  describe('assertIsEventCard', () => {
+  describe('assertIsEventCardInstance', () => {
     it('does not throw for valid Event card', () => {
       const eventCard = { ...mockCardInstance, type: CardType.EVENT }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      expect(() => guards.assertIsEventCard(eventCard as any)).not.toThrow()
+      expect(() =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+        guards.assertIsEventCardInstance(eventCard as any)
+      ).not.toThrow()
     })
 
     it('throws MatchStateCorruptError for non-Event card', () => {
-      expect(() => guards.assertIsEventCard(mockCardInstance)).toThrow(
+      expect(() => guards.assertIsEventCardInstance(mockCardInstance)).toThrow(
         MatchStateCorruptError
       )
     })
   })
 
-  describe('assertIsToolCard', () => {
+  describe('assertIsToolCardInstance', () => {
     it('does not throw for valid Tool card', () => {
       const toolCard = { ...mockCardInstance, type: CardType.TOOL }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      expect(() => guards.assertIsToolCard(toolCard as any)).not.toThrow()
+      expect(() =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+        guards.assertIsToolCardInstance(toolCard as any)
+      ).not.toThrow()
     })
 
     it('throws MatchStateCorruptError for non-Tool card', () => {
-      expect(() => guards.assertIsToolCard(mockCardInstance)).toThrow(
+      expect(() => guards.assertIsToolCardInstance(mockCardInstance)).toThrow(
         MatchStateCorruptError
       )
     })

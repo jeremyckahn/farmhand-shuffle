@@ -188,7 +188,15 @@ export function assertIsCardId(id: string): asserts id is keyof typeof cards {
   }
 }
 
-export function assertIsEventCard(
+export function assertIsToolCardId(
+  id: string
+): asserts id is keyof typeof cards.toolCards {
+  if (!(id in cards.toolCards)) {
+    throw new MatchStateCorruptError(`${id} is not a valid tool card ID`)
+  }
+}
+
+export function assertIsEventCardInstance(
   card: CardInstance
 ): asserts card is EventInstance {
   if (!isEventCardInstance(card)) {
@@ -196,19 +204,11 @@ export function assertIsEventCard(
   }
 }
 
-export function assertIsToolCard(
+export function assertIsToolCardInstance(
   card: CardInstance
 ): asserts card is ToolInstance {
   if (!isToolCardInstance(card)) {
     throw new MatchStateCorruptError(`${card.id} is not a tool card`)
-  }
-}
-
-export function assertIsToolCardId(
-  id: string
-): asserts id is keyof typeof cards.toolCards {
-  if (!(id in cards.toolCards)) {
-    throw new MatchStateCorruptError(`${id} is not a valid tool card ID`)
   }
 }
 
