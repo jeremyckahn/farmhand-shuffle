@@ -204,6 +204,14 @@ export function assertIsToolCard(
   }
 }
 
+export function assertIsToolCardId(
+  id: string
+): asserts id is keyof typeof cards.toolCards {
+  if (!(id in cards.toolCards)) {
+    throw new MatchStateCorruptError(`${id} is not a valid tool card ID`)
+  }
+}
+
 export function assertCurrentPlayer(
   currentPlayerId: string | null
 ): asserts currentPlayerId is string {

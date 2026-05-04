@@ -1,18 +1,17 @@
 import { enqueueActions } from 'xstate'
 
 import { randomNumber } from '../../../../services/RandomNumber'
-import { allCards } from '../../../cards'
+import { toolCards } from '../../../cards'
 import { BOT_ACTION_DELAY, STANDARD_FIELD_SIZE } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
 import {
   BotTurnActionState,
-  ITool,
   MatchEvent,
   MatchState,
   isToolCardInstance,
 } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
+import { assertCurrentPlayer, assertIsToolCardId } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
 import { GameStateCorruptError, MatchStateCorruptError } from '../errors'
@@ -359,8 +358,13 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 throw new GameStateCorruptError('toolCardInstance is undefined')
               }
 
-              // FIXME: Avoid use of `as`
-              const toolCard = allCards[toolCardInstance.id] as ITool
+              if (!(toolCardInstance.id in toolCards)) {
+                throw new GameStateCorruptError('')
+              }
+
+              assertIsToolCardId(toolCardInstance.id)
+
+              const toolCard = toolCards[toolCardInstance.id]
 
               // FIXME: Test that skipping over a plantable tool cards in the case of full field does not cause a crash
               if (
