@@ -283,4 +283,23 @@ describe('Lookup', () => {
       expect(nextPlayer).toEqual(1)
     })
   })
+
+  describe('fullPlots', () => {
+    test('filter out empty plots', () => {
+      let match = stubMatch()
+
+      const playedCrop1 = factory.buildPlayedCrop(stubCarrot)
+      const playedCrop2 = factory.buildPlayedCrop(stubCarrot)
+
+      match = updatePlayer(match, stubPlayer1.id, {
+        field: {
+          cards: [undefined, playedCrop1, undefined, playedCrop2, undefined],
+        },
+      })
+
+      const fullPlots = lookup.fullPlots(match, stubPlayer1.id)
+
+      expect(fullPlots).toEqual([playedCrop1, playedCrop2])
+    })
+  })
 })

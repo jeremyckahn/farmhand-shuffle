@@ -202,7 +202,6 @@ export class LookupService {
     return nextPlayerIdx
   }
 
-  // FIXME: Test this
   fullPlots = (match: IMatch, playerId: IPlayer['id']) => {
     const player = lookup.getPlayer(match, playerId)
     const { field } = player
