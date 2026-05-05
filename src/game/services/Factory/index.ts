@@ -10,9 +10,11 @@ import {
   IField,
   IMatch,
   IPlayedCrop,
+  IPlayedTool,
   IPlayer,
   IPlayerSeed,
   ITable,
+  ToolInstance,
 } from '../../types'
 import { validate } from '../Validation'
 
@@ -122,6 +124,13 @@ export class FactoryService {
       instance: cropInstance,
       wasWateredDuringTurn: false,
       waterCards: 0,
+    }
+  }
+
+  // FIXME: Test this
+  buildPlayedTool(toolInstance: ToolInstance): IPlayedTool {
+    return {
+      instance: toolInstance,
     }
   }
 }

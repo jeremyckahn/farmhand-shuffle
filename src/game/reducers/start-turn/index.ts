@@ -8,6 +8,7 @@ import { updatePlayedCrop } from '../update-played-crop'
 import { updatePlayer } from '../update-player'
 import { updatePrices } from '../update-prices'
 import { updateMatch } from '../update-match'
+import { isPlayedCrop } from '../../types/guards'
 
 export const startTurn = (
   match: IMatch,
@@ -31,7 +32,9 @@ export const startTurn = (
   const cards = playerAfterDraw.field.cards
 
   for (let i = 0; i < cards.length; i++) {
-    if (cards[i] === undefined) {
+    const card = cards[i]
+
+    if (!isPlayedCrop(card)) {
       continue
     }
 
