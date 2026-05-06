@@ -366,12 +366,12 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
               const toolCard = toolCards[toolCardInstance.id]
 
-              if (
-                !toolCard.isPlantable ||
-                (toolCard.isPlantable &&
-                  lookup.fullPlots(match, currentPlayerId).length <
-                    STANDARD_FIELD_SIZE)
-              ) {
+              const isPlantableAndCanBePlayed =
+                toolCard.isPlantable &&
+                lookup.fullPlots(match, currentPlayerId).length <
+                  STANDARD_FIELD_SIZE
+
+              if (!toolCard.isPlantable || isPlantableAndCanBePlayed) {
                 enqueue.raise(
                   {
                     type: MatchEvent.PLAY_TOOL,
@@ -383,6 +383,13 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   }
                 )
               } else {
+                // NOTE: Currently, if the bot attempts to play a plantable
+                // tool card but there is no room in the Field, the Tool phase
+                // of the bot's turn ends here. This prevents the potential
+                // playing of non-plantable tools.
+                //
+                // TODO: Improve the logic to continue to play any
+                // non-plantable tools when plantable tools are skipped.
                 enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
               }
             } else {
