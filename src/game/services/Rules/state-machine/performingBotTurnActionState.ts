@@ -366,7 +366,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
               const toolCard = toolCards[toolCardInstance.id]
 
-              // FIXME: Test that skipping over a plantable tool cards in the case of full field does not cause a crash
               if (
                 !toolCard.isPlantable ||
                 (toolCard.isPlantable &&
@@ -383,6 +382,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                     delay: BOT_ACTION_DELAY,
                   }
                 )
+              } else {
+                enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
               }
             } else {
               enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })

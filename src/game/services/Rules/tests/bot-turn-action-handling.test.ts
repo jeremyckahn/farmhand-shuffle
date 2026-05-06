@@ -5,6 +5,7 @@ import {
   stubPumpkin,
   stubRain,
   stubShovel,
+  stubSprinkler,
   stubWater,
 } from '../../../../test-utils/stubs/cards'
 import {
@@ -13,6 +14,7 @@ import {
   pumpkin,
   rain,
   shovel,
+  sprinkler,
   water,
 } from '../../../cards'
 import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../../config'
@@ -30,6 +32,7 @@ import {
 } from '../../../types'
 import { isPlayedCrop } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
+import { factory } from '../../Factory'
 
 import {
   carrot1,
@@ -708,7 +711,7 @@ describe('bot turn action handling', () => {
       startingDeck: IPlayer['deck']
       startingHand: IPlayer['hand']
       resultingHand: IPlayer['hand']
-      resultingDiscardPile: CardInstance[]
+      resultingDiscardPile: IPlayer['discardPile']
       playedCards: CardInstance[]
     }>([
       {
@@ -803,5 +806,84 @@ describe('bot turn action handling', () => {
         >(shellNotification)
       }
     )
+
+    test('skips playing plantable tool cards when field is full', () => {
+      // NOTE: This causes the maximum amount of tools in the hand to be
+      // played.
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
+
+      const matchActor = createSetUpMatchActor()
+
+      const snapshot = matchActor.getSnapshot()
+      let {
+        context: { match },
+      } = snapshot
+      const {
+        context: { shell },
+      } = snapshot
+
+      vi.spyOn(shell, 'triggerNotification')
+
+      const startingDeck: IPlayer['deck'] = new Array<CardInstance>(
+        DECK_SIZE
+      ).fill(stubWater)
+      const startingHand: IPlayer['hand'] = [stubSprinkler]
+      const startingField: IPlayer['field'] = {
+        cards: Array.from({ length: STANDARD_FIELD_SIZE }, () =>
+          factory.buildPlayedTool(instantiate(sprinkler))
+        ),
+      }
+
+      const resultingHand: IPlayer['hand'] = [stubSprinkler, stubWater]
+      const resultingDiscardPile: IPlayer['discardPile'] = []
+      const playedCards: CardInstance[] = []
+
+      match = updatePlayer(match, player2.id, {
+        deck: startingDeck,
+        hand: startingHand,
+        field: startingField,
+      })
+
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+      // NOTE: Prompts bot player
+      matchActor.send({ type: MatchEvent.START_TURN })
+
+      // NOTE: Performs all bot turn logic
+      vi.runAllTimers()
+
+      const {
+        value,
+        context: { match: matchResult },
+      } = matchActor.getSnapshot()
+
+      vi.runAllTimers()
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(matchResult.currentPlayerId).toBe(player1.id)
+
+      const player = matchResult.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      expect(player.hand).toEqual<IPlayer['hand']>(resultingHand)
+      expect(player.discardPile).toEqual<IPlayer['discardPile']>(
+        resultingDiscardPile
+      )
+      expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
+
+      const shellNotification: ShellNotification = {
+        type: ShellNotificationType.TOOL_CARD_PLAYED,
+        payload: {
+          toolCard: stubSprinkler,
+        },
+      }
+
+      expect(shell.triggerNotification).not.toHaveBeenCalledWith<
+        ShellNotification[]
+      >(shellNotification)
+    })
   })
 })
