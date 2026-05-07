@@ -1,7 +1,5 @@
 import { factory } from '../../../game/services/Factory'
-
 import { InvalidCardError } from '../../../game/services/Rules/errors'
-
 import { IPlayedCrop } from '../../../game/types'
 import {
   stubCarrot,
@@ -9,9 +7,9 @@ import {
   stubShovel,
 } from '../../../test-utils/stubs/cards'
 
-import { usePlayedCropLogic } from './usePlayedCropLogic'
+import { usePlayedCardLogic } from './usePlayedCardLogic'
 
-describe('usePlayedCropLogic', () => {
+describe('usePlayedCardLogic', () => {
   const validCard = stubCarrot
 
   const playedCropNoWater: IPlayedCrop = {
@@ -33,13 +31,13 @@ describe('usePlayedCropLogic', () => {
     'should throw InvalidCardError if card is not plantable',
     ({ invalidCard }) => {
       expect(() =>
-        usePlayedCropLogic({ card: invalidCard, playedCard: playedCropNoWater })
+        usePlayedCardLogic({ card: invalidCard, playedCard: playedCropNoWater })
       ).toThrow(InvalidCardError)
     }
   )
 
   it('should calculate waterIconsToRender correctly when not enough water', () => {
-    const result = usePlayedCropLogic({
+    const result = usePlayedCardLogic({
       card: validCard,
       playedCard: playedCropNoWater,
     })
@@ -48,7 +46,7 @@ describe('usePlayedCropLogic', () => {
   })
 
   it('should calculate waterIconsToRender correctly when enough water', () => {
-    const result = usePlayedCropLogic({
+    const result = usePlayedCardLogic({
       card: validCard,
       playedCard: playedCropWithEnoughWater,
     })
@@ -57,7 +55,7 @@ describe('usePlayedCropLogic', () => {
   })
 
   it('should calculate waterIconsToRender correctly when there is extra water', () => {
-    const result = usePlayedCropLogic({
+    const result = usePlayedCardLogic({
       card: validCard,
       playedCard: playedCropWithExtraWater,
     })
@@ -66,7 +64,7 @@ describe('usePlayedCropLogic', () => {
   })
 
   it('should determine canBeWatered correctly when not watered', () => {
-    const result = usePlayedCropLogic({
+    const result = usePlayedCardLogic({
       card: validCard,
       playedCard: playedCropNoWater,
     })
@@ -75,7 +73,7 @@ describe('usePlayedCropLogic', () => {
   })
 
   it('should determine canBeHarvested correctly when not enough water', () => {
-    const result = usePlayedCropLogic({
+    const result = usePlayedCardLogic({
       card: validCard,
       playedCard: playedCropNoWater,
     })
@@ -84,7 +82,7 @@ describe('usePlayedCropLogic', () => {
   })
 
   it('should determine canBeHarvested correctly when enough water', () => {
-    const result = usePlayedCropLogic({
+    const result = usePlayedCardLogic({
       card: validCard,
       playedCard: playedCropWithEnoughWater,
     })

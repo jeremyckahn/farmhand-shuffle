@@ -10,8 +10,7 @@ import {
   isPlayedTool,
 } from '../../../game/types/guards'
 
-// FIXME: Rename this to usePlayedCardLogic
-export const usePlayedCropLogic = ({
+export const usePlayedCardLogic = ({
   card,
   playedCard,
 }: {

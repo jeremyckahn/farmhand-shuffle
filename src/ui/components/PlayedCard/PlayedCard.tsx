@@ -11,7 +11,7 @@ import { Card } from '../Card'
 import { BaseCardProps } from '../Card/types'
 import { Image } from '../Image'
 
-import { usePlayedCropLogic } from './usePlayedCropLogic'
+import { usePlayedCardLogic } from './usePlayedCardLogic'
 
 export interface PlayedCropProps extends BoxProps {
   cardProps: BaseCardProps & { playedCard: IPlayedCard }
@@ -32,7 +32,7 @@ export const PlayedCard = ({
   const { cardInstance, playedCard, size = CardSize.MEDIUM } = cardProps
 
   const { canBeWatered, canBeHarvested, waterIconsToRender } =
-    usePlayedCropLogic({ card: cardInstance, playedCard })
+    usePlayedCardLogic({ card: cardInstance, playedCard })
 
   return (
     <Box
