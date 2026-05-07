@@ -29,11 +29,11 @@ type Story = StoryObj<typeof meta>
 
 export const PlayedCropCard: Story = {
   args: {
-    cropCardProps: {
+    cardProps: {
       cardInstance: stubCarrot,
       cardIdx: 0,
       playerId: '',
-      playedCrop: {
+      playedCard: {
         instance: stubCarrot,
         wasWateredDuringTurn: false,
         waterCards: 1,
@@ -45,11 +45,11 @@ export const PlayedCropCard: Story = {
 
 export const PlayedCropCardWithExtraWater: Story = {
   args: {
-    cropCardProps: {
+    cardProps: {
       cardInstance: stubCarrot,
       cardIdx: 0,
       playerId: '',
-      playedCrop: {
+      playedCard: {
         instance: stubCarrot,
         wasWateredDuringTurn: false,
         waterCards: 5,

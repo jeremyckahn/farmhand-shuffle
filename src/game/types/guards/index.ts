@@ -15,6 +15,8 @@ import {
   ITable,
   ToolInstance,
   CropInstance,
+  IPlayedTool,
+  IPlayedCard,
 } from '../'
 import * as cards from '../../cards'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
@@ -50,7 +52,6 @@ export const isCropCardInstance = (
   return cardInstance.type === CardType.CROP
 }
 
-// FIXME: Remove this if unused before merging
 export const isPlantableCardInstance = (
   cardInstance: CardInstance
 ): cardInstance is CropInstance | ToolInstance => {
@@ -77,6 +78,26 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
     'wasWateredDuringTurn' in o &&
     typeof o.wasWateredDuringTurn === 'boolean'
   )
+}
+
+// FIXME: Test this
+export const isPlayedTool = (obj: unknown): obj is IPlayedTool => {
+  if (!obj || typeof obj !== 'object') {
+    return false
+  }
+
+  const o = obj
+
+  return (
+    'instance' in o &&
+    isCardInstance(o.instance) &&
+    isToolCardInstance(o.instance)
+  )
+}
+
+// FIXME: Test this
+export const isPlayedCard = (obj: unknown): obj is IPlayedCard => {
+  return isPlayedCrop(obj) || isPlayedTool(obj)
 }
 
 export const isField = (obj: unknown): obj is IField => {

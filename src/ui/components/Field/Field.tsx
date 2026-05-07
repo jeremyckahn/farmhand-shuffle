@@ -10,9 +10,9 @@ import {
 } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
-import { isPlayedCrop } from '../../../game/types/guards'
+import { isPlayedCard } from '../../../game/types/guards'
 import { CardSize } from '../../types'
-import { PlayedCard, playedCropClassName } from '../PlayedCard'
+import { PlayedCard, playedCardClassName } from '../PlayedCard'
 
 import { EmptyPlot } from './EmptyPlot'
 
@@ -91,7 +91,7 @@ export const Field = ({
     // CardCore component (which is rendered by PlayedCard). So, this handler
     // needs to check to see if that would happen and abort its execution if
     // so.
-    if (!target.classList.contains(playedCropClassName)) {
+    if (!target.classList.contains(playedCardClassName)) {
       return
     }
 
@@ -130,7 +130,7 @@ export const Field = ({
     .fill(undefined)
     .map((_, idx) => player.field.cards[idx])
 
-  const displayedCrops = isSessionOwnerPlayer
+  const displayedCards = isSessionOwnerPlayer
     ? paddedCrops
     : [...paddedCrops].reverse()
 
@@ -148,13 +148,13 @@ export const Field = ({
         alignItems={isSessionOwnerPlayer ? 'flex-start' : 'flex-end'}
         justifyContent="center"
       >
-        {displayedCrops.map((playedCrop, renderedIdx) => {
+        {displayedCards.map((playedCard, renderedIdx) => {
           const fieldIdx = isSessionOwnerPlayer
             ? renderedIdx
             : STANDARD_FIELD_SIZE - 1 - renderedIdx
 
-          // FIXME: Needs to support showing planted tools
-          if (!playedCrop || !isPlayedCrop(playedCrop)) {
+          // FIXME: Test support for showing planted tools
+          if (!isPlayedCard(playedCard)) {
             return (
               <EmptyPlot
                 key={renderedIdx}
@@ -165,7 +165,7 @@ export const Field = ({
             )
           }
 
-          const { instance: cardInstance } = playedCrop
+          const { instance: cardInstance } = playedCard
 
           const isSelected = selectedCardIdx === fieldIdx
           const isInBackground =
@@ -178,14 +178,14 @@ export const Field = ({
                   isSelected ? selectedCardLabel : unselectedCardLabel
                 }
                 tabIndex={0}
-                cropCardProps={{
+                cardProps={{
                   cardInstance,
                   cardIdx: fieldIdx,
                   isInField: true,
                   isFocused: isSelected,
                   playerId: player.id,
                   size: cardSize,
-                  playedCrop,
+                  playedCard,
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
                   }),

@@ -1,21 +1,37 @@
 import { InvalidCardError } from '../../../game/services/Rules/errors'
-import { CardInstance, IPlayedCrop } from '../../../game/types'
-import { isCropCardInstance } from '../../../game/types/guards'
+import {
+  CardInstance,
+  IPlayedCard,
+  isToolCardInstance,
+} from '../../../game/types'
+import {
+  isPlantableCardInstance,
+  isPlayedCrop,
+  isPlayedTool,
+} from '../../../game/types/guards'
 
+// FIXME: Rename this to usePlayedCardLogic
 export const usePlayedCropLogic = ({
   card,
-  playedCrop,
+  playedCard,
 }: {
   card: CardInstance
-  playedCrop: IPlayedCrop
+  playedCard: IPlayedCard
 }) => {
-  if (!isCropCardInstance(card)) {
+  if (!isPlantableCardInstance(card)) {
     throw new InvalidCardError(`${card.id} is not a crop card.`)
   }
 
-  const waterIconsToRender = Math.max(playedCrop.waterCards, card.waterToMature)
-  const canBeWatered = playedCrop.wasWateredDuringTurn === false
-  const canBeHarvested = playedCrop.waterCards >= card.waterToMature
+  // FIXME: Make this less repetitive
+  const waterIconsToRender =
+    isPlayedTool(playedCard) || isToolCardInstance(card)
+      ? 0
+      : Math.max(playedCard.waterCards, card.waterToMature)
+  const canBeWatered =
+    isPlayedCrop(playedCard) && playedCard.wasWateredDuringTurn === false
+  const canBeHarvested =
+    !(isPlayedTool(playedCard) || isToolCardInstance(card)) &&
+    playedCard.waterCards >= card.waterToMature
 
   return { canBeWatered, canBeHarvested, waterIconsToRender }
 }

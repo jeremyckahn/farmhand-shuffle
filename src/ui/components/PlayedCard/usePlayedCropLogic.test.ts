@@ -33,7 +33,7 @@ describe('usePlayedCropLogic', () => {
     'should throw InvalidCardError if card is not plantable',
     ({ invalidCard }) => {
       expect(() =>
-        usePlayedCropLogic({ card: invalidCard, playedCrop: playedCropNoWater })
+        usePlayedCropLogic({ card: invalidCard, playedCard: playedCropNoWater })
       ).toThrow(InvalidCardError)
     }
   )
@@ -41,7 +41,7 @@ describe('usePlayedCropLogic', () => {
   it('should calculate waterIconsToRender correctly when not enough water', () => {
     const result = usePlayedCropLogic({
       card: validCard,
-      playedCrop: playedCropNoWater,
+      playedCard: playedCropNoWater,
     })
 
     expect(result.waterIconsToRender).toBe(validCard.waterToMature)
@@ -50,7 +50,7 @@ describe('usePlayedCropLogic', () => {
   it('should calculate waterIconsToRender correctly when enough water', () => {
     const result = usePlayedCropLogic({
       card: validCard,
-      playedCrop: playedCropWithEnoughWater,
+      playedCard: playedCropWithEnoughWater,
     })
 
     expect(result.waterIconsToRender).toBe(validCard.waterToMature)
@@ -59,7 +59,7 @@ describe('usePlayedCropLogic', () => {
   it('should calculate waterIconsToRender correctly when there is extra water', () => {
     const result = usePlayedCropLogic({
       card: validCard,
-      playedCrop: playedCropWithExtraWater,
+      playedCard: playedCropWithExtraWater,
     })
 
     expect(result.waterIconsToRender).toBe(playedCropWithExtraWater.waterCards)
@@ -68,7 +68,7 @@ describe('usePlayedCropLogic', () => {
   it('should determine canBeWatered correctly when not watered', () => {
     const result = usePlayedCropLogic({
       card: validCard,
-      playedCrop: playedCropNoWater,
+      playedCard: playedCropNoWater,
     })
 
     expect(result.canBeWatered).toBe(true)
@@ -77,7 +77,7 @@ describe('usePlayedCropLogic', () => {
   it('should determine canBeHarvested correctly when not enough water', () => {
     const result = usePlayedCropLogic({
       card: validCard,
-      playedCrop: playedCropNoWater,
+      playedCard: playedCropNoWater,
     })
 
     expect(result.canBeHarvested).toBe(false)
@@ -86,7 +86,7 @@ describe('usePlayedCropLogic', () => {
   it('should determine canBeHarvested correctly when enough water', () => {
     const result = usePlayedCropLogic({
       card: validCard,
-      playedCrop: playedCropWithEnoughWater,
+      playedCard: playedCropWithEnoughWater,
     })
 
     expect(result.canBeHarvested).toBe(true)

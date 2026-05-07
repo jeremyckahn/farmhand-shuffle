@@ -19,9 +19,9 @@ const stubPlayedCrop: IPlayedCrop = {
   wasWateredDuringTurn: false,
   waterCards: stubWaterCards,
 }
-const stubCropCardProps: PlayedCropProps['cropCardProps'] = {
+const stubCropCardProps: PlayedCropProps['cardProps'] = {
   cardInstance: stubCardInstance,
-  playedCrop: stubPlayedCrop,
+  playedCard: stubPlayedCrop,
   cardIdx: 0,
   playerId: '',
 }
@@ -30,7 +30,7 @@ const StubCropCard = (overrides: Partial<PlayedCropProps> = {}) => (
   <StubShellContext>
     <ActorContext.Provider>
       <PlayedCard
-        cropCardProps={stubCropCardProps}
+        cardProps={stubCropCardProps}
         isInBackground={false}
         {...overrides}
       />
@@ -91,9 +91,9 @@ describe('PlayedCard', () => {
 
     render(
       <StubCropCard
-        cropCardProps={{
+        cardProps={{
           ...stubCropCardProps,
-          playedCrop: { ...stubPlayedCrop, waterCards },
+          playedCard: { ...stubPlayedCrop, waterCards },
         }}
       />
     )
