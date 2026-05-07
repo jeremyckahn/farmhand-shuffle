@@ -6,7 +6,6 @@ import {
 } from '../../../game/types'
 import {
   isPlantableCardInstance,
-  isPlayedCrop,
   isPlayedTool,
 } from '../../../game/types/guards'
 
@@ -21,16 +20,15 @@ export const usePlayedCardLogic = ({
     throw new InvalidCardError(`${card.id} is not a crop card.`)
   }
 
-  // FIXME: Make this less repetitive
-  const waterIconsToRender =
-    isPlayedTool(playedCard) || isToolCardInstance(card)
-      ? 0
-      : Math.max(playedCard.waterCards, card.waterToMature)
-  const canBeWatered =
-    isPlayedCrop(playedCard) && playedCard.wasWateredDuringTurn === false
-  const canBeHarvested =
-    !(isPlayedTool(playedCard) || isToolCardInstance(card)) &&
-    playedCard.waterCards >= card.waterToMature
+  let waterIconsToRender = 0
+  let canBeWatered = false
+  let canBeHarvested = false
+
+  if (!(isPlayedTool(playedCard) || isToolCardInstance(card))) {
+    waterIconsToRender = Math.max(playedCard.waterCards, card.waterToMature)
+    canBeWatered = playedCard.wasWateredDuringTurn === false
+    canBeHarvested = playedCard.waterCards >= card.waterToMature
+  }
 
   return { canBeWatered, canBeHarvested, waterIconsToRender }
 }
