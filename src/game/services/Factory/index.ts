@@ -127,7 +127,6 @@ export class FactoryService {
     }
   }
 
-  // FIXME: Test this
   buildPlayedTool(toolInstance: ToolInstance): IPlayedTool {
     return {
       instance: toolInstance,

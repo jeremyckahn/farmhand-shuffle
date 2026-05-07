@@ -1,8 +1,8 @@
 import { randomNumber } from '../../../services/RandomNumber'
-import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { stubCarrot, stubSprinkler } from '../../../test-utils/stubs/cards'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 import { INITIAL_HAND_SIZE, INITIAL_PLAYER_FUNDS } from '../../config'
-import { IPlayedCrop } from '../../types'
+import { IPlayedCrop, IPlayedTool } from '../../types'
 import { isField, isMatch, isPlayer, isTable } from '../../types/guards'
 
 import { factory } from '.'
@@ -136,6 +136,16 @@ describe('Factory', () => {
         instance: stubCarrot,
         wasWateredDuringTurn: false,
         waterCards: 0,
+      })
+    })
+  })
+
+  describe('buildPlayedTool', () => {
+    test('builds a played tool', () => {
+      const playedCard = factory.buildPlayedTool(stubSprinkler)
+
+      expect(playedCard).toEqual<IPlayedTool>({
+        instance: stubSprinkler,
       })
     })
   })
