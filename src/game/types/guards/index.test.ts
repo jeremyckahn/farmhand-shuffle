@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { CardType, MatchState } from '../'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
 import { stubShovel, stubSprinkler } from '../../../test-utils/stubs/cards'
-import { instantiate, sprinkler } from '../../cards'
+import { carrot, instantiate, sprinkler } from '../../cards'
 import { factory } from '../../services/Factory'
 
 import * as guards from './index'
@@ -108,7 +108,7 @@ describe('Type Guards', () => {
   })
 
   describe('isPlayedTool', () => {
-    it('returns true for valid isPlayedTool', () => {
+    it('returns true for valid IPlayedTool', () => {
       expect(
         guards.isPlayedTool(factory.buildPlayedTool(instantiate(sprinkler)))
       ).toBe(true)
@@ -118,6 +118,23 @@ describe('Type Guards', () => {
       expect(guards.isPlayedTool(null)).toBe(false)
       expect(guards.isPlayedTool({})).toBe(false)
       expect(guards.isPlayedTool({ instance: {} })).toBe(false)
+    })
+  })
+
+  describe('isPlayedCard', () => {
+    it('returns true for valid IPlayedCard', () => {
+      expect(
+        guards.isPlayedCard(factory.buildPlayedCrop(instantiate(carrot)))
+      ).toBe(true)
+      expect(
+        guards.isPlayedCard(factory.buildPlayedTool(instantiate(sprinkler)))
+      ).toBe(true)
+    })
+
+    it('returns false for invalid input', () => {
+      expect(guards.isPlayedCard(null)).toBe(false)
+      expect(guards.isPlayedCard({})).toBe(false)
+      expect(guards.isPlayedCard({ instance: {} })).toBe(false)
     })
   })
 

@@ -80,7 +80,6 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
   )
 }
 
-// FIXME: Test this
 export const isPlayedTool = (obj: unknown): obj is IPlayedTool => {
   if (!obj || typeof obj !== 'object') {
     return false
