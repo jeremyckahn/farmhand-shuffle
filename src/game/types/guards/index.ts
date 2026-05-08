@@ -95,7 +95,6 @@ export const isPlayedTool = (obj: unknown): obj is IPlayedTool => {
   )
 }
 
-// FIXME: Test this
 export const isPlayedCard = (obj: unknown): obj is IPlayedCard => {
   return isPlayedCrop(obj) || isPlayedTool(obj)
 }

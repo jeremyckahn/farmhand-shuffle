@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { CardType, MatchState } from '../'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
 import { stubShovel, stubSprinkler } from '../../../test-utils/stubs/cards'
+import { instantiate, sprinkler } from '../../cards'
+import { factory } from '../../services/Factory'
 
 import * as guards from './index'
 
@@ -102,6 +104,20 @@ describe('Type Guards', () => {
       expect(guards.isPlayedCrop(null)).toBe(false)
       expect(guards.isPlayedCrop({})).toBe(false)
       expect(guards.isPlayedCrop({ instance: {} })).toBe(false)
+    })
+  })
+
+  describe('isPlayedTool', () => {
+    it('returns true for valid isPlayedTool', () => {
+      expect(
+        guards.isPlayedTool(factory.buildPlayedTool(instantiate(sprinkler)))
+      ).toBe(true)
+    })
+
+    it('returns false for invalid input', () => {
+      expect(guards.isPlayedTool(null)).toBe(false)
+      expect(guards.isPlayedTool({})).toBe(false)
+      expect(guards.isPlayedTool({ instance: {} })).toBe(false)
     })
   })
 
