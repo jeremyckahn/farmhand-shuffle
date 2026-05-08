@@ -1,9 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { sprinkler } from '../../../game/cards'
 import { updateField } from '../../../game/reducers/update-field'
 import { factory } from '../../../game/services/Factory'
-import { stubCarrot, stubPumpkin } from '../../../test-utils/stubs/cards'
+import {
+  stubCarrot,
+  stubPumpkin,
+  stubSprinkler,
+} from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { isSxArray } from '../../type-guards'
@@ -35,14 +40,18 @@ vi.mock('../Card', () => ({
   }: CardProps) => {
     const style = sx && isSxArray(sx) ? sx?.[0] || {} : {}
 
-    if ('playedCrop' in rest) {
+    if ('playedCard' in rest) {
       // NOTE: Prevents a harmless warning in the tests
       // eslint-disable-next-line functional/immutable-data
-      delete rest.playedCrop
+      delete rest.playedCard
     }
 
-    // @ts-expect-error Type error is acceptable for tests
-    return <div {...rest} style={style} />
+    return (
+      // @ts-expect-error Type error is acceptable for tests
+      <div {...rest} style={style}>
+        <label>{cardInstance.name}</label>
+      </div>
+    )
   },
 }))
 
@@ -93,6 +102,18 @@ describe('Field', () => {
 
       expect(transform).toMatchSnapshot()
     }
+  })
+
+  test('renders playable tool cards', () => {
+    const match = updateField(matchStub, matchStub.sessionOwnerPlayerId, {
+      cards: [factory.buildPlayedTool(stubSprinkler)],
+    })
+
+    render(<StubField match={match} />)
+
+    const playedTool = screen.getByText(sprinkler.name)
+
+    expect(playedTool).toBeInTheDocument()
   })
 
   test('renders crop cards for opponent upside-down', () => {
