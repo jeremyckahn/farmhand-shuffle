@@ -79,7 +79,7 @@ describe('BotLogicService', () => {
           waterCards: 0,
         }),
         minimumCropsToPlay: 1,
-        expectedResult: 0, // No room for more crops in field
+        expectedResult: 0, // No room for more cards in field
       },
 
       {
@@ -123,7 +123,7 @@ describe('BotLogicService', () => {
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
-            crops: fieldCrops,
+            cards: fieldCrops,
           },
         })
 
@@ -143,7 +143,7 @@ describe('BotLogicService', () => {
   describe('getCropCardIndicesToWater', () => {
     it.each<{
       hand: IPlayer['hand']
-      fieldCrops: IField['crops']
+      fieldCrops: IField['cards']
       expectedResult: number[]
     }>([
       { hand: [], fieldCrops: [], expectedResult: [] },
@@ -246,7 +246,7 @@ describe('BotLogicService', () => {
         match = updatePlayer(match, stubPlayer1.id, {
           hand,
           field: {
-            crops: fieldCrops,
+            cards: fieldCrops,
           },
         })
 
@@ -259,7 +259,7 @@ describe('BotLogicService', () => {
 
   describe('getCropCardIndicesToHarvest', () => {
     it.each<{
-      fieldCrops: IField['crops']
+      fieldCrops: IField['cards']
       expectedResult: number[]
     }>([
       { fieldCrops: [], expectedResult: [] },
@@ -312,7 +312,7 @@ describe('BotLogicService', () => {
 
         match = updatePlayer(match, stubPlayer1.id, {
           field: {
-            crops: fieldCrops,
+            cards: fieldCrops,
           },
         })
 
@@ -443,6 +443,89 @@ describe('BotLogicService', () => {
         })
 
         const result = botLogic.getToolCardIndexToPlay(match, stubPlayer1.id)
+
+        expect(result).toBe(expectedResult)
+      }
+    )
+  })
+
+  describe('getOpenFieldPosition', () => {
+    it.each([
+      {
+        fieldCrops: [],
+        rngStub: 0,
+        expectedResult: 0,
+      },
+      {
+        fieldCrops: [],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: STANDARD_FIELD_SIZE - 1,
+      },
+      {
+        fieldCrops: [
+          undefined,
+          {
+            instance: instantiate(carrot),
+            wasWateredDuringTurn: false,
+            waterCards: 0,
+          },
+          undefined,
+        ],
+        rngStub: 0,
+        expectedResult: 0,
+      },
+      {
+        fieldCrops: [
+          undefined,
+          {
+            instance: instantiate(carrot),
+            wasWateredDuringTurn: false,
+            waterCards: 0,
+          },
+          undefined,
+        ],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: STANDARD_FIELD_SIZE - 1,
+      },
+      {
+        fieldCrops: [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          {
+            instance: instantiate(carrot),
+            wasWateredDuringTurn: false,
+            waterCards: 0,
+          },
+        ],
+        rngStub: MAX_RANDOM_VALUE,
+        expectedResult: 4,
+      },
+      {
+        fieldCrops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill({
+          instance: instantiate(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        }),
+        rngStub: 0,
+        expectedResult: undefined,
+      },
+    ])(
+      'returns an open field position for field crops $fieldCrops and rngStub $rngStub',
+      ({ fieldCrops, rngStub, expectedResult }) => {
+        vi.spyOn(randomNumber, 'generate').mockReturnValue(rngStub)
+
+        let match = stubMatch()
+
+        match = updatePlayer(match, stubPlayer1.id, {
+          field: {
+            cards: fieldCrops,
+          },
+        })
+
+        const result = botLogic.getOpenFieldPosition(match, stubPlayer1.id)
 
         expect(result).toBe(expectedResult)
       }

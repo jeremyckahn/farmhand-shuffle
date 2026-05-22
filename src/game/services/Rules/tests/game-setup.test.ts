@@ -1,6 +1,6 @@
-import { MatchEvent, MatchState, IPlayedCrop } from '../../../types'
 import { rules } from '..'
 import { updatePlayer } from '../../../reducers/update-player'
+import { IPlayedCrop, MatchEvent, MatchState } from '../../../types'
 
 import { carrot1, carrot2, player1, player2, playerSeeds } from './helpers'
 
@@ -35,13 +35,25 @@ describe('match setup', () => {
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 0,
     })
     // NOTE: Plays second carrot card
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 1,
     })
 
     const {
@@ -54,11 +66,53 @@ describe('match setup', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_SETUP_ACTION)
     expect(maybePlayer1.hand).toEqual([])
-    expect(maybePlayer1.field.crops).toEqual<IPlayedCrop[]>([
+    expect(maybePlayer1.field.cards).toEqual<IPlayedCrop[]>([
       { instance: carrot1, wasWateredDuringTurn: false, waterCards: 0 },
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
     ])
     expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([carrot2, carrot1])
+  })
+
+  test('lets the player abort crop placement', () => {
+    const matchActor = rules.startMatch()
+
+    matchActor.send({
+      type: MatchEvent.INIT,
+      playerSeeds,
+      userPlayerId: player1.id,
+    })
+
+    let {
+      context: { match },
+    } = matchActor.getSnapshot()
+
+    match = updatePlayer(match, player1.id, {
+      hand: [carrot1, carrot2],
+    })
+
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+    // NOTE: Plays first carrot card
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.OPERATION_ABORTED,
+    })
+
+    const {
+      value,
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
+    const maybePlayer1 = matchResult.table.players[player1.id]
+
+    if (!maybePlayer1) throw new Error('Player not found')
+
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_SETUP_ACTION)
+    expect(maybePlayer1.hand).toEqual([carrot1, carrot2])
+    expect(maybePlayer1.field.cards).toEqual<IPlayedCrop[]>([])
+    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([])
   })
 
   test('completes the bot setup sequence', () => {
@@ -85,7 +139,13 @@ describe('match setup', () => {
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 0,
     })
     // NOTE: Prompts player 2
     matchActor.send({
@@ -106,7 +166,7 @@ describe('match setup', () => {
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
 
     expect(matchResult.currentPlayerId).toEqual(player1.id)
-    expect(maybePlayer2.field.crops).toEqual<IPlayedCrop[]>([
+    expect(maybePlayer2.field.cards).toEqual<IPlayedCrop[]>([
       { instance: carrot2, wasWateredDuringTurn: false, waterCards: 0 },
     ])
     expect(maybePlayer2.cardsPlayedDuringTurn).toEqual([carrot2])
@@ -133,7 +193,7 @@ describe('match setup', () => {
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
     })
 
     const previousSnapshot = matchActor.getSnapshot()

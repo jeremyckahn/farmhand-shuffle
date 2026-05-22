@@ -16,7 +16,7 @@ describe('updateField', () => {
     }
 
     const field: IField = {
-      crops: [factory.buildPlayedCrop(stubCarrot)],
+      cards: [factory.buildPlayedCrop(stubCarrot)],
     }
 
     const newMatch = updateField(match, player1Id, field)

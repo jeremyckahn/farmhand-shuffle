@@ -5,6 +5,7 @@ import pumpkin from './cards/pumpkin.png'
 import water from './cards/watering-can.png'
 import rain from './cards/raincloud.png'
 import shovel from './cards/shovel.png'
+import sprinkler from './cards/sprinkler.png'
 import brownDotBackground from './ui/brown-dot-bg.png'
 import dirt from './ui/dirt.png'
 import pixel from './ui/pixel.png'
@@ -14,6 +15,7 @@ export const cards = {
   pumpkin,
   rain,
   shovel,
+  sprinkler,
   water,
 }
 

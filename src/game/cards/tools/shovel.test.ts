@@ -8,7 +8,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../../reducers/update-player'
 import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
 import { ShellNotificationType } from '../../types'
-import { assertCurrentPlayer } from '../../types/guards'
+import { assertCurrentPlayer, assertIsNonNullable } from '../../types/guards'
 
 import { shovel } from './shovel'
 
@@ -28,6 +28,8 @@ describe('shovel', () => {
       const context = createMatchStateMachineContext()
 
       vi.spyOn(context.shell, 'triggerNotification')
+
+      assertIsNonNullable(shovel.applyEffect)
 
       const { match: updatedMatch } = shovel.applyEffect({
         ...context,

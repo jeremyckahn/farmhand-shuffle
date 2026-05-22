@@ -2,7 +2,10 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
-import { assertCurrentPlayer, assertIsToolCard } from '../../../types/guards'
+import {
+  assertCurrentPlayer,
+  assertIsToolCardInstance,
+} from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
@@ -15,6 +18,8 @@ export const playingToolCard: RulesMachineConfig['states'] = {
 
       [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
         MatchState.PERFORMING_BOT_TURN_ACTION,
+
+      [MatchEvent.PLAY_PLANTABLE_TOOL]: MatchState.CHOOSING_CARD_POSITION,
     },
 
     entry: enqueueActions(
@@ -31,30 +36,45 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         assertEvent(event, MatchEvent.PLAY_TOOL)
 
         const { currentPlayerId, sessionOwnerPlayerId } = match
-        const { playerId, cardIdx } = event
-        const card = lookup.getCardFromHand(match, playerId, cardIdx)
+        const { playerId, cardIdxInHand } = event
+        const card = lookup.getCardFromHand(match, playerId, cardIdxInHand)
 
-        assertIsToolCard(card)
+        assertIsToolCardInstance(card)
         assertCurrentPlayer(currentPlayerId)
 
-        triggerNotification({
-          type: ShellNotificationType.TOOL_CARD_PLAYED,
-          payload: {
-            toolCard: card,
-          },
-        })
+        if (!card.isPlantable || currentPlayerId !== sessionOwnerPlayerId) {
+          triggerNotification({
+            type: ShellNotificationType.TOOL_CARD_PLAYED,
+            payload: {
+              toolCard: card,
+            },
+          })
+        }
 
-        match = card.applyEffect(context).match
-        match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdx)
+        match = card.applyEffect?.(context).match ?? match
 
-        if (currentPlayerId === sessionOwnerPlayerId) {
-          enqueue.raise({ type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
+        if (card.isPlantable) {
+          enqueue.raise({
+            type: MatchEvent.PLAY_PLANTABLE_TOOL,
+            cardIdxInHand,
+            playerId: currentPlayerId,
+          })
         } else {
-          enqueue.raise({ type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION })
+          match = moveFromHandToDiscardPile(
+            match,
+            currentPlayerId,
+            cardIdxInHand
+          )
 
-          botState = {
-            ...botState,
-            toolCardsThatCanBePlayed: botState.toolCardsThatCanBePlayed - 1,
+          if (currentPlayerId === sessionOwnerPlayerId) {
+            enqueue.raise({ type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION })
+          } else {
+            enqueue.raise({ type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION })
+
+            botState = {
+              ...botState,
+              toolCardsThatCanBePlayed: botState.toolCardsThatCanBePlayed - 1,
+            }
           }
         }
 

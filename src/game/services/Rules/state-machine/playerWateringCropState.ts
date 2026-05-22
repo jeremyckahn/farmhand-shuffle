@@ -29,11 +29,11 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
     entry: enqueueActions(({ event, context: { match }, enqueue }) => {
       switch (event.type) {
         case MatchEvent.PLAY_WATER: {
-          const { cardIdx } = event
+          const { cardIdxInHand } = event
 
           match = {
             ...match,
-            selectedWaterCardInHandIdx: cardIdx,
+            selectedWaterCardInHandIdx: cardIdxInHand,
           }
 
           break
@@ -62,7 +62,7 @@ export const playerWateringCropState: RulesMachineConfig['states'] = {
               event
 
             const player = lookup.getPlayer(match, playerId)
-            const playedCrop = player.field.crops[cropIdxInFieldToWater]
+            const playedCrop = player.field.cards[cropIdxInFieldToWater]
 
             assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
 

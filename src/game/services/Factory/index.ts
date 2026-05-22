@@ -10,16 +10,18 @@ import {
   IField,
   IMatch,
   IPlayedCrop,
+  IPlayedTool,
   IPlayer,
   IPlayerSeed,
   ITable,
+  ToolInstance,
 } from '../../types'
 import { validate } from '../Validation'
 
 export class FactoryService {
   buildField(overrides: Partial<IField> = {}): IField {
     return {
-      crops: [],
+      cards: [],
       ...overrides,
     }
   }
@@ -57,6 +59,7 @@ export class FactoryService {
     let match: IMatch = {
       sessionOwnerPlayerId,
       table,
+      turn: 0,
       currentPlayerId,
       buffedCrop: null,
       nerfedCrop: null,
@@ -121,6 +124,12 @@ export class FactoryService {
       instance: cropInstance,
       wasWateredDuringTurn: false,
       waterCards: 0,
+    }
+  }
+
+  buildPlayedTool(toolInstance: ToolInstance): IPlayedTool {
+    return {
+      instance: toolInstance,
     }
   }
 }

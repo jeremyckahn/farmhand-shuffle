@@ -34,12 +34,6 @@ export interface ICrop extends ICard {
 
 export interface CropInstance extends ICrop, Instance {}
 
-export const isCropCardInstance = (
-  cardInstance: CardInstance
-): cardInstance is CropInstance => {
-  return cardInstance.type === CardType.CROP
-}
-
 /**
  * A stateful representation of a Crop card that is in the Field.
  */
@@ -60,20 +54,34 @@ export interface IPlayedCrop {
   wasWateredDuringTurn: boolean
 }
 
+export interface IPlayedTool {
+  /**
+   * The card instance of this crop.
+   */
+  instance: ToolInstance
+}
+
 export interface MatchMachineContext {
   match: IMatch
   shell: IShell
   botState: BotState
 }
 
+type ApplyEffect = (context: MatchMachineContext) => MatchMachineContext
+
 interface IEffect extends ICard {
   readonly description: string
 
-  readonly applyEffect: (context: MatchMachineContext) => MatchMachineContext
+  /**
+   * Performs some side affect when the card is played.
+   */
+  readonly applyEffect: ApplyEffect
 
-  readonly onStartFollowingTurn?: (
-    context: MatchMachineContext
-  ) => MatchMachineContext
+  /**
+   * Performs some side affect at the start of the current player's following
+   * turn.
+   */
+  readonly onStartFollowingTurn?: ApplyEffect
 }
 
 /**
@@ -88,8 +96,10 @@ export interface IEvent extends IEffect {
  * Players can play as many tool cards per turn as they wish. Has some sort of
  * effect on one or both players simultaneously, defined per card.
  */
-export interface ITool extends IEffect {
+export interface ITool extends Omit<IEffect, 'applyEffect'> {
   readonly type: CardType.TOOL
+
+  readonly applyEffect?: ApplyEffect
 }
 
 /**
@@ -99,6 +109,17 @@ export interface ITool extends IEffect {
  */
 export interface ITool extends ICard {
   readonly type: CardType.TOOL
+
+  readonly isPlantable?: boolean
+
+  /**
+   * For tool cards planted in the Field. Performs some side affect at the
+   * start of every turn for the player who owns the card.
+   */
+  readonly applyDailyEffect?: (
+    context: MatchMachineContext,
+    idxOfCardInField: number
+  ) => MatchMachineContext
 }
 
 /**
@@ -138,8 +159,10 @@ export const isToolCardInstance = (
   return cardInstance.type === CardType.TOOL
 }
 
+export type IPlayedCard = IPlayedCrop | IPlayedTool
+
 export interface IField {
-  readonly crops: (IPlayedCrop | undefined)[]
+  readonly cards: (IPlayedCard | undefined)[]
 }
 
 export interface IPlayer {
@@ -209,6 +232,12 @@ export interface IMatch {
   readonly table: ITable
 
   /**
+   * The number of the current turn. This is incremented at the start of each
+   * player's turn. This is 0 during the setup phase.
+   */
+  readonly turn: number
+
+  /**
    * The IPlayer['id'] of the player whose turn it is.
    */
   readonly currentPlayerId: IPlayer['id'] | null
@@ -256,18 +285,26 @@ export enum MatchEvent {
   HARVEST_CROP = 'HARVEST_CROP',
   INIT = 'INIT',
   OPERATION_ABORTED = 'OPERATION_ABORTED',
+
   PLAY_CARD = 'PLAY_CARD',
   PLAY_CROP = 'PLAY_CROP',
   PLAY_EVENT = 'PLAY_EVENT',
   PLAY_TOOL = 'PLAY_TOOL', // Spiral out
+  PLAY_PLANTABLE_TOOL = 'PLAY_PLANTABLE_TOOL',
   PLAY_WATER = 'PLAY_WATER',
+
+  DISCARD_CARD_FROM_FIELD = 'DISCARD_CARD_FROM_FIELD',
+
   PLAYER_RAN_OUT_OF_FUNDS = 'PLAYER_RAN_OUT_OF_FUNDS',
+
   PROMPT_BOT_FOR_SETUP_ACTION = 'PROMPT_BOT_FOR_SETUP_ACTION',
   PROMPT_BOT_FOR_TURN_ACTION = 'PROMPT_BOT_FOR_TURN_ACTION',
   PROMPT_PLAYER_FOR_CROP_TO_WATER = 'PROMPT_PLAYER_FOR_CROP_TO_WATER',
   PROMPT_PLAYER_FOR_SETUP_ACTION = 'PROMPT_PLAYER_FOR_SETUP_ACTION',
   PROMPT_PLAYER_FOR_TURN_ACTION = 'PROMPT_PLAYER_FOR_TURN_ACTION',
+
   SELECT_CROP_TO_WATER = 'SELECT_CROP_TO_WATER',
+  SELECT_CARD_POSITION = 'SELECT_CARD_POSITION',
   SET_SHELL = 'SET_SHELL',
   START_TURN = 'START_TURN',
   BOT_TURN_INITIALIZED = 'BOT_TURN_INITIALIZED',
@@ -277,6 +314,7 @@ export enum MatchEvent {
 export enum BotTurnActionState {
   INITIALIZING = 'INITIALIZING',
   HARVESTING_CROPS = 'HARVESTING_CROPS',
+  PLACING_CROP = 'PLACING_CROP',
   PLAYING_CROPS = 'PLAYING_CROPS',
   PLAYING_EVENTS = 'PLAYING_EVENTS',
   PLAYING_TOOLS = 'PLAYING_TOOLS',
@@ -287,21 +325,23 @@ export enum BotTurnActionState {
 interface PlayCardEventPayload<T = MatchEvent.PLAY_CARD> {
   type: T
   playerId: IPlayer['id']
+
   /**
    * The index of the card in the hand being played
    */
-  cardIdx: number
+  cardIdxInHand: number
 }
 
 export enum MatchState {
   UNINITIALIZED = 'UNINITIALIZED',
 
+  CHOOSING_CARD_POSITION = 'CHOOSING_CARD_POSITION',
   GAME_OVER = 'GAME_OVER',
   PERFORMING_BOT_CROP_WATERING = 'PERFORMING_BOT_CROP_WATERING',
   PERFORMING_BOT_CROP_HARVESTING = 'PERFORMING_BOT_CROP_HARVESTING',
   PERFORMING_BOT_SETUP_ACTION = 'PERFORMING_BOT_SETUP_ACTION',
   PERFORMING_BOT_TURN_ACTION = 'PERFORMING_BOT_TURN_ACTION',
-  PLANTING_CROP = 'PLANTING_CROP',
+  PLANTING_CARD = 'PLANTING_CARD',
   PLAYER_WATERING_CROP = 'PLAYER_WATERING_CROP',
   PLAYING_CARD = 'PLAYING_CARD',
   PLAYING_EVENT = 'PLAYING_EVENT',
@@ -311,13 +351,14 @@ export enum MatchState {
 }
 
 export enum MatchStateGuard {
-  HAVE_PLAYERS_COMPLETED_SETUP = 'HAVE_PLAYERS_COMPLETED_SETUP',
   IS_SELECTED_IDX_VALID = 'IS_SELECTED_IDX_VALID',
+  IS_SETUP_PHASE = 'IS_SETUP_PHASE',
 }
 
 export enum ShellNotificationType {
   CARDS_DRAWN = 'CARDS_DRAWN',
   CROP_HARVESTED = 'CROP_HARVESTED',
+  CARD_DISCARDED = 'CARD_DISCARDED',
   CROP_WATERED = 'CROP_WATERED',
   EVENT_CARD_PLAYED = 'EVENT_CARD_PLAYED',
   TOOL_CARD_PLAYED = 'TOOL_CARD_PLAYED',
@@ -332,6 +373,10 @@ export interface ShellNotificationPayload {
 
   [ShellNotificationType.CROP_HARVESTED]: {
     cropHarvested: ICrop
+  }
+
+  [ShellNotificationType.CARD_DISCARDED]: {
+    cardDiscarded: ICard
   }
 
   [ShellNotificationType.CROP_WATERED]: {
@@ -392,13 +437,28 @@ export interface MatchEventPayload {
     shell: IShell
   }
 
+  [MatchEvent.SELECT_CARD_POSITION]: {
+    type: MatchEvent.SELECT_CARD_POSITION
+    cardIdxInHand: number
+    fieldIdxToPlace: number
+    playerId: IPlayer['id']
+  }
+
   [MatchEvent.PLAY_CROP]: PlayCardEventPayload<MatchEvent.PLAY_CROP>
 
   [MatchEvent.PLAY_EVENT]: PlayCardEventPayload<MatchEvent.PLAY_EVENT>
 
   [MatchEvent.PLAY_TOOL]: PlayCardEventPayload<MatchEvent.PLAY_TOOL>
 
+  [MatchEvent.PLAY_PLANTABLE_TOOL]: PlayCardEventPayload<MatchEvent.PLAY_PLANTABLE_TOOL>
+
   [MatchEvent.PLAY_WATER]: PlayCardEventPayload<MatchEvent.PLAY_WATER>
+
+  [MatchEvent.DISCARD_CARD_FROM_FIELD]: {
+    type: MatchEvent.DISCARD_CARD_FROM_FIELD
+    playerId: IPlayer['id']
+    cardIdxInField: number
+  }
 
   [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: {
     type: MatchEvent.PLAYER_RAN_OUT_OF_FUNDS

@@ -1,6 +1,6 @@
 import { ButtonProps } from '@mui/material'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode } from 'react'
 import { describe, expect, it } from 'vitest'
 
 import { updateMatch } from '../../../game/reducers/update-match'
@@ -13,7 +13,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import * as useMatchRulesModule from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
-import { ShellContext } from '../Match/ShellContext'
+import { StubShellContext } from '../../test-utils/StubShellContext'
 
 import { TurnControl, TurnControlProps } from './TurnControl'
 
@@ -117,21 +117,11 @@ vi.mock('fun-animal-names', () => ({
 const mockSetIsHandInViewport = vi.fn()
 
 const StubTurnControl = (overrides: Partial<TurnControlProps>) => {
-  const shellContextValue = useMemo(
-    () => ({
-      setIsHandInViewport: mockSetIsHandInViewport,
-      blockingOperation: vi.fn(),
-      isHandInViewport: true,
-      showNotification: vi.fn(),
-    }),
-    []
-  )
-
   return (
     <ActorContext.Provider>
-      <ShellContext.Provider value={shellContextValue}>
+      <StubShellContext setIsHandInViewport={mockSetIsHandInViewport}>
         <TurnControl match={stubMatch()} {...overrides} />
-      </ShellContext.Provider>
+      </StubShellContext>
     </ActorContext.Provider>
   )
 }
@@ -148,7 +138,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
@@ -245,6 +235,35 @@ describe('TurnControl Component', () => {
     expect(mockSetIsHandInViewport).toHaveBeenCalledWith(true)
   })
 
+  it('handles cancelling card positioning', () => {
+    const matchState = MatchState.CHOOSING_CARD_POSITION
+
+    let match = stubMatch()
+
+    match = updateMatch(match, { currentPlayerId: match.sessionOwnerPlayerId })
+
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      },
+    })
+
+    const send = mockSend()
+
+    render(<StubTurnControl match={match} />)
+
+    const button = screen.getByRole('button', { name: /Cancel placement/i })
+
+    fireEvent.click(button)
+
+    expect(send).toHaveBeenCalledWith({
+      type: MatchEvent.OPERATION_ABORTED,
+    })
+    expect(mockSetIsHandInViewport).toHaveBeenCalledWith(true)
+  })
+
   it('renders correct text for PERFORMING_BOT_TURN_ACTION', () => {
     const matchState = MatchState.PERFORMING_BOT_TURN_ACTION
     let match = stubMatch()
@@ -316,7 +335,7 @@ describe('TurnControl Component', () => {
     let match = stubMatch()
 
     match = updatePlayer(match, stubPlayer1.id, {
-      field: { crops: [] },
+      field: { cards: [] },
     })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -341,7 +360,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
@@ -370,7 +389,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },
@@ -431,7 +450,7 @@ describe('TurnControl Component', () => {
     let match = stubMatch()
 
     match = updatePlayer(match, stubPlayer1.id, {
-      field: { crops: [] },
+      field: { cards: [] },
     })
 
     vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
@@ -458,7 +477,7 @@ describe('TurnControl Component', () => {
 
     match = updatePlayer(match, stubPlayer1.id, {
       field: {
-        crops: [
+        cards: [
           { instance: stubCarrot, wasWateredDuringTurn: false, waterCards: 0 },
         ],
       },

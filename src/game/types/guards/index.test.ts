@@ -1,7 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { CardType, MatchState } from '../'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
+import { stubShovel, stubSprinkler } from '../../../test-utils/stubs/cards'
+import { carrot, instantiate, sprinkler } from '../../cards'
+import { factory } from '../../services/Factory'
 
 import * as guards from './index'
 
@@ -25,7 +28,7 @@ const mockPlayedCrop = {
 }
 
 const mockField = {
-  crops: [mockPlayedCrop, undefined, undefined, undefined],
+  cards: [mockPlayedCrop, undefined, undefined, undefined],
 }
 
 const mockPlayer = {
@@ -104,6 +107,37 @@ describe('Type Guards', () => {
     })
   })
 
+  describe('isPlayedTool', () => {
+    it('returns true for valid IPlayedTool', () => {
+      expect(
+        guards.isPlayedTool(factory.buildPlayedTool(instantiate(sprinkler)))
+      ).toBe(true)
+    })
+
+    it('returns false for invalid input', () => {
+      expect(guards.isPlayedTool(null)).toBe(false)
+      expect(guards.isPlayedTool({})).toBe(false)
+      expect(guards.isPlayedTool({ instance: {} })).toBe(false)
+    })
+  })
+
+  describe('isPlayedCard', () => {
+    it('returns true for valid IPlayedCard', () => {
+      expect(
+        guards.isPlayedCard(factory.buildPlayedCrop(instantiate(carrot)))
+      ).toBe(true)
+      expect(
+        guards.isPlayedCard(factory.buildPlayedTool(instantiate(sprinkler)))
+      ).toBe(true)
+    })
+
+    it('returns false for invalid input', () => {
+      expect(guards.isPlayedCard(null)).toBe(false)
+      expect(guards.isPlayedCard({})).toBe(false)
+      expect(guards.isPlayedCard({ instance: {} })).toBe(false)
+    })
+  })
+
   describe('isField', () => {
     it('returns true for valid IField', () => {
       expect(guards.isField(mockField)).toBe(true)
@@ -111,8 +145,8 @@ describe('Type Guards', () => {
 
     it('returns false for invalid input', () => {
       expect(guards.isField(null)).toBe(false)
-      expect(guards.isField({ crops: 'not-array' })).toBe(false)
-      expect(guards.isField({ crops: [null] })).toBe(false) // null is not allowed in crops array (undefined is)
+      expect(guards.isField({ cards: 'not-array' })).toBe(false)
+      expect(guards.isField({ cards: [null] })).toBe(false) // null is not allowed in crops array (undefined is)
     })
   })
 
@@ -199,31 +233,35 @@ describe('Type Guards', () => {
     })
   })
 
-  describe('assertIsEventCard', () => {
+  describe('assertIsEventCardInstance', () => {
     it('does not throw for valid Event card', () => {
       const eventCard = { ...mockCardInstance, type: CardType.EVENT }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      expect(() => guards.assertIsEventCard(eventCard as any)).not.toThrow()
+      expect(() =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+        guards.assertIsEventCardInstance(eventCard as any)
+      ).not.toThrow()
     })
 
     it('throws MatchStateCorruptError for non-Event card', () => {
-      expect(() => guards.assertIsEventCard(mockCardInstance)).toThrow(
+      expect(() => guards.assertIsEventCardInstance(mockCardInstance)).toThrow(
         MatchStateCorruptError
       )
     })
   })
 
-  describe('assertIsToolCard', () => {
+  describe('assertIsToolCardInstance', () => {
     it('does not throw for valid Tool card', () => {
       const toolCard = { ...mockCardInstance, type: CardType.TOOL }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      expect(() => guards.assertIsToolCard(toolCard as any)).not.toThrow()
+      expect(() =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+        guards.assertIsToolCardInstance(toolCard as any)
+      ).not.toThrow()
     })
 
     it('throws MatchStateCorruptError for non-Tool card', () => {
-      expect(() => guards.assertIsToolCard(mockCardInstance)).toThrow(
+      expect(() => guards.assertIsToolCardInstance(mockCardInstance)).toThrow(
         MatchStateCorruptError
       )
     })
@@ -242,7 +280,7 @@ describe('Type Guards', () => {
   describe('assertStringIsMatchState', () => {
     it('does not throw for valid MatchState string', () => {
       expect(() =>
-        guards.assertStringIsMatchState(MatchState.PLANTING_CROP)
+        guards.assertStringIsMatchState(MatchState.PLANTING_CARD)
       ).not.toThrow()
     })
 
@@ -260,6 +298,30 @@ describe('Type Guards', () => {
 
     it('throws TypeError for undefined', () => {
       expect(() => guards.assertIsPlayedCrop(undefined, 0)).toThrow(TypeError)
+    })
+  })
+
+  describe('isCropCardInstance', () => {
+    it('returns true for CROP card instance', () => {
+      expect(guards.isCropCardInstance(mockCardInstance)).toBe(true)
+    })
+
+    it('returns false for non-CROP card instance', () => {
+      expect(guards.isCropCardInstance(stubSprinkler)).toBe(false)
+    })
+  })
+
+  describe('isPlantableCardInstance', () => {
+    it('returns true for CROP card instance', () => {
+      expect(guards.isPlantableCardInstance(mockCardInstance)).toBe(true)
+    })
+
+    it('returns true for plantable TOOL card instance', () => {
+      expect(guards.isPlantableCardInstance(stubSprinkler)).toBe(true)
+    })
+
+    it('returns false for non-plantable TOOL card instance', () => {
+      expect(guards.isPlantableCardInstance(stubShovel)).toBe(false)
     })
   })
 })

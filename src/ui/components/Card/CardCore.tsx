@@ -13,11 +13,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import React, { useRef } from 'react'
 
 import {
-  isCropCardInstance,
   isEventCardInstance,
   isToolCardInstance,
   isWaterCardInstance,
 } from '../../../game/types'
+import { isCropCardInstance } from '../../../game/types/guards'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { ui } from '../../img'
@@ -74,15 +74,20 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       showHarvestCropButton = false,
       showWaterableState = false,
       showHarvestableState = false,
+      showDiscardButton = false,
       tooltipTitle = '',
       onPlayCard,
       onWaterCrop,
       onHarvestCrop,
+      onDiscardCard,
 
       ...props
     },
     containerRef
   ) {
+    // TODO: Prevent cards from being focusable when it is not the current
+    // player's turn
+
     const theme = useTheme()
     const cardRef = useRef<HTMLDivElement>(null)
     const prefersReducedMotion = useMediaQuery(
@@ -253,6 +258,19 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                           onClick={onHarvestCrop}
                         >
                           Harvest crop
+                        </Button>
+                      </Typography>
+                    </Box>
+                  )}
+                  {showDiscardButton && (
+                    <Box position="absolute" right="-100%" width={1} px={1}>
+                      <Typography>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={onDiscardCard}
+                        >
+                          Discard
                         </Button>
                       </Typography>
                     </Box>

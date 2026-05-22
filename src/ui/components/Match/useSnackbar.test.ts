@@ -13,7 +13,11 @@ import {
   ShellNotificationPayload,
   ShellNotificationType,
 } from '../../../game/types'
-import { stubRain, stubShovel } from '../../../test-utils/stubs/cards'
+import {
+  stubRain,
+  stubShovel,
+  stubSprinkler,
+} from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
@@ -451,6 +455,86 @@ describe('useSnackbar Hook', () => {
 
     expect(result.current.snackbarProps.message).toEqual(
       `Fun Animal played ${payload.toolCard.name}`
+    )
+    expect(result.current.snackbarProps.severity).toEqual('info')
+  })
+
+  it('should show the correct CARD_DISCARDED notification message when player discards a planted card', () => {
+    match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer1.id })
+    const { result } = renderHook(() =>
+      useSnackbar({
+        actorRef,
+        match,
+      })
+    )
+
+    const showNotification = vi.fn()
+
+    vi.spyOn(result.current, 'showNotification').mockImplementation(
+      showNotification
+    )
+
+    const payload: ShellNotificationPayload[ShellNotificationType.CARD_DISCARDED] =
+      {
+        cardDiscarded: stubSprinkler,
+      }
+
+    const send = actorRef.send as unknown as MockInstance<
+      (event: MatchEvents) => void
+    >
+    const matchEventPayload = send.mock.calls[0]![0]
+
+    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+    act(() => {
+      matchEventPayload.shell.triggerNotification({
+        type: ShellNotificationType.CARD_DISCARDED,
+        payload,
+      })
+    })
+
+    expect(result.current.snackbarProps.message).toEqual(
+      `You discarded ${payload.cardDiscarded.name}`
+    )
+    expect(result.current.snackbarProps.severity).toEqual('info')
+  })
+
+  it('should show the correct CARD_DISCARDED notification message when non-session owner discards a planted card', () => {
+    match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
+    const { result } = renderHook(() =>
+      useSnackbar({
+        actorRef,
+        match,
+      })
+    )
+
+    const showNotification = vi.fn()
+
+    vi.spyOn(result.current, 'showNotification').mockImplementation(
+      showNotification
+    )
+
+    const payload: ShellNotificationPayload[ShellNotificationType.CARD_DISCARDED] =
+      {
+        cardDiscarded: stubSprinkler,
+      }
+
+    const send = actorRef.send as unknown as MockInstance<
+      (event: MatchEvents) => void
+    >
+    const matchEventPayload = send.mock.calls[0]![0]
+
+    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+    act(() => {
+      matchEventPayload.shell.triggerNotification({
+        type: ShellNotificationType.CARD_DISCARDED,
+        payload,
+      })
+    })
+
+    expect(result.current.snackbarProps.message).toEqual(
+      `Fun Animal discarded ${payload.cardDiscarded.name}`
     )
     expect(result.current.snackbarProps.severity).toEqual('info')
   })

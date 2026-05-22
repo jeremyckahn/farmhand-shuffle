@@ -3,12 +3,8 @@ import {
   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
   STANDARD_FIELD_SIZE,
 } from '../../config'
-import {
-  IMatch,
-  isCropCardInstance,
-  isWaterCardInstance,
-  WaterInstance,
-} from '../../types'
+import { IMatch, isWaterCardInstance, WaterInstance } from '../../types'
+import { isPlayedCrop } from '../../types/guards'
 import { lookup } from '../Lookup'
 
 export class BotLogicService {
@@ -28,7 +24,8 @@ export class BotLogicService {
       randomNumber.chooseIntegerBetween(0, cropCardIdxsInPlayerHand.length)
     )
 
-    const availableFieldSpace = STANDARD_FIELD_SIZE - player.field.crops.length
+    const availableFieldSpace =
+      STANDARD_FIELD_SIZE - player.field.cards.filter(crop => !!crop).length
 
     const safeNumberOfCropsToPlay = Math.min(
       availableFieldSpace,
@@ -80,7 +77,7 @@ export class BotLogicService {
   getCropCardIndicesToWater(match: IMatch, playerId: string) {
     const player = lookup.getPlayer(match, playerId)
     const {
-      field: { crops },
+      field: { cards },
       hand,
     } = player
 
@@ -91,21 +88,20 @@ export class BotLogicService {
       }
     )
 
-    for (let i = 0; i < crops.length; i++) {
+    for (let i = 0; i < cards.length; i++) {
       // NOTE: Prevents playing more water cards than there are in the player's hand
       if (fieldCropIdxsThatNeedWater.length === numberOfWaterCardsInHand) {
         break
       }
 
-      const plantedCrop = crops[i]
+      const plantedCrop = cards[i]
 
-      if (plantedCrop && isCropCardInstance(plantedCrop.instance)) {
-        if (
-          plantedCrop.waterCards < plantedCrop.instance.waterToMature &&
-          plantedCrop.wasWateredDuringTurn === false
-        ) {
-          fieldCropIdxsThatNeedWater = [...fieldCropIdxsThatNeedWater, i]
-        }
+      if (
+        isPlayedCrop(plantedCrop) &&
+        plantedCrop.waterCards < plantedCrop.instance.waterToMature &&
+        plantedCrop.wasWateredDuringTurn === false
+      ) {
+        fieldCropIdxsThatNeedWater = [...fieldCropIdxsThatNeedWater, i]
       }
     }
 
@@ -115,22 +111,41 @@ export class BotLogicService {
   getCropCardIndicesToHarvest(match: IMatch, playerId: string) {
     const player = lookup.getPlayer(match, playerId)
     const {
-      field: { crops },
+      field: { cards },
     } = player
 
     let fieldCropIdxsToHarvest: number[] = []
 
-    for (let i = 0; i < crops.length; i++) {
-      const plantedCrop = crops[i]
+    for (let i = 0; i < cards.length; i++) {
+      const plantedCrop = cards[i]
 
-      if (plantedCrop && isCropCardInstance(plantedCrop.instance)) {
-        if (plantedCrop.waterCards >= plantedCrop.instance.waterToMature) {
-          fieldCropIdxsToHarvest = [...fieldCropIdxsToHarvest, i]
-        }
+      if (
+        isPlayedCrop(plantedCrop) &&
+        plantedCrop.waterCards >= plantedCrop.instance.waterToMature
+      ) {
+        fieldCropIdxsToHarvest = [...fieldCropIdxsToHarvest, i]
       }
     }
 
     return fieldCropIdxsToHarvest
+  }
+
+  getOpenFieldPosition(match: IMatch, playerId: string) {
+    const player = lookup.getPlayer(match, playerId)
+    const { field } = player
+    const { cards } = field
+
+    let availableIdxs: number[] = []
+
+    for (let i = 0; i < Math.max(STANDARD_FIELD_SIZE, cards.length); i++) {
+      if (typeof cards[i] === 'undefined') {
+        availableIdxs = [...availableIdxs, i]
+      }
+    }
+
+    const selectedIdx = randomNumber.chooseElement(availableIdxs)
+
+    return selectedIdx
   }
 }
 

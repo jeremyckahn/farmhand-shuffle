@@ -1,23 +1,3 @@
-import { botLogic } from '../../BotLogic'
-import {
-  CardInstance,
-  MatchEvent,
-  MatchState,
-  IField,
-  IPlayedCrop,
-  IPlayer,
-  ShellNotification,
-  ShellNotificationType,
-} from '../../../types'
-import {
-  carrot,
-  instantiate,
-  pumpkin,
-  rain,
-  shovel,
-  water,
-} from '../../../cards'
-import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../../config'
 import { randomNumber } from '../../../../services/RandomNumber'
 import { MAX_RANDOM_VALUE } from '../../../../test-utils/constants'
 import {
@@ -25,28 +5,73 @@ import {
   stubPumpkin,
   stubRain,
   stubShovel,
+  stubSprinkler,
   stubWater,
 } from '../../../../test-utils/stubs/cards'
+import {
+  carrot,
+  instantiate,
+  pumpkin,
+  rain,
+  shovel,
+  sprinkler,
+  water,
+} from '../../../cards'
+import { DECK_SIZE, STANDARD_FIELD_SIZE } from '../../../config'
 import { updateField } from '../../../reducers/update-field'
 import { updatePlayer } from '../../../reducers/update-player'
+import {
+  CardInstance,
+  IField,
+  IPlayedCrop,
+  IPlayer,
+  MatchEvent,
+  MatchState,
+  ShellNotification,
+  ShellNotificationType,
+} from '../../../types'
+import { assertIsNonNullable, isPlayedCrop } from '../../../types/guards'
+import { botLogic } from '../../BotLogic'
+import { factory } from '../../Factory'
 
 import {
+  carrot1,
   createSetUpMatchActor,
-  expectInstance,
+  expectCropInstance,
+  expectEventInstance,
+  expectToolInstance,
+  expectWaterInstance,
   player1,
   player2,
-  carrot1,
   pumpkin1,
 } from './helpers'
 
 describe('bot turn action handling', () => {
+  beforeEach(() => {
+    vi.spyOn(botLogic, 'getOpenFieldPosition').mockImplementation(
+      (match, playerId) => {
+        const player = match.table.players[playerId]
+
+        if (!player) {
+          throw new Error(`Player with ID ${playerId} not found`)
+        }
+
+        const firstEmptyIdx = player.field.cards.findIndex(
+          crop => typeof crop === 'undefined'
+        )
+
+        return firstEmptyIdx === -1 ? player.field.cards.length : firstEmptyIdx
+      }
+    )
+  })
+
   describe('crop management', () => {
     // NOTE: For each of these test cases, there was already a carrot in the
     // field as a result of createSetUpMatchActor.
     test.each<{
       startingHand: IPlayer['hand']
       startingDeck: IPlayer['deck']
-      resultingFieldCrops: IField['crops']
+      resultingFieldCrops: IField['cards']
       resultingHand: IPlayer['hand']
       resultingDeck: IPlayer['deck']
       playedCards: CardInstance[]
@@ -56,14 +81,14 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
         ],
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
-        playedCards: [expectInstance(water)],
+        playedCards: [expectWaterInstance(water)],
       },
 
       {
@@ -74,7 +99,7 @@ describe('bot turn action handling', () => {
         ],
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: false,
             waterCards: 0,
           },
@@ -86,7 +111,7 @@ describe('bot turn action handling', () => {
         ],
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 2).fill(stubWater),
-        playedCards: [expectInstance(carrot)],
+        playedCards: [expectCropInstance(carrot)],
       },
 
       {
@@ -94,7 +119,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -104,7 +129,7 @@ describe('bot turn action handling', () => {
         resultingHand: [stubWater],
 
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
-        playedCards: [expectInstance(water)],
+        playedCards: [expectWaterInstance(water)],
       },
 
       {
@@ -112,7 +137,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -120,7 +145,7 @@ describe('bot turn action handling', () => {
         ],
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
-        playedCards: [expectInstance(water), expectInstance(pumpkin)],
+        playedCards: [expectWaterInstance(water), expectCropInstance(pumpkin)],
       },
 
       {
@@ -128,7 +153,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -138,9 +163,9 @@ describe('bot turn action handling', () => {
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
         playedCards: [
-          expectInstance(water),
-          expectInstance(pumpkin),
-          expectInstance(carrot),
+          expectWaterInstance(water),
+          expectCropInstance(pumpkin),
+          expectCropInstance(carrot),
         ],
       },
 
@@ -149,7 +174,7 @@ describe('bot turn action handling', () => {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubWater),
         resultingFieldCrops: [
           {
-            instance: expectInstance(carrot),
+            instance: expectCropInstance(carrot),
             wasWateredDuringTurn: true,
             waterCards: 1,
           },
@@ -159,10 +184,10 @@ describe('bot turn action handling', () => {
         resultingHand: [],
         resultingDeck: new Array<CardInstance>(DECK_SIZE - 1).fill(stubWater),
         playedCards: [
-          expectInstance(water),
-          expectInstance(water),
-          expectInstance(pumpkin),
-          expectInstance(carrot),
+          expectWaterInstance(water),
+          expectWaterInstance(water),
+          expectCropInstance(pumpkin),
+          expectCropInstance(carrot),
         ],
       },
     ])(
@@ -220,20 +245,20 @@ describe('bot turn action handling', () => {
           throw new Error('Player not found')
         }
 
-        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
         expect(player.hand).toEqual(resultingHand)
         expect(player.deck).toEqual(resultingDeck)
         expect(cropsToPlayDuringTurn).toEqual(0)
         expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
         const wereAnyCropsWatered = resultingFieldCrops.some(
-          crop => crop && crop.wasWateredDuringTurn
+          crop => isPlayedCrop(crop) && crop.wasWateredDuringTurn
         )
 
         const shellNotification: ShellNotification = {
           type: ShellNotificationType.CROP_WATERED,
           payload: {
-            cropWatered: expectInstance(carrot),
+            cropWatered: expectCropInstance(carrot),
           },
         }
 
@@ -252,9 +277,9 @@ describe('bot turn action handling', () => {
     // NOTE: For each of these test cases, there was already a carrot in the
     // field as a result of createSetUpMatchActor.
     test.each<{
-      startingFieldCrops: IField['crops']
+      startingFieldCrops: IField['cards']
       startingDiscardPile: CardInstance[]
-      resultingFieldCrops: IField['crops']
+      resultingFieldCrops: IField['cards']
       resultingDiscardPile: CardInstance[]
       playedCards: CardInstance[]
     }>([
@@ -305,9 +330,9 @@ describe('bot turn action handling', () => {
         ],
         resultingDiscardPile: [
           stubPumpkin,
-          expectInstance(water),
+          expectWaterInstance(water),
         ] as CardInstance[],
-        playedCards: [expectInstance(water)],
+        playedCards: [expectWaterInstance(water)],
       },
     ])(
       'harvests crops from starting field $startingFieldCrops',
@@ -325,7 +350,7 @@ describe('bot turn action handling', () => {
         } = matchActor.getSnapshot()
 
         match = updateField(match, player2.id, {
-          crops: startingFieldCrops,
+          cards: startingFieldCrops,
         })
 
         match = updatePlayer(match, player2.id, {
@@ -354,7 +379,7 @@ describe('bot turn action handling', () => {
           throw new Error('Player not found')
         }
 
-        expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+        expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
         expect(player.discardPile).toEqual<IPlayer['discardPile']>(
           resultingDiscardPile
         )
@@ -364,7 +389,7 @@ describe('bot turn action handling', () => {
 
     // NOTE: For this test case, there was already a carrot in the field as a
     // result of createSetUpMatchActor.
-    test('prevents planting crops if field is full', () => {
+    test('prevents planting cards if field is full', () => {
       // NOTE: When the turn starts, the player will draw an additional Carrot
       // from the deck. This would result in a hand that is the max size of the
       // field. With one Carrot already in the field, there would be only one
@@ -377,14 +402,14 @@ describe('bot turn action handling', () => {
       const resultingFieldCrops = new Array<IPlayedCrop>(
         STANDARD_FIELD_SIZE
       ).fill({
-        instance: expectInstance(carrot),
+        instance: expectCropInstance(carrot),
         wasWateredDuringTurn: false,
         waterCards: 0,
       })
-      const resultingHand: IPlayer['hand'] = [expectInstance(carrot)]
+      const resultingHand: IPlayer['hand'] = [expectCropInstance(carrot)]
       const playedCards = new Array(STANDARD_FIELD_SIZE - 1)
         .fill(null)
-        .map(() => expectInstance(carrot))
+        .map(() => expectCropInstance(carrot))
 
       const matchActor = createSetUpMatchActor()
 
@@ -419,7 +444,7 @@ describe('bot turn action handling', () => {
         throw new Error('Player not found')
       }
 
-      expect(player.hand).toEqual([...startingHand, expectInstance(carrot)])
+      expect(player.hand).toEqual([...startingHand, expectCropInstance(carrot)])
 
       // NOTE: Performs all bot turn logic
       vi.runAllTimers()
@@ -442,20 +467,127 @@ describe('bot turn action handling', () => {
       }
 
       expect(player.hand).toEqual(resultingHand)
-      expect(player.field.crops).toEqual<IField['crops']>(resultingFieldCrops)
+      expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
       expect(cropsToPlayDuringTurn).toEqual(0)
       expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
 
       const shellNotification: ShellNotification = {
         type: ShellNotificationType.CROP_WATERED,
         payload: {
-          cropWatered: expectInstance(carrot),
+          cropWatered: expectCropInstance(carrot),
         },
       }
 
       expect(shell.triggerNotification).not.toHaveBeenCalledWith<
         ShellNotification[]
       >(shellNotification)
+    })
+
+    // NOTE: For this test case, there was already a carrot in the field as a
+    // result of createSetUpMatchActor.
+    test('allows planting cards if field only has space in the middle', () => {
+      // NOTE: When the turn starts, the player will draw a Carrot from the
+      // deck.
+      const startingHand: IPlayer['hand'] = []
+
+      const startingDeck = new Array<CardInstance>(DECK_SIZE).fill(stubCarrot)
+
+      // NOTE: Field is bookended by crops, but otherwise empty
+      const startingFieldCrops: Array<IPlayedCrop | undefined> = [
+        {
+          instance: expectCropInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+        ...new Array<undefined>(STANDARD_FIELD_SIZE - 2).fill(undefined),
+        {
+          instance: expectCropInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+      ]
+
+      const resultingFieldCrops: Array<IPlayedCrop | undefined> = [
+        {
+          instance: expectCropInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+        {
+          instance: expectCropInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+        ...new Array<undefined>(STANDARD_FIELD_SIZE - 3).fill(undefined),
+        {
+          instance: expectCropInstance(carrot),
+          wasWateredDuringTurn: false,
+          waterCards: 0,
+        },
+      ]
+
+      const resultingHand: IPlayer['hand'] = []
+      const playedCards = [expectCropInstance(carrot)]
+      const matchActor = createSetUpMatchActor()
+
+      const snapshot = matchActor.getSnapshot()
+      let {
+        context: { match },
+      } = snapshot
+      const {
+        context: { shell },
+      } = snapshot
+
+      vi.spyOn(shell, 'triggerNotification')
+
+      // NOTE: This causes the maximum amount of crops in the hand to be
+      // played. It plays from the back of the hand to the front.
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
+
+      match = updatePlayer(match, player2.id, {
+        deck: startingDeck,
+        hand: startingHand,
+        field: {
+          cards: startingFieldCrops,
+        },
+      })
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+      // NOTE: Prompts bot player
+      matchActor.send({ type: MatchEvent.START_TURN })
+
+      // NOTE: Indicates that another Carrot was drawn
+      let player =
+        matchActor.getSnapshot().context.match.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      // NOTE: Performs all bot turn logic
+      vi.runAllTimers()
+
+      const {
+        value,
+        context: {
+          match: matchResult,
+          botState: { cropsToPlayDuringTurn },
+        },
+      } = matchActor.getSnapshot()
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(matchResult.currentPlayerId).toBe(player1.id)
+
+      player = matchResult.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      expect(player.hand).toEqual(resultingHand)
+      expect(player.field.cards).toEqual<IField['cards']>(resultingFieldCrops)
+      expect(cropsToPlayDuringTurn).toEqual(0)
+      expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
     })
   })
 
@@ -484,7 +616,7 @@ describe('bot turn action handling', () => {
         startingHand: [stubRain],
         resultingHand: [stubPumpkin],
         resultingDiscardPile: [stubRain],
-        playedCards: [expectInstance(rain)],
+        playedCards: [expectEventInstance(rain)],
       },
       {
         numberOfEventCardsToPlay: 1,
@@ -492,7 +624,7 @@ describe('bot turn action handling', () => {
         startingHand: [stubRain, stubRain],
         resultingHand: [stubRain, stubPumpkin],
         resultingDiscardPile: [stubRain],
-        playedCards: [expectInstance(rain)],
+        playedCards: [expectEventInstance(rain)],
       },
     ])(
       'plays $numberOfEventCardsToPlay event cards from hand with $startingHandEvents.length of them',
@@ -579,7 +711,7 @@ describe('bot turn action handling', () => {
       startingDeck: IPlayer['deck']
       startingHand: IPlayer['hand']
       resultingHand: IPlayer['hand']
-      resultingDiscardPile: CardInstance[]
+      resultingDiscardPile: IPlayer['discardPile']
       playedCards: CardInstance[]
     }>([
       {
@@ -589,7 +721,7 @@ describe('bot turn action handling', () => {
         // it is set in the field due to `generate` being mocked as 1.
         resultingHand: [stubPumpkin, stubPumpkin],
         resultingDiscardPile: [stubShovel],
-        playedCards: [expectInstance(shovel), expectInstance(pumpkin)],
+        playedCards: [expectToolInstance(shovel), expectCropInstance(pumpkin)],
       },
       {
         startingDeck: new Array<CardInstance>(DECK_SIZE).fill(stubPumpkin),
@@ -599,9 +731,9 @@ describe('bot turn action handling', () => {
         resultingHand: [stubPumpkin, stubPumpkin, stubPumpkin, stubPumpkin],
         resultingDiscardPile: [stubShovel, stubShovel],
         playedCards: [
-          expectInstance(shovel),
-          expectInstance(shovel),
-          expectInstance(pumpkin),
+          expectToolInstance(shovel),
+          expectToolInstance(shovel),
+          expectCropInstance(pumpkin),
         ],
       },
     ])(
@@ -674,5 +806,219 @@ describe('bot turn action handling', () => {
         >(shellNotification)
       }
     )
+
+    test('shows notification for plantable tools when they are planted', () => {
+      const startingDeck: IPlayer['deck'] = new Array<CardInstance>(
+        DECK_SIZE
+      ).fill(stubSprinkler)
+      const startingHand: IPlayer['hand'] = []
+      const resultingHand: IPlayer['hand'] = []
+      const resultingDiscardPile: IPlayer['discardPile'] = []
+      const playedCards: CardInstance[] = [expectToolInstance(sprinkler)]
+
+      // NOTE: This causes the maximum amount of tools in the hand to be
+      // played.
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
+
+      const matchActor = createSetUpMatchActor()
+
+      const snapshot = matchActor.getSnapshot()
+      let {
+        context: { match },
+      } = snapshot
+      const {
+        context: { shell },
+      } = snapshot
+
+      vi.spyOn(shell, 'triggerNotification')
+
+      match = updatePlayer(match, player2.id, {
+        deck: startingDeck,
+        hand: startingHand,
+      })
+
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+      // NOTE: Prompts bot player
+      matchActor.send({ type: MatchEvent.START_TURN })
+
+      // NOTE: Performs all bot turn logic
+      vi.runAllTimers()
+
+      const {
+        value,
+        context: { match: matchResult },
+      } = matchActor.getSnapshot()
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(matchResult.currentPlayerId).toBe(player1.id)
+
+      const player = matchResult.table.players[player2.id]
+
+      assertIsNonNullable(player)
+
+      expect(player.hand).toEqual<IPlayer['hand']>(resultingHand)
+      expect(player.discardPile).toEqual<IPlayer['discardPile']>(
+        resultingDiscardPile
+      )
+      expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
+
+      const shellNotification: ShellNotification = {
+        type: ShellNotificationType.TOOL_CARD_PLAYED,
+        payload: {
+          toolCard: stubSprinkler,
+        },
+      }
+
+      expect(shell.triggerNotification).toHaveBeenCalledWith<
+        ShellNotification[]
+      >(shellNotification)
+    })
+
+    test('performs any daily effects for planted tool cards at the start of every turn', () => {
+      const startingDeck: IPlayer['deck'] = new Array<CardInstance>(
+        DECK_SIZE
+      ).fill(stubCarrot)
+      const startingHand: IPlayer['hand'] = []
+      const startingFieldCards: IField['cards'] = [
+        factory.buildPlayedCrop(stubCarrot),
+        factory.buildPlayedTool(stubSprinkler),
+        factory.buildPlayedCrop(stubPumpkin),
+      ]
+      const resultingFieldCards: IField['cards'] = [
+        {
+          ...factory.buildPlayedCrop(stubCarrot),
+          wasWateredDuringTurn: true,
+          waterCards: 1,
+        },
+        factory.buildPlayedTool(stubSprinkler),
+        {
+          ...factory.buildPlayedCrop(stubPumpkin),
+          wasWateredDuringTurn: true,
+          waterCards: 1,
+        },
+        factory.buildPlayedCrop(stubCarrot),
+      ]
+
+      // NOTE: This causes the maximum amount of tools in the hand to be
+      // played.
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
+
+      const matchActor = createSetUpMatchActor()
+
+      const snapshot = matchActor.getSnapshot()
+      let {
+        context: { match },
+      } = snapshot
+
+      match = updatePlayer(match, player2.id, {
+        deck: startingDeck,
+        hand: startingHand,
+        field: {
+          cards: startingFieldCards,
+        },
+      })
+
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+      // NOTE: Prompts bot player
+      matchActor.send({ type: MatchEvent.START_TURN })
+
+      // NOTE: Performs all bot turn logic
+      vi.runAllTimers()
+
+      const {
+        value,
+        context: { match: matchResult },
+      } = matchActor.getSnapshot()
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(matchResult.currentPlayerId).toBe(player1.id)
+
+      const player = matchResult.table.players[player2.id]
+
+      assertIsNonNullable(player)
+
+      expect(player.field.cards).toEqual(resultingFieldCards)
+    })
+
+    test('skips playing plantable tool cards when field is full', () => {
+      // NOTE: This causes the maximum amount of tools in the hand to be
+      // played.
+      vi.spyOn(randomNumber, 'generate').mockReturnValue(MAX_RANDOM_VALUE)
+
+      const matchActor = createSetUpMatchActor()
+
+      const snapshot = matchActor.getSnapshot()
+      let {
+        context: { match },
+      } = snapshot
+      const {
+        context: { shell },
+      } = snapshot
+
+      vi.spyOn(shell, 'triggerNotification')
+
+      const startingDeck: IPlayer['deck'] = new Array<CardInstance>(
+        DECK_SIZE
+      ).fill(stubWater)
+      const startingHand: IPlayer['hand'] = [stubSprinkler]
+      const startingField: IPlayer['field'] = {
+        cards: Array.from({ length: STANDARD_FIELD_SIZE }, () =>
+          factory.buildPlayedTool(instantiate(sprinkler))
+        ),
+      }
+
+      const resultingHand: IPlayer['hand'] = [stubSprinkler, stubWater]
+      const resultingDiscardPile: IPlayer['discardPile'] = []
+      const playedCards: CardInstance[] = []
+
+      match = updatePlayer(match, player2.id, {
+        deck: startingDeck,
+        hand: startingHand,
+        field: startingField,
+      })
+
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+      // NOTE: Prompts bot player
+      matchActor.send({ type: MatchEvent.START_TURN })
+
+      // NOTE: Performs all bot turn logic
+      vi.runAllTimers()
+
+      const {
+        value,
+        context: { match: matchResult },
+      } = matchActor.getSnapshot()
+
+      vi.runAllTimers()
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(matchResult.currentPlayerId).toBe(player1.id)
+
+      const player = matchResult.table.players[player2.id]
+
+      if (!player) {
+        throw new Error('Player not found')
+      }
+
+      expect(player.hand).toEqual<IPlayer['hand']>(resultingHand)
+      expect(player.discardPile).toEqual<IPlayer['discardPile']>(
+        resultingDiscardPile
+      )
+      expect(player.cardsPlayedDuringTurn).toEqual(playedCards)
+
+      const shellNotification: ShellNotification = {
+        type: ShellNotificationType.TOOL_CARD_PLAYED,
+        payload: {
+          toolCard: stubSprinkler,
+        },
+      }
+
+      expect(shell.triggerNotification).not.toHaveBeenCalledWith<
+        ShellNotification[]
+      >(shellNotification)
+    })
   })
 })

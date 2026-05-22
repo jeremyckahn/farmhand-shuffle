@@ -1,12 +1,7 @@
 import { randomNumber } from '../../../services/RandomNumber'
 import * as crops from '../../cards/crops'
-import {
-  CardInstance,
-  ICrop,
-  IMatch,
-  IPlayedCrop,
-  isCropCardInstance,
-} from '../../types'
+import { CardInstance, ICrop, IMatch, IPlayedCrop } from '../../types'
+import { isCropCardInstance } from '../../types/guards'
 import { updateMatch } from '../update-match'
 
 export const updatePrices = (match: IMatch) => {
@@ -17,7 +12,7 @@ export const updatePrices = (match: IMatch) => {
       ...player.deck,
       ...player.hand,
       ...player.discardPile,
-      ...player.field.crops
+      ...player.field.cards
         .filter(
           (playedCrop): playedCrop is IPlayedCrop => playedCrop !== undefined
         )
