@@ -5,11 +5,12 @@ import {
   stubPumpkin,
   stubShovel,
   stubSprinkler,
-} from '../../../../test-utils/stubs/cards'
-import { stubMatch } from '../../../../test-utils/stubs/match'
-import { stubPlayer1 } from '../../../../test-utils/stubs/players'
-import { factory } from '../../../services/Factory'
-import { rules } from '../index'
+} from '../../../test-utils/stubs/cards'
+import { stubMatch } from '../../../test-utils/stubs/match'
+import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { factory } from '../Factory'
+
+import { rules } from './index'
 
 describe('rules.applyDailyEffects', () => {
   test('returns context unmodified if current player has no cards in field', () => {
@@ -78,14 +79,20 @@ describe('rules.applyDailyEffects', () => {
     const applyDailyEffectSpy1 = vi.fn().mockReturnValue(mockedContext1)
 
     // eslint-disable-next-line functional/immutable-data
-    sprinkler1.instance = { ...sprinkler1.instance, applyDailyEffect: applyDailyEffectSpy1 }
+    sprinkler1.instance = {
+      ...sprinkler1.instance,
+      applyDailyEffect: applyDailyEffectSpy1,
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
     const mockedContext2 = { match: { ...match, turn: 3 } } as any
     const applyDailyEffectSpy2 = vi.fn().mockReturnValue(mockedContext2)
 
     // eslint-disable-next-line functional/immutable-data
-    sprinkler2.instance = { ...sprinkler2.instance, applyDailyEffect: applyDailyEffectSpy2 }
+    sprinkler2.instance = {
+      ...sprinkler2.instance,
+      applyDailyEffect: applyDailyEffectSpy2,
+    }
 
     // eslint-disable-next-line functional/immutable-data, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     ;(match.table.players[stubPlayer1.id]!.field as any).cards = [
