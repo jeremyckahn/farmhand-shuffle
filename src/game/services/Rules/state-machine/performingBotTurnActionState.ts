@@ -90,15 +90,15 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                     }
                   }
 
-                  const currentPlayer = match.table.players[currentPlayerId]
-
-                  assertIsNonNullable(currentPlayer)
-
                   match = startTurn(
                     match,
                     currentPlayerId,
                     match.cardsToDrawAtTurnStart
                   )
+
+                  const currentPlayer = match.table.players[currentPlayerId]
+
+                  assertIsNonNullable(currentPlayer)
 
                   for (let i = 0; i < currentPlayer.field.cards.length; i++) {
                     const card = currentPlayer.field.cards[i]
