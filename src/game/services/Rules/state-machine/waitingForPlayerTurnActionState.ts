@@ -15,13 +15,10 @@ import {
   MatchState,
   ShellNotificationType,
 } from '../../../types'
-import {
-  assertCurrentPlayer,
-  assertIsNonNullable,
-  isPlayedCrop,
-} from '../../../types/guards'
+import { assertCurrentPlayer, isPlayedCrop } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 import { InvalidCardError, PlayerOutOfFundsError } from '../errors'
+import { rules } from '..'
 
 import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
@@ -162,25 +159,8 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
                 match.cardsToDrawAtTurnStart
               )
 
-              const currentPlayer = match.table.players[currentPlayerId]
-
-              assertIsNonNullable(currentPlayer)
-
-              for (let i = 0; i < currentPlayer.field.cards.length; i++) {
-                const card = currentPlayer.field.cards[i]
-
-                if (
-                  card &&
-                  isToolCardInstance(card.instance) &&
-                  card.instance.applyDailyEffect
-                ) {
-                  context = card.instance.applyDailyEffect(
-                    { ...context, match },
-                    i
-                  )
-                  match = context.match
-                }
-              }
+              context = rules.applyDailyEffects({ ...context, match })
+              match = context.match
 
               break
             }
