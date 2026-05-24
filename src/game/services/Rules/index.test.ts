@@ -6,64 +6,61 @@ import {
   stubShovel,
   stubSprinkler,
 } from '../../../test-utils/stubs/cards'
+import { stubContext } from '../../../test-utils/stubs/context'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { updatePlayer } from '../../reducers/update-player'
 import { factory } from '../Factory'
 
 import { rules } from './index'
 
 describe('rules.applyDailyEffects', () => {
   test('returns context unmodified if current player has no cards in field', () => {
-    const match = stubMatch({ currentPlayerId: stubPlayer1.id })
+    let match = stubMatch({ currentPlayerId: stubPlayer1.id })
 
-    // eslint-disable-next-line functional/immutable-data, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-    ;(match.table.players[stubPlayer1.id]!.field as any).cards = []
+    match = updatePlayer(match, stubPlayer1.id, {
+      field: { cards: [] },
+    })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-    const context = { match } as any
+    const nextContext = rules.applyDailyEffects({ ...stubContext, match })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const nextContext = rules.applyDailyEffects(context)
-
-    expect(nextContext).toBe(context)
-    expect(nextContext.match).toBe(match)
+    expect(nextContext.match).toEqual(match)
   })
 
   test("returns context unmodified if current player's field contains only crop cards", () => {
-    const match = stubMatch({ currentPlayerId: stubPlayer1.id })
+    let match = stubMatch({ currentPlayerId: stubPlayer1.id })
 
-    // eslint-disable-next-line functional/immutable-data, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-    ;(match.table.players[stubPlayer1.id]!.field as any).cards = [
-      factory.buildPlayedCrop(stubCarrot),
-      factory.buildPlayedCrop(stubPumpkin),
-    ]
+    match = updatePlayer(match, stubPlayer1.id, {
+      field: {
+        cards: [
+          factory.buildPlayedCrop(stubCarrot),
+          factory.buildPlayedCrop(stubPumpkin),
+        ],
+      },
+    })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-    const context = { match } as any
+    const nextContext = rules.applyDailyEffects({ ...stubContext, match })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const nextContext = rules.applyDailyEffects(context)
-
-    expect(nextContext).toBe(context)
+    expect(nextContext.match).toEqual(match)
   })
 
   test('returns context unmodified for tool cards that do not implement applyDailyEffect', () => {
-    const match = stubMatch({ currentPlayerId: stubPlayer1.id })
-    // Shovel is a tool card but does not implement applyDailyEffect
+    let match = stubMatch({ currentPlayerId: stubPlayer1.id })
+
+    // NOTE: Shovel is a tool card but does not implement applyDailyEffect
     const shovelCard = factory.buildPlayedTool(stubShovel)
 
     expect(shovelCard.instance.applyDailyEffect).toBeUndefined()
 
-    // eslint-disable-next-line functional/immutable-data, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-    ;(match.table.players[stubPlayer1.id]!.field as any).cards = [shovelCard]
+    match = updatePlayer(match, stubPlayer1.id, {
+      field: {
+        cards: [shovelCard],
+      },
+    })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-    const context = { match } as any
+    const nextContext = rules.applyDailyEffects({ ...stubContext, match })
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const nextContext = rules.applyDailyEffects(context)
-
-    expect(nextContext).toBe(context)
+    expect(nextContext.match).toEqual(match)
   })
 
   test('calls applyDailyEffect for tool cards that implement it and accumulates context', () => {
