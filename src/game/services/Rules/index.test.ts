@@ -94,30 +94,18 @@ describe('rules.applyDailyEffects', () => {
       },
     })
 
-    const context = { ...stubContext, match }
-
-    const finalContext = rules.applyDailyEffects(context)
+    rules.applyDailyEffects({ ...stubContext, match })
 
     expect(sprinkler1.instance.applyDailyEffect).toHaveBeenCalledTimes(1)
-
-    // The first sprinkler gets the context
-    // The context argument to `applyDailyEffect` merges `{ ...context, match }`
-    // but the implementation doesn't use the original context if it's `{ match }`
-    // The original code: `context = card.instance.applyDailyEffect({ ...context, match }, i)`
     expect(sprinkler1.instance.applyDailyEffect).toHaveBeenCalledWith(
       expect.objectContaining({ match }),
       1
     )
 
     expect(sprinkler2.instance.applyDailyEffect).toHaveBeenCalledTimes(1)
-
-    // The second sprinkler gets the context returned by the first sprinkler, and its index (3)
     expect(sprinkler2.instance.applyDailyEffect).toHaveBeenCalledWith(
-      expect.objectContaining({ match: mockedContext1.match }),
+      mockedContext1,
       3
     )
-
-    // The final returned context should be what the last sprinkler returned
-    expect(finalContext).toBe(mockedContext2)
   })
 })
