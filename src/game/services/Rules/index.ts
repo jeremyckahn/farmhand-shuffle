@@ -21,7 +21,6 @@ export class RulesService {
     return createActor(this.createMatchStateMachine()).start()
   }
 
-  // FIXME: Test this
   applyDailyEffects = (context: MatchMachineContext): MatchMachineContext => {
     let { match } = context
     const { currentPlayerId } = match
