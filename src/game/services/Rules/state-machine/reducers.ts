@@ -1,12 +1,12 @@
 import { addCardsPlayedDuringTurn } from '../../../reducers/add-turn-cards-played'
 import {
+  IMatch,
+  isToolCardInstance,
   MatchEvent,
   MatchEventPayload,
   MatchEventPayloadKey,
-  IMatch,
 } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
-import { MatchStateCorruptError } from '../errors'
+import { assertCurrentPlayer, assertIsNonNullable } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 /**
@@ -20,8 +20,29 @@ export const recordCardPlayEvents = (
   match: IMatch,
   event: MatchEventPayload[MatchEventPayloadKey]
 ) => {
+  const recordCardsPlayedDuringTurn = (
+    currentPlayerId: string,
+    cardIdxInHand: number
+  ) => {
+    const player = lookup.getPlayer(match, currentPlayerId)
+    const card = player.hand[cardIdxInHand]
+
+    assertIsNonNullable(card)
+
+    return addCardsPlayedDuringTurn(match, currentPlayerId, [card])
+  }
+
   switch (event.type) {
-    case MatchEvent.PLAY_CROP:
+    case MatchEvent.SELECT_CARD_POSITION: {
+      const { currentPlayerId } = match
+
+      assertCurrentPlayer(currentPlayerId)
+
+      match = recordCardsPlayedDuringTurn(currentPlayerId, event.cardIdxInHand)
+
+      break
+    }
+
     case MatchEvent.PLAY_EVENT:
     case MatchEvent.PLAY_TOOL:
     case MatchEvent.PLAY_WATER: {
@@ -30,15 +51,17 @@ export const recordCardPlayEvents = (
       assertCurrentPlayer(currentPlayerId)
 
       const player = lookup.getPlayer(match, currentPlayerId)
-      const card = player.hand[event.cardIdx]
+      const card = player.hand[event.cardIdxInHand]
 
-      if (!card) {
-        throw new MatchStateCorruptError(
-          `event.cardIdx is invalid: ${event.cardIdx}`
-        )
+      assertIsNonNullable(card)
+
+      // NOTE: Prevents plantable tool cards from being double-recorded (they
+      // should only be recorded after being placed)
+      if (isToolCardInstance(card) && card.isPlantable) {
+        break
       }
 
-      match = addCardsPlayedDuringTurn(match, currentPlayerId, [card])
+      match = recordCardsPlayedDuringTurn(currentPlayerId, event.cardIdxInHand)
 
       break
     }

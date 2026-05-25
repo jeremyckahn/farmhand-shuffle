@@ -40,7 +40,7 @@ if (!opponentPlayerId) {
 }
 
 match = updateField(match, selfPlayerId, {
-  crops: [
+  cards: [
     { ...factory.buildPlayedCrop(instantiate(carrot)), waterCards: 1 },
     { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 3 },
     { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 12 },
@@ -48,7 +48,7 @@ match = updateField(match, selfPlayerId, {
 })
 
 match = updateField(match, opponentPlayerId, {
-  crops: [
+  cards: [
     { ...factory.buildPlayedCrop(instantiate(carrot)), waterCards: 1 },
     { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 3 },
     { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 12 },

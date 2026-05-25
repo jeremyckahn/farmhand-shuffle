@@ -7,10 +7,10 @@ import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Match/ActorContext'
 
 import {
-  PlayedCrop,
+  PlayedCard,
   PlayedCropProps,
   unfilledWaterIndicatorOpacity,
-} from './PlayedCrop'
+} from './PlayedCard'
 
 const stubCardInstance = stubCarrot
 const stubWaterCards = 1
@@ -19,9 +19,9 @@ const stubPlayedCrop: IPlayedCrop = {
   wasWateredDuringTurn: false,
   waterCards: stubWaterCards,
 }
-const stubCropCardProps: PlayedCropProps['cropCardProps'] = {
+const stubCropCardProps: PlayedCropProps['cardProps'] = {
   cardInstance: stubCardInstance,
-  playedCrop: stubPlayedCrop,
+  playedCard: stubPlayedCrop,
   cardIdx: 0,
   playerId: '',
 }
@@ -29,8 +29,8 @@ const stubCropCardProps: PlayedCropProps['cropCardProps'] = {
 const StubCropCard = (overrides: Partial<PlayedCropProps> = {}) => (
   <StubShellContext>
     <ActorContext.Provider>
-      <PlayedCrop
-        cropCardProps={stubCropCardProps}
+      <PlayedCard
+        cardProps={stubCropCardProps}
         isInBackground={false}
         {...overrides}
       />
@@ -38,7 +38,7 @@ const StubCropCard = (overrides: Partial<PlayedCropProps> = {}) => (
   </StubShellContext>
 )
 
-describe('PlayedCrop', () => {
+describe('PlayedCard', () => {
   test('renders played crop card', () => {
     render(<StubCropCard />)
 
@@ -91,9 +91,9 @@ describe('PlayedCrop', () => {
 
     render(
       <StubCropCard
-        cropCardProps={{
+        cardProps={{
           ...stubCropCardProps,
-          playedCrop: { ...stubPlayedCrop, waterCards },
+          playedCard: { ...stubPlayedCrop, waterCards },
         }}
       />
     )

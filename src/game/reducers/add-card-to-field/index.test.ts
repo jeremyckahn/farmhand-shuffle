@@ -6,9 +6,9 @@ import { factory } from '../../services/Factory'
 import { FieldFullError } from '../../services/Rules/errors'
 import { updateField } from '../update-field'
 
-import { addCropToField } from '.'
+import { addCardToField } from '.'
 
-describe('addCropToField', () => {
+describe('addCardToField', () => {
   test('adds crop to field', () => {
     const match = stubMatch()
     const [player1Id] = Object.keys(match.table.players)
@@ -19,7 +19,7 @@ describe('addCropToField', () => {
 
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
 
-    const newMatch = addCropToField(match, player1Id, playedCrop)
+    const newMatch = addCardToField(match, player1Id, playedCrop, 0)
 
     const newPlayer = newMatch.table.players[player1Id]
 
@@ -27,7 +27,7 @@ describe('addCropToField', () => {
       throw new Error('Player not found')
     }
 
-    expect(newPlayer.field.crops).toEqual([playedCrop])
+    expect(newPlayer.field.cards).toEqual([playedCrop])
   })
 
   test('adds crop to empty slot in sparse field', () => {
@@ -42,14 +42,15 @@ describe('addCropToField', () => {
     const insertedCrop = factory.buildPlayedCrop(stubPumpkin)
 
     // Initialize field with some empty plots (undefined values)
-    const initialCrops = [playedCrop, undefined, playedCrop, undefined]
-    const sparseField = stubField({ crops: initialCrops })
+    const initialCards = [playedCrop, undefined, playedCrop, undefined]
+    const sparseField = stubField({ cards: initialCards })
     const matchWithSparseField = updateField(match, player1Id, sparseField)
 
-    const newMatch = addCropToField(
+    const newMatch = addCardToField(
       matchWithSparseField,
       player1Id,
-      insertedCrop
+      insertedCrop,
+      1
     )
 
     const expectedCrops = [playedCrop, insertedCrop, playedCrop, undefined]
@@ -59,7 +60,7 @@ describe('addCropToField', () => {
       throw new Error('Player not found')
     }
 
-    expect(newPlayer.field.crops).toEqual(expectedCrops)
+    expect(newPlayer.field.cards).toEqual(expectedCrops)
   })
 
   test('throws an error if field is full', () => {
@@ -73,13 +74,13 @@ describe('addCropToField', () => {
     const playedCrop = factory.buildPlayedCrop(stubCarrot)
 
     const fullField = stubField({
-      crops: new Array(STANDARD_FIELD_SIZE).fill(playedCrop),
+      cards: new Array(STANDARD_FIELD_SIZE).fill(playedCrop),
     })
 
     const newMatch = updateField(match, player1Id, fullField)
 
     expect(() => {
-      addCropToField(newMatch, player1Id, playedCrop)
+      addCardToField(newMatch, player1Id, playedCrop, 0)
     }).toThrow(FieldFullError)
   })
 })

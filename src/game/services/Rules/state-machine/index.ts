@@ -2,12 +2,13 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { MatchEvent, MatchState } from '../../../types'
 
+import { choosingCardPositon } from './choosingCardPosition'
 import { gameOverState } from './gameOverState'
 import { performingBotCropHarvestingState } from './performingBotCropHarvestingState'
 import { performingBotCropWateringState } from './performingBotCropWateringState'
 import { performingBotSetupActionState } from './performingBotSetupActionState'
 import { performingBotTurnActionState } from './performingBotTurnActionState'
-import { plantingCropState } from './plantingCropState'
+import { plantingCardState } from './plantingCardState'
 import { playerWateringCropState } from './playerWateringCropState'
 import { playingEventCard } from './playingEventCard'
 import { playingToolCard } from './playingToolCard'
@@ -47,11 +48,12 @@ export const machineConfig: RulesMachineConfig = {
     ...uninitializedState,
     ...gameOverState,
 
+    ...choosingCardPositon,
     ...performingBotCropWateringState,
     ...performingBotCropHarvestingState,
     ...performingBotSetupActionState,
     ...performingBotTurnActionState,
-    ...plantingCropState,
+    ...plantingCardState,
     ...playerWateringCropState,
     ...playingEventCard,
     ...playingToolCard,

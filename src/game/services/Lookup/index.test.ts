@@ -2,6 +2,7 @@ import {
   stubCarrot,
   stubRain,
   stubShovel,
+  stubSprinkler,
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
@@ -166,7 +167,7 @@ describe('Lookup', () => {
     })
   })
 
-  describe('getPlayedCropFromField', () => {
+  describe('getPlayedCardFromField', () => {
     let mutatedMatch: IMatch
 
     beforeEach(() => {
@@ -178,17 +179,29 @@ describe('Lookup', () => {
       }
 
       // eslint-disable-next-line functional/immutable-data
-      player.field.crops[0] = factory.buildPlayedCrop(stubCarrot)
+      player.field.cards[0] = factory.buildPlayedCrop(stubCarrot)
+      // eslint-disable-next-line functional/immutable-data
+      player.field.cards[1] = factory.buildPlayedTool(stubSprinkler)
     })
 
-    test('returns card from field', () => {
-      const playedCrop = lookup.getPlayedCropFromField(
+    test('returns crop from field', () => {
+      const playedCrop = lookup.getPlayedCardFromField(
         mutatedMatch,
         stubPlayer1.id,
         0
       )
 
       expect(playedCrop).toEqual(factory.buildPlayedCrop(stubCarrot))
+    })
+
+    test('returns planted tool from field', () => {
+      const playedCrop = lookup.getPlayedCardFromField(
+        mutatedMatch,
+        stubPlayer1.id,
+        1
+      )
+
+      expect(playedCrop).toEqual(factory.buildPlayedTool(stubSprinkler))
     })
 
     test('throws an error when specified card is not in field', () => {
@@ -199,10 +212,10 @@ describe('Lookup', () => {
       }
 
       expect(() => {
-        lookup.getPlayedCropFromField(
+        lookup.getPlayedCardFromField(
           mutatedMatch,
           stubPlayer1.id,
-          player.field.crops.length
+          player.field.cards.length
         )
       }).toThrow()
     })
@@ -281,6 +294,25 @@ describe('Lookup', () => {
       const nextPlayer = lookup.nextPlayerIndex(match)
 
       expect(nextPlayer).toEqual(1)
+    })
+  })
+
+  describe('fullPlots', () => {
+    test('filter out empty plots', () => {
+      let match = stubMatch()
+
+      const playedCrop1 = factory.buildPlayedCrop(stubCarrot)
+      const playedCrop2 = factory.buildPlayedCrop(stubCarrot)
+
+      match = updatePlayer(match, stubPlayer1.id, {
+        field: {
+          cards: [undefined, playedCrop1, undefined, playedCrop2, undefined],
+        },
+      })
+
+      const fullPlots = lookup.fullPlots(match, stubPlayer1.id)
+
+      expect(fullPlots).toEqual([playedCrop1, playedCrop2])
     })
   })
 })

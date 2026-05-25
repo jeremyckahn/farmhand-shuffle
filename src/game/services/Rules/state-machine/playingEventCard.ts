@@ -2,7 +2,10 @@ import { assertEvent, enqueueActions } from 'xstate'
 
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
-import { assertCurrentPlayer, assertIsEventCard } from '../../../types/guards'
+import {
+  assertCurrentPlayer,
+  assertIsEventCardInstance,
+} from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'
@@ -30,10 +33,10 @@ export const playingEventCard: RulesMachineConfig['states'] = {
         assertEvent(event, MatchEvent.PLAY_EVENT)
 
         const { currentPlayerId, sessionOwnerPlayerId } = match
-        const { playerId, cardIdx } = event
-        const card = lookup.getCardFromHand(match, playerId, cardIdx)
+        const { playerId, cardIdxInHand } = event
+        const card = lookup.getCardFromHand(match, playerId, cardIdxInHand)
 
-        assertIsEventCard(card)
+        assertIsEventCardInstance(card)
         assertCurrentPlayer(currentPlayerId)
 
         triggerNotification({
@@ -44,7 +47,7 @@ export const playingEventCard: RulesMachineConfig['states'] = {
         })
 
         match = card.applyEffect(context).match
-        match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdx)
+        match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdxInHand)
 
         if (currentPlayerId === sessionOwnerPlayerId) {
           enqueue.raise({ type: MatchEvent.PROMPT_PLAYER_FOR_TURN_ACTION })

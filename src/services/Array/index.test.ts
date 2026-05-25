@@ -21,5 +21,11 @@ describe('ArrayService', () => {
 
       expect(arr).toEqual([1, 4, 3])
     })
+
+    test('supports dynamic array resizing', () => {
+      const arr = array.replaceAt([], 2, 1)
+
+      expect(arr).toEqual([undefined, undefined, 1])
+    })
   })
 })

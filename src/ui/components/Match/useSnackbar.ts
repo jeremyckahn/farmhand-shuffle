@@ -96,6 +96,23 @@ export const useSnackbar = ({
               break
             }
 
+            case ShellNotificationType.CARD_DISCARDED: {
+              const {
+                cardDiscarded: { name: cardName },
+              } = payload
+
+              if (isSessionOwner) {
+                showNotification(`You discarded ${cardName}`, 'info')
+              } else {
+                showNotification(
+                  `${currentPlayerName} discarded ${cardName}`,
+                  'info'
+                )
+              }
+
+              break
+            }
+
             case ShellNotificationType.CROP_WATERED: {
               const {
                 cropWatered: { name: cropName },

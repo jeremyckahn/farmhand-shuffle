@@ -14,13 +14,15 @@ import {
   stubCarrot,
   stubRain,
   stubShovel,
+  stubSprinkler,
   stubWater,
 } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
-import { stubPlayer1 } from '../../../test-utils/stubs/players'
+import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import * as useMatchStateModule from '../../hooks/useMatchRules'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { ActorContext } from '../Match/ActorContext'
+import { deselectedHandIdx } from '../constants'
 
 import { Card } from './Card'
 import { CardProps } from './types'
@@ -122,7 +124,7 @@ describe('Card', () => {
     const playerWithFullField: IPlayer = {
       ...player,
       field: {
-        crops: fullFieldCrops,
+        cards: fullFieldCrops,
       },
     }
 
@@ -184,7 +186,7 @@ describe('Card', () => {
         [MatchEventPayload[MatchEvent.PLAY_CROP]]
       >({
         type: MatchEvent.PLAY_CROP,
-        cardIdx: 0,
+        cardIdxInHand: 0,
         playerId: stubPlayer1.id,
       })
     }
@@ -218,7 +220,7 @@ describe('Card', () => {
         [MatchEventPayload[MatchEvent.PLAY_WATER]]
       >({
         type: MatchEvent.PLAY_WATER,
-        cardIdx: 0,
+        cardIdxInHand: 0,
         playerId: stubPlayer1.id,
       })
     }
@@ -314,7 +316,7 @@ describe('Card', () => {
       [MatchEventPayload[MatchEvent.PLAY_EVENT]]
     >({
       type: MatchEvent.PLAY_EVENT,
-      cardIdx: 0,
+      cardIdxInHand: 0,
       playerId: stubPlayer1.id,
     })
   })
@@ -341,9 +343,63 @@ describe('Card', () => {
       [MatchEventPayload[MatchEvent.PLAY_TOOL]]
     >({
       type: MatchEvent.PLAY_TOOL,
-      cardIdx: 0,
+      cardIdxInHand: 0,
       playerId: stubPlayer1.id,
     })
+  })
+
+  test('allows player to discard a planted tool card', () => {
+    const send = mockSend()
+
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      match: stubMatch({
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      }),
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubSprinkler}
+        playerId={stubPlayer1.id}
+        isFocused
+        isInField
+      />
+    )
+
+    const discardCardButton = screen.getByText('Discard')
+
+    fireEvent.click(discardCardButton)
+
+    expect(send).toHaveBeenCalledWith<
+      [MatchEventPayload[MatchEvent.DISCARD_CARD_FROM_FIELD]]
+    >({
+      type: MatchEvent.DISCARD_CARD_FROM_FIELD,
+      playerId: stubPlayer1.id,
+      cardIdxInField: 0,
+    })
+  })
+
+  test("does not allow players to discard other player's planted tools", () => {
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      match: stubMatch({
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      }),
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubSprinkler}
+        playerId={stubPlayer2.id}
+        isFocused
+        isInField
+      />
+    )
+
+    const discardCardButton = screen.queryByText('Discard')
+
+    expect(discardCardButton).not.toBeInTheDocument()
   })
 
   describe('Tooltip variations', () => {
@@ -422,6 +478,84 @@ describe('Card', () => {
       expect(
         screen.queryByLabelText('Ready to be harvested')
       ).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Shell context side-effects when playing cards', () => {
+    // NOTE: This is behavior is necessary to prevent the played card from
+    // appearing to immediately transform into the next card in the hand when
+    // played. Though not obvious from this test, deleselecting the card
+    // animates it back to the hand before unmounting it.
+    test('playing a non-plantable tool (Shovel) deselects the hand card immediately and keeps the hand in viewport', () => {
+      const mockSetSelectedHandCardIdx = vi.fn()
+      const mockSetIsHandInViewport = vi.fn()
+
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+        match: stubMatch({
+          selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        }),
+      })
+
+      render(
+        <StubShellContext
+          setSelectedHandCardIdx={mockSetSelectedHandCardIdx}
+          setIsHandInViewport={mockSetIsHandInViewport}
+        >
+          <ActorContext.Provider>
+            <Card
+              cardInstance={stubShovel}
+              cardIdx={0}
+              playerId={stubPlayer1.id}
+              isFocused
+            />
+          </ActorContext.Provider>
+        </StubShellContext>
+      )
+
+      const playCardButton = screen.getByText('Play tool')
+
+      fireEvent.click(playCardButton)
+
+      expect(mockSetSelectedHandCardIdx).toHaveBeenCalledWith(deselectedHandIdx)
+      expect(mockSetIsHandInViewport).not.toHaveBeenCalled()
+    })
+
+    // NOTE: This behavior is necessary to make space for the player to select
+    // a position in the Field to place the card in.
+    test('playing a plantable tool (Sprinkler) does not deselect the hand card early and hides the hand viewport', () => {
+      const mockSetSelectedHandCardIdx = vi.fn()
+      const mockSetIsHandInViewport = vi.fn()
+
+      vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+        matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+        match: stubMatch({
+          selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+        }),
+      })
+
+      render(
+        <StubShellContext
+          setSelectedHandCardIdx={mockSetSelectedHandCardIdx}
+          setIsHandInViewport={mockSetIsHandInViewport}
+        >
+          <ActorContext.Provider>
+            <Card
+              cardInstance={stubSprinkler}
+              cardIdx={0}
+              playerId={stubPlayer1.id}
+              isFocused
+            />
+          </ActorContext.Provider>
+        </StubShellContext>
+      )
+
+      const playCardButton = screen.getByText('Play tool')
+
+      fireEvent.click(playCardButton)
+
+      expect(mockSetSelectedHandCardIdx).not.toHaveBeenCalled()
+      expect(mockSetIsHandInViewport).toHaveBeenCalledWith(false)
     })
   })
 })

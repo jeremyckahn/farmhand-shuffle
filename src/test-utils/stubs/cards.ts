@@ -4,6 +4,7 @@ import {
   pumpkin,
   rain,
   shovel,
+  sprinkler,
   water,
 } from '../../game/cards'
 import {
@@ -18,3 +19,4 @@ export const stubPumpkin: CropInstance = instantiate(pumpkin)
 export const stubWater: WaterInstance = instantiate(water)
 export const stubRain: EventInstance = instantiate(rain)
 export const stubShovel: ToolInstance = instantiate(shovel)
+export const stubSprinkler: ToolInstance = instantiate(sprinkler)

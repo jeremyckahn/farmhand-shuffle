@@ -7,12 +7,15 @@ import { payFromPlayerToCommunity } from '../pay-from-player-to-community'
 import { updatePlayedCrop } from '../update-played-crop'
 import { updatePlayer } from '../update-player'
 import { updatePrices } from '../update-prices'
+import { updateMatch } from '../update-match'
+import { isPlayedCrop } from '../../types/guards'
 
 export const startTurn = (
   match: IMatch,
   playerId: IPlayer['id'],
   cardsToDraw = 1
 ): IMatch => {
+  match = updateMatch(match, { turn: match.turn + 1 })
   match = updatePlayer(match, playerId, { cardsPlayedDuringTurn: [] })
   match = payFromPlayerToCommunity(match, STANDARD_TAX_AMOUNT, playerId)
 
@@ -26,10 +29,12 @@ export const startTurn = (
 
   const playerAfterDraw = lookup.getPlayer(match, playerId)
 
-  const crops = playerAfterDraw.field.crops
+  const cards = playerAfterDraw.field.cards
 
-  for (let i = 0; i < crops.length; i++) {
-    if (crops[i] === undefined) {
+  for (let i = 0; i < cards.length; i++) {
+    const maybeCard = cards[i]
+
+    if (!isPlayedCrop(maybeCard)) {
       continue
     }
 

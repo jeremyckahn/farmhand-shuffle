@@ -3,12 +3,12 @@ import { assertEvent, enqueueActions } from 'xstate'
 import { randomNumber } from '../../../../services/RandomNumber'
 import { BOT_ACTION_DELAY } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
-import { moveCropFromHandToField } from '../../../reducers/move-crop-from-hand-to-field'
+import { moveCardFromHandToField } from '../../../reducers/move-card-from-hand-to-field'
 import { MatchEvent, MatchState, MatchStateGuard } from '../../../types'
 import { assertCurrentPlayer } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
-import { MatchStateCorruptError } from '../errors'
+import { GameStateCorruptError, MatchStateCorruptError } from '../errors'
 
 import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
@@ -18,7 +18,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
     on: {
       [MatchEvent.START_TURN]: {
         target: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
-        guard: MatchStateGuard.HAVE_PLAYERS_COMPLETED_SETUP,
+        guard: MatchStateGuard.IS_SETUP_PHASE,
       },
 
       [MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION]: {
@@ -40,7 +40,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
             const player = lookup.getPlayer(match, currentPlayerId)
             const hasBotCompletedSetup =
-              player.field.crops.length > 0 && cropsToPlayDuringTurn === 0
+              player.field.cards.length > 0 && cropsToPlayDuringTurn === 0
 
             if (hasBotCompletedSetup) {
               // NOTE: Returns control to the player
@@ -62,9 +62,10 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
                 match,
                 currentPlayerId
               )
-              const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
+              const cardIdxInHand =
+                randomNumber.chooseElement(cropIdxsInPlayerHand)
 
-              if (cardIdx === undefined) {
+              if (cardIdxInHand === undefined) {
                 throw new MatchStateCorruptError(
                   `Expected crops in hand but none were found for bot player ${currentPlayerId}`
                 )
@@ -74,7 +75,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
                 {
                   type: MatchEvent.PLAY_CROP,
                   playerId: currentPlayerId,
-                  cardIdx,
+                  cardIdxInHand,
                 },
                 { delay: BOT_ACTION_DELAY }
               )
@@ -92,6 +93,41 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
       },
 
       [MatchEvent.PLAY_CROP]: {
+        actions: enqueueActions(({ event, context: { match }, enqueue }) => {
+          assertEvent(event, MatchEvent.PLAY_CROP)
+
+          const { cardIdxInHand } = event
+          const { currentPlayerId } = match
+
+          assertCurrentPlayer(currentPlayerId)
+
+          match = recordCardPlayEvents(match, event)
+
+          const openFieldPositionIdx = botLogic.getOpenFieldPosition(
+            match,
+            currentPlayerId
+          )
+
+          if (typeof openFieldPositionIdx === 'undefined') {
+            throw new GameStateCorruptError(
+              `${MatchEvent.PLAY_CROP} event occurred for a full field`
+            )
+          }
+
+          enqueue.raise({
+            type: MatchEvent.SELECT_CARD_POSITION,
+            playerId: currentPlayerId,
+            cardIdxInHand,
+            fieldIdxToPlace: openFieldPositionIdx,
+          })
+
+          enqueue.assign({
+            match,
+          })
+        }),
+      },
+
+      [MatchEvent.SELECT_CARD_POSITION]: {
         actions: enqueueActions(
           ({
             event,
@@ -102,15 +138,22 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
             },
             enqueue,
           }) => {
-            assertEvent(event, MatchEvent.PLAY_CROP)
-            const { cardIdx, playerId } = event
+            assertEvent(event, MatchEvent.SELECT_CARD_POSITION)
+
+            const { cardIdxInHand, playerId, fieldIdxToPlace } = event
 
             const { currentPlayerId } = match
 
             assertCurrentPlayer(currentPlayerId)
 
             match = recordCardPlayEvents(match, event)
-            match = moveCropFromHandToField(match, playerId, cardIdx)
+            match = moveCardFromHandToField(
+              match,
+              playerId,
+              cardIdxInHand,
+              fieldIdxToPlace
+            )
+
             cropsToPlayDuringTurn--
 
             enqueue.raise({

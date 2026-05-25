@@ -64,10 +64,12 @@ export type CardViewProps = Omit<CardProps, keyof CardInteractionProps> & {
   showHarvestCropButton?: boolean
   showWaterableState?: boolean
   showHarvestableState?: boolean
+  showDiscardButton?: boolean
   tooltipTitle?: string
   onPlayCard?: () => Promise<void>
   onWaterCrop?: () => void
   onHarvestCrop?: () => void
+  onDiscardCard?: () => void
 }
 
 // NOTE: We exclude `keyof CardProps` here to isolate the properties that are

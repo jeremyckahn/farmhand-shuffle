@@ -1,5 +1,7 @@
 import { AlertColor } from '@mui/material/Alert'
-import { createContext, ReactNode } from 'react'
+import { createContext, ReactNode, SetStateAction } from 'react'
+
+import { deselectedHandIdx } from '../constants'
 
 export interface ShellContextProps {
   /**
@@ -9,6 +11,8 @@ export interface ShellContextProps {
   isHandInViewport: boolean
   setIsHandInViewport: React.Dispatch<React.SetStateAction<boolean>>
   showNotification: (message: ReactNode, severity: AlertColor) => void
+  selectedHandCardIdx: number
+  setSelectedHandCardIdx: React.Dispatch<SetStateAction<number>>
 }
 
 export const ShellContext = createContext<ShellContextProps>({
@@ -20,6 +24,10 @@ export const ShellContext = createContext<ShellContextProps>({
     throw new Error('Calling context method outside of ShellContext.Provider')
   },
   showNotification: () => {
+    throw new Error('Calling context method outside of ShellContext.Provider')
+  },
+  selectedHandCardIdx: deselectedHandIdx,
+  setSelectedHandCardIdx: () => {
     throw new Error('Calling context method outside of ShellContext.Provider')
   },
 })

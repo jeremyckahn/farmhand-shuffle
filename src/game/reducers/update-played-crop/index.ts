@@ -1,5 +1,7 @@
-import { IMatch, IPlayedCrop, IPlayer } from '../../types'
 import { lookup } from '../../services/Lookup'
+import { InvalidCardError } from '../../services/Rules/errors'
+import { IMatch, IPlayedCrop, IPlayer } from '../../types'
+import { isPlayedCrop } from '../../types/guards'
 import { updateField } from '../update-field'
 
 export const updatePlayedCrop = (
@@ -9,8 +11,8 @@ export const updatePlayedCrop = (
   newPlayedCropProperties: Partial<IPlayedCrop>
 ) => {
   const player = lookup.getPlayer(match, playerId)
-  const { crops } = player.field
-  const playedCrop = crops[cropIdx]
+  const { cards } = player.field
+  const playedCrop = cards[cropIdx]
 
   if (!playedCrop) {
     throw new RangeError(
@@ -18,14 +20,20 @@ export const updatePlayedCrop = (
     )
   }
 
-  const newCrops = [
-    ...crops.slice(0, cropIdx),
+  if (!isPlayedCrop(playedCrop)) {
+    throw new InvalidCardError(
+      `${playedCrop.instance.id}, at player ${playerId}'s field in position ${cropIdx}, is not an IPlayedCrop`
+    )
+  }
+
+  const newCards = [
+    ...cards.slice(0, cropIdx),
     { ...playedCrop, ...newPlayedCropProperties },
-    ...crops.slice(cropIdx + 1),
+    ...cards.slice(cropIdx + 1),
   ]
 
   match = updateField(match, playerId, {
-    crops: newCrops,
+    cards: newCards,
   })
 
   return match

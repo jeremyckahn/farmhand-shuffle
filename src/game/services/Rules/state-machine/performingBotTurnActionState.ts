@@ -1,7 +1,9 @@
 import { enqueueActions } from 'xstate'
 
+import { rules } from '..'
 import { randomNumber } from '../../../../services/RandomNumber'
-import { BOT_ACTION_DELAY } from '../../../config'
+import { toolCards } from '../../../cards'
+import { BOT_ACTION_DELAY, STANDARD_FIELD_SIZE } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { startTurn } from '../../../reducers/start-turn'
 import {
@@ -10,10 +12,14 @@ import {
   MatchState,
   isToolCardInstance,
 } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
+import {
+  assertCurrentPlayer,
+  assertIsNonNullable,
+  assertIsToolCardId,
+} from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
-import { MatchStateCorruptError } from '../errors'
+import { GameStateCorruptError, MatchStateCorruptError } from '../errors'
 
 import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
@@ -31,7 +37,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
-      [MatchEvent.PLAY_CROP]: MatchState.PLANTING_CROP,
+      [MatchEvent.SELECT_CARD_POSITION]: MatchState.PLANTING_CARD,
 
       [MatchEvent.PLAY_WATER]: MatchState.PERFORMING_BOT_CROP_WATERING,
 
@@ -91,6 +97,9 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                     match.cardsToDrawAtTurnStart
                   )
 
+                  context = rules.applyDailyEffects({ ...context, match })
+                  match = context.match
+
                   match = {
                     ...match,
                     eventCardsThatCanBePlayed:
@@ -127,8 +136,60 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
       [BotTurnActionState.PLAYING_CROPS]: {
         on: {
+          [MatchEvent.PLAY_CROP]: BotTurnActionState.PLACING_CROP,
+
           [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
             BotTurnActionState.PLAYING_WATER,
+        },
+        entry: enqueueActions(
+          withBotErrorHandling(
+            ({
+              context: {
+                botState: { cropsToPlayDuringTurn },
+                match,
+              },
+              enqueue,
+            }) => {
+              const areCropsToPlay = cropsToPlayDuringTurn > 0
+
+              if (areCropsToPlay) {
+                const { currentPlayerId } = match
+
+                assertCurrentPlayer(currentPlayerId)
+
+                const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
+                  match,
+                  currentPlayerId
+                )
+                const cardIdxInHand =
+                  randomNumber.chooseElement(cropIdxsInPlayerHand)
+
+                if (cardIdxInHand === undefined) {
+                  throw new MatchStateCorruptError(
+                    `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
+                  )
+                }
+
+                enqueue.raise(
+                  {
+                    type: MatchEvent.PLAY_CROP,
+                    playerId: currentPlayerId,
+                    cardIdxInHand,
+                  },
+                  { delay: BOT_ACTION_DELAY }
+                )
+              } else {
+                enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
+              }
+            }
+          )
+        ),
+      },
+
+      [BotTurnActionState.PLACING_CROP]: {
+        on: {
+          [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
+            BotTurnActionState.PLAYING_CROPS,
         },
         entry: enqueueActions(
           withBotErrorHandling(
@@ -158,11 +219,23 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   )
                 }
 
+                const openFieldPositionIdx = botLogic.getOpenFieldPosition(
+                  match,
+                  currentPlayerId
+                )
+
+                if (typeof openFieldPositionIdx === 'undefined') {
+                  throw new GameStateCorruptError(
+                    `${MatchEvent.BOT_TURN_PHASE_COMPLETE} event occurred for a full field`
+                  )
+                }
+
                 enqueue.raise(
                   {
-                    type: MatchEvent.PLAY_CROP,
+                    type: MatchEvent.SELECT_CARD_POSITION,
                     playerId: currentPlayerId,
-                    cardIdx,
+                    cardIdxInHand: cardIdx,
+                    fieldIdxToPlace: openFieldPositionIdx,
                   },
                   { delay: BOT_ACTION_DELAY }
                 )
@@ -198,7 +271,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 enqueue.raise(
                   {
                     type: MatchEvent.PLAY_WATER,
-                    cardIdx: waterCardIdxsInPlayerHand[0],
+                    cardIdxInHand: waterCardIdxsInPlayerHand[0],
                     playerId: currentPlayerId,
                   },
                   {
@@ -248,7 +321,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               enqueue.raise(
                 {
                   type: MatchEvent.PLAY_EVENT,
-                  cardIdx: eventCardIdxToPlay,
+                  cardIdxInHand: eventCardIdxToPlay,
                   playerId: currentPlayerId,
                 },
                 {
@@ -283,23 +356,49 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
               if (toolCardIdxToPlay === undefined) {
                 throw new MatchStateCorruptError(
-                  `areToolsToPlay is true but there are no tool in the hand of bot player ${currentPlayerId}`
+                  `areToolsToPlay is true but there are no tools in the hand of bot player ${currentPlayerId}`
                 )
               }
 
-              enqueue.raise(
-                {
-                  type: MatchEvent.PLAY_TOOL,
-                  cardIdx: toolCardIdxToPlay,
-                  playerId: currentPlayerId,
-                },
-                {
-                  delay: BOT_ACTION_DELAY,
-                }
+              const toolCardInstance =
+                match.table.players[currentPlayerId]?.hand[toolCardIdxToPlay]
+
+              assertIsNonNullable(
+                toolCardInstance,
+                'toolCardInstance is undefined'
               )
-            } else {
-              enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
+              assertIsToolCardId(toolCardInstance.id)
+
+              const toolCard = toolCards[toolCardInstance.id]
+              const isPlantableAndCanBePlayed =
+                toolCard.isPlantable &&
+                lookup.fullPlots(match, currentPlayerId).length <
+                  STANDARD_FIELD_SIZE
+
+              // NOTE: Currently, if the bot attempts to play a plantable tool
+              // card but there is no room in the Field, the Tool phase of the
+              // bot's turn ends. This prevents the potential playing of
+              // non-plantable tools.
+              //
+              // TODO: Improve the logic to continue to play any non-plantable
+              // tools when plantable tools are skipped.
+              if (!toolCard.isPlantable || isPlantableAndCanBePlayed) {
+                enqueue.raise(
+                  {
+                    type: MatchEvent.PLAY_TOOL,
+                    cardIdxInHand: toolCardIdxToPlay,
+                    playerId: currentPlayerId,
+                  },
+                  {
+                    delay: BOT_ACTION_DELAY,
+                  }
+                )
+
+                return
+              }
             }
+
+            enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
           })
         ),
       },

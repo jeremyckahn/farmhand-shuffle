@@ -32,7 +32,7 @@ describe('shovel', () => {
     matchActor.send({
       type: MatchEvent.PLAY_TOOL,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
     })
 
     const playerBefore = matchBeforePlayingShovel.table.players[player1.id]

@@ -14,6 +14,9 @@ import {
   isToolCardInstance,
   ITable,
   ToolInstance,
+  CropInstance,
+  IPlayedTool,
+  IPlayedCard,
 } from '../'
 import * as cards from '../../cards'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
@@ -43,6 +46,22 @@ export const isCrop = (obj: unknown): obj is ICrop => {
   )
 }
 
+export const isCropCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance => {
+  return cardInstance.type === CardType.CROP
+}
+
+export const isPlantableCardInstance = (
+  cardInstance: CardInstance
+): cardInstance is CropInstance | ToolInstance => {
+  if (cardInstance.type === CardType.TOOL && cardInstance.isPlantable) {
+    return true
+  }
+
+  return isCropCardInstance(cardInstance)
+}
+
 export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
   if (!obj || typeof obj !== 'object') {
     return false
@@ -52,8 +71,8 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
 
   return (
     'instance' in o &&
-    typeof o.instance === 'object' &&
-    o.instance !== null &&
+    isCardInstance(o.instance) &&
+    isCropCardInstance(o.instance) &&
     'waterCards' in o &&
     typeof o.waterCards === 'number' &&
     'wasWateredDuringTurn' in o &&
@@ -61,13 +80,31 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
   )
 }
 
+export const isPlayedTool = (obj: unknown): obj is IPlayedTool => {
+  if (!obj || typeof obj !== 'object') {
+    return false
+  }
+
+  const o = obj
+
+  return (
+    'instance' in o &&
+    isCardInstance(o.instance) &&
+    isToolCardInstance(o.instance)
+  )
+}
+
+export const isPlayedCard = (obj: unknown): obj is IPlayedCard => {
+  return isPlayedCrop(obj) || isPlayedTool(obj)
+}
+
 export const isField = (obj: unknown): obj is IField => {
   if (typeof obj !== 'object' || obj === null) return false
 
   return (
-    'crops' in obj &&
-    Array.isArray(obj.crops) &&
-    obj.crops.every(crop => isPlayedCrop(crop) || crop === undefined)
+    'cards' in obj &&
+    Array.isArray(obj.cards) &&
+    obj.cards.every(crop => isPlayedCrop(crop) || crop === undefined)
   )
 }
 
@@ -164,13 +201,30 @@ export const isCard = (obj: unknown): obj is ICard => {
   )
 }
 
+export function assertIsNonNullable<T>(
+  obj: T,
+  message = `${String(obj)} is not a valid card ID`
+): asserts obj is NonNullable<T> {
+  if (obj === undefined || obj === null) {
+    throw new MatchStateCorruptError(message)
+  }
+}
+
 export function assertIsCardId(id: string): asserts id is keyof typeof cards {
   if (!isCardId(id)) {
     throw new MatchStateCorruptError(`${id} is not a valid card ID`)
   }
 }
 
-export function assertIsEventCard(
+export function assertIsToolCardId(
+  id: string
+): asserts id is keyof typeof cards.toolCards {
+  if (!(id in cards.toolCards)) {
+    throw new MatchStateCorruptError(`${id} is not a valid tool card ID`)
+  }
+}
+
+export function assertIsEventCardInstance(
   card: CardInstance
 ): asserts card is EventInstance {
   if (!isEventCardInstance(card)) {
@@ -178,7 +232,7 @@ export function assertIsEventCard(
   }
 }
 
-export function assertIsToolCard(
+export function assertIsToolCardInstance(
   card: CardInstance
 ): asserts card is ToolInstance {
   if (!isToolCardInstance(card)) {
@@ -186,6 +240,7 @@ export function assertIsToolCard(
   }
 }
 
+// TODO: Replace all uses of this with assertIsNonNullable
 export function assertCurrentPlayer(
   currentPlayerId: string | null
 ): asserts currentPlayerId is string {
@@ -203,7 +258,7 @@ export function assertStringIsMatchState(
 }
 
 export function assertIsPlayedCrop(
-  plotContents: IField['crops'][0],
+  plotContents: IField['cards'][0],
   fieldCropIdx: number
 ): asserts plotContents is IPlayedCrop {
   if (plotContents === undefined) {

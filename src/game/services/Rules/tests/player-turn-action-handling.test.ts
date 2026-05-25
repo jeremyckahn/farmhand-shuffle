@@ -1,28 +1,37 @@
-import { carrot, instantiate, water } from '../../../cards'
 import {
-  MatchEvent,
-  MatchState,
+  stubCarrot,
+  stubPumpkin,
+  stubRain,
+  stubShovel,
+  stubSprinkler,
+} from '../../../../test-utils/stubs/cards'
+import { carrot, instantiate, sprinkler, water } from '../../../cards'
+import { STANDARD_FIELD_SIZE } from '../../../config'
+import * as startTurnModule from '../../../reducers/start-turn'
+import { updatePlayer } from '../../../reducers/update-player'
+import {
   IField,
   IPlayedCrop,
+  MatchEvent,
+  MatchState,
   ShellNotification,
   ShellNotificationType,
 } from '../../../types'
+import { assertIsNonNullable } from '../../../types/guards'
 import { factory } from '../../Factory'
-import { STANDARD_FIELD_SIZE } from '../../../config'
-import * as startTurnModule from '../../../reducers/start-turn'
-import { stubRain, stubShovel } from '../../../../test-utils/stubs/cards'
-import { updatePlayer } from '../../../reducers/update-player'
 
 import {
   createSetUpMatchActor,
-  expectInstance,
+  expectCropInstance,
+  expectToolInstance,
+  expectWaterInstance,
   player1,
   player2,
   pumpkin1,
 } from './helpers'
 
 describe('player turn action handling', () => {
-  test('player can play a crop card', () => {
+  test('player can play and place a crop card', () => {
     const matchActor = createSetUpMatchActor()
 
     let {
@@ -37,7 +46,13 @@ describe('player turn action handling', () => {
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 1,
     })
 
     const {
@@ -50,15 +65,56 @@ describe('player turn action handling', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
     expect(maybePlayer1.hand).toEqual([])
-    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
-        instance: expectInstance(carrot),
+        instance: expectCropInstance(carrot),
         wasWateredDuringTurn: false,
         waterCards: 0,
       },
       { instance: pumpkin1, wasWateredDuringTurn: false, waterCards: 0 },
     ])
     expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([pumpkin1])
+  })
+
+  test('player can abort placing a crop card', () => {
+    const matchActor = createSetUpMatchActor()
+
+    let {
+      context: { match },
+    } = matchActor.getSnapshot()
+
+    match = updatePlayer(match, player1.id, {
+      hand: [pumpkin1],
+    })
+
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+    matchActor.send({
+      type: MatchEvent.PLAY_CROP,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+    })
+    matchActor.send({
+      type: MatchEvent.OPERATION_ABORTED,
+    })
+
+    const {
+      value,
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
+    const maybePlayer1 = matchResult.table.players[player1.id]
+
+    if (!maybePlayer1) throw new Error('Player not found')
+
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(maybePlayer1.hand).toEqual([pumpkin1])
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
+      {
+        instance: expectCropInstance(carrot),
+        wasWateredDuringTurn: false,
+        waterCards: 0,
+      },
+    ])
+    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([])
   })
 
   test('player can harvest a crop card', () => {
@@ -85,12 +141,12 @@ describe('player turn action handling', () => {
     if (!maybePlayer1) throw new Error('Player not found')
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
-    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([undefined])
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([undefined])
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
         type: ShellNotificationType.CROP_HARVESTED,
         payload: {
-          cropHarvested: expectInstance(carrot),
+          cropHarvested: expectCropInstance(carrot),
         },
       }
     )
@@ -107,7 +163,7 @@ describe('player turn action handling', () => {
     } = matchActor.getSnapshot()
 
     const filledField = {
-      crops: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill(
+      cards: new Array<IPlayedCrop>(STANDARD_FIELD_SIZE).fill(
         factory.buildPlayedCrop(instantiate(carrot))
       ),
     }
@@ -124,7 +180,14 @@ describe('player turn action handling', () => {
     matchActor.send({
       type: MatchEvent.PLAY_CROP,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
+    })
+
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 1,
     })
 
     const latestSnapshot = matchActor.getSnapshot()
@@ -155,7 +218,7 @@ describe('player turn action handling', () => {
     matchActor.send({
       type: MatchEvent.PLAY_WATER,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
     })
     matchActor.send({
       type: MatchEvent.SELECT_CROP_TO_WATER,
@@ -174,20 +237,22 @@ describe('player turn action handling', () => {
 
     expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
     expect(maybePlayer1.hand).toEqual([])
-    expect(maybePlayer1.field.crops).toEqual<IField['crops']>([
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([
       {
-        instance: expectInstance(carrot),
+        instance: expectCropInstance(carrot),
         wasWateredDuringTurn: true,
         waterCards: 1,
       },
     ])
-    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([expectInstance(water)])
+    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([
+      expectWaterInstance(water),
+    ])
 
     expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
       {
         type: ShellNotificationType.CROP_WATERED,
         payload: {
-          cropWatered: expectInstance(carrot),
+          cropWatered: expectCropInstance(carrot),
         },
       }
     )
@@ -216,7 +281,7 @@ describe('player turn action handling', () => {
     matchActor.send({
       type: MatchEvent.PLAY_EVENT,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
     })
 
     const {
@@ -242,7 +307,7 @@ describe('player turn action handling', () => {
     expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([stubRain])
   })
 
-  test('player can play a tool card', () => {
+  test('player can play a non-plantable tool card', () => {
     const matchActor = createSetUpMatchActor()
 
     const snapshot = matchActor.getSnapshot()
@@ -265,7 +330,7 @@ describe('player turn action handling', () => {
     matchActor.send({
       type: MatchEvent.PLAY_TOOL,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
     })
 
     const {
@@ -298,6 +363,185 @@ describe('player turn action handling', () => {
     )
   })
 
+  test('player can play a plantable tool card', () => {
+    const matchActor = createSetUpMatchActor()
+
+    const snapshot = matchActor.getSnapshot()
+    let {
+      context: { match },
+    } = snapshot
+    const {
+      context: { shell },
+    } = snapshot
+
+    vi.spyOn(shell, 'triggerNotification')
+
+    match = updatePlayer(match, player1.id, {
+      hand: [stubSprinkler],
+    })
+
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+    // NOTE: Plays the tool card
+    matchActor.send({
+      type: MatchEvent.PLAY_TOOL,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+    })
+
+    const {
+      value,
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
+    const maybePlayer1 = matchResult.table.players[player1.id]
+
+    assertIsNonNullable(maybePlayer1)
+
+    const player1Before = match.table.players[player1.id]
+
+    assertIsNonNullable(player1Before)
+
+    expect(shell.triggerNotification).not.toHaveBeenCalledWith<
+      ShellNotification[]
+    >({
+      type: ShellNotificationType.TOOL_CARD_PLAYED,
+      payload: {
+        toolCard: stubSprinkler,
+      },
+    })
+
+    expect(value).toBe(MatchState.CHOOSING_CARD_POSITION)
+
+    matchActor.send({
+      type: MatchEvent.SELECT_CARD_POSITION,
+      playerId: player1.id,
+      cardIdxInHand: 0,
+      fieldIdxToPlace: 0,
+    })
+
+    {
+      const {
+        value,
+        context: { match: matchResult },
+      } = matchActor.getSnapshot()
+      const maybePlayer1 = matchResult.table.players[player1.id]
+
+      assertIsNonNullable(maybePlayer1)
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+      expect(maybePlayer1.discardPile).toEqual([])
+      expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([stubSprinkler])
+    }
+
+    expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
+      {
+        type: ShellNotificationType.TOOL_CARD_PLAYED,
+        payload: {
+          toolCard: stubSprinkler,
+        },
+      }
+    )
+  })
+
+  test('player can discard a planted a tool card', () => {
+    const matchActor = createSetUpMatchActor()
+
+    const {
+      context: { shell },
+    } = matchActor.getSnapshot()
+    let {
+      context: { match },
+    } = matchActor.getSnapshot()
+
+    vi.spyOn(shell, 'triggerNotification')
+
+    match = updatePlayer(match, player1.id, {
+      field: {
+        cards: [factory.buildPlayedTool(stubSprinkler)],
+      },
+    })
+
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+    matchActor.send({
+      type: MatchEvent.DISCARD_CARD_FROM_FIELD,
+      playerId: player1.id,
+      cardIdxInField: 0,
+    })
+
+    const {
+      value,
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
+
+    const maybePlayer1 = matchResult.table.players[player1.id]
+
+    assertIsNonNullable(maybePlayer1, 'Player not found')
+
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(maybePlayer1.field.cards).toEqual<IField['cards']>([undefined])
+    expect(shell.triggerNotification).toHaveBeenCalledWith<ShellNotification[]>(
+      {
+        type: ShellNotificationType.CARD_DISCARDED,
+        payload: {
+          cardDiscarded: expectToolInstance(sprinkler),
+        },
+      }
+    )
+    expect(maybePlayer1.cardsPlayedDuringTurn).toEqual([])
+  })
+
+  test('performs any daily effects for planted tool cards at the start of every turn', () => {
+    const matchActor = createSetUpMatchActor()
+
+    const startingFieldCards: IField['cards'] = [
+      factory.buildPlayedCrop(stubCarrot),
+      factory.buildPlayedTool(stubSprinkler),
+      factory.buildPlayedCrop(stubPumpkin),
+    ]
+    const resultingFieldCards: IField['cards'] = [
+      {
+        ...factory.buildPlayedCrop(stubCarrot),
+        wasWateredDuringTurn: true,
+        waterCards: 1,
+      },
+      factory.buildPlayedTool(stubSprinkler),
+      {
+        ...factory.buildPlayedCrop(stubPumpkin),
+        wasWateredDuringTurn: true,
+        waterCards: 1,
+      },
+    ]
+
+    let {
+      context: { match },
+    } = matchActor.getSnapshot()
+
+    match = updatePlayer(match, player1.id, {
+      field: {
+        cards: startingFieldCards,
+      },
+    })
+
+    matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+    // NOTE: Returns control to the bot
+    matchActor.send({ type: MatchEvent.START_TURN })
+    // NOTE: Performs all bot turn logic and returns control back to the player
+    vi.runAllTimers()
+
+    const {
+      value,
+      context: { match: matchResult },
+    } = matchActor.getSnapshot()
+
+    const maybePlayer1 = matchResult.table.players[player1.id]
+
+    assertIsNonNullable(maybePlayer1, 'Player not found')
+
+    expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+    expect(maybePlayer1.field.cards).toEqual(resultingFieldCards)
+  })
+
   test('player can abort playing a water card', () => {
     const matchActor = createSetUpMatchActor()
 
@@ -317,7 +561,7 @@ describe('player turn action handling', () => {
     matchActor.send({
       type: MatchEvent.PLAY_WATER,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
     })
 
     matchActor.send({
@@ -348,7 +592,7 @@ describe('player turn action handling', () => {
     matchActor.send({
       type: MatchEvent.PLAY_WATER,
       playerId: player1.id,
-      cardIdx: 0,
+      cardIdxInHand: 0,
     })
 
     const previousSnapshot = matchActor.getSnapshot()

@@ -6,17 +6,19 @@ import {
 } from '../../../config'
 import { harvestCrop } from '../../../reducers/harvest-crop'
 import { incrementPlayer } from '../../../reducers/increment-player'
+import { moveFromFieldToDiscardPile } from '../../../reducers/move-from-field-to-discard-pile'
 import { removeTurnCardsPlayed } from '../../../reducers/remove-turn-cards-played'
 import { startTurn } from '../../../reducers/start-turn'
 import {
+  isToolCardInstance,
   MatchEvent,
   MatchState,
-  isToolCardInstance,
   ShellNotificationType,
 } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
+import { assertCurrentPlayer, isPlayedCrop } from '../../../types/guards'
 import { lookup } from '../../Lookup'
-import { PlayerOutOfFundsError } from '../errors'
+import { InvalidCardError, PlayerOutOfFundsError } from '../errors'
+import { rules } from '..'
 
 import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
@@ -26,7 +28,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
     on: {
       [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
-      [MatchEvent.PLAY_CROP]: MatchState.PLANTING_CROP,
+      [MatchEvent.PLAY_CROP]: MatchState.CHOOSING_CARD_POSITION,
 
       [MatchEvent.PLAY_EVENT]: MatchState.PLAYING_EVENT,
 
@@ -48,7 +50,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
           }) => {
             const { playerId, cropIdxInFieldToHarvest } = event
 
-            const playedCrop = lookup.getPlayedCropFromField(
+            const playedCrop = lookup.getPlayedCardFromField(
               match,
               playerId,
               cropIdxInFieldToHarvest
@@ -56,10 +58,49 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
 
             match = harvestCrop(match, playerId, cropIdxInFieldToHarvest)
 
+            if (!isPlayedCrop(playedCrop)) {
+              throw new InvalidCardError(
+                `${playedCrop.instance.id} is not IPlayedCrop`
+              )
+            }
+
             triggerNotification({
               type: ShellNotificationType.CROP_HARVESTED,
               payload: {
                 cropHarvested: playedCrop.instance,
+              },
+            })
+
+            enqueue.assign({ match })
+          }
+        ),
+      },
+
+      // TODO: Implement strategic card discarding for bots
+      [MatchEvent.DISCARD_CARD_FROM_FIELD]: {
+        actions: enqueueActions(
+          ({
+            event,
+            enqueue,
+            context: {
+              match,
+              shell: { triggerNotification },
+            },
+          }) => {
+            const { playerId, cardIdxInField } = event
+
+            const playedCard = lookup.getPlayedCardFromField(
+              match,
+              playerId,
+              cardIdxInField
+            )
+
+            match = moveFromFieldToDiscardPile(match, playerId, cardIdxInField)
+
+            triggerNotification({
+              type: ShellNotificationType.CARD_DISCARDED,
+              payload: {
+                cardDiscarded: playedCard.instance,
               },
             })
 
@@ -117,6 +158,9 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
                 currentPlayerId,
                 match.cardsToDrawAtTurnStart
               )
+
+              context = rules.applyDailyEffects({ ...context, match })
+              match = context.match
 
               break
             }
