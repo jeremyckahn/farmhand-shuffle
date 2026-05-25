@@ -1,5 +1,6 @@
 import { enqueueActions } from 'xstate'
 
+import { rules } from '..'
 import { randomNumber } from '../../../../services/RandomNumber'
 import { toolCards } from '../../../cards'
 import { BOT_ACTION_DELAY, STANDARD_FIELD_SIZE } from '../../../config'
@@ -11,11 +12,14 @@ import {
   MatchState,
   isToolCardInstance,
 } from '../../../types'
-import { assertCurrentPlayer, assertIsToolCardId } from '../../../types/guards'
+import {
+  assertCurrentPlayer,
+  assertIsNonNullable,
+  assertIsToolCardId,
+} from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
 import { GameStateCorruptError, MatchStateCorruptError } from '../errors'
-import { rules } from '..'
 
 import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
@@ -359,18 +363,13 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               const toolCardInstance =
                 match.table.players[currentPlayerId]?.hand[toolCardIdxToPlay]
 
-              if (!toolCardInstance) {
-                throw new GameStateCorruptError('toolCardInstance is undefined')
-              }
-
-              if (!(toolCardInstance.id in toolCards)) {
-                throw new GameStateCorruptError('')
-              }
-
+              assertIsNonNullable(
+                toolCardInstance,
+                'toolCardInstance is undefined'
+              )
               assertIsToolCardId(toolCardInstance.id)
 
               const toolCard = toolCards[toolCardInstance.id]
-
               const isPlantableAndCanBePlayed =
                 toolCard.isPlantable &&
                 lookup.fullPlots(match, currentPlayerId).length <
