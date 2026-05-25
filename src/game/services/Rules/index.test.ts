@@ -69,8 +69,6 @@ describe('rules.applyDailyEffects', () => {
     const sprinkler1 = factory.buildPlayedTool(instantiate(sprinkler))
     const sprinkler2 = factory.buildPlayedTool(instantiate(sprinkler))
 
-    // We mock the applyDailyEffect for both sprinklers
-
     const mockedContext1 = { ...stubContext, match }
 
     vi.spyOn(sprinkler1.instance, 'applyDailyEffect').mockReturnValue(
