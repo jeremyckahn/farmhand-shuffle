@@ -19,7 +19,7 @@ import { lookup } from '.'
 const match = stubMatch()
 
 describe('Lookup', () => {
-  describe('getCardFromHand', () => {
+  describe('getCardInstanceFromHand', () => {
     let mutatedMatch: IMatch
     const { id: player1Id } = stubPlayer1
 
@@ -36,7 +36,11 @@ describe('Lookup', () => {
     })
 
     test('returns card from hand', () => {
-      const cardInstance = lookup.getCardFromHand(mutatedMatch, player1Id, 0)
+      const cardInstance = lookup.getCardInstanceFromHand(
+        mutatedMatch,
+        player1Id,
+        0
+      )
 
       expect(cardInstance).toBe(stubCarrot)
     })
@@ -49,7 +53,11 @@ describe('Lookup', () => {
       }
 
       expect(() => {
-        lookup.getCardFromHand(mutatedMatch, player1Id, player.hand.length)
+        lookup.getCardInstanceFromHand(
+          mutatedMatch,
+          player1Id,
+          player.hand.length
+        )
       }).toThrow()
     })
   })

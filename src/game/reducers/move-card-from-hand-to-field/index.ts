@@ -30,7 +30,11 @@ export const moveCardFromHandToField = (
   }
 
   const newHand = array.removeAt(hand, cardIdxInHand)
-  const cardInstance = lookup.getCardFromHand(match, playerId, cardIdxInHand)
+  const cardInstance = lookup.getCardInstanceFromHand(
+    match,
+    playerId,
+    cardIdxInHand
+  )
 
   let playedCard: IPlayedCrop | IPlayedTool
 

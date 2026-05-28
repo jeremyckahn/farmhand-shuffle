@@ -18,8 +18,7 @@ import {
 } from '../Rules/errors'
 
 export class LookupService {
-  // TODO: Rename to getCardInstanceFromHand
-  getCardFromHand = (
+  getCardInstanceFromHand = (
     match: IMatch,
     playerId: IPlayer['id'],
     cardIdx: number
@@ -41,7 +40,7 @@ export class LookupService {
    * @throws InvalidCardError if card is not a CropInstance.
    */
   getCropFromHand(match: IMatch, playerId: IPlayer['id'], cardIdx: number) {
-    const cropInstance = this.getCardFromHand(match, playerId, cardIdx)
+    const cropInstance = this.getCardInstanceFromHand(match, playerId, cardIdx)
 
     if (!isCrop(cropInstance)) {
       throw new InvalidCardError(`${cropInstance.id} is not a crop card.`)
