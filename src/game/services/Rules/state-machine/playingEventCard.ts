@@ -34,19 +34,23 @@ export const playingEventCard: RulesMachineConfig['states'] = {
 
         const { currentPlayerId, sessionOwnerPlayerId } = match
         const { playerId, cardIdxInHand } = event
-        const card = lookup.getCardFromHand(match, playerId, cardIdxInHand)
+        const cardInstance = lookup.getCardInstanceFromHand(
+          match,
+          playerId,
+          cardIdxInHand
+        )
 
-        assertIsEventCardInstance(card)
+        assertIsEventCardInstance(cardInstance)
         assertCurrentPlayer(currentPlayerId)
 
         triggerNotification({
           type: ShellNotificationType.EVENT_CARD_PLAYED,
           payload: {
-            eventCard: card,
+            eventCard: cardInstance,
           },
         })
 
-        match = card.applyEffect(context).match
+        match = cardInstance.applyEffect(context).match
         match = moveFromHandToDiscardPile(match, currentPlayerId, cardIdxInHand)
 
         if (currentPlayerId === sessionOwnerPlayerId) {
