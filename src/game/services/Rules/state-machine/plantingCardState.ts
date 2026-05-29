@@ -47,7 +47,7 @@ export const plantingCardState: RulesMachineConfig['states'] = {
         const { playerId, cardIdxInHand, fieldIdxToPlace } = event
 
         try {
-          const cardInstance = lookup.getCardFromHand(
+          const cardInstance = lookup.getCardInstanceFromHand(
             match,
             playerId,
             cardIdxInHand

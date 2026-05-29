@@ -37,7 +37,11 @@ export const playingToolCard: RulesMachineConfig['states'] = {
 
         const { currentPlayerId, sessionOwnerPlayerId } = match
         const { playerId, cardIdxInHand } = event
-        const card = lookup.getCardFromHand(match, playerId, cardIdxInHand)
+        const card = lookup.getCardInstanceFromHand(
+          match,
+          playerId,
+          cardIdxInHand
+        )
 
         assertIsToolCardInstance(card)
         assertCurrentPlayer(currentPlayerId)
