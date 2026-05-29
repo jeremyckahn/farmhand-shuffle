@@ -37,27 +37,30 @@ export const playingToolCard: RulesMachineConfig['states'] = {
 
         const { currentPlayerId, sessionOwnerPlayerId } = match
         const { playerId, cardIdxInHand } = event
-        const card = lookup.getCardInstanceFromHand(
+        const cardInstance = lookup.getCardInstanceFromHand(
           match,
           playerId,
           cardIdxInHand
         )
 
-        assertIsToolCardInstance(card)
+        assertIsToolCardInstance(cardInstance)
         assertCurrentPlayer(currentPlayerId)
 
-        if (!card.isPlantable || currentPlayerId !== sessionOwnerPlayerId) {
+        if (
+          !cardInstance.isPlantable ||
+          currentPlayerId !== sessionOwnerPlayerId
+        ) {
           triggerNotification({
             type: ShellNotificationType.TOOL_CARD_PLAYED,
             payload: {
-              toolCard: card,
+              toolCard: cardInstance,
             },
           })
         }
 
-        match = card.applyEffect?.(context).match ?? match
+        match = cardInstance.applyEffect?.(context).match ?? match
 
-        if (card.isPlantable) {
+        if (cardInstance.isPlantable) {
           enqueue.raise({
             type: MatchEvent.PLAY_PLANTABLE_TOOL,
             cardIdxInHand,
