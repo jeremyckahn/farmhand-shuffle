@@ -15,9 +15,10 @@ import { ui } from '../../img'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 
+import { Snackbar } from '../Snackbar/Snackbar'
+
 import { ActorContext } from './ActorContext'
 import { ShellContext } from './ShellContext'
-import { Snackbar } from './Snackbar'
 import { MatchProps } from './types'
 import { useMatch } from './useMatch'
 

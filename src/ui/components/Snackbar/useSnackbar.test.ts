@@ -21,7 +21,8 @@ import {
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
-import { ActorContext } from './ActorContext'
+import { ActorContext } from '../Match/ActorContext'
+
 import { emptyNotificationMessage } from './Snackbar'
 import { useSnackbar } from './useSnackbar'
 
@@ -112,7 +113,9 @@ describe('useSnackbar Hook', () => {
         assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
-          matchEventPayload.shell.triggerNotification({
+          matchEventPayload.shell.triggerNotification.bind(
+            matchEventPayload.shell
+          )({
             type: ShellNotificationType.CARDS_DRAWN,
             payload,
           })
@@ -153,7 +156,9 @@ describe('useSnackbar Hook', () => {
         assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
         act(() => {
-          matchEventPayload.shell.triggerNotification({
+          matchEventPayload.shell.triggerNotification.bind(
+            matchEventPayload.shell
+          )({
             type: ShellNotificationType.CARDS_DRAWN,
             payload,
           })
@@ -187,7 +192,9 @@ describe('useSnackbar Hook', () => {
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        matchEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification.bind(
+          matchEventPayload.shell
+        )({
           type: ShellNotificationType.CROP_HARVESTED,
           payload,
         })
@@ -227,7 +234,9 @@ describe('useSnackbar Hook', () => {
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        matchEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification.bind(
+          matchEventPayload.shell
+        )({
           type: ShellNotificationType.CROP_HARVESTED,
           payload,
         })
@@ -260,7 +269,9 @@ describe('useSnackbar Hook', () => {
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        matchEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification.bind(
+          matchEventPayload.shell
+        )({
           type: ShellNotificationType.CROP_WATERED,
           payload,
         })
@@ -300,7 +311,9 @@ describe('useSnackbar Hook', () => {
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        matchEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification.bind(
+          matchEventPayload.shell
+        )({
           type: ShellNotificationType.CROP_WATERED,
           payload,
         })
@@ -333,7 +346,9 @@ describe('useSnackbar Hook', () => {
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        matchEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification.bind(
+          matchEventPayload.shell
+        )({
           type: ShellNotificationType.EVENT_CARD_PLAYED,
           payload,
         })
@@ -373,7 +388,9 @@ describe('useSnackbar Hook', () => {
       assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
       act(() => {
-        matchEventPayload.shell.triggerNotification({
+        matchEventPayload.shell.triggerNotification.bind(
+          matchEventPayload.shell
+        )({
           type: ShellNotificationType.EVENT_CARD_PLAYED,
           payload,
         })
@@ -407,10 +424,12 @@ describe('useSnackbar Hook', () => {
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.TOOL_CARD_PLAYED,
-        payload,
-      })
+      matchEventPayload.shell.triggerNotification.bind(matchEventPayload.shell)(
+        {
+          type: ShellNotificationType.TOOL_CARD_PLAYED,
+          payload,
+        }
+      )
     })
 
     expect(result.current.snackbarProps.message).toEqual(
@@ -447,10 +466,12 @@ describe('useSnackbar Hook', () => {
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.TOOL_CARD_PLAYED,
-        payload,
-      })
+      matchEventPayload.shell.triggerNotification.bind(matchEventPayload.shell)(
+        {
+          type: ShellNotificationType.TOOL_CARD_PLAYED,
+          payload,
+        }
+      )
     })
 
     expect(result.current.snackbarProps.message).toEqual(
@@ -487,10 +508,12 @@ describe('useSnackbar Hook', () => {
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.CARD_DISCARDED,
-        payload,
-      })
+      matchEventPayload.shell.triggerNotification.bind(matchEventPayload.shell)(
+        {
+          type: ShellNotificationType.CARD_DISCARDED,
+          payload,
+        }
+      )
     })
 
     expect(result.current.snackbarProps.message).toEqual(
@@ -527,10 +550,12 @@ describe('useSnackbar Hook', () => {
     assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
 
     act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.CARD_DISCARDED,
-        payload,
-      })
+      matchEventPayload.shell.triggerNotification.bind(matchEventPayload.shell)(
+        {
+          type: ShellNotificationType.CARD_DISCARDED,
+          payload,
+        }
+      )
     })
 
     expect(result.current.snackbarProps.message).toEqual(

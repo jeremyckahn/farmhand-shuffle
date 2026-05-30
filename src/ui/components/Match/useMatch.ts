@@ -5,10 +5,11 @@ import { isDebugEnabled } from '../../config/constants'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { deselectedHandIdx } from '../constants'
 
+import { useSnackbar } from '../Snackbar/useSnackbar'
+
 import { ActorContext } from './ActorContext'
 import { ShellContextProps } from './ShellContext'
 import { MatchProps } from './types'
-import { useSnackbar } from './useSnackbar'
 
 export const useMatch = ({
   playerSeeds,
