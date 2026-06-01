@@ -10,8 +10,7 @@ export const BuildDeck = () => {
   const [state, saveDeck] = useAsyncFn(
     async (deck: DeserializedDeck) => {
       await storage.saveDeck(deck)
-      void navigate('/')
-      // TODO: Show a success notification
+      void navigate('/', { state: { notification: 'Deck saved successfully' } })
       // TODO: Handle errors
     },
     [navigate]

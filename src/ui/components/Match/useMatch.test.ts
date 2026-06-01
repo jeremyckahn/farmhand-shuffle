@@ -5,9 +5,10 @@ import { MatchState, MatchEvent, IPlayerSeed } from '../../../game/types'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { stubMatch } from '../../../test-utils/stubs/match'
 
+import { emptyNotificationMessage } from '../Snackbar'
+
 import { ActorContext } from './ActorContext'
 import { useMatch } from './useMatch'
-import { emptyNotificationMessage } from './Snackbar'
 
 // Mock dependencies
 vi.mock('../../hooks/useMatchRules')

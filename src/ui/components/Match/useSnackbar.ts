@@ -6,8 +6,9 @@ import reactNodeToString from 'react-node-to-string'
 import { MatchEvent, IMatch, ShellNotificationType } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
 
+import { emptyNotificationMessage, SnackbarProps } from '../Snackbar'
+
 import { ActorContext } from './ActorContext'
-import { emptyNotificationMessage, SnackbarProps } from './Snackbar'
 
 // NOTE: Centralized notification content management ensures consistent
 // messaging across the application and separates concern between game
