@@ -21,8 +21,9 @@ import {
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
+import { emptyNotificationMessage } from '../Snackbar'
+
 import { ActorContext } from './ActorContext'
-import { emptyNotificationMessage } from './Snackbar'
 import { useSnackbar } from './useSnackbar'
 
 // Mock dependencies
