@@ -9,3 +9,7 @@ export enum AppRoute {
   MATCH = '/match',
   BUILD_DECK = '/build-deck',
 }
+
+export interface ILocationStateWithNotification {
+  notification: string
+}

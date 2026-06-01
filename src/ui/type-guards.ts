@@ -2,6 +2,8 @@ import { SxProps } from '@mui/material/styles'
 import { Theme } from '@mui/material/styles/createTheme'
 import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx'
 
+import { ILocationStateWithNotification } from './types'
+
 // NOTE: This is a workaround for unhelpful TypeScript behavior that conflicts
 // with MUI idioms.
 // See: https://github.com/mui/material-ui/issues/37730#issuecomment-2218304523
@@ -13,10 +15,6 @@ export const isSxArray = (
   | ((theme: Theme) => SystemStyleObject<Theme>)
 > => {
   return Array.isArray(sx)
-}
-
-export interface ILocationStateWithNotification {
-  notification: string
 }
 
 export const isLocationStateWithNotification = (
