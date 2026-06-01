@@ -14,3 +14,17 @@ export const isSxArray = (
 > => {
   return Array.isArray(sx)
 }
+
+export interface ILocationStateWithNotification {
+  notification: string
+}
+
+export const isLocationStateWithNotification = (
+  state: unknown
+): state is ILocationStateWithNotification => {
+  if (state === null || typeof state !== 'object') {
+    return false
+  }
+
+  return 'notification' in state && typeof state.notification === 'string'
+}
