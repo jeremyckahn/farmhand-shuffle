@@ -3,6 +3,7 @@ import { pricing } from '../../services/Pricing'
 import { InvalidCardError } from '../../services/Rules/errors'
 import { IMatch, IPlayer } from '../../types'
 import { isPlayedCrop } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/guards'
 import { incrementCommunityFund } from '../increment-community-fund'
 import { incrementPlayerFunds } from '../increment-player-funds'
 import { moveFromFieldToDiscardPile } from '../move-from-field-to-discard-pile'
@@ -36,10 +37,32 @@ export const harvestCrop = (
     throw new InvalidCardError(`${playedCrop.instance.id} is not IPlayedCrop`)
   }
 
-  const cropSaleValue = pricing.getCropSaleValue(match, playedCrop.instance)
+  let cropSaleValue = pricing.getCropSaleValue(match, playedCrop.instance)
 
-  match = incrementPlayerFunds(match, playerId, cropSaleValue)
-  match = incrementCommunityFund(match, -cropSaleValue)
+  const player = match.table.players[playerId]
+  assertIsNonNullable(player)
+
+  let bonus = 0
+  const field = player.field.cards
+  const neighbors = [
+    field[cropIdxInFieldToHarvest - 1],
+    field[cropIdxInFieldToHarvest + 1],
+  ]
+
+  for (const neighbor of neighbors) {
+    if (
+      neighbor &&
+      !isPlayedCrop(neighbor) &&
+      neighbor.instance?.id === 'fertilizer'
+    ) {
+      bonus += 10
+    }
+  }
+
+  const finalSaleValue = cropSaleValue + bonus
+
+  match = incrementPlayerFunds(match, playerId, finalSaleValue)
+  match = incrementCommunityFund(match, -finalSaleValue)
   match = moveFromFieldToDiscardPile(match, playerId, cropIdxInFieldToHarvest)
 
   return match

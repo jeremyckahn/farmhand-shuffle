@@ -47,4 +47,33 @@ describe('harvestCrop', () => {
     expect(playerAfter.field.cards).toEqual([undefined])
     expect(playerAfter.funds).toBe(initialPlayerFunds + saleValue)
   })
+
+  it('should add +10 bonus to crop sale value when adjacent to fertilizer', () => {
+    const playerBefore = match.table.players[stubPlayer1.id]
+
+    if (!playerBefore) {
+      throw new Error('Player not found in test setup')
+    }
+
+    const fertilizerPlayed = factory.buildPlayedTool(stubFertilizer)
+    // eslint-disable-next-line functional/immutable-data
+    playerBefore.field.cards[1] = fertilizerPlayed
+
+    const saleValue = pricing.getCropSaleValue(match, stubPlayedCrop.instance)
+    const initialCommunityFund = match.table.communityFund
+    const initialPlayerFunds = playerBefore.funds
+
+    match = harvestCrop(match, stubPlayer1.id, 0)
+    const playerAfter = match.table.players[stubPlayer1.id]
+
+    if (!playerAfter) {
+      throw new Error('Player not found after harvesting')
+    }
+
+    expect(match.table.communityFund).toEqual(
+      initialCommunityFund - (saleValue + 10)
+    )
+    expect(playerAfter.funds).toBe(initialPlayerFunds + (saleValue + 10))
+    expect(playerAfter.field.cards).toEqual([undefined, fertilizerPlayed])
+  })
 })
