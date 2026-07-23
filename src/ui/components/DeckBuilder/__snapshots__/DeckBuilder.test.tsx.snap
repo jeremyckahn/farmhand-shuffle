@@ -107,7 +107,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M19 13H5v-2h14z"
                     />
                   </svg>
                 </button>
@@ -136,7 +136,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
                     />
                   </svg>
                   <span
@@ -219,7 +219,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M19 13H5v-2h14z"
                     />
                   </svg>
                 </button>
@@ -248,7 +248,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
                     />
                   </svg>
                   <span
@@ -347,7 +347,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M19 13H5v-2h14z"
                     />
                   </svg>
                 </button>
@@ -376,7 +376,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
                     />
                   </svg>
                   <span
@@ -475,7 +475,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M19 13H5v-2h14z"
                     />
                   </svg>
                 </button>
@@ -504,7 +504,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
                     />
                   </svg>
                   <span
@@ -603,7 +603,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M19 13H5v-2h14z"
                     />
                   </svg>
                 </button>
@@ -632,7 +632,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     viewBox="0 0 24 24"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
                     />
                   </svg>
                   <span
@@ -649,7 +649,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
       class="MuiBox-root css-1bvc4cc"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge css-jh47zj-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-colorPrimary css-jh47zj-MuiButtonBase-root-MuiButton-root"
         disabled=""
         tabindex="-1"
         type="button"

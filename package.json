@@ -13,7 +13,7 @@
     "fix:style": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "check": "npm test -- --coverage && npm run check:lint && npm run check:types",
     "check:lint": "eslint src --max-warnings=0",
-    "check:types": "tsc",
+    "check:types": "node node_modules/@typescript/native/bin/tsc",
     "prepare": "husky install",
     "gitingest": "command -v gitingest >/dev/null 2>&1 || { echo \"gitingest not found. Please install it: https://github.com/cyclotruc/gitingest\"; exit 1; } && gitingest",
     "gitingest:app": "npm run gitingest -- --exclude-pattern=\"coverage,storybook-static,.vercel,*.piskel,*.test.*,*.stories.*,.github,.storybook\"",
@@ -71,11 +71,12 @@
     "pretty-quick": "^3.1.3",
     "process": "^0.11.10",
     "storybook": "^10.2.13",
-    "typescript": "^5.9.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.46.4",
     "vite": "^8.0.16",
     "vitest": "^4.1.8",
-    "vitest-mock-extended": "^2.0.2"
+    "vitest-mock-extended": "^2.0.2",
+    "@typescript/native": "npm:typescript@^7.0.2"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {

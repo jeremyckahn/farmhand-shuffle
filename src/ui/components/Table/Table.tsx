@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Grid, { GridProps } from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
-import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch } from '../../../game/types'

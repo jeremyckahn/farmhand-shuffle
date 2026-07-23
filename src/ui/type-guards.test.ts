@@ -13,9 +13,7 @@ describe('type-guards', () => {
     })
 
     it('returns false for null', () => {
-      expect(
-        isSxArray(null as unknown as Parameters<typeof isSxArray>[0])
-      ).toBe(false)
+      expect(isSxArray(null)).toBe(false)
     })
   })
 
