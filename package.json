@@ -56,6 +56,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.2",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.8",
     "eslint": "^9.39.1",
@@ -75,8 +76,7 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^8.0.16",
     "vitest": "^4.1.8",
-    "vitest-mock-extended": "^2.0.2",
-    "@typescript/native": "npm:typescript@^7.0.2"
+    "vitest-mock-extended": "^2.0.2"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {
@@ -106,5 +106,10 @@
     "usehooks-ts": "^2.16.0",
     "uuid": "^14.0.0",
     "xstate": "^5.19.1"
+  },
+  "overrides": {
+    "vitest-mock-extended": {
+      "typescript": "$typescript"
+    }
   }
 }
