@@ -44,8 +44,12 @@ const mockMatch: IMatch = {
 vi.mock('../Card', async () => {
   const React = await import('react')
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Card = React.forwardRef(function Card({ cardInstance, cardIdx, playerId, size, ...rest }: any, ref: any) {
+  const Card = React.forwardRef(function Card(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { cardInstance, playerId, size, ...rest }: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ref: any
+  ) {
     return (
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       <div ref={ref} data-testid="mock-card" {...rest}>

@@ -52,7 +52,6 @@ export const CardQuantityControl = ({
       <CardCore
         cardInstance={dummyCardInstance}
         size={cardSize}
-        cardIdx={0}
         playerId=""
         disableEnterAnimation
       />

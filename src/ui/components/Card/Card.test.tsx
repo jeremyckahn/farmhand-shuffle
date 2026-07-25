@@ -33,12 +33,7 @@ const stubCardInstance = stubCarrot
 const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
   <StubShellContext>
     <ActorContext.Provider>
-      <Card
-        cardInstance={stubCardInstance}
-        cardIdx={0}
-        playerId=""
-        {...overrides}
-      />
+      <Card cardInstance={stubCardInstance} playerId="" {...overrides} />
     </ActorContext.Provider>
   </StubShellContext>
 )
@@ -174,6 +169,7 @@ describe('Card', () => {
         <StubCard
           cardInstance={stubCarrot}
           playerId={stubPlayer1.id}
+          cardIdxInHand={0}
           isFocused
         />
       )
@@ -208,6 +204,7 @@ describe('Card', () => {
         <StubCard
           cardInstance={stubWater}
           playerId={stubPlayer1.id}
+          cardIdxInHand={0}
           isFocused
         />
       )
@@ -239,6 +236,7 @@ describe('Card', () => {
       <StubCard
         cardInstance={stubCarrot}
         playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
         isFocused
         isInField
         canBeWatered
@@ -267,12 +265,12 @@ describe('Card', () => {
       match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
     })
 
-    const cardIdx = 2
+    const cropIdxInFieldToHarvest = 2
 
     render(
       <StubCard
         canBeHarvested
-        cardIdx={cardIdx}
+        cropIdxInFieldToHarvest={cropIdxInFieldToHarvest}
         cardInstance={stubCarrot}
         isFocused
         isInField
@@ -289,7 +287,7 @@ describe('Card', () => {
     >({
       type: MatchEvent.HARVEST_CROP,
       playerId: stubPlayer1.id,
-      cropIdxInFieldToHarvest: cardIdx,
+      cropIdxInFieldToHarvest,
     })
   })
 
@@ -305,7 +303,12 @@ describe('Card', () => {
     })
 
     render(
-      <StubCard cardInstance={stubRain} playerId={stubPlayer1.id} isFocused />
+      <StubCard
+        cardInstance={stubRain}
+        playerId={stubPlayer1.id}
+        cardIdxInHand={0}
+        isFocused
+      />
     )
 
     const playCardButton = screen.getByText('Play event')
@@ -332,7 +335,12 @@ describe('Card', () => {
     })
 
     render(
-      <StubCard cardInstance={stubShovel} playerId={stubPlayer1.id} isFocused />
+      <StubCard
+        cardInstance={stubShovel}
+        playerId={stubPlayer1.id}
+        cardIdxInHand={0}
+        isFocused
+      />
     )
 
     const playCardButton = screen.getByText('Play tool')
@@ -362,6 +370,7 @@ describe('Card', () => {
       <StubCard
         cardInstance={stubSprinkler}
         playerId={stubPlayer1.id}
+        cardIdxInField={0}
         isFocused
         isInField
       />
@@ -505,8 +514,8 @@ describe('Card', () => {
           <ActorContext.Provider>
             <Card
               cardInstance={stubShovel}
-              cardIdx={0}
               playerId={stubPlayer1.id}
+              cardIdxInHand={0}
               isFocused
             />
           </ActorContext.Provider>
@@ -542,8 +551,8 @@ describe('Card', () => {
           <ActorContext.Provider>
             <Card
               cardInstance={stubSprinkler}
-              cardIdx={0}
               playerId={stubPlayer1.id}
+              cardIdxInHand={0}
               isFocused
             />
           </ActorContext.Provider>

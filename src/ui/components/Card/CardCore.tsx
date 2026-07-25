@@ -56,7 +56,10 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
   function CardCore(
     {
       cardInstance: card,
-      cardIdx,
+      cardIdxInHand,
+      cardIdxInField,
+      cropIdxInFieldToHarvest,
+      cropIdxInFieldToWater,
       playerId,
       children,
       disableEnterAnimation = false,

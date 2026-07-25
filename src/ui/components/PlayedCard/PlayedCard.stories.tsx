@@ -31,7 +31,6 @@ export const PlayedCropCard: Story = {
   args: {
     cardProps: {
       cardInstance: stubCarrot,
-      cardIdx: 0,
       playerId: '',
       playedCard: {
         instance: stubCarrot,
@@ -47,7 +46,6 @@ export const PlayedCropCardWithExtraWater: Story = {
   args: {
     cardProps: {
       cardInstance: stubCarrot,
-      cardIdx: 0,
       playerId: '',
       playedCard: {
         instance: stubCarrot,

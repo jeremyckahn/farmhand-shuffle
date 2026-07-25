@@ -30,7 +30,10 @@ vi.mock('../Card/Card', async () => {
         sx,
         // Destructure and ignore props that are not valid for a div
         disableEnterAnimation,
-        cardIdx,
+        cardIdxInField,
+        cardIdxInHand,
+        cropIdxInFieldToHarvest,
+        cropIdxInFieldToWater,
         playerId,
         paperProps,
         onBeforePlay,
