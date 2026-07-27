@@ -24,7 +24,10 @@ export interface CardInteractionProps {
 
 export interface BaseCardProps extends BoxProps, CardInteractionProps {
   cardInstance: CardInstance
-  cardIdx: number
+  cardIdxInHand?: number
+  cropIdxInFieldToWater?: number
+  cropIdxInFieldToHarvest?: number
+  cardIdxInField?: number
   disableEnterAnimation?: boolean
   imageScale?: number
   isFlipped?: boolean

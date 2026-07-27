@@ -179,7 +179,9 @@ export const Field = ({
                 tabIndex={0}
                 cardProps={{
                   cardInstance,
-                  cardIdx: fieldIdx,
+                  cardIdxInField: fieldIdx,
+                  cropIdxInFieldToWater: fieldIdx,
+                  cropIdxInFieldToHarvest: fieldIdx,
                   isInField: true,
                   isFocused: isSelected,
                   playerId: player.id,

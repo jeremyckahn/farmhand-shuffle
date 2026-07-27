@@ -35,7 +35,6 @@ type Story = StoryObj<typeof meta>
 export const CropCard: Story = {
   args: {
     cardInstance: stubCarrot,
-    cardIdx: 0,
     playerId: '',
     isFlipped: false,
   },
@@ -44,11 +43,11 @@ export const CropCard: Story = {
 export const PlayableCropCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
     size: CardSize.MEDIUM,
     isFocused: true,
+    cardIdxInHand: 0,
   },
   decorators: [
     Story => {
@@ -67,11 +66,11 @@ export const PlayableCropCard: Story = {
 export const PlayableWaterCard: Story = {
   args: {
     cardInstance: stubWater,
-    cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
     size: CardSize.MEDIUM,
     isFocused: true,
+    cardIdxInHand: 0,
   },
   decorators: [
     Story => {
@@ -90,11 +89,11 @@ export const PlayableWaterCard: Story = {
 export const PlayableEventCard: Story = {
   args: {
     cardInstance: stubRain,
-    cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
     size: CardSize.MEDIUM,
     isFocused: true,
+    cardIdxInHand: 0,
   },
   decorators: [
     Story => {
@@ -113,11 +112,11 @@ export const PlayableEventCard: Story = {
 export const PlayableToolCard: Story = {
   args: {
     cardInstance: stubShovel,
-    cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
     size: CardSize.MEDIUM,
     isFocused: true,
+    cardIdxInHand: 0,
   },
   decorators: [
     Story => {
@@ -136,13 +135,13 @@ export const PlayableToolCard: Story = {
 export const WaterableCropCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
     isInField: true,
     size: CardSize.MEDIUM,
     isFocused: true,
     canBeWatered: true,
+    cropIdxInFieldToWater: 0,
   },
   decorators: [
     Story => {
@@ -161,13 +160,13 @@ export const WaterableCropCard: Story = {
 export const HarvestableSessionOwnerCropCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
     isInField: true,
     size: CardSize.MEDIUM,
     isFocused: true,
     canBeHarvested: true,
+    cropIdxInFieldToHarvest: 0,
   },
   decorators: [
     Story => {
@@ -186,13 +185,13 @@ export const HarvestableSessionOwnerCropCard: Story = {
 export const HarvestableBuffedSessionOwnerCropCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: stubPlayer1.id,
     isFlipped: false,
     isInField: true,
     size: CardSize.MEDIUM,
     isFocused: true,
     canBeHarvested: true,
+    cropIdxInFieldToHarvest: 0,
   },
   decorators: [
     Story => {
@@ -217,7 +216,6 @@ export const HarvestableBuffedSessionOwnerCropCard: Story = {
 export const HarvestableOpponentCropCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: stubPlayer2.id,
     isFlipped: false,
     isInField: true,
@@ -242,7 +240,6 @@ export const HarvestableOpponentCropCard: Story = {
 export const WaterCard: Story = {
   args: {
     cardInstance: stubWater,
-    cardIdx: 0,
     playerId: '',
     isFlipped: false,
   },
@@ -251,7 +248,6 @@ export const WaterCard: Story = {
 export const SmallRainCard: Story = {
   args: {
     cardInstance: stubRain,
-    cardIdx: 0,
     playerId: '',
     size: CardSize.SMALL,
     isFlipped: false,
@@ -261,7 +257,6 @@ export const SmallRainCard: Story = {
 export const RainCard: Story = {
   args: {
     cardInstance: stubRain,
-    cardIdx: 0,
     playerId: '',
     isFlipped: false,
   },
@@ -270,7 +265,6 @@ export const RainCard: Story = {
 export const SmallShovelCard: Story = {
   args: {
     cardInstance: stubShovel,
-    cardIdx: 0,
     playerId: '',
     size: CardSize.SMALL,
     isFlipped: false,
@@ -280,7 +274,6 @@ export const SmallShovelCard: Story = {
 export const ShovelCard: Story = {
   args: {
     cardInstance: stubShovel,
-    cardIdx: 0,
     playerId: '',
     isFlipped: false,
   },
@@ -289,7 +282,6 @@ export const ShovelCard: Story = {
 export const SmallCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: '',
     size: CardSize.SMALL,
     isFlipped: false,
@@ -299,7 +291,6 @@ export const SmallCard: Story = {
 export const MediumCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: '',
     isFlipped: false,
     size: CardSize.MEDIUM,
@@ -309,7 +300,6 @@ export const MediumCard: Story = {
 export const LargeCard: Story = {
   args: {
     cardInstance: stubPumpkin,
-    cardIdx: 0,
     playerId: '',
     isFlipped: false,
     size: CardSize.LARGE,

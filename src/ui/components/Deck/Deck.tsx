@@ -64,7 +64,6 @@ export const Deck = ({
           <Card
             key={cardInstance.instanceId}
             cardInstance={cardInstance}
-            cardIdx={idx}
             playerId={player.id}
             position="absolute"
             isFlipped={!(isTopCard && isTopCardSelected)}

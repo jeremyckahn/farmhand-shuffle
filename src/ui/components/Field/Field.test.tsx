@@ -27,7 +27,10 @@ import {
 vi.mock('../Card', () => ({
   Card: ({
     cardInstance,
-    cardIdx,
+    cardIdxInHand,
+    cardIdxInField,
+    cropIdxInFieldToHarvest,
+    cropIdxInFieldToWater,
     playerId,
     isFlipped,
     canBeWatered,

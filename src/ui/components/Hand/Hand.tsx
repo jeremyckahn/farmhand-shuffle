@@ -183,7 +183,7 @@ export const Hand = ({
             key={cardInstance.instanceId}
             disableEnterAnimation
             cardInstance={cardInstance}
-            cardIdx={idx}
+            cardIdxInHand={idx}
             playerId={playerId}
             size={cardSize}
             paperProps={{

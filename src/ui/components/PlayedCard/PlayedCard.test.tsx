@@ -22,7 +22,6 @@ const stubPlayedCrop: IPlayedCrop = {
 const stubCropCardProps: PlayedCropProps['cardProps'] = {
   cardInstance: stubCardInstance,
   playedCard: stubPlayedCrop,
-  cardIdx: 0,
   playerId: '',
 }
 

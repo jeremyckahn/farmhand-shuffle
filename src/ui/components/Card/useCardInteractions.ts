@@ -4,6 +4,7 @@ import { STANDARD_FIELD_SIZE } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { CardType, MatchEvent, MatchState } from '../../../game/types'
 import {
+  assertIsNonNullable,
   isCropCardInstance,
   isPlantableCardInstance,
 } from '../../../game/types/guards'
@@ -17,9 +18,10 @@ import { CardInteractions, CardProps } from './types'
 export const useCardInteractions = (props: CardProps): CardInteractions => {
   const {
     cardInstance,
-    // TODO: cardIdx is overloaded; sometimes it refers to index in the hand,
-    // field, etc. Break it out into discrete named properties.
-    cardIdx,
+    cardIdxInHand,
+    cropIdxInFieldToWater,
+    cropIdxInFieldToHarvest,
+    cardIdxInField,
     playerId,
     onBeforePlay,
     canBeWatered = false,
@@ -51,11 +53,16 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
       await onBeforePlay()
     }
 
+    assertIsNonNullable(
+      cardIdxInHand,
+      'cardIdxInHand is not a valid hand index'
+    )
+
     switch (cardInstance.type) {
       case CardType.CROP: {
         actorRef.send({
           type: MatchEvent.PLAY_CROP,
-          cardIdxInHand: cardIdx,
+          cardIdxInHand,
           playerId,
         })
         setIsHandInViewport(false)
@@ -66,7 +73,7 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
       case CardType.WATER: {
         actorRef.send({
           type: MatchEvent.PLAY_WATER,
-          cardIdxInHand: cardIdx,
+          cardIdxInHand,
           playerId,
         })
         setIsHandInViewport(false)
@@ -77,7 +84,7 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
       case CardType.EVENT: {
         actorRef.send({
           type: MatchEvent.PLAY_EVENT,
-          cardIdxInHand: cardIdx,
+          cardIdxInHand,
           playerId,
         })
 
@@ -87,7 +94,7 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
       case CardType.TOOL: {
         actorRef.send({
           type: MatchEvent.PLAY_TOOL,
-          cardIdxInHand: cardIdx,
+          cardIdxInHand,
           playerId,
         })
 
@@ -106,27 +113,42 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
   }
 
   const handleWaterCrop = () => {
+    assertIsNonNullable(
+      cropIdxInFieldToWater,
+      'cropIdxInFieldToWater is not a valid field index'
+    )
+
     actorRef.send({
       type: MatchEvent.SELECT_CROP_TO_WATER,
       playerId,
-      cropIdxInFieldToWater: cardIdx,
+      cropIdxInFieldToWater,
       waterCardInHandIdx: selectedWaterCardInHandIdx,
     })
   }
 
   const handleHarvestCrop = () => {
+    assertIsNonNullable(
+      cropIdxInFieldToHarvest,
+      'cropIdxInFieldToHarvest is not a valid field index'
+    )
+
     actorRef.send({
       type: MatchEvent.HARVEST_CROP,
       playerId,
-      cropIdxInFieldToHarvest: cardIdx,
+      cropIdxInFieldToHarvest,
     })
   }
 
   const handleDiscardCard = () => {
+    assertIsNonNullable(
+      cardIdxInField,
+      'cardIdxInField is not a valid field index'
+    )
+
     actorRef.send({
       type: MatchEvent.DISCARD_CARD_FROM_FIELD,
       playerId,
-      cardIdxInField: cardIdx,
+      cardIdxInField,
     })
   }
 

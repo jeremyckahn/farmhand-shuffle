@@ -62,7 +62,6 @@ export const DiscardPile = ({
             <Card
               cardInstance={cardInstance}
               size={cardSize}
-              cardIdx={idx}
               playerId={playerId}
               position="absolute"
               sx={{
