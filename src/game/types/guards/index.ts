@@ -206,7 +206,7 @@ export function assertIsNonNullable<T>(
   message = `${String(obj)} is null or undefined`
 ): asserts obj is NonNullable<T> {
   if (obj === undefined || obj === null) {
-    throw new MatchStateCorruptError(message)
+    throw new TypeError(message)
   }
 }
 
