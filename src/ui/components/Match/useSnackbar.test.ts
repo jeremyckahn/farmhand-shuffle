@@ -21,8 +21,6 @@ import {
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
-import { emptyNotificationMessage } from '../Snackbar'
-
 import { ActorContext } from './ActorContext'
 import { useSnackbar } from './useSnackbar'
 
@@ -39,11 +37,20 @@ vi.mock('./ActorContext', () => ({
   },
 }))
 
+const showNotificationMock = vi.fn()
+
+vi.mock('../../context/NotificationContext', () => ({
+  useNotification: () => ({
+    showNotification: showNotificationMock,
+  }),
+}))
+
 describe('useSnackbar Hook', () => {
   let actorRef: ReturnType<typeof ActorContext.useActorRef>
   let match: IMatch
 
   beforeEach(() => {
+    vi.clearAllMocks()
     actorRef = { send: vi.fn() } as unknown as ReturnType<
       typeof ActorContext.useActorRef
     >
@@ -56,15 +63,15 @@ describe('useSnackbar Hook', () => {
     ).mockReturnValue('Fun Animal')
   })
 
-  it('should initialize with an empty snackbar message', () => {
-    const { result } = renderHook(() =>
+  it('should initialize without firing notifications', () => {
+    renderHook(() =>
       useSnackbar({
         actorRef,
         match,
       })
     )
 
-    expect(result.current.snackbarProps.message).toBe('')
+    expect(showNotificationMock).not.toHaveBeenCalled()
   })
 
   it('should call actorRef.send on mount', () => {
@@ -92,7 +99,7 @@ describe('useSnackbar Hook', () => {
     ])(
       'shows the correct CARDS_DRAWN notification message when session owner draws $howMany cards',
       ({ howMany, expectedNotification }) => {
-        const { result } = renderHook(() =>
+        renderHook(() =>
           useSnackbar({
             actorRef,
             match,
@@ -119,10 +126,10 @@ describe('useSnackbar Hook', () => {
           })
         })
 
-        expect(result.current.snackbarProps.message).toEqual(
-          expectedNotification
+        expect(showNotificationMock).toHaveBeenLastCalledWith(
+          expectedNotification,
+          'success'
         )
-        expect(result.current.snackbarProps.severity).toEqual('success')
       }
     )
 
@@ -133,7 +140,7 @@ describe('useSnackbar Hook', () => {
       'shows the correct CARDS_DRAWN notification message when $howMany cards are drawn by non-session owner',
       ({ howMany, expectedNotification }) => {
         match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
-        const { result } = renderHook(() =>
+        renderHook(() =>
           useSnackbar({
             actorRef,
             match,
@@ -160,15 +167,15 @@ describe('useSnackbar Hook', () => {
           })
         })
 
-        expect(result.current.snackbarProps.message).toEqual(
-          expectedNotification
+        expect(showNotificationMock).toHaveBeenLastCalledWith(
+          expectedNotification,
+          'warning'
         )
-        expect(result.current.snackbarProps.severity).toEqual('warning')
       }
     )
 
     it('should show the correct CROP_HARVESTED notification message when session owner', () => {
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useSnackbar({
           actorRef,
           match,
@@ -194,25 +201,19 @@ describe('useSnackbar Hook', () => {
         })
       })
 
-      expect(result.current.snackbarProps.message).toEqual(
-        `You harvested and sold a ${carrot.name}`
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `You harvested and sold a ${carrot.name}`,
+        'success'
       )
-      expect(result.current.snackbarProps.severity).toEqual('success')
     })
 
     it('should show the correct CROP_HARVESTED notification message when not session owner', () => {
       match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useSnackbar({
           actorRef,
           match,
         })
-      )
-
-      const showNotification = vi.fn()
-
-      vi.spyOn(result.current, 'showNotification').mockImplementation(
-        showNotification
       )
 
       const payload: ShellNotificationPayload[ShellNotificationType.CROP_HARVESTED] =
@@ -234,14 +235,14 @@ describe('useSnackbar Hook', () => {
         })
       })
 
-      expect(result.current.snackbarProps.message).toEqual(
-        `Fun Animal harvested and sold a ${carrot.name}`
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `Fun Animal harvested and sold a ${carrot.name}`,
+        'warning'
       )
-      expect(result.current.snackbarProps.severity).toEqual('warning')
     })
 
     it('should show the correct CROP_WATERED notification message when session owner', () => {
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useSnackbar({
           actorRef,
           match,
@@ -267,25 +268,19 @@ describe('useSnackbar Hook', () => {
         })
       })
 
-      expect(result.current.snackbarProps.message).toEqual(
-        `You watered your ${carrot.name}`
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `You watered your ${carrot.name}`,
+        'info'
       )
-      expect(result.current.snackbarProps.severity).toEqual('info')
     })
 
     it('should show the correct CROP_WATERED notification message when not session owner', () => {
       match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useSnackbar({
           actorRef,
           match,
         })
-      )
-
-      const showNotification = vi.fn()
-
-      vi.spyOn(result.current, 'showNotification').mockImplementation(
-        showNotification
       )
 
       const payload: ShellNotificationPayload[ShellNotificationType.CROP_WATERED] =
@@ -307,14 +302,14 @@ describe('useSnackbar Hook', () => {
         })
       })
 
-      expect(result.current.snackbarProps.message).toEqual(
-        `Fun Animal watered their ${carrot.name}`
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `Fun Animal watered their ${carrot.name}`,
+        'info'
       )
-      expect(result.current.snackbarProps.severity).toEqual('info')
     })
 
     it('should show the correct EVENT_CARD_PLAYED notification message when session owner', () => {
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useSnackbar({
           actorRef,
           match,
@@ -340,25 +335,19 @@ describe('useSnackbar Hook', () => {
         })
       })
 
-      expect(result.current.snackbarProps.message).toEqual(
-        `You played ${payload.eventCard.name}`
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `You played ${payload.eventCard.name}`,
+        'info'
       )
-      expect(result.current.snackbarProps.severity).toEqual('info')
     })
 
     it('should show the correct EVENT_CARD_PLAYED notification message when not session owner', () => {
       match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useSnackbar({
           actorRef,
           match,
         })
-      )
-
-      const showNotification = vi.fn()
-
-      vi.spyOn(result.current, 'showNotification').mockImplementation(
-        showNotification
       )
 
       const payload: ShellNotificationPayload[ShellNotificationType.EVENT_CARD_PLAYED] =
@@ -380,167 +369,148 @@ describe('useSnackbar Hook', () => {
         })
       })
 
-      expect(result.current.snackbarProps.message).toEqual(
-        `Fun Animal played ${payload.eventCard.name}`
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `Fun Animal played ${payload.eventCard.name}`,
+        'info'
       )
-      expect(result.current.snackbarProps.severity).toEqual('info')
+    })
+
+    it('should show the correct TOOL_CARD_PLAYED notification message when session owner', () => {
+      renderHook(() =>
+        useSnackbar({
+          actorRef,
+          match,
+        })
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.TOOL_CARD_PLAYED] =
+        {
+          toolCard: stubShovel,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        (event: MatchEvents) => void
+      >
+      const matchEventPayload = send.mock.calls[0]![0]
+
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+      act(() => {
+        matchEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.TOOL_CARD_PLAYED,
+          payload,
+        })
+      })
+
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `You played ${payload.toolCard.name}`,
+        'info'
+      )
+    })
+
+    it('should show the correct TOOL_CARD_PLAYED notification message when not session owner', () => {
+      match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
+      renderHook(() =>
+        useSnackbar({
+          actorRef,
+          match,
+        })
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.TOOL_CARD_PLAYED] =
+        {
+          toolCard: stubShovel,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        (event: MatchEvents) => void
+      >
+      const matchEventPayload = send.mock.calls[0]![0]
+
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+      act(() => {
+        matchEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.TOOL_CARD_PLAYED,
+          payload,
+        })
+      })
+
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `Fun Animal played ${payload.toolCard.name}`,
+        'info'
+      )
+    })
+
+    it('should show the correct CARD_DISCARDED notification message when player discards a planted card', () => {
+      renderHook(() =>
+        useSnackbar({
+          actorRef,
+          match,
+        })
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.CARD_DISCARDED] =
+        {
+          cardDiscarded: stubSprinkler,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        (event: MatchEvents) => void
+      >
+      const matchEventPayload = send.mock.calls[0]![0]
+
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+      act(() => {
+        matchEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.CARD_DISCARDED,
+          payload,
+        })
+      })
+
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `You discarded ${payload.cardDiscarded.name}`,
+        'info'
+      )
+    })
+
+    it('should show the correct CARD_DISCARDED notification message when non-session owner discards a planted card', () => {
+      match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
+      renderHook(() =>
+        useSnackbar({
+          actorRef,
+          match,
+        })
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.CARD_DISCARDED] =
+        {
+          cardDiscarded: stubSprinkler,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        (event: MatchEvents) => void
+      >
+      const matchEventPayload = send.mock.calls[0]![0]
+
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+      act(() => {
+        matchEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.CARD_DISCARDED,
+          payload,
+        })
+      })
+
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `Fun Animal discarded ${payload.cardDiscarded.name}`,
+        'info'
+      )
     })
   })
 
-  it('should show the correct TOOL_CARD_PLAYED notification message when session owner', () => {
-    const { result } = renderHook(() =>
-      useSnackbar({
-        actorRef,
-        match,
-      })
-    )
-
-    const payload: ShellNotificationPayload[ShellNotificationType.TOOL_CARD_PLAYED] =
-      {
-        toolCard: stubShovel,
-      }
-
-    const send = actorRef.send as unknown as MockInstance<
-      (event: MatchEvents) => void
-    >
-    const matchEventPayload = send.mock.calls[0]![0]
-
-    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
-
-    act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.TOOL_CARD_PLAYED,
-        payload,
-      })
-    })
-
-    expect(result.current.snackbarProps.message).toEqual(
-      `You played ${payload.toolCard.name}`
-    )
-    expect(result.current.snackbarProps.severity).toEqual('info')
-  })
-
-  it('should show the correct TOOL_CARD_PLAYED notification message when not session owner', () => {
-    match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
-    const { result } = renderHook(() =>
-      useSnackbar({
-        actorRef,
-        match,
-      })
-    )
-
-    const showNotification = vi.fn()
-
-    vi.spyOn(result.current, 'showNotification').mockImplementation(
-      showNotification
-    )
-
-    const payload: ShellNotificationPayload[ShellNotificationType.TOOL_CARD_PLAYED] =
-      {
-        toolCard: stubShovel,
-      }
-
-    const send = actorRef.send as unknown as MockInstance<
-      (event: MatchEvents) => void
-    >
-    const matchEventPayload = send.mock.calls[0]![0]
-
-    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
-
-    act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.TOOL_CARD_PLAYED,
-        payload,
-      })
-    })
-
-    expect(result.current.snackbarProps.message).toEqual(
-      `Fun Animal played ${payload.toolCard.name}`
-    )
-    expect(result.current.snackbarProps.severity).toEqual('info')
-  })
-
-  it('should show the correct CARD_DISCARDED notification message when player discards a planted card', () => {
-    match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer1.id })
-    const { result } = renderHook(() =>
-      useSnackbar({
-        actorRef,
-        match,
-      })
-    )
-
-    const showNotification = vi.fn()
-
-    vi.spyOn(result.current, 'showNotification').mockImplementation(
-      showNotification
-    )
-
-    const payload: ShellNotificationPayload[ShellNotificationType.CARD_DISCARDED] =
-      {
-        cardDiscarded: stubSprinkler,
-      }
-
-    const send = actorRef.send as unknown as MockInstance<
-      (event: MatchEvents) => void
-    >
-    const matchEventPayload = send.mock.calls[0]![0]
-
-    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
-
-    act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.CARD_DISCARDED,
-        payload,
-      })
-    })
-
-    expect(result.current.snackbarProps.message).toEqual(
-      `You discarded ${payload.cardDiscarded.name}`
-    )
-    expect(result.current.snackbarProps.severity).toEqual('info')
-  })
-
-  it('should show the correct CARD_DISCARDED notification message when non-session owner discards a planted card', () => {
-    match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
-    const { result } = renderHook(() =>
-      useSnackbar({
-        actorRef,
-        match,
-      })
-    )
-
-    const showNotification = vi.fn()
-
-    vi.spyOn(result.current, 'showNotification').mockImplementation(
-      showNotification
-    )
-
-    const payload: ShellNotificationPayload[ShellNotificationType.CARD_DISCARDED] =
-      {
-        cardDiscarded: stubSprinkler,
-      }
-
-    const send = actorRef.send as unknown as MockInstance<
-      (event: MatchEvents) => void
-    >
-    const matchEventPayload = send.mock.calls[0]![0]
-
-    assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
-
-    act(() => {
-      matchEventPayload.shell.triggerNotification({
-        type: ShellNotificationType.CARD_DISCARDED,
-        payload,
-      })
-    })
-
-    expect(result.current.snackbarProps.message).toEqual(
-      `Fun Animal discarded ${payload.cardDiscarded.name}`
-    )
-    expect(result.current.snackbarProps.severity).toEqual('info')
-  })
-
-  it('should update snackbarProps correctly with showNotification', () => {
+  it('should call showNotification on showNotification call', () => {
     const { result } = renderHook(() =>
       useSnackbar({
         actorRef,
@@ -552,28 +522,9 @@ describe('useSnackbar Hook', () => {
       result.current.showNotification('Test Message', 'success')
     })
 
-    expect(result.current.snackbarProps.message).toBe('Test Message')
-    expect(result.current.snackbarProps.severity).toBe('success')
-  })
-
-  it('should clear the notification message when onClose is called', () => {
-    const { result } = renderHook(() =>
-      useSnackbar({
-        actorRef,
-        match,
-      })
+    expect(showNotificationMock).toHaveBeenLastCalledWith(
+      'Test Message',
+      'success'
     )
-
-    act(() => {
-      result.current.showNotification('Test Message', 'success')
-    })
-
-    expect(result.current.snackbarProps.message).toBe('Test Message')
-
-    act(() => {
-      result.current.snackbarProps.onClose()
-    })
-
-    expect(result.current.snackbarProps.message).toBe(emptyNotificationMessage)
   })
 })

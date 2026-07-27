@@ -1,12 +1,11 @@
 import { AlertColor } from '@mui/material'
 import { funAnimalName } from 'fun-animal-names'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect } from 'react'
 import reactNodeToString from 'react-node-to-string'
 
 import { MatchEvent, IMatch, ShellNotificationType } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
-
-import { emptyNotificationMessage, SnackbarProps } from '../Snackbar'
+import { useNotification } from '../../context/NotificationContext'
 
 import { ActorContext } from './ActorContext'
 
@@ -21,16 +20,7 @@ export const useSnackbar = ({
   actorRef: ReturnType<typeof ActorContext.useActorRef>
   match: IMatch
 }) => {
-  const [snackbarProps, setSnackbarProps] = useState<SnackbarProps>({
-    message: '',
-    severity: 'info',
-    onClose: () => {
-      setSnackbarProps(prev => ({
-        ...prev,
-        message: emptyNotificationMessage,
-      }))
-    },
-  })
+  const { showNotification: triggerGlobalNotification } = useNotification()
 
   const showNotification = useCallback(
     (message: ReactNode, severity: AlertColor) => {
@@ -38,9 +28,9 @@ export const useSnackbar = ({
         console.debug(`Notification: ${reactNodeToString(message)}`)
       }
 
-      setSnackbarProps(prev => ({ ...prev, message, severity }))
+      triggerGlobalNotification(message, severity)
     },
-    [setSnackbarProps]
+    [triggerGlobalNotification]
   )
 
   const isSessionOwner = match.currentPlayerId === match.sessionOwnerPlayerId
@@ -174,5 +164,5 @@ export const useSnackbar = ({
     })
   }, [actorRef, match.currentPlayerId, isSessionOwner, showNotification])
 
-  return { showNotification, snackbarProps }
+  return { showNotification }
 }

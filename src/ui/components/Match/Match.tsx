@@ -15,8 +15,6 @@ import { ui } from '../../img'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 
-import { Snackbar } from '../Snackbar'
-
 import { ActorContext } from './ActorContext'
 import { ShellContext } from './ShellContext'
 import { MatchProps } from './types'
@@ -40,7 +38,6 @@ const MatchCore = ({
     shellContextValue,
     showGameOver,
     showHand,
-    snackbarProps,
   } = useMatch({ playerSeeds, userPlayerId })
 
   const { winner } = match
@@ -103,7 +100,6 @@ const MatchCore = ({
           </DialogActions>
         </Dialog>
       </Container>
-      <Snackbar {...snackbarProps} />
     </ShellContext.Provider>
   )
 }
