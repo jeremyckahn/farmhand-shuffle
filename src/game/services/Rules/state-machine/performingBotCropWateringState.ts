@@ -9,7 +9,7 @@ import {
   isWaterCardInstance,
   ShellNotificationType,
 } from '../../../types'
-import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
+import { assertIsNonNullable, assertIsPlayedCrop } from '../../../types/guards'
 import { MatchStateCorruptError } from '../errors'
 import { lookup } from '../../Lookup'
 
@@ -33,7 +33,7 @@ export const performingBotCropWateringState: RulesMachineConfig['states'] = {
       }) => {
         const { currentPlayerId } = match
 
-        assertCurrentPlayer(currentPlayerId)
+        assertIsNonNullable(currentPlayerId)
 
         const player = lookup.getPlayer(match, currentPlayerId)
         const waterCardInHandIdx = player.hand.findIndex(cardInstance => {

@@ -7,7 +7,7 @@ import {
   MatchMachineContext,
   MatchStateGuard,
 } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 export const { createMachine } = setup({
@@ -23,7 +23,7 @@ export const { createMachine } = setup({
     }) => {
       const { currentPlayerId } = match
 
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       switch (event.type) {
         case MatchEvent.SELECT_CROP_TO_WATER: {

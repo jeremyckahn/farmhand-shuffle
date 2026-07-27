@@ -12,11 +12,7 @@ import {
   MatchState,
   isToolCardInstance,
 } from '../../../types'
-import {
-  assertCurrentPlayer,
-  assertIsNonNullable,
-  assertIsToolCardId,
-} from '../../../types/guards'
+import { assertIsNonNullable, assertIsToolCardId } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
 import { GameStateCorruptError, MatchStateCorruptError } from '../errors'
@@ -66,7 +62,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
                   const { currentPlayerId } = match
 
-                  assertCurrentPlayer(currentPlayerId)
+                  assertIsNonNullable(currentPlayerId)
 
                   const previousTurnStateForCurrentPlayer =
                     previousTurnMatchState.table.players[currentPlayerId]
@@ -155,7 +151,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               if (areCropsToPlay) {
                 const { currentPlayerId } = match
 
-                assertCurrentPlayer(currentPlayerId)
+                assertIsNonNullable(currentPlayerId)
 
                 const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
                   match,
@@ -205,7 +201,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               if (areCropsToPlay) {
                 const { currentPlayerId } = match
 
-                assertCurrentPlayer(currentPlayerId)
+                assertIsNonNullable(currentPlayerId)
 
                 const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
                   match,
@@ -256,7 +252,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           withBotErrorHandling(({ context: { botState, match }, enqueue }) => {
             const { currentPlayerId } = match
 
-            assertCurrentPlayer(currentPlayerId)
+            assertIsNonNullable(currentPlayerId)
 
             const fieldCropIndicesToWaterDuringTurn =
               botLogic.getCropCardIndicesToWater(match, currentPlayerId)
@@ -305,7 +301,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             if (areEventCardsToPlay) {
               const { currentPlayerId } = match
 
-              assertCurrentPlayer(currentPlayerId)
+              assertIsNonNullable(currentPlayerId)
 
               const eventCardIdxToPlay = botLogic.getEventCardIndexToPlay(
                 match,
@@ -347,7 +343,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             if (areToolsToPlay) {
               const { currentPlayerId } = match
 
-              assertCurrentPlayer(currentPlayerId)
+              assertIsNonNullable(currentPlayerId)
 
               const toolCardIdxToPlay = botLogic.getToolCardIndexToPlay(
                 match,
@@ -411,7 +407,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           withBotErrorHandling(({ context: { botState, match }, enqueue }) => {
             const { currentPlayerId } = match
 
-            assertCurrentPlayer(currentPlayerId)
+            assertIsNonNullable(currentPlayerId)
 
             const cropCardIndicesToHarvest =
               botLogic.getCropCardIndicesToHarvest(match, currentPlayerId)

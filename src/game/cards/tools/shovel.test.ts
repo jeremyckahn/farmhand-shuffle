@@ -8,7 +8,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../../reducers/update-player'
 import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
 import { ShellNotificationType } from '../../types'
-import { assertCurrentPlayer, assertIsNonNullable } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/guards'
 
 import { shovel } from './shovel'
 
@@ -18,7 +18,7 @@ describe('shovel', () => {
       let match = stubMatch()
       const { currentPlayerId } = match
 
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       match = updatePlayer(match, currentPlayerId, {
         deck: [stubCarrot, stubPumpkin, stubWater],
@@ -60,7 +60,7 @@ describe('shovel', () => {
       let match = stubMatch()
       const { currentPlayerId } = match
 
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       match = updatePlayer(match, currentPlayerId, {
         deck: [stubCarrot, stubPumpkin, stubWater],

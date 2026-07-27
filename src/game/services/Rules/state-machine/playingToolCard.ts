@@ -3,7 +3,7 @@ import { assertEvent, enqueueActions } from 'xstate'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import {
-  assertCurrentPlayer,
+  assertIsNonNullable,
   assertIsToolCardInstance,
 } from '../../../types/guards'
 import { lookup } from '../../Lookup'
@@ -44,7 +44,7 @@ export const playingToolCard: RulesMachineConfig['states'] = {
         )
 
         assertIsToolCardInstance(cardInstance)
-        assertCurrentPlayer(currentPlayerId)
+        assertIsNonNullable(currentPlayerId)
 
         if (
           !cardInstance.isPlantable ||

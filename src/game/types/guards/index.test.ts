@@ -267,16 +267,6 @@ describe('Type Guards', () => {
     })
   })
 
-  describe('assertCurrentPlayer', () => {
-    it('does not throw for valid string', () => {
-      expect(() => guards.assertCurrentPlayer('player1')).not.toThrow()
-    })
-
-    it('throws TypeError for null', () => {
-      expect(() => guards.assertCurrentPlayer(null)).toThrow(TypeError)
-    })
-  })
-
   describe('assertStringIsMatchState', () => {
     it('does not throw for valid MatchState string', () => {
       expect(() =>

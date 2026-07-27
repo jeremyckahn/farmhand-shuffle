@@ -1,7 +1,7 @@
 import { enqueueActions } from 'xstate'
 
 import { MatchEvent, MatchState, MatchStateGuard } from '../../../types'
-import { assertCurrentPlayer, assertIsNonNullable } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 
 import { recordCardPlayEvents } from './reducers'
@@ -28,7 +28,7 @@ export const choosingCardPositon: RulesMachineConfig['states'] = {
           const { currentPlayerId, sessionOwnerPlayerId } = match
           const { playerId, cardIdxInHand } = event
 
-          assertCurrentPlayer(currentPlayerId)
+          assertIsNonNullable(currentPlayerId)
 
           if (currentPlayerId !== sessionOwnerPlayerId) {
             const openFieldPositionIdx = botLogic.getOpenFieldPosition(

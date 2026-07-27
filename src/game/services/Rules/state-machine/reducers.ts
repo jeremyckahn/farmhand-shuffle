@@ -6,7 +6,7 @@ import {
   MatchEventPayload,
   MatchEventPayloadKey,
 } from '../../../types'
-import { assertCurrentPlayer, assertIsNonNullable } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 
 /**
@@ -36,7 +36,7 @@ export const recordCardPlayEvents = (
     case MatchEvent.SELECT_CARD_POSITION: {
       const { currentPlayerId } = match
 
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       match = recordCardsPlayedDuringTurn(currentPlayerId, event.cardIdxInHand)
 
@@ -48,7 +48,7 @@ export const recordCardPlayEvents = (
     case MatchEvent.PLAY_WATER: {
       const { currentPlayerId } = match
 
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       const player = lookup.getPlayer(match, currentPlayerId)
       const card = player.hand[event.cardIdxInHand]

@@ -1,7 +1,7 @@
 import { enqueueActions } from 'xstate'
 
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
-import { assertCurrentPlayer, assertIsPlayedCrop } from '../../../types/guards'
+import { assertIsNonNullable, assertIsPlayedCrop } from '../../../types/guards'
 import { harvestCrop } from '../../../reducers/harvest-crop'
 import { lookup } from '../../Lookup'
 
@@ -27,7 +27,7 @@ export const performingBotCropHarvestingState: RulesMachineConfig['states'] = {
       }) => {
         const { currentPlayerId } = match
 
-        assertCurrentPlayer(currentPlayerId)
+        assertIsNonNullable(currentPlayerId)
 
         if (cropCardIdxToHarvest !== undefined) {
           const player = lookup.getPlayer(match, currentPlayerId)

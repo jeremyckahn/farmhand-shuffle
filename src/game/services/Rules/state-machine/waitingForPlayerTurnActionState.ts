@@ -15,7 +15,7 @@ import {
   MatchState,
   ShellNotificationType,
 } from '../../../types'
-import { assertCurrentPlayer, isPlayedCrop } from '../../../types/guards'
+import { assertIsNonNullable, isPlayedCrop } from '../../../types/guards'
 import { lookup } from '../../Lookup'
 import { InvalidCardError, PlayerOutOfFundsError } from '../errors'
 import { rules } from '..'
@@ -124,7 +124,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
               match = incrementPlayer(match)
               const { currentPlayerId } = match
 
-              assertCurrentPlayer(currentPlayerId)
+              assertIsNonNullable(currentPlayerId)
 
               const previousTurnStateForCurrentPlayer = lookup.getPlayer(
                 previousTurnMatchState,
@@ -168,7 +168,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
             case MatchEvent.OPERATION_ABORTED: {
               const { currentPlayerId } = match
 
-              assertCurrentPlayer(currentPlayerId)
+              assertIsNonNullable(currentPlayerId)
 
               match = removeTurnCardsPlayed(match, currentPlayerId, 1)
 
@@ -181,7 +181,7 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
           if (error instanceof PlayerOutOfFundsError) {
             const { currentPlayerId } = match
 
-            assertCurrentPlayer(currentPlayerId)
+            assertIsNonNullable(currentPlayerId)
 
             enqueue.raise({
               type: MatchEvent.PLAYER_RAN_OUT_OF_FUNDS,

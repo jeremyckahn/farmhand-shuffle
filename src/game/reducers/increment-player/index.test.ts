@@ -1,5 +1,6 @@
 import { stubMatch } from '../../../test-utils/stubs/match'
 
+import { MatchStateCorruptError } from '../../services/Rules/errors'
 import { updateMatch } from '../update-match'
 
 import { incrementPlayer } from '.'
@@ -31,6 +32,6 @@ describe('incrementPlayer', () => {
 
     expect(() => {
       incrementPlayer(newMatch)
-    }).toThrowError(TypeError)
+    }).toThrowError(MatchStateCorruptError)
   })
 })

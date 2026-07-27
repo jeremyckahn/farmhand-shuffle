@@ -7,7 +7,7 @@ import {
   isWaterCardInstance,
 } from '../../types'
 import {
-  assertCurrentPlayer,
+  assertIsNonNullable,
   isCrop,
   isCropCardInstance,
 } from '../../types/guards'
@@ -186,7 +186,7 @@ export class LookupService {
   nextPlayerIndex = (match: IMatch) => {
     const { currentPlayerId } = match
 
-    assertCurrentPlayer(currentPlayerId)
+    assertIsNonNullable(currentPlayerId)
 
     const playerIds = Object.keys(match.table.players).sort()
     const currentPlayerIdx = playerIds.indexOf(currentPlayerId)
