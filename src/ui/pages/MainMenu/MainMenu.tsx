@@ -1,24 +1,9 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-import { useNotification } from '../../context/NotificationContext'
-import { isLocationStateWithNotification } from '../../type-guards'
 import { AppRoute } from '../../types'
 
 export const MainMenu = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { showNotification } = useNotification()
-
-  useEffect(() => {
-    if (isLocationStateWithNotification(location.state)) {
-      showNotification(location.state.notification, 'success')
-      // Clear the location state so the notification doesn't reappear on refresh
-      void navigate('.', { replace: true, state: {} })
-    }
-  }, [location.state, navigate, showNotification])
-
   return (
     <Box
       sx={{
