@@ -203,10 +203,10 @@ export const isCard = (obj: unknown): obj is ICard => {
 
 export function assertIsNonNullable<T>(
   obj: T,
-  message = `${String(obj)} is not a valid card ID`
+  message = `${String(obj)} is null or undefined`
 ): asserts obj is NonNullable<T> {
   if (obj === undefined || obj === null) {
-    throw new MatchStateCorruptError(message)
+    throw new TypeError(message)
   }
 }
 
@@ -237,15 +237,6 @@ export function assertIsToolCardInstance(
 ): asserts card is ToolInstance {
   if (!isToolCardInstance(card)) {
     throw new MatchStateCorruptError(`${card.id} is not a tool card`)
-  }
-}
-
-// TODO: Replace all uses of this with assertIsNonNullable
-export function assertCurrentPlayer(
-  currentPlayerId: string | null
-): asserts currentPlayerId is string {
-  if (currentPlayerId === null) {
-    throw new TypeError('currentPlayerId must not be null')
   }
 }
 

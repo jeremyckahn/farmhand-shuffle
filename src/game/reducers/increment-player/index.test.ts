@@ -1,5 +1,4 @@
 import { stubMatch } from '../../../test-utils/stubs/match'
-
 import { updateMatch } from '../update-match'
 
 import { incrementPlayer } from '.'
@@ -25,7 +24,7 @@ describe('incrementPlayer', () => {
     expect(newMatch.currentPlayerId).toEqual(player1Id)
   })
 
-  test('throws error is there is no current player', () => {
+  test('throws error if there is no current player', () => {
     const match = stubMatch()
     const newMatch = updateMatch(match, { currentPlayerId: null })
 

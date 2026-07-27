@@ -15,7 +15,7 @@ import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useContext } from 'react'
 
 import { MatchEvent, MatchState, IMatch } from '../../../game/types'
-import { assertCurrentPlayer } from '../../../game/types/guards'
+import { assertIsNonNullable } from '../../../game/types/guards'
 import { lookup } from '../../../game/services/Lookup'
 import { MatchStateCorruptError } from '../../../game/services/Rules/errors'
 import { formatNumber } from '../../../lib/formatting/numbers'
@@ -117,7 +117,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     }
 
     case MatchState.PERFORMING_BOT_TURN_ACTION: {
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       stateInfo = `${funAnimalName(currentPlayerId)}'s turn`
 
@@ -125,7 +125,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     }
 
     case MatchState.PERFORMING_BOT_SETUP_ACTION: {
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       stateInfo = `${funAnimalName(currentPlayerId)} is setting their field up`
 
@@ -133,7 +133,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     }
 
     case MatchState.PERFORMING_BOT_CROP_WATERING: {
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       // TODO: This message never seems to actually appear in the game when the bot is watering crops. This may be due to a timing issue (it may be shown faster than it can be seen).
       stateInfo = `${funAnimalName(currentPlayerId)} is watering crops`

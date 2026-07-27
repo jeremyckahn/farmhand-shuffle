@@ -5,7 +5,7 @@ import { BOT_ACTION_DELAY } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { moveCardFromHandToField } from '../../../reducers/move-card-from-hand-to-field'
 import { MatchEvent, MatchState, MatchStateGuard } from '../../../types'
-import { assertCurrentPlayer } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/guards'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
 import { GameStateCorruptError, MatchStateCorruptError } from '../errors'
@@ -36,7 +36,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
             const { currentPlayerId } = match
 
-            assertCurrentPlayer(currentPlayerId)
+            assertIsNonNullable(currentPlayerId)
 
             const player = lookup.getPlayer(match, currentPlayerId)
             const hasBotCompletedSetup =
@@ -99,7 +99,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
           const { cardIdxInHand } = event
           const { currentPlayerId } = match
 
-          assertCurrentPlayer(currentPlayerId)
+          assertIsNonNullable(currentPlayerId)
 
           match = recordCardPlayEvents(match, event)
 
@@ -144,7 +144,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
 
             const { currentPlayerId } = match
 
-            assertCurrentPlayer(currentPlayerId)
+            assertIsNonNullable(currentPlayerId)
 
             match = recordCardPlayEvents(match, event)
             match = moveCardFromHandToField(
@@ -174,7 +174,7 @@ export const performingBotSetupActionState: RulesMachineConfig['states'] = {
     entry: enqueueActions(({ context: { match }, enqueue }) => {
       const { currentPlayerId } = match
 
-      assertCurrentPlayer(currentPlayerId)
+      assertIsNonNullable(currentPlayerId)
 
       match = incrementPlayer(match)
 

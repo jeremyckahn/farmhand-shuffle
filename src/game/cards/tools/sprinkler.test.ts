@@ -7,7 +7,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../../reducers/update-player'
 import { factory } from '../../services/Factory'
 import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
-import { assertCurrentPlayer, assertIsNonNullable } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/guards'
 
 import { sprinkler } from './sprinkler'
 
@@ -127,7 +127,7 @@ describe('sprinkler', () => {
         let match = stubMatch()
         const { currentPlayerId } = match
 
-        assertCurrentPlayer(currentPlayerId)
+        assertIsNonNullable(currentPlayerId)
 
         match = updatePlayer(match, currentPlayerId, {
           field: {
