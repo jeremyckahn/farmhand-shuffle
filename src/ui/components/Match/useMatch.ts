@@ -51,7 +51,7 @@ export const useMatch = ({
     [setIsBlockingOperationExecuting]
   )
 
-  const { showNotification, snackbarProps } = useSnackbar({ actorRef, match })
+  const { showNotification } = useSnackbar({ actorRef, match })
 
   const [selectedHandCardIdx, _setSelectedHandCardIdx] =
     useState(deselectedHandIdx)
@@ -111,6 +111,5 @@ export const useMatch = ({
     shellContextValue,
     showGameOver,
     showHand,
-    snackbarProps,
   }
 }

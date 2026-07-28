@@ -5,14 +5,20 @@ import { MatchState, MatchEvent, IPlayerSeed } from '../../../game/types'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { stubMatch } from '../../../test-utils/stubs/match'
 
-import { emptyNotificationMessage } from '../Snackbar'
-
 import { ActorContext } from './ActorContext'
 import { useMatch } from './useMatch'
 
 // Mock dependencies
 vi.mock('../../hooks/useMatchRules')
 vi.mock('./ActorContext')
+
+const showNotificationMock = vi.fn()
+
+vi.mock('../../context/NotificationContext', () => ({
+  useNotification: () => ({
+    showNotification: showNotificationMock,
+  }),
+}))
 
 describe('useMatch', () => {
   // Mock player seeds and user ID
@@ -37,6 +43,7 @@ describe('useMatch', () => {
 
   beforeEach(() => {
     // Setup mocks
+    vi.clearAllMocks()
     vi.mocked(ActorContext.useActorRef).mockReturnValue(mockActorRef)
     vi.mocked(useMatchRules).mockReturnValue({
       match: {
@@ -219,7 +226,7 @@ describe('useMatch', () => {
     expect(result.current.showHand).toBe(true)
   })
 
-  it('should update snackbar props when showNotification is called', () => {
+  it('should delegate showNotification to NotificationContext', () => {
     const { result } = renderHook(() =>
       useMatch({
         playerSeeds: mockPlayerSeeds,
@@ -234,32 +241,7 @@ describe('useMatch', () => {
       )
     })
 
-    expect(result.current.snackbarProps.message).toBe('Test message')
-    expect(result.current.snackbarProps.severity).toBe('success')
-  })
-
-  it('should clear snackbar message when onClose is called', () => {
-    const { result } = renderHook(() =>
-      useMatch({
-        playerSeeds: mockPlayerSeeds,
-        userPlayerId: mockUserPlayerId,
-      })
-    )
-
-    act(() => {
-      result.current.shellContextValue.showNotification(
-        'Test message',
-        'success'
-      )
-    })
-
-    expect(result.current.snackbarProps.message).toBe('Test message')
-
-    act(() => {
-      result.current.snackbarProps.onClose()
-    })
-
-    expect(result.current.snackbarProps.message).toBe(emptyNotificationMessage)
+    expect(showNotificationMock).toHaveBeenCalledWith('Test message', 'success')
   })
 
   it('should update isHandInViewport when setIsHandInViewport is called', () => {

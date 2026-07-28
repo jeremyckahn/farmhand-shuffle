@@ -2,6 +2,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
+import { NotificationProvider } from './ui/context/NotificationContext'
 import { ErrorBoundary } from './ui/components/ErrorBoundary'
 import { BuildDeck } from './ui/pages/BuildDeck'
 import { MainMenu } from './ui/pages/MainMenu'
@@ -32,7 +33,9 @@ export const App = () => {
   return (
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
-      <RouterProvider router={router} />
+      <NotificationProvider>
+        <RouterProvider router={router} />
+      </NotificationProvider>
     </ThemeProvider>
   )
 }
