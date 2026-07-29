@@ -3,7 +3,6 @@ import { MemoryRouter } from 'react-router-dom'
 import { spyOn } from 'storybook/test'
 
 import { storage } from '../../../services/StorageService'
-import { NotificationProvider } from '../../context/NotificationContext'
 
 import { BuildDeck } from './BuildDeck'
 
@@ -12,11 +11,9 @@ const meta: Meta<typeof BuildDeck> = {
   component: BuildDeck,
   decorators: [
     Story => (
-      <NotificationProvider>
-        <MemoryRouter>
-          <Story />
-        </MemoryRouter>
-      </NotificationProvider>
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
     ),
   ],
 }

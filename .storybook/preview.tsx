@@ -9,6 +9,7 @@ import { DecoratorFunction } from 'storybook/internal/csf'
 import { fn, spyOn } from 'storybook/test'
 
 import { ActorContext } from '../src/ui/components/Match/ActorContext'
+import { NotificationProvider } from '../src/ui/context/NotificationContext'
 import { darkTheme, lightTheme } from '../src/ui/theme'
 
 const THEMES = {
@@ -61,6 +62,14 @@ const withActorContext = (Story: ThemeParameters[0]) => {
   )
 }
 
+const withNotificationProvider = (Story: ThemeParameters[0]) => {
+  return (
+    <NotificationProvider>
+      <Story />
+    </NotificationProvider>
+  )
+}
+
 export const globalTypes = {
   theme: {
     name: 'Theme',
@@ -89,7 +98,7 @@ const preview: Preview = {
     },
   },
 
-  decorators: [withMuiTheme, withActorContext],
+  decorators: [withMuiTheme, withNotificationProvider, withActorContext],
 }
 
 export default preview
