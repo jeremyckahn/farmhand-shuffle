@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 
 import { ActorContext } from '../components/Match/ActorContext'
-import { MatchState } from '../../game/types'
+import { BotTurnActionState, MatchState } from '../../game/types'
 
 import { useMatchRules } from './useMatchRules'
 
@@ -33,7 +33,7 @@ describe('useMatchRules', () => {
   it('resolves PERFORMING_BOT_TURN_ACTION when state is an object', () => {
     const mockMatch = { some: 'match data' }
     const mockState = {
-      [MatchState.PERFORMING_BOT_TURN_ACTION]: 'some substate',
+      [MatchState.PERFORMING_BOT_TURN_ACTION]: BotTurnActionState.INITIALIZING,
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call

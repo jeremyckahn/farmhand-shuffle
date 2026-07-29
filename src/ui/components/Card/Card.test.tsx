@@ -137,6 +137,7 @@ describe('Card', () => {
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValue({
       matchState: MatchState.WAITING_FOR_PLAYER_SETUP_ACTION,
       match: matchWithFullField,
+      botTurnActionState: null,
     })
 
     render(
@@ -163,6 +164,7 @@ describe('Card', () => {
           ...match,
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         },
+        botTurnActionState: null,
       })
 
       render(
@@ -198,6 +200,7 @@ describe('Card', () => {
         match: stubMatch({
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         }),
+        botTurnActionState: null,
       })
 
       render(
@@ -230,6 +233,7 @@ describe('Card', () => {
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.PLAYER_WATERING_CROP,
       match: stubMatch({ selectedWaterCardInHandIdx }),
+      botTurnActionState: null,
     })
 
     render(
@@ -263,6 +267,7 @@ describe('Card', () => {
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
       match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
     })
 
     const cropIdxInFieldToHarvest = 2
@@ -300,6 +305,7 @@ describe('Card', () => {
         eventCardsThatCanBePlayed: 1,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       }),
+      botTurnActionState: null,
     })
 
     render(
@@ -332,6 +338,7 @@ describe('Card', () => {
       match: stubMatch({
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       }),
+      botTurnActionState: null,
     })
 
     render(
@@ -364,6 +371,7 @@ describe('Card', () => {
       match: stubMatch({
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       }),
+      botTurnActionState: null,
     })
 
     render(
@@ -395,6 +403,7 @@ describe('Card', () => {
       match: stubMatch({
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       }),
+      botTurnActionState: null,
     })
 
     render(
@@ -421,6 +430,7 @@ describe('Card', () => {
           ...match,
           selectedWaterCardInHandIdx: 0,
         },
+        botTurnActionState: null,
       })
 
       render(
@@ -441,6 +451,7 @@ describe('Card', () => {
           ...match,
           selectedWaterCardInHandIdx: 0,
         },
+        botTurnActionState: null,
       })
 
       render(
@@ -461,6 +472,7 @@ describe('Card', () => {
           ...match,
           selectedWaterCardInHandIdx: 0,
         },
+        botTurnActionState: null,
       })
 
       render(<StubCard isInField playerId={match.sessionOwnerPlayerId} />)
@@ -478,6 +490,7 @@ describe('Card', () => {
           ...match,
           selectedWaterCardInHandIdx: 0,
         },
+        botTurnActionState: null,
       })
 
       render(
@@ -504,6 +517,7 @@ describe('Card', () => {
         match: stubMatch({
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         }),
+        botTurnActionState: null,
       })
 
       render(
@@ -541,6 +555,7 @@ describe('Card', () => {
         match: stubMatch({
           selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
         }),
+        botTurnActionState: null,
       })
 
       render(

@@ -31,6 +31,7 @@ describe('EmptyPlot', () => {
         currentPlayerId,
         sessionOwnerPlayerId: stubPlayer1.id,
       },
+      botTurnActionState: null,
     })
 
     return render(

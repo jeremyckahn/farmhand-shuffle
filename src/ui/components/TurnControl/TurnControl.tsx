@@ -1,7 +1,7 @@
 import AccountBalance from '@mui/icons-material/AccountBalance'
 import AttachMoney from '@mui/icons-material/AttachMoney'
-import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp'
 import Accordion from '@mui/material/Accordion'
 import AccordionActions from '@mui/material/AccordionActions'
 import AccordionSummary from '@mui/material/AccordionSummary'
@@ -14,17 +14,21 @@ import Typography from '@mui/material/Typography'
 import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useContext } from 'react'
 
-import { MatchEvent, MatchState, IMatch } from '../../../game/types'
-import { assertIsNonNullable } from '../../../game/types/guards'
+import { STANDARD_TAX_AMOUNT } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { MatchStateCorruptError } from '../../../game/services/Rules/errors'
+import {
+  BotTurnActionState,
+  IMatch,
+  MatchEvent,
+  MatchState,
+} from '../../../game/types'
 import { formatNumber } from '../../../lib/formatting/numbers'
 import { useMatchRules } from '../../hooks/useMatchRules'
-import { ActorContext } from '../Match/ActorContext'
-import { ShellContext } from '../Match/ShellContext'
-import { STANDARD_TAX_AMOUNT } from '../../../game/config'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
+import { ActorContext } from '../Match/ActorContext'
+import { ShellContext } from '../Match/ShellContext'
 
 export interface TurnControlProps {
   match: IMatch
@@ -38,8 +42,11 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   const { setIsHandInViewport } = useContext(ShellContext)
   const {
     matchState,
+    botTurnActionState,
     match: { currentPlayerId, sessionOwnerPlayerId },
   } = useMatchRules()
+
+  const currentPlayerName = funAnimalName(currentPlayerId ?? '')
 
   const handleCompleteSetup = () => {
     actorRef.send({ type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION })
@@ -117,26 +124,50 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     }
 
     case MatchState.PERFORMING_BOT_TURN_ACTION: {
-      assertIsNonNullable(currentPlayerId)
+      stateInfo = `${currentPlayerName}'s turn`
 
-      stateInfo = `${funAnimalName(currentPlayerId)}'s turn`
+      // NOTE: Refines the general stateInfo above with a more specific one,
+      // if applicable.
+      switch (botTurnActionState) {
+        case BotTurnActionState.PLAYING_CROPS:
+        case BotTurnActionState.PLACING_CROP: {
+          stateInfo = `${currentPlayerName} is planting crops`
+
+          break
+        }
+
+        case BotTurnActionState.PLAYING_WATER: {
+          stateInfo = `${currentPlayerName} is watering crops`
+
+          break
+        }
+
+        case BotTurnActionState.HARVESTING_CROPS: {
+          stateInfo = `${currentPlayerName} is harvesting crops`
+
+          break
+        }
+
+        case BotTurnActionState.PLAYING_EVENTS: {
+          stateInfo = `${currentPlayerName} is playing Event cards`
+
+          break
+        }
+
+        case BotTurnActionState.PLAYING_TOOLS: {
+          stateInfo = `${currentPlayerName} is playing Tool cards`
+
+          break
+        }
+
+        default:
+      }
 
       break
     }
 
     case MatchState.PERFORMING_BOT_SETUP_ACTION: {
-      assertIsNonNullable(currentPlayerId)
-
-      stateInfo = `${funAnimalName(currentPlayerId)} is setting their field up`
-
-      break
-    }
-
-    case MatchState.PERFORMING_BOT_CROP_WATERING: {
-      assertIsNonNullable(currentPlayerId)
-
-      // TODO: This message never seems to actually appear in the game when the bot is watering crops. This may be due to a timing issue (it may be shown faster than it can be seen).
-      stateInfo = `${funAnimalName(currentPlayerId)} is watering crops`
+      stateInfo = `${currentPlayerName} is setting their field up`
 
       break
     }
@@ -156,6 +187,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   const opponentFunds = opponentPlayerId
     ? lookup.getPlayer(match, opponentPlayerId)?.funds
     : 0
+  const opponentName = funAnimalName(opponentPlayerId ?? '')
 
   return (
     <Stack spacing={1}>
@@ -264,10 +296,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
             </Stack>
           </Tooltip>
         )}
-        <Tooltip
-          title={`${funAnimalName(currentPlayerId ?? '')}'s funds`}
-          arrow
-        >
+        <Tooltip title={`${opponentName}'s funds`} arrow>
           <Stack
             direction="row"
             alignItems="center"

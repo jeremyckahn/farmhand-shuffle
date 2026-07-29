@@ -1,3 +1,5 @@
+import { StateValue, StateValueMap } from 'xstate'
+
 import {
   CardInstance,
   CardType,
@@ -17,6 +19,7 @@ import {
   CropInstance,
   IPlayedTool,
   IPlayedCard,
+  BotTurnActionState,
 } from '../'
 import * as cards from '../../cards'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
@@ -201,6 +204,23 @@ export const isCard = (obj: unknown): obj is ICard => {
   )
 }
 
+// TODO: This file repeats an "is non-null object" check in nearly every
+// guard, in two slightly different (and not equivalent) forms:
+//   - `typeof obj !== 'object' || obj === null`
+//   - `!obj || typeof obj !== 'object'` (also rejects falsy values like 0, '', false)
+// Proposed: extract a single shared helper -
+//   const isNonNullObject = (value: unknown): value is Record<string, unknown> =>
+//     typeof value === 'object' && value !== null
+// - and have every guard in this file call it instead of repeating the check
+// inline, so there's one definition instead of ~9 near-duplicates.
+export const isStateValueStateValueMap = (
+  stateValue: StateValue
+): stateValue is StateValueMap => {
+  return typeof stateValue === 'object' && stateValue !== null
+}
+
+// TODO: Move assertions to their own file
+
 export function assertIsNonNullable<T>(
   obj: T,
   message = `${String(obj)} is null or undefined`
@@ -245,6 +265,18 @@ export function assertStringIsMatchState(
 ): asserts str is MatchState {
   if (!(str in MatchState)) {
     throw new TypeError(`${str} is not a MatchState`)
+  }
+}
+
+export function assertStateValueIsBotTurnActionState(
+  stateValue: StateValue
+): asserts stateValue is BotTurnActionState {
+  if (isStateValueStateValueMap(stateValue)) {
+    throw new TypeError(`stateValue is not a string`)
+  }
+
+  if (!(stateValue in BotTurnActionState)) {
+    throw new TypeError(`${stateValue} is not a BotTurnActionState`)
   }
 }
 
