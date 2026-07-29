@@ -186,7 +186,6 @@ export const Field = ({
                   isFocused: isSelected,
                   playerId: player.id,
                   size: cardSize,
-                  playedCard,
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
                   }),
@@ -196,6 +195,7 @@ export const Field = ({
                     }),
                   },
                 }}
+                playedCard={playedCard}
                 isInBackground={isInBackground}
                 onFocus={event => handleCardFocus(event, fieldIdx)}
                 sx={{

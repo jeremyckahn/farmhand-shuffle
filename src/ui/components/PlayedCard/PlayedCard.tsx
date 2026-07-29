@@ -14,7 +14,8 @@ import { Image } from '../Image'
 import { usePlayedCardLogic } from './usePlayedCardLogic'
 
 export interface PlayedCropProps extends BoxProps {
-  cardProps: BaseCardProps & { playedCard: IPlayedCard }
+  cardProps: BaseCardProps
+  playedCard: IPlayedCard
   isInBackground: boolean
 }
 
@@ -24,11 +25,8 @@ export const playedCardClassName = 'PlayedCard'
 
 export const PlayedCard = ({
   isInBackground,
-  // NOTE: playedCard must be picked out here so it isn't spread to downstream
-  // DOM elements.
-  //
-  // TODO: Improve types to make this less fragile.
-  cardProps: { ref, playedCard, ...cardProps },
+  playedCard,
+  cardProps: { ref, ...cardProps },
   ...props
 }: PlayedCropProps) => {
   const theme = useTheme()

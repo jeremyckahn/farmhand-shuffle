@@ -21,7 +21,6 @@ const stubPlayedCrop: IPlayedCrop = {
 }
 const stubCropCardProps: PlayedCropProps['cardProps'] = {
   cardInstance: stubCardInstance,
-  playedCard: stubPlayedCrop,
   playerId: '',
 }
 
@@ -31,6 +30,7 @@ const StubCropCard = (overrides: Partial<PlayedCropProps> = {}) => (
       <PlayedCard
         cardProps={stubCropCardProps}
         isInBackground={false}
+        playedCard={stubPlayedCrop}
         {...overrides}
       />
     </ActorContext.Provider>
@@ -92,8 +92,8 @@ describe('PlayedCard', () => {
       <StubCropCard
         cardProps={{
           ...stubCropCardProps,
-          playedCard: { ...stubPlayedCrop, waterCards },
         }}
+        playedCard={{ ...stubPlayedCrop, waterCards }}
       />
     )
 
