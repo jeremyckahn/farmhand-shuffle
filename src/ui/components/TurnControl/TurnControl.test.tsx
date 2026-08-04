@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest'
 import { updateMatch } from '../../../game/reducers/update-match'
 import { updatePlayer } from '../../../game/reducers/update-player'
 import { defaultSelectedWaterCardInHandIdx } from '../../../game/services/Rules/constants'
-import { MatchEvent, MatchState } from '../../../game/types'
+import { BotTurnActionState, MatchEvent, MatchState } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
@@ -115,6 +115,7 @@ vi.mock('fun-animal-names', () => ({
 }))
 
 const mockSetIsHandInViewport = vi.fn()
+const botId = stubPlayer2.id
 
 const StubTurnControl = (overrides: Partial<TurnControlProps>) => {
   return (
@@ -150,6 +151,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -173,6 +175,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -196,6 +199,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -219,6 +223,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     const send = mockSend()
@@ -248,6 +253,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     const send = mockSend()
@@ -267,8 +273,6 @@ describe('TurnControl Component', () => {
   it('renders correct text for PERFORMING_BOT_TURN_ACTION', () => {
     const matchState = MatchState.PERFORMING_BOT_TURN_ACTION
     let match = stubMatch()
-    // Use stubPlayer2 as the bot/opponent
-    const botId = stubPlayer2.id
 
     match = updateMatch(match, { currentPlayerId: botId })
 
@@ -278,6 +282,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -288,7 +293,6 @@ describe('TurnControl Component', () => {
   it('renders correct text for PERFORMING_BOT_SETUP_ACTION', () => {
     const matchState = MatchState.PERFORMING_BOT_SETUP_ACTION
     let match = stubMatch()
-    const botId = stubPlayer2.id
 
     match = updateMatch(match, { currentPlayerId: botId })
 
@@ -298,6 +302,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -307,27 +312,55 @@ describe('TurnControl Component', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders correct text for PERFORMING_BOT_CROP_WATERING', () => {
-    const matchState = MatchState.PERFORMING_BOT_CROP_WATERING
-    let match = stubMatch()
-    const botId = stubPlayer2.id
+  it.each([
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is watering crops`,
+      botTurnActionState: BotTurnActionState.PLAYING_WATER,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is planting crops`,
+      botTurnActionState: BotTurnActionState.PLAYING_CROPS,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is planting crops`,
+      botTurnActionState: BotTurnActionState.PLACING_CROP,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is harvesting crops`,
+      botTurnActionState: BotTurnActionState.HARVESTING_CROPS,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is playing Event cards`,
+      botTurnActionState: BotTurnActionState.PLAYING_EVENTS,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is playing Tool cards`,
+      botTurnActionState: BotTurnActionState.PLAYING_TOOLS,
+    },
+  ])(
+    'renders correct text for $matchState:$botTurnActionState',
+    ({ matchState, displayText, botTurnActionState }) => {
+      let match = stubMatch()
 
-    match = updateMatch(match, { currentPlayerId: botId })
+      match = updateMatch(match, { currentPlayerId: botId })
 
-    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
-      matchState,
-      match: {
-        ...match,
-        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
-      },
-    })
+      vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+        matchState,
+        match,
+        botTurnActionState,
+      })
 
-    render(<StubTurnControl match={match} />)
+      render(<StubTurnControl match={match} />)
 
-    expect(
-      screen.getByText(`fun-animal-${botId} is watering crops`)
-    ).toBeInTheDocument()
-  })
+      expect(screen.getByText(displayText)).toBeInTheDocument()
+    }
+  )
 
   it('does not render a button when in WAITING_FOR_PLAYER_SETUP_ACTION state but current player has no crops', () => {
     const matchState = MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
@@ -344,6 +377,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -372,6 +406,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -401,6 +436,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     const send = mockSend()
@@ -429,6 +465,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     const send = mockSend()
@@ -459,6 +496,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)
@@ -489,6 +527,7 @@ describe('TurnControl Component', () => {
         ...match,
         selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
       },
+      botTurnActionState: null,
     })
 
     render(<StubTurnControl match={match} />)

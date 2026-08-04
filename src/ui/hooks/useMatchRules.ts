@@ -1,7 +1,16 @@
 import { StateValue } from 'xstate'
 
-import { MatchMachineContext, MatchState } from '../../game/types'
-import { assertStringIsMatchState } from '../../game/types/guards'
+import {
+  BotTurnActionState,
+  MatchMachineContext,
+  MatchState,
+} from '../../game/types'
+import {
+  assertIsNonNullable,
+  assertStateValueIsBotTurnActionState,
+  assertStringIsMatchState,
+  isStateValueStateValueMap,
+} from '../../game/types/guards'
 import { ActorContext } from '../components/Match/ActorContext'
 
 export interface MatchRuleMachineContextSelectorDerivation
@@ -21,10 +30,19 @@ export const useMatchRules = () => {
   )
 
   let resolvedMatchState = matchState
+  let botTurnActionState: BotTurnActionState | null = null
 
-  if (typeof matchState === 'object') {
+  if (isStateValueStateValueMap(matchState)) {
     if (MatchState.PERFORMING_BOT_TURN_ACTION in matchState) {
       resolvedMatchState = MatchState.PERFORMING_BOT_TURN_ACTION
+
+      const maybeBotTurnActionState =
+        matchState[MatchState.PERFORMING_BOT_TURN_ACTION]
+
+      assertIsNonNullable(maybeBotTurnActionState)
+      assertStateValueIsBotTurnActionState(maybeBotTurnActionState)
+
+      botTurnActionState = maybeBotTurnActionState
     } else {
       throw new TypeError(`Unexpected matchState shape`)
     }
@@ -39,5 +57,6 @@ export const useMatchRules = () => {
   return {
     match,
     matchState: resolvedMatchState,
+    botTurnActionState,
   }
 }

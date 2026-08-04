@@ -51,6 +51,7 @@ describe('useMatch', () => {
         selectedWaterCardInHandIdx: 0,
       },
       matchState: MatchState.UNINITIALIZED,
+      botTurnActionState: null,
     })
 
     vi.spyOn(console, 'debug').mockImplementationOnce(vi.fn())
@@ -142,6 +143,7 @@ describe('useMatch', () => {
         selectedWaterCardInHandIdx: 0,
       },
       matchState: MatchState.UNINITIALIZED,
+      botTurnActionState: null,
     })
 
     const { result } = renderHook(() =>
@@ -178,6 +180,7 @@ describe('useMatch', () => {
         selectedWaterCardInHandIdx: 0,
       },
       matchState: MatchState.PLAYER_WATERING_CROP,
+      botTurnActionState: null,
     })
 
     const { result } = renderHook(() =>
@@ -208,6 +211,7 @@ describe('useMatch', () => {
         selectedWaterCardInHandIdx: 0,
       },
       matchState: MatchState.PLAYER_WATERING_CROP,
+      botTurnActionState: null,
     })
 
     const { result } = renderHook(() =>
