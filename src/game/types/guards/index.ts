@@ -148,8 +148,7 @@ export const isTable = (obj: unknown): obj is ITable => {
     'communityFund' in obj &&
     typeof obj.communityFund === 'number' &&
     'players' in obj &&
-    typeof obj.players === 'object' &&
-    obj.players !== null &&
+    isNonNullObject(obj.players) &&
     Object.values(obj.players).every(player => isPlayer(player))
   )
 }
