@@ -24,8 +24,13 @@ import {
 import * as cards from '../../cards'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
 
+export const isNonNullObject = (
+  value: unknown
+): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
 export const isCardInstance = (obj: unknown): obj is CardInstance => {
-  if (typeof obj !== 'object' || obj === null) return false
+  if (!isNonNullObject(obj)) return false
 
   return (
     'id' in obj &&
@@ -39,7 +44,7 @@ export const isCardInstance = (obj: unknown): obj is CardInstance => {
 }
 
 export const isCrop = (obj: unknown): obj is ICrop => {
-  if (typeof obj !== 'object' || obj === null) return false
+  if (!isNonNullObject(obj)) return false
 
   return (
     'id' in obj &&
@@ -66,7 +71,7 @@ export const isPlantableCardInstance = (
 }
 
 export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
-  if (!obj || typeof obj !== 'object') {
+  if (!isNonNullObject(obj)) {
     return false
   }
 
@@ -84,7 +89,7 @@ export const isPlayedCrop = (obj: unknown): obj is IPlayedCrop => {
 }
 
 export const isPlayedTool = (obj: unknown): obj is IPlayedTool => {
-  if (!obj || typeof obj !== 'object') {
+  if (!isNonNullObject(obj)) {
     return false
   }
 
@@ -102,7 +107,7 @@ export const isPlayedCard = (obj: unknown): obj is IPlayedCard => {
 }
 
 export const isField = (obj: unknown): obj is IField => {
-  if (typeof obj !== 'object' || obj === null) return false
+  if (!isNonNullObject(obj)) return false
 
   return (
     'cards' in obj &&
@@ -112,7 +117,7 @@ export const isField = (obj: unknown): obj is IField => {
 }
 
 export const isPlayer = (obj: unknown): obj is IPlayer => {
-  if (typeof obj !== 'object' || obj === null) return false
+  if (!isNonNullObject(obj)) return false
 
   return (
     'id' in obj &&
@@ -137,14 +142,13 @@ export const isPlayer = (obj: unknown): obj is IPlayer => {
 }
 
 export const isTable = (obj: unknown): obj is ITable => {
-  if (typeof obj !== 'object' || obj === null) return false
+  if (!isNonNullObject(obj)) return false
 
   return (
     'communityFund' in obj &&
     typeof obj.communityFund === 'number' &&
     'players' in obj &&
-    typeof obj.players === 'object' &&
-    obj.players !== null &&
+    isNonNullObject(obj.players) &&
     Object.values(obj.players).every(player => isPlayer(player))
   )
 }
@@ -152,7 +156,7 @@ export const isTable = (obj: unknown): obj is ITable => {
 export const isCropPriceFluctuation = (
   obj: unknown
 ): obj is ICropPriceFluctuation => {
-  if (typeof obj !== 'object' || obj === null) return false
+  if (!isNonNullObject(obj)) return false
 
   return (
     'crop' in obj &&
@@ -163,7 +167,7 @@ export const isCropPriceFluctuation = (
 }
 
 export const isMatch = (obj: unknown): obj is IMatch => {
-  if (typeof obj !== 'object' || obj === null) return false
+  if (!isNonNullObject(obj)) return false
 
   return (
     'table' in obj &&
@@ -191,8 +195,7 @@ export const isCardId = (id: string): id is keyof typeof cards => id in cards
 
 export const isCard = (obj: unknown): obj is ICard => {
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
+    isNonNullObject(obj) &&
     'id' in obj &&
     typeof obj.id === 'string' &&
     isCardId(obj.id) &&
@@ -204,19 +207,10 @@ export const isCard = (obj: unknown): obj is ICard => {
   )
 }
 
-// TODO: This file repeats an "is non-null object" check in nearly every
-// guard, in two slightly different (and not equivalent) forms:
-//   - `typeof obj !== 'object' || obj === null`
-//   - `!obj || typeof obj !== 'object'` (also rejects falsy values like 0, '', false)
-// Proposed: extract a single shared helper -
-//   const isNonNullObject = (value: unknown): value is Record<string, unknown> =>
-//     typeof value === 'object' && value !== null
-// - and have every guard in this file call it instead of repeating the check
-// inline, so there's one definition instead of ~9 near-duplicates.
 export const isStateValueStateValueMap = (
   stateValue: StateValue
 ): stateValue is StateValueMap => {
-  return typeof stateValue === 'object' && stateValue !== null
+  return isNonNullObject(stateValue)
 }
 
 // TODO: Move assertions to their own file
