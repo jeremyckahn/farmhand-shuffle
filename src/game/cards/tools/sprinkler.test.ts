@@ -7,7 +7,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../../reducers/update-player'
 import { factory } from '../../services/Factory'
 import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
-import { assertIsNonNullable } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/assertions'
 
 import { sprinkler } from './sprinkler'
 

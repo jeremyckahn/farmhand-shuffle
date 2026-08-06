@@ -8,7 +8,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { updatePlayer } from '../../reducers/update-player'
 import { createMatchStateMachineContext } from '../../services/Rules/createMatchStateMachineContext'
 import { ShellNotificationType } from '../../types'
-import { assertIsNonNullable } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/assertions'
 
 import { shovel } from './shovel'
 

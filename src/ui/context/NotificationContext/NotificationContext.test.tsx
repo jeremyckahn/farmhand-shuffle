@@ -2,7 +2,7 @@ import { render, renderHook, screen } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import { vi } from 'vitest'
 
-import { assertIsNonNullable } from '../../../game/types/guards'
+import { assertIsNonNullable } from '../../../game/types/assertions'
 import * as SnackbarModule from '../../components/Snackbar'
 
 import { NotificationProvider, useNotification } from './NotificationContext'

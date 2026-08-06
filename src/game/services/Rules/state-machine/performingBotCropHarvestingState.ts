@@ -1,7 +1,10 @@
 import { enqueueActions } from 'xstate'
 
 import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
-import { assertIsNonNullable, assertIsPlayedCrop } from '../../../types/guards'
+import {
+  assertIsNonNullable,
+  assertIsPlayedCrop,
+} from '../../../types/assertions'
 import { harvestCrop } from '../../../reducers/harvest-crop'
 import { lookup } from '../../Lookup'
 

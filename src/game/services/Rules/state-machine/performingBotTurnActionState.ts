@@ -12,7 +12,10 @@ import {
   MatchState,
   isToolCardInstance,
 } from '../../../types'
-import { assertIsNonNullable, assertIsToolCardId } from '../../../types/guards'
+import {
+  assertIsNonNullable,
+  assertIsToolCardId,
+} from '../../../types/assertions'
 import { botLogic } from '../../BotLogic'
 import { lookup } from '../../Lookup'
 import { GameStateCorruptError, MatchStateCorruptError } from '../errors'

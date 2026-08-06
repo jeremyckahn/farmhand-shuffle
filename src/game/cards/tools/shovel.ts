@@ -1,7 +1,7 @@
 import { SHOVEL_CARDS_TO_DRAW } from '../../config'
 import { drawCard } from '../../reducers/draw-card'
 import { CardType, ITool, ShellNotificationType } from '../../types'
-import { assertIsNonNullable } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/assertions'
 
 export const shovel: ITool = Object.freeze<ITool>({
   type: CardType.TOOL,

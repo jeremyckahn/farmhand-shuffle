@@ -6,11 +6,8 @@ import {
   isToolCardInstance,
   isWaterCardInstance,
 } from '../../types'
-import {
-  assertIsNonNullable,
-  isCrop,
-  isCropCardInstance,
-} from '../../types/guards'
+import { isCrop, isCropCardInstance } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/assertions'
 import {
   InvalidCardError,
   InvalidCardIndexError,

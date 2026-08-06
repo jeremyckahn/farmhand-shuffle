@@ -1,7 +1,10 @@
 /* c8 ignore start */
 import react from '@vitejs/plugin-react'
 import { defineConfig, mergeConfig } from 'vite'
-import { defineConfig as vitestDefineConfig } from 'vitest/config'
+import {
+  defineConfig as vitestDefineConfig,
+  configDefaults,
+} from 'vitest/config'
 
 const viteConfig = defineConfig({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -14,6 +17,7 @@ const vitestConfig = vitestDefineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
     restoreMocks: true,
+    exclude: [...configDefaults.exclude, '.claude/**'],
     coverage: {
       reporter: ['text', 'html'],
       exclude: [

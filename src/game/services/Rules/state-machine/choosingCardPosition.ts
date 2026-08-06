@@ -1,7 +1,7 @@
 import { enqueueActions } from 'xstate'
 
 import { MatchEvent, MatchState, MatchStateGuard } from '../../../types'
-import { assertIsNonNullable } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/assertions'
 import { botLogic } from '../../BotLogic'
 
 import { recordCardPlayEvents } from './reducers'
