@@ -5,12 +5,12 @@ import {
   MatchMachineContext,
   MatchState,
 } from '../../game/types'
+import { isStateValueStateValueMap } from '../../game/types/guards'
 import {
   assertIsNonNullable,
   assertStateValueIsBotTurnActionState,
   assertStringIsMatchState,
-  isStateValueStateValueMap,
-} from '../../game/types/guards'
+} from '../../game/types/assertions'
 import { ActorContext } from '../components/Match/ActorContext'
 
 export interface MatchRuleMachineContextSelectorDerivation

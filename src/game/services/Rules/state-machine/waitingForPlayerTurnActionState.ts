@@ -15,7 +15,8 @@ import {
   MatchState,
   ShellNotificationType,
 } from '../../../types'
-import { assertIsNonNullable, isPlayedCrop } from '../../../types/guards'
+import { isPlayedCrop } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/assertions'
 import { lookup } from '../../Lookup'
 import { InvalidCardError, PlayerOutOfFundsError } from '../errors'
 import { rules } from '..'

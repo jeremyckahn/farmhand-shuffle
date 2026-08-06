@@ -5,7 +5,7 @@ import { MatchEvent, MatchState, ShellNotificationType } from '../../../types'
 import {
   assertIsEventCardInstance,
   assertIsNonNullable,
-} from '../../../types/guards'
+} from '../../../types/assertions'
 import { lookup } from '../../Lookup'
 
 import { RulesMachineConfig } from './types'

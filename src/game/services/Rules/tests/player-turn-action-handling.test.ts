@@ -17,7 +17,7 @@ import {
   ShellNotification,
   ShellNotificationType,
 } from '../../../types'
-import { assertIsNonNullable } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/assertions'
 import { factory } from '../../Factory'
 
 import {

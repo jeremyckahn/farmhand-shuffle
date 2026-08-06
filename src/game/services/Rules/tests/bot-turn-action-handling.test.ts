@@ -30,7 +30,8 @@ import {
   ShellNotification,
   ShellNotificationType,
 } from '../../../types'
-import { assertIsNonNullable, isPlayedCrop } from '../../../types/guards'
+import { isPlayedCrop } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/assertions'
 import { botLogic } from '../../BotLogic'
 import { factory } from '../../Factory'
 

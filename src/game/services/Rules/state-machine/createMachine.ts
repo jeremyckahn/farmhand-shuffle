@@ -7,7 +7,7 @@ import {
   MatchMachineContext,
   MatchStateGuard,
 } from '../../../types'
-import { assertIsNonNullable } from '../../../types/guards'
+import { assertIsNonNullable } from '../../../types/assertions'
 import { lookup } from '../../Lookup'
 
 export const { createMachine } = setup({

@@ -9,7 +9,10 @@ import {
   isWaterCardInstance,
   ShellNotificationType,
 } from '../../../types'
-import { assertIsNonNullable, assertIsPlayedCrop } from '../../../types/guards'
+import {
+  assertIsNonNullable,
+  assertIsPlayedCrop,
+} from '../../../types/assertions'
 import { MatchStateCorruptError } from '../errors'
 import { lookup } from '../../Lookup'
 

@@ -1,7 +1,7 @@
 import { createActor } from 'xstate'
 
 import { isToolCardInstance, MatchMachineContext } from '../../types'
-import { assertIsNonNullable } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/assertions'
 
 import { createMatchStateMachineContext } from './createMatchStateMachineContext'
 import { machineConfig } from './state-machine'

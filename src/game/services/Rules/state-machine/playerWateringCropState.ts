@@ -9,7 +9,7 @@ import {
   IPlayedCrop,
   ShellNotificationType,
 } from '../../../types'
-import { assertIsPlayedCrop } from '../../../types/guards'
+import { assertIsPlayedCrop } from '../../../types/assertions'
 import { lookup } from '../../Lookup'
 import { defaultSelectedWaterCardInHandIdx } from '../constants'
 

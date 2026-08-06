@@ -1,6 +1,7 @@
 import { updatePlayedCrop } from '../../reducers/update-played-crop'
 import { CardType, ITool } from '../../types'
-import { assertIsNonNullable, isPlayedCrop } from '../../types/guards'
+import { isPlayedCrop } from '../../types/guards'
+import { assertIsNonNullable } from '../../types/assertions'
 
 export const sprinkler: ITool = Object.freeze<ITool>({
   type: CardType.TOOL,
