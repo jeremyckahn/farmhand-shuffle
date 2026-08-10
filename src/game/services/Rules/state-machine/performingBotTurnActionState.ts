@@ -329,11 +329,10 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
             const [cropIdxInFieldToWater] = fieldCropIndicesToWaterDuringTurn
 
-            if (cropIdxInFieldToWater === undefined) {
-              throw new MatchStateCorruptError(
-                `fieldCropIndicesToWaterDuringTurn is empty in ${BotTurnActionState.WATERING_CROP}`
-              )
-            }
+            assertIsNonNullable(
+              cropIdxInFieldToWater,
+              `fieldCropIndicesToWaterDuringTurn is empty in ${BotTurnActionState.WATERING_CROP}`
+            )
 
             const playedCrop = player.field.cards[cropIdxInFieldToWater]
 
