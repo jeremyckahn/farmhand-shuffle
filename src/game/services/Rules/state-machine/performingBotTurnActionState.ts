@@ -4,6 +4,7 @@ import { rules } from '..'
 import { randomNumber } from '../../../../services/RandomNumber'
 import { toolCards } from '../../../cards'
 import { BOT_ACTION_DELAY, STANDARD_FIELD_SIZE } from '../../../config'
+import { harvestCrop } from '../../../reducers/harvest-crop'
 import { incrementPlayer } from '../../../reducers/increment-player'
 import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { startTurn } from '../../../reducers/start-turn'
@@ -47,8 +48,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [MatchEvent.PLAY_EVENT]: MatchState.PLAYING_EVENT,
 
       [MatchEvent.PLAY_TOOL]: MatchState.PLAYING_TOOL,
-
-      [MatchEvent.HARVEST_CROP]: MatchState.PERFORMING_BOT_CROP_HARVESTING,
 
       [MatchEvent.START_TURN]: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
     },
@@ -483,6 +482,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
       [BotTurnActionState.HARVESTING_CROPS]: {
         on: {
+          [MatchEvent.HARVEST_CROP]: BotTurnActionState.HARVESTING_CROP,
+
           [MatchEvent.BOT_TURN_PHASE_COMPLETE]: BotTurnActionState.DONE,
         },
         entry: enqueueActions(
@@ -519,6 +520,51 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               },
             })
           })
+        ),
+      },
+
+      [BotTurnActionState.HARVESTING_CROP]: {
+        on: {
+          [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+            BotTurnActionState.HARVESTING_CROPS,
+        },
+        entry: enqueueActions(
+          ({
+            context: {
+              match,
+              botState: {
+                cropCardIndicesToHarvest: [cropCardIdxToHarvest],
+              },
+              shell: { triggerNotification },
+            },
+            enqueue,
+          }) => {
+            const { currentPlayerId } = match
+
+            assertIsNonNullable(currentPlayerId)
+
+            if (cropCardIdxToHarvest !== undefined) {
+              const player = lookup.getPlayer(match, currentPlayerId)
+              const plantedCrop = player.field.cards[cropCardIdxToHarvest]
+
+              assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
+
+              match = harvestCrop(match, currentPlayerId, cropCardIdxToHarvest)
+
+              triggerNotification({
+                type: ShellNotificationType.CROP_HARVESTED,
+                payload: {
+                  cropHarvested: plantedCrop.instance,
+                },
+              })
+            }
+
+            enqueue.raise({
+              type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
+            })
+
+            enqueue.assign({ match })
+          }
         ),
       },
 
