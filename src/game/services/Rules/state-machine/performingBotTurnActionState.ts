@@ -31,6 +31,10 @@ import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
 import { withBotErrorHandling } from './withBotErrorHandling'
 
+// TODO: In some cases, phases are repeated improperly (e.g. watering, then
+// tool cards, then watering again, then tool cards again). Prevent this from
+// happening.
+
 export const performingBotTurnActionState: RulesMachineConfig['states'] = {
   [MatchState.PERFORMING_BOT_TURN_ACTION]: {
     initial: BotTurnActionState.INITIALIZING,
@@ -299,7 +303,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
       [BotTurnActionState.WATERING_CROP]: {
         on: {
-          [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+          [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
             BotTurnActionState.PLAYING_WATER,
         },
         entry: enqueueActions(
@@ -362,7 +366,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             })
 
             enqueue.raise({
-              type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
+              type: MatchEvent.BOT_TURN_PHASE_COMPLETE,
             })
 
             enqueue.assign({ match })
@@ -525,7 +529,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
       [BotTurnActionState.HARVESTING_CROP]: {
         on: {
-          [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+          [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
             BotTurnActionState.HARVESTING_CROPS,
         },
         entry: enqueueActions(
@@ -560,7 +564,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             }
 
             enqueue.raise({
-              type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
+              type: MatchEvent.BOT_TURN_PHASE_COMPLETE,
             })
 
             enqueue.assign({ match })
