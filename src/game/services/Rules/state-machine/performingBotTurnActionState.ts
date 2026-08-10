@@ -5,15 +5,21 @@ import { randomNumber } from '../../../../services/RandomNumber'
 import { toolCards } from '../../../cards'
 import { BOT_ACTION_DELAY, STANDARD_FIELD_SIZE } from '../../../config'
 import { incrementPlayer } from '../../../reducers/increment-player'
+import { moveFromHandToDiscardPile } from '../../../reducers/move-from-hand-to-discard-pile'
 import { startTurn } from '../../../reducers/start-turn'
+import { updatePlayedCrop } from '../../../reducers/update-played-crop'
 import {
   BotTurnActionState,
+  IPlayedCrop,
   MatchEvent,
   MatchState,
+  ShellNotificationType,
   isToolCardInstance,
+  isWaterCardInstance,
 } from '../../../types'
 import {
   assertIsNonNullable,
+  assertIsPlayedCrop,
   assertIsToolCardId,
 } from '../../../types/assertions'
 import { botLogic } from '../../BotLogic'
@@ -37,8 +43,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [MatchEvent.PLAYER_RAN_OUT_OF_FUNDS]: MatchState.GAME_OVER,
 
       [MatchEvent.SELECT_CARD_POSITION]: MatchState.PLANTING_CARD,
-
-      [MatchEvent.PLAY_WATER]: MatchState.PERFORMING_BOT_CROP_WATERING,
 
       [MatchEvent.PLAY_EVENT]: MatchState.PLAYING_EVENT,
 
@@ -248,6 +252,8 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
       [BotTurnActionState.PLAYING_WATER]: {
         on: {
+          [MatchEvent.PLAY_WATER]: BotTurnActionState.WATERING_CROP,
+
           [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
             BotTurnActionState.PLAYING_EVENTS,
         },
@@ -289,6 +295,79 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               },
             })
           })
+        ),
+      },
+
+      [BotTurnActionState.WATERING_CROP]: {
+        on: {
+          [MatchEvent.PROMPT_BOT_FOR_TURN_ACTION]:
+            BotTurnActionState.PLAYING_WATER,
+        },
+        entry: enqueueActions(
+          ({
+            event,
+            context: {
+              match,
+              botState: { fieldCropIndicesToWaterDuringTurn },
+              shell: { triggerNotification },
+            },
+            enqueue,
+          }) => {
+            match = recordCardPlayEvents(match, event)
+
+            const { currentPlayerId } = match
+
+            assertIsNonNullable(currentPlayerId)
+
+            const player = lookup.getPlayer(match, currentPlayerId)
+            const waterCardInHandIdx = player.hand.findIndex(cardInstance =>
+              isWaterCardInstance(cardInstance)
+            )
+
+            const [cropIdxInFieldToWater] = fieldCropIndicesToWaterDuringTurn
+
+            if (cropIdxInFieldToWater === undefined) {
+              throw new MatchStateCorruptError(
+                `fieldCropIndicesToWaterDuringTurn is empty in ${BotTurnActionState.WATERING_CROP}`
+              )
+            }
+
+            const playedCrop = player.field.cards[cropIdxInFieldToWater]
+
+            assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
+
+            const updatedPlayedCrop: IPlayedCrop = {
+              ...playedCrop,
+              wasWateredDuringTurn: true,
+              waterCards: playedCrop.waterCards + 1,
+            }
+
+            match = updatePlayedCrop(
+              match,
+              currentPlayerId,
+              cropIdxInFieldToWater,
+              updatedPlayedCrop
+            )
+
+            match = moveFromHandToDiscardPile(
+              match,
+              currentPlayerId,
+              waterCardInHandIdx
+            )
+
+            triggerNotification({
+              type: ShellNotificationType.CROP_WATERED,
+              payload: {
+                cropWatered: playedCrop.instance,
+              },
+            })
+
+            enqueue.raise({
+              type: MatchEvent.PROMPT_BOT_FOR_TURN_ACTION,
+            })
+
+            enqueue.assign({ match })
+          }
         ),
       },
 

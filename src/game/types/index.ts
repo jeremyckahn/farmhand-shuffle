@@ -319,6 +319,7 @@ export enum BotTurnActionState {
   PLAYING_EVENTS = 'PLAYING_EVENTS',
   PLAYING_TOOLS = 'PLAYING_TOOLS',
   PLAYING_WATER = 'PLAYING_WATER',
+  WATERING_CROP = 'WATERING_CROP',
   DONE = 'DONE',
 }
 
@@ -337,9 +338,12 @@ export enum MatchState {
 
   CHOOSING_CARD_POSITION = 'CHOOSING_CARD_POSITION',
   GAME_OVER = 'GAME_OVER',
-  // TODO: Explore removing these PERFORMING_BOT_* states (aside from
-  // PERFORMING_BOT_TURN_ACTION) and using BotTurnActionState instead
-  PERFORMING_BOT_CROP_WATERING = 'PERFORMING_BOT_CROP_WATERING',
+  // TODO: Explore removing PERFORMING_BOT_CROP_HARVESTING and using a
+  // BotTurnActionState substate of PERFORMING_BOT_TURN_ACTION instead, the
+  // same way PERFORMING_BOT_CROP_WATERING was folded into
+  // BotTurnActionState.WATERING_CROP. PERFORMING_BOT_SETUP_ACTION is
+  // intentionally excluded: it represents the setup phase rather than a
+  // phase of a bot's turn, and has its own guard/exit rules.
   PERFORMING_BOT_CROP_HARVESTING = 'PERFORMING_BOT_CROP_HARVESTING',
   PERFORMING_BOT_SETUP_ACTION = 'PERFORMING_BOT_SETUP_ACTION',
   PERFORMING_BOT_TURN_ACTION = 'PERFORMING_BOT_TURN_ACTION',

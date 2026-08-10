@@ -320,6 +320,11 @@ describe('TurnControl Component', () => {
     },
     {
       matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is watering crops`,
+      botTurnActionState: BotTurnActionState.WATERING_CROP,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
       displayText: `fun-animal-${botId} is planting crops`,
       botTurnActionState: BotTurnActionState.PLAYING_CROPS,
     },
