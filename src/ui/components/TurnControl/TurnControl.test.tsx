@@ -316,7 +316,12 @@ describe('TurnControl Component', () => {
     {
       matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
       displayText: `fun-animal-${botId} is watering crops`,
-      botTurnActionState: BotTurnActionState.PLAYING_WATER,
+      botTurnActionState: BotTurnActionState.WATERING_CROPS,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is watering crops`,
+      botTurnActionState: BotTurnActionState.WATERING_CROP,
     },
     {
       matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
@@ -332,6 +337,11 @@ describe('TurnControl Component', () => {
       matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
       displayText: `fun-animal-${botId} is harvesting crops`,
       botTurnActionState: BotTurnActionState.HARVESTING_CROPS,
+    },
+    {
+      matchState: MatchState.PERFORMING_BOT_TURN_ACTION,
+      displayText: `fun-animal-${botId} is harvesting crops`,
+      botTurnActionState: BotTurnActionState.HARVESTING_CROP,
     },
     {
       matchState: MatchState.PERFORMING_BOT_TURN_ACTION,

@@ -4,8 +4,6 @@ import { MatchEvent, MatchState } from '../../../types'
 
 import { choosingCardPositon } from './choosingCardPosition'
 import { gameOverState } from './gameOverState'
-import { performingBotCropHarvestingState } from './performingBotCropHarvestingState'
-import { performingBotCropWateringState } from './performingBotCropWateringState'
 import { performingBotSetupActionState } from './performingBotSetupActionState'
 import { performingBotTurnActionState } from './performingBotTurnActionState'
 import { plantingCardState } from './plantingCardState'
@@ -49,8 +47,6 @@ export const machineConfig: RulesMachineConfig = {
     ...gameOverState,
 
     ...choosingCardPositon,
-    ...performingBotCropWateringState,
-    ...performingBotCropHarvestingState,
     ...performingBotSetupActionState,
     ...performingBotTurnActionState,
     ...plantingCardState,

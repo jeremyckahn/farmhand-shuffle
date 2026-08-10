@@ -136,13 +136,15 @@ export const TurnControl = ({ match }: TurnControlProps) => {
           break
         }
 
-        case BotTurnActionState.PLAYING_WATER: {
+        case BotTurnActionState.WATERING_CROPS:
+        case BotTurnActionState.WATERING_CROP: {
           stateInfo = `${currentPlayerName} is watering crops`
 
           break
         }
 
-        case BotTurnActionState.HARVESTING_CROPS: {
+        case BotTurnActionState.HARVESTING_CROPS:
+        case BotTurnActionState.HARVESTING_CROP: {
           stateInfo = `${currentPlayerName} is harvesting crops`
 
           break
