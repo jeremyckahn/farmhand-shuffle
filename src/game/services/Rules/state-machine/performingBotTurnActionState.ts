@@ -145,7 +145,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
           [MatchEvent.PLAY_CROP]: BotTurnActionState.PLACING_CROP,
 
           [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
-            BotTurnActionState.PLAYING_WATER,
+            BotTurnActionState.WATERING_CROPS,
         },
         entry: enqueueActions(
           withBotErrorHandling(
@@ -253,7 +253,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
         ),
       },
 
-      [BotTurnActionState.PLAYING_WATER]: {
+      [BotTurnActionState.WATERING_CROPS]: {
         on: {
           [MatchEvent.PLAY_WATER]: BotTurnActionState.WATERING_CROP,
 
@@ -304,7 +304,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [BotTurnActionState.WATERING_CROP]: {
         on: {
           [MatchEvent.BOT_TURN_PHASE_COMPLETE]:
-            BotTurnActionState.PLAYING_WATER,
+            BotTurnActionState.WATERING_CROPS,
         },
         entry: enqueueActions(
           ({
