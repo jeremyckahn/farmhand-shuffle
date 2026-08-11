@@ -38,12 +38,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     exit: enqueueActions(({ event, context: { botState, match }, enqueue }) => {
       match = recordCardPlayEvents(match, event)
 
-      // NOTE: Some events (SELECT_CARD_POSITION, PLAY_EVENT, PLAY_TOOL) hand
-      // control off to a state shared with the player, exiting
-      // MatchState.PERFORMING_BOT_TURN_ACTION entirely. Recording which bot
-      // turn phase was in progress here, in one place, lets
-      // BotTurnActionState.INITIALIZING resume that phase instead of
-      // restarting from BotTurnActionState.PLAYING_CROPS.
       let { currentBotTurnPhase } = botState
 
       switch (event.type) {
@@ -80,12 +74,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     states: {
       [BotTurnActionState.INITIALIZING]: {
         on: {
-          // NOTE: BotTurnActionState.WATERING_CROPS and .HARVESTING_CROPS
-          // are not resumption targets here: unlike PLAYING_CROPS,
-          // PLAYING_EVENTS, and PLAYING_TOOLS, their card-effect substates
-          // (WATERING_CROP, HARVESTING_CROP) are nested directly under
-          // PERFORMING_BOT_TURN_ACTION and never exit it, so this state is
-          // never re-entered while those phases are in progress.
           [MatchEvent.BOT_TURN_INITIALIZED]: [
             {
               guard: ({ context: { botState } }) =>
@@ -99,9 +87,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 BotTurnActionState.PLAYING_TOOLS,
               target: BotTurnActionState.PLAYING_TOOLS,
             },
-            // NOTE: Covers both a fresh MatchEvent.START_TURN (where
-            // currentBotTurnPhase is reset to undefined below) and resuming
-            // BotTurnActionState.PLAYING_CROPS after placing a crop.
             { target: BotTurnActionState.PLAYING_CROPS },
           ],
         },

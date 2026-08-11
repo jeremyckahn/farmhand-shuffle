@@ -1024,14 +1024,6 @@ describe('bot turn action handling', () => {
   })
 
   describe('phase resumption', () => {
-    // NOTE: Regression test for a bug where playing a card that hands
-    // control off to a state shared with the player (e.g. a tool card, which
-    // is played via MatchState.PLAYING_TOOL) caused
-    // MatchState.PERFORMING_BOT_TURN_ACTION to restart its bot turn phase
-    // pipeline from BotTurnActionState.PLAYING_CROPS instead of resuming the
-    // phase that was in progress. This was not visible in the final match
-    // state (phase guards already prevented duplicate card plays), but it
-    // did cause completed phases, such as watering, to be evaluated again.
     test('does not re-evaluate the watering phase after playing a tool card', () => {
       const matchActor = createSetUpMatchActor()
 
