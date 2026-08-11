@@ -1091,5 +1091,67 @@ describe('bot turn action handling', () => {
       // improperly restarted the bot turn phase pipeline.
       expect(getCropCardIndicesToWaterSpy).toHaveBeenCalledTimes(2)
     })
+
+    // NOTE: Regression test for the same bug as above, but for the
+    // MatchState.PLAYING_EVENT hand-off instead of MatchState.PLAYING_TOOL.
+    test('does not re-evaluate the watering phase after playing an event card', () => {
+      const matchActor = createSetUpMatchActor()
+
+      // NOTE: There was already an unwatered carrot in the field as a result
+      // of createSetUpMatchActor.
+      vi.spyOn(botLogic, 'getNumberOfCropCardsToPlay').mockReturnValue(0)
+      vi.spyOn(botLogic, 'getNumberOfToolCardsToPlay').mockReturnValue(0)
+      vi.spyOn(botLogic, 'getNumberOfEventCardsToPlay').mockReturnValue(1)
+
+      const getCropCardIndicesToWaterSpy = vi.spyOn(
+        botLogic,
+        'getCropCardIndicesToWater'
+      )
+
+      let {
+        context: { match },
+      } = matchActor.getSnapshot()
+
+      match = updatePlayer(match, player2.id, {
+        deck: new Array<CardInstance>(DECK_SIZE).fill(stubPumpkin),
+        hand: [stubRain, stubWater],
+      })
+
+      matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
+
+      // NOTE: Prompts bot player
+      matchActor.send({ type: MatchEvent.START_TURN })
+
+      // NOTE: Performs all bot turn logic
+      vi.runAllTimers()
+
+      const {
+        value,
+        context: { match: matchResult },
+      } = matchActor.getSnapshot()
+
+      expect(value).toBe(MatchState.WAITING_FOR_PLAYER_TURN_ACTION)
+
+      const player = matchResult.table.players[player2.id]
+
+      assertIsNonNullable(player)
+
+      // NOTE: Confirms the watering and event phases both actually ran.
+      const wateredCrop = player.field.cards[0]
+
+      if (!isPlayedCrop(wateredCrop)) {
+        throw new Error('Expected a played crop in the field')
+      }
+
+      expect(wateredCrop.wasWateredDuringTurn).toBe(true)
+      expect(player.discardPile).toContainEqual(stubRain)
+
+      // NOTE: BotTurnActionState.WATERING_CROPS is entered exactly twice
+      // during a correct turn with one crop to water: once to find and play
+      // the water card, and once more afterward to confirm there is nothing
+      // left to water. A third call means the event card round trip
+      // improperly restarted the bot turn phase pipeline.
+      expect(getCropCardIndicesToWaterSpy).toHaveBeenCalledTimes(2)
+    })
   })
 })

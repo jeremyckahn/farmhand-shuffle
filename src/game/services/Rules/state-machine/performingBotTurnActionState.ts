@@ -35,9 +35,34 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
   [MatchState.PERFORMING_BOT_TURN_ACTION]: {
     initial: BotTurnActionState.INITIALIZING,
 
-    exit: enqueueActions(({ event, context: { match }, enqueue }) => {
+    exit: enqueueActions(({ event, context: { botState, match }, enqueue }) => {
       match = recordCardPlayEvents(match, event)
-      enqueue.assign({ match })
+
+      // NOTE: Some events (SELECT_CARD_POSITION, PLAY_EVENT, PLAY_TOOL) hand
+      // control off to a state shared with the player, exiting
+      // MatchState.PERFORMING_BOT_TURN_ACTION entirely. Recording which bot
+      // turn phase was in progress here, in one place, lets
+      // BotTurnActionState.INITIALIZING resume that phase instead of
+      // restarting from BotTurnActionState.PLAYING_CROPS.
+      let { currentBotTurnPhase } = botState
+
+      switch (event.type) {
+        case MatchEvent.SELECT_CARD_POSITION:
+          currentBotTurnPhase = BotTurnActionState.PLAYING_CROPS
+          break
+
+        case MatchEvent.PLAY_EVENT:
+          currentBotTurnPhase = BotTurnActionState.PLAYING_EVENTS
+          break
+
+        case MatchEvent.PLAY_TOOL:
+          currentBotTurnPhase = BotTurnActionState.PLAYING_TOOLS
+          break
+
+        default:
+      }
+
+      enqueue.assign({ match, botState: { ...botState, currentBotTurnPhase } })
     }),
 
     on: {
@@ -250,18 +275,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                 )
               }
 
-              // NOTE: Placing a crop hands control off to the
-              // player-shared MatchState.PLANTING_CARD state, which exits
-              // MatchState.PERFORMING_BOT_TURN_ACTION entirely. Recording
-              // the in-progress phase here lets INITIALIZING resume here
-              // instead of restarting from BotTurnActionState.PLAYING_CROPS.
-              enqueue.assign({
-                botState: {
-                  ...botState,
-                  currentBotTurnPhase: BotTurnActionState.PLAYING_CROPS,
-                },
-              })
-
               enqueue.raise(
                 {
                   type: MatchEvent.SELECT_CARD_POSITION,
@@ -404,7 +417,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             BotTurnActionState.PLAYING_TOOLS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(({ context: { botState, match }, enqueue }) => {
+          withBotErrorHandling(({ context: { match }, enqueue }) => {
             const areEventCardsToPlay = match.eventCardsThatCanBePlayed > 0
 
             if (areEventCardsToPlay) {
@@ -422,18 +435,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                   `areEventCardsToPlay is true but there are no events in the hand of bot player ${currentPlayerId}`
                 )
               }
-
-              // NOTE: Playing an event card hands control off to the
-              // player-shared MatchState.PLAYING_EVENT state, which exits
-              // MatchState.PERFORMING_BOT_TURN_ACTION entirely. Recording
-              // the in-progress phase here lets INITIALIZING resume here
-              // instead of restarting from BotTurnActionState.PLAYING_CROPS.
-              enqueue.assign({
-                botState: {
-                  ...botState,
-                  currentBotTurnPhase: BotTurnActionState.PLAYING_EVENTS,
-                },
-              })
 
               enqueue.raise(
                 {
@@ -500,19 +501,6 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               // TODO: Improve the logic to continue to play any non-plantable
               // tools when plantable tools are skipped.
               if (!toolCard.isPlantable || isPlantableAndCanBePlayed) {
-                // NOTE: Playing a tool card hands control off to the
-                // player-shared MatchState.PLAYING_TOOL state (and possibly
-                // MatchState.CHOOSING_CARD_POSITION), which exits
-                // MatchState.PERFORMING_BOT_TURN_ACTION entirely. Recording
-                // the in-progress phase here lets INITIALIZING resume here
-                // instead of restarting from BotTurnActionState.PLAYING_CROPS.
-                enqueue.assign({
-                  botState: {
-                    ...botState,
-                    currentBotTurnPhase: BotTurnActionState.PLAYING_TOOLS,
-                  },
-                })
-
                 enqueue.raise(
                   {
                     type: MatchEvent.PLAY_TOOL,
