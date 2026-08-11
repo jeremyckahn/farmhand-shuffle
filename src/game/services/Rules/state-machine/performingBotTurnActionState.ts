@@ -14,6 +14,7 @@ import {
   IPlayedCrop,
   MatchEvent,
   MatchState,
+  MatchStateGuard,
   ShellNotificationType,
   isToolCardInstance,
   isWaterCardInstance,
@@ -75,18 +76,20 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
       [BotTurnActionState.INITIALIZING]: {
         on: {
           [MatchEvent.BOT_TURN_INITIALIZED]: [
+            // NOTE: Handles resuming an in-progress phase
             {
-              guard: ({ context: { botState } }) =>
-                botState.currentBotTurnPhase ===
-                BotTurnActionState.PLAYING_EVENTS,
+              guard: MatchStateGuard.IS_BOT_PHASE_PLAYING_EVENTS,
               target: BotTurnActionState.PLAYING_EVENTS,
             },
+
+            // NOTE: Handles resuming an in-progress phase
             {
-              guard: ({ context: { botState } }) =>
-                botState.currentBotTurnPhase ===
-                BotTurnActionState.PLAYING_TOOLS,
+              guard: MatchStateGuard.IS_BOT_PHASE_PLAYING_TOOLS,
               target: BotTurnActionState.PLAYING_TOOLS,
             },
+
+            // NOTE: If not resuming an in-progress phase, start with playing
+            // crops
             { target: BotTurnActionState.PLAYING_CROPS },
           ],
         },
