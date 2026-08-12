@@ -1091,12 +1091,16 @@ describe('bot turn action handling', () => {
       // NOTE: There was already an unwatered carrot in the field as a result
       // of createSetUpMatchActor.
       vi.spyOn(botLogic, 'getNumberOfCropCardsToPlay').mockReturnValue(0)
-      vi.spyOn(botLogic, 'getNumberOfToolCardsToPlay').mockReturnValue(0)
+      vi.spyOn(botLogic, 'getNumberOfToolCardsToPlay').mockReturnValue(1)
       vi.spyOn(botLogic, 'getNumberOfEventCardsToPlay').mockReturnValue(1)
 
       const getCropCardIndicesToWaterSpy = vi.spyOn(
         botLogic,
         'getCropCardIndicesToWater'
+      )
+      const getNumberOfToolCardsToPlaySpy = vi.spyOn(
+        botLogic,
+        'getNumberOfToolCardsToPlay'
       )
 
       let {
@@ -1105,7 +1109,7 @@ describe('bot turn action handling', () => {
 
       match = updatePlayer(match, player2.id, {
         deck: new Array<CardInstance>(DECK_SIZE).fill(stubPumpkin),
-        hand: [stubRain, stubWater],
+        hand: [stubRain, stubWater, stubShovel],
       })
 
       matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
@@ -1142,6 +1146,12 @@ describe('bot turn action handling', () => {
       // left to water. A third call (or more) means the event card round trip
       // improperly restarted the bot turn phase pipeline.
       expect(getCropCardIndicesToWaterSpy).toHaveBeenCalledTimes(2)
+
+      // NOTE: BotTurnActionState.INITIALIZING (where
+      // botLogic.getNumberOfToolCardsToPlay is called) is entered exactly once
+      // during a correct turn. An additional callmeans the event card round
+      // trip improperly restarted the bot turn phase pipeline.
+      expect(getNumberOfToolCardsToPlaySpy).toHaveBeenCalledTimes(1)
     })
   })
 })
