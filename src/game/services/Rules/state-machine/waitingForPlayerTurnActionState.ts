@@ -1,5 +1,6 @@
 import { enqueueActions } from 'xstate'
 
+import { rules } from '..'
 import {
   EVENT_CARDS_THAT_CAN_BE_PLAYED_PER_TURN,
   STANDARD_CARDS_TO_DRAW_AT_TURN_START,
@@ -15,11 +16,12 @@ import {
   MatchState,
   ShellNotificationType,
 } from '../../../types'
-import { isPlayedCrop } from '../../../types/guards'
-import { assertIsNonNullable } from '../../../types/assertions'
+import {
+  assertIsNonNullable,
+  assertIsPlayedCrop,
+} from '../../../types/assertions'
 import { lookup } from '../../Lookup'
-import { InvalidCardError, PlayerOutOfFundsError } from '../errors'
-import { rules } from '..'
+import { PlayerOutOfFundsError } from '../errors'
 
 import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
@@ -57,13 +59,8 @@ export const waitingForPlayerTurnActionState: RulesMachineConfig['states'] = {
               cropIdxInFieldToHarvest
             )
 
+            assertIsPlayedCrop(playedCrop)
             match = harvestCrop(match, playerId, cropIdxInFieldToHarvest)
-
-            if (!isPlayedCrop(playedCrop)) {
-              throw new InvalidCardError(
-                `${playedCrop.instance.id} is not IPlayedCrop`
-              )
-            }
 
             triggerNotification({
               type: ShellNotificationType.CROP_HARVESTED,

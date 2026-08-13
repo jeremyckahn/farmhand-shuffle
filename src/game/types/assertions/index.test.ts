@@ -84,10 +84,10 @@ describe('assertStringIsMatchState', () => {
 
 describe('assertIsPlayedCrop', () => {
   it('does not throw for valid IPlayedCrop', () => {
-    expect(() => assertions.assertIsPlayedCrop(mockPlayedCrop, 0)).not.toThrow()
+    expect(() => assertions.assertIsPlayedCrop(mockPlayedCrop)).not.toThrow()
   })
 
   it('throws TypeError for undefined', () => {
-    expect(() => assertions.assertIsPlayedCrop(undefined, 0)).toThrow(TypeError)
+    expect(() => assertions.assertIsPlayedCrop(undefined)).toThrow(TypeError)
   })
 })

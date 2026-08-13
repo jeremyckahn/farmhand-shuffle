@@ -1,7 +1,6 @@
 import { lookup } from '../../services/Lookup'
-import { InvalidCardError } from '../../services/Rules/errors'
 import { IMatch, IPlayedCrop, IPlayer } from '../../types'
-import { isPlayedCrop } from '../../types/guards'
+import { assertIsPlayedCrop } from '../../types/assertions'
 import { updateField } from '../update-field'
 
 export const updatePlayedCrop = (
@@ -20,11 +19,7 @@ export const updatePlayedCrop = (
     )
   }
 
-  if (!isPlayedCrop(playedCrop)) {
-    throw new InvalidCardError(
-      `${playedCrop.instance.id}, at player ${playerId}'s field in position ${cropIdx}, is not an IPlayedCrop`
-    )
-  }
+  assertIsPlayedCrop(playedCrop)
 
   const newCards = [
     ...cards.slice(0, cropIdx),
