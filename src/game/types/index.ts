@@ -527,7 +527,7 @@ export interface BotState {
    * machine had to exit PERFORMING_BOT_TURN_ACTION to hand off to a state
    * shared with the player (e.g. PLANTING_CARD, PLAYING_TOOL, PLAYING_EVENT).
    * Used to resume the correct phase instead of restarting from
-   * BotTurnActionState.PLAYING_CROPS. Reset to undefined at the start of a new
+   * BotTurnActionState.INITIALIZING. Reset to undefined at the start of a new
    * bot turn.
    */
   currentBotTurnPhase?: BotTurnActionState
