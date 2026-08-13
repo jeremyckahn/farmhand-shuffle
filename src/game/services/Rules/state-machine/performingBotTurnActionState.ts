@@ -14,6 +14,7 @@ import {
   IPlayedCrop,
   MatchEvent,
   MatchState,
+  MatchStateGuard,
   ShellNotificationType,
   isToolCardInstance,
   isWaterCardInstance,
@@ -31,17 +32,32 @@ import { recordCardPlayEvents } from './reducers'
 import { RulesMachineConfig } from './types'
 import { withBotErrorHandling } from './withBotErrorHandling'
 
-// TODO: In some cases, phases are repeated improperly (e.g. watering, then
-// tool cards, then watering again, then tool cards again). Prevent this from
-// happening.
-
 export const performingBotTurnActionState: RulesMachineConfig['states'] = {
   [MatchState.PERFORMING_BOT_TURN_ACTION]: {
     initial: BotTurnActionState.INITIALIZING,
 
-    exit: enqueueActions(({ event, context: { match }, enqueue }) => {
+    exit: enqueueActions(({ event, context: { botState, match }, enqueue }) => {
       match = recordCardPlayEvents(match, event)
-      enqueue.assign({ match })
+
+      let { currentBotTurnPhase } = botState
+
+      switch (event.type) {
+        case MatchEvent.SELECT_CARD_POSITION:
+          currentBotTurnPhase = BotTurnActionState.PLAYING_CROPS
+          break
+
+        case MatchEvent.PLAY_EVENT:
+          currentBotTurnPhase = BotTurnActionState.PLAYING_EVENTS
+          break
+
+        case MatchEvent.PLAY_TOOL:
+          currentBotTurnPhase = BotTurnActionState.PLAYING_TOOLS
+          break
+
+        default:
+      }
+
+      enqueue.assign({ match, botState: { ...botState, currentBotTurnPhase } })
     }),
 
     on: {
@@ -59,7 +75,23 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
     states: {
       [BotTurnActionState.INITIALIZING]: {
         on: {
-          [MatchEvent.BOT_TURN_INITIALIZED]: BotTurnActionState.PLAYING_CROPS,
+          [MatchEvent.BOT_TURN_INITIALIZED]: [
+            // NOTE: Handles resuming an in-progress phase
+            {
+              guard: MatchStateGuard.IS_BOT_PHASE_PLAYING_EVENTS,
+              target: BotTurnActionState.PLAYING_EVENTS,
+            },
+
+            // NOTE: Handles resuming an in-progress phase
+            {
+              guard: MatchStateGuard.IS_BOT_PHASE_PLAYING_TOOLS,
+              target: BotTurnActionState.PLAYING_TOOLS,
+            },
+
+            // NOTE: If not resuming an in-progress phase, start with playing
+            // crops
+            { target: BotTurnActionState.PLAYING_CROPS },
+          ],
         },
         entry: enqueueActions(
           withBotErrorHandling(
@@ -120,6 +152,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
                       match,
                       currentPlayerId
                     ),
+                    currentBotTurnPhase: undefined,
                     toolCardsThatCanBePlayed:
                       botLogic.getNumberOfToolCardsToPlay(
                         match,
@@ -198,58 +231,51 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
             BotTurnActionState.PLAYING_CROPS,
         },
         entry: enqueueActions(
-          withBotErrorHandling(
-            ({
-              context: {
-                botState: { cropsToPlayDuringTurn },
+          withBotErrorHandling(({ context: { botState, match }, enqueue }) => {
+            const { cropsToPlayDuringTurn } = botState
+            const areCropsToPlay = cropsToPlayDuringTurn > 0
+
+            if (areCropsToPlay) {
+              const { currentPlayerId } = match
+
+              assertIsNonNullable(currentPlayerId)
+
+              const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
                 match,
-              },
-              enqueue,
-            }) => {
-              const areCropsToPlay = cropsToPlayDuringTurn > 0
+                currentPlayerId
+              )
+              const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
 
-              if (areCropsToPlay) {
-                const { currentPlayerId } = match
-
-                assertIsNonNullable(currentPlayerId)
-
-                const cropIdxsInPlayerHand = lookup.findCropIndexesInPlayerHand(
-                  match,
-                  currentPlayerId
+              if (cardIdx === undefined) {
+                throw new MatchStateCorruptError(
+                  `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
                 )
-                const cardIdx = randomNumber.chooseElement(cropIdxsInPlayerHand)
-
-                if (cardIdx === undefined) {
-                  throw new MatchStateCorruptError(
-                    `areCropsToPlay is true but there are no crops in the hand of bot player ${currentPlayerId}`
-                  )
-                }
-
-                const openFieldPositionIdx = botLogic.getOpenFieldPosition(
-                  match,
-                  currentPlayerId
-                )
-
-                if (typeof openFieldPositionIdx === 'undefined') {
-                  throw new GameStateCorruptError(
-                    `${MatchEvent.BOT_TURN_PHASE_COMPLETE} event occurred for a full field`
-                  )
-                }
-
-                enqueue.raise(
-                  {
-                    type: MatchEvent.SELECT_CARD_POSITION,
-                    playerId: currentPlayerId,
-                    cardIdxInHand: cardIdx,
-                    fieldIdxToPlace: openFieldPositionIdx,
-                  },
-                  { delay: BOT_ACTION_DELAY }
-                )
-              } else {
-                enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
               }
+
+              const openFieldPositionIdx = botLogic.getOpenFieldPosition(
+                match,
+                currentPlayerId
+              )
+
+              if (typeof openFieldPositionIdx === 'undefined') {
+                throw new GameStateCorruptError(
+                  `${MatchEvent.BOT_TURN_PHASE_COMPLETE} event occurred for a full field`
+                )
+              }
+
+              enqueue.raise(
+                {
+                  type: MatchEvent.SELECT_CARD_POSITION,
+                  playerId: currentPlayerId,
+                  cardIdxInHand: cardIdx,
+                  fieldIdxToPlace: openFieldPositionIdx,
+                },
+                { delay: BOT_ACTION_DELAY }
+              )
+            } else {
+              enqueue.raise({ type: MatchEvent.BOT_TURN_PHASE_COMPLETE })
             }
-          )
+          })
         ),
       },
 

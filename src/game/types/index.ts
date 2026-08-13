@@ -357,6 +357,8 @@ export enum MatchState {
 }
 
 export enum MatchStateGuard {
+  IS_BOT_PHASE_PLAYING_EVENTS = 'IS_BOT_PHASE_PLAYING_EVENTS',
+  IS_BOT_PHASE_PLAYING_TOOLS = 'IS_BOT_PHASE_PLAYING_TOOLS',
   IS_SELECTED_IDX_VALID = 'IS_SELECTED_IDX_VALID',
   IS_SETUP_PHASE = 'IS_SETUP_PHASE',
 }
@@ -520,6 +522,15 @@ export type MatchEvents = MatchEventPayload[MatchEventPayloadKey]
 export interface BotState {
   cropCardIndicesToHarvest: number[]
   cropsToPlayDuringTurn: number
+  /**
+   * Tracks which BotTurnActionState phase was active before the bot turn state
+   * machine had to exit PERFORMING_BOT_TURN_ACTION to hand off to a state
+   * shared with the player (e.g. PLANTING_CARD, PLAYING_TOOL, PLAYING_EVENT).
+   * Used to resume the correct phase instead of restarting from
+   * BotTurnActionState.INITIALIZING. Reset to undefined at the start of a new
+   * bot turn.
+   */
+  currentBotTurnPhase?: BotTurnActionState
   fieldCropIndicesToWaterDuringTurn: number[]
   toolCardsThatCanBePlayed: number
 }

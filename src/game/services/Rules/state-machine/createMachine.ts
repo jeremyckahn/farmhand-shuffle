@@ -1,6 +1,7 @@
 import { setup } from 'xstate'
 
 import {
+  BotTurnActionState,
   MatchEvent,
   MatchEventPayload,
   MatchEventPayloadKey,
@@ -17,6 +18,18 @@ export const { createMachine } = setup({
   },
 
   guards: {
+    [MatchStateGuard.IS_BOT_PHASE_PLAYING_EVENTS]: ({
+      context: {
+        botState: { currentBotTurnPhase },
+      },
+    }) => currentBotTurnPhase === BotTurnActionState.PLAYING_EVENTS,
+
+    [MatchStateGuard.IS_BOT_PHASE_PLAYING_TOOLS]: ({
+      context: {
+        botState: { currentBotTurnPhase },
+      },
+    }) => currentBotTurnPhase === BotTurnActionState.PLAYING_TOOLS,
+
     [MatchStateGuard.IS_SELECTED_IDX_VALID]: ({
       event,
       context: { match },
