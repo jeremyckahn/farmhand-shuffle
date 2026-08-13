@@ -1037,6 +1037,10 @@ describe('bot turn action handling', () => {
         botLogic,
         'getCropCardIndicesToWater'
       )
+      const getNumberOfToolCardsToPlaySpy = vi.spyOn(
+        botLogic,
+        'getNumberOfToolCardsToPlay'
+      )
 
       let {
         context: { match },
@@ -1075,12 +1079,18 @@ describe('bot turn action handling', () => {
       expect(wateredCrop.wasWateredDuringTurn).toBe(true)
       expect(player.discardPile).toContainEqual(stubShovel)
 
-      // NOTE: BotTurnActionState.WATERING_CROPS is entered exactly twice
-      // during a correct turn with one crop to water: once to find and play
-      // the water card, and once more afterward to confirm there is nothing
-      // left to water. A third call (or more) means the tool card round trip
-      // improperly restarted the bot turn phase pipeline.
+      // NOTE: BotTurnActionState.WATERING_CROPS is entered twice during a turn
+      // with one crop to water: once to find and play the water card, and once
+      // more afterward to confirm there is nothing left to water. A third call
+      // (or more) would mean the tool card round trip improperly restarted the
+      // bot turn phase pipeline.
       expect(getCropCardIndicesToWaterSpy).toHaveBeenCalledTimes(2)
+
+      // NOTE: BotTurnActionState.INITIALIZING (where
+      // botLogic.getNumberOfToolCardsToPlay is called) is entered once during
+      // a turn. An additional call would mean the event card round trip
+      // improperly restarted the bot turn phase pipeline.
+      expect(getNumberOfToolCardsToPlaySpy).toHaveBeenCalledTimes(1)
     })
 
     // NOTE: Regression test for the same bug as above, but for the
@@ -1109,7 +1119,7 @@ describe('bot turn action handling', () => {
 
       match = updatePlayer(match, player2.id, {
         deck: new Array<CardInstance>(DECK_SIZE).fill(stubPumpkin),
-        hand: [stubRain, stubWater, stubShovel],
+        hand: [stubRain, stubShovel],
       })
 
       matchActor.send({ type: MatchEvent.DANGEROUSLY_SET_CONTEXT, match })
@@ -1138,19 +1148,18 @@ describe('bot turn action handling', () => {
       }
 
       expect(wateredCrop.wasWateredDuringTurn).toBe(true)
-      expect(player.discardPile).toContainEqual(stubRain)
+      expect(player.discardPile).toContain(stubRain)
 
-      // NOTE: BotTurnActionState.WATERING_CROPS is entered exactly twice
-      // during a correct turn with one crop to water: once to find and play
-      // the water card, and once more afterward to confirm there is nothing
-      // left to water. A third call (or more) means the event card round trip
+      // NOTE: BotTurnActionState.WATERING_CROPS is entered once during a turn
+      // when there are no water cards in the hand to confirm there is nothing
+      // to water. An additional call would mean the event card round trip
       // improperly restarted the bot turn phase pipeline.
-      expect(getCropCardIndicesToWaterSpy).toHaveBeenCalledTimes(2)
+      expect(getCropCardIndicesToWaterSpy).toHaveBeenCalledTimes(1)
 
       // NOTE: BotTurnActionState.INITIALIZING (where
-      // botLogic.getNumberOfToolCardsToPlay is called) is entered exactly once
-      // during a correct turn. An additional callmeans the event card round
-      // trip improperly restarted the bot turn phase pipeline.
+      // botLogic.getNumberOfToolCardsToPlay is called) is entered once during
+      // a turn. An additional call would mean the event card round trip
+      // improperly restarted the bot turn phase pipeline.
       expect(getNumberOfToolCardsToPlaySpy).toHaveBeenCalledTimes(1)
     })
   })
