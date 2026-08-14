@@ -1,19 +1,19 @@
 import { StateValue } from 'xstate'
 
 import {
+  BotTurnActionState,
   CardInstance,
   EventInstance,
-  isEventCardInstance,
-  ToolInstance,
-  isToolCardInstance,
-  MatchState,
-  BotTurnActionState,
   IField,
   IPlayedCrop,
+  isEventCardInstance,
+  isToolCardInstance,
+  MatchState,
+  ToolInstance,
 } from '..'
 import * as cards from '../../cards'
 import { MatchStateCorruptError } from '../../services/Rules/errors'
-import { isCardId, isStateValueStateValueMap } from '../guards'
+import { isCardId, isPlayedCrop, isStateValueStateValueMap } from '../guards'
 
 export function assertIsNonNullable<T>(
   obj: T,
@@ -75,10 +75,9 @@ export function assertStateValueIsBotTurnActionState(
 }
 
 export function assertIsPlayedCrop(
-  plotContents: IField['cards'][0],
-  fieldCropIdx: number
+  plotContents: IField['cards'][0]
 ): asserts plotContents is IPlayedCrop {
-  if (plotContents === undefined) {
-    throw new TypeError(`Field plot at position ${fieldCropIdx} is undefined`)
+  if (!isPlayedCrop(plotContents)) {
+    throw new TypeError(`${JSON.stringify(plotContents)} is not IPlayedCrop`)
   }
 }

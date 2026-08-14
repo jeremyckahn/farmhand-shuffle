@@ -1,8 +1,7 @@
 import { lookup } from '../../services/Lookup'
 import { pricing } from '../../services/Pricing'
-import { InvalidCardError } from '../../services/Rules/errors'
 import { IMatch, IPlayer } from '../../types'
-import { isPlayedCrop } from '../../types/guards'
+import { assertIsPlayedCrop } from '../../types/assertions'
 import { incrementCommunityFund } from '../increment-community-fund'
 import { incrementPlayerFunds } from '../increment-player-funds'
 import { moveFromFieldToDiscardPile } from '../move-from-field-to-discard-pile'
@@ -32,9 +31,7 @@ export const harvestCrop = (
     cropIdxInFieldToHarvest
   )
 
-  if (!isPlayedCrop(playedCrop)) {
-    throw new InvalidCardError(`${playedCrop.instance.id} is not IPlayedCrop`)
-  }
+  assertIsPlayedCrop(playedCrop)
 
   const cropSaleValue = pricing.getCropSaleValue(match, playedCrop.instance)
 

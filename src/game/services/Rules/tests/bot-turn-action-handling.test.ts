@@ -30,8 +30,11 @@ import {
   ShellNotification,
   ShellNotificationType,
 } from '../../../types'
+import {
+  assertIsNonNullable,
+  assertIsPlayedCrop,
+} from '../../../types/assertions'
 import { isPlayedCrop } from '../../../types/guards'
-import { assertIsNonNullable } from '../../../types/assertions'
 import { botLogic } from '../../BotLogic'
 import { factory } from '../../Factory'
 
@@ -1072,9 +1075,7 @@ describe('bot turn action handling', () => {
 
       const wateredCrop = player.field.cards[0]
 
-      if (!isPlayedCrop(wateredCrop)) {
-        throw new Error('Expected a played crop in the field')
-      }
+      assertIsPlayedCrop(wateredCrop)
 
       expect(wateredCrop.wasWateredDuringTurn).toBe(true)
       expect(player.discardPile).toContainEqual(stubShovel)
@@ -1143,9 +1144,7 @@ describe('bot turn action handling', () => {
 
       const wateredCrop = player.field.cards[0]
 
-      if (!isPlayedCrop(wateredCrop)) {
-        throw new Error('Expected a played crop in the field')
-      }
+      assertIsPlayedCrop(wateredCrop)
 
       expect(wateredCrop.wasWateredDuringTurn).toBe(true)
       expect(player.discardPile).toContain(stubRain)

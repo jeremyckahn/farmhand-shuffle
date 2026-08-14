@@ -362,7 +362,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
 
             const playedCrop = player.field.cards[cropIdxInFieldToWater]
 
-            assertIsPlayedCrop(playedCrop, cropIdxInFieldToWater)
+            assertIsPlayedCrop(playedCrop)
 
             const updatedPlayedCrop: IPlayedCrop = {
               ...playedCrop,
@@ -576,7 +576,7 @@ export const performingBotTurnActionState: RulesMachineConfig['states'] = {
               const player = lookup.getPlayer(match, currentPlayerId)
               const plantedCrop = player.field.cards[cropCardIdxToHarvest]
 
-              assertIsPlayedCrop(plantedCrop, cropCardIdxToHarvest)
+              assertIsPlayedCrop(plantedCrop)
 
               match = harvestCrop(match, currentPlayerId, cropCardIdxToHarvest)
 

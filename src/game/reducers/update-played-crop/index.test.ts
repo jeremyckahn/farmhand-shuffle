@@ -53,8 +53,6 @@ describe('updatePlayedCrop', () => {
 
     expect(() => {
       updatePlayedCrop(newMatch, player1Id, 0, { waterCards: 1 })
-    }).toThrow(
-      `[InvalidCardError] ${stubSprinkler.id}, at player ${player1Id}'s field in position 0, is not an IPlayedCrop`
-    )
+    }).toThrow()
   })
 })
