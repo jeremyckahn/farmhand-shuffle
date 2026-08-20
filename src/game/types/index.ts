@@ -330,7 +330,7 @@ export enum BotTurnActionState {
   DONE = 'DONE',
 }
 
-interface PlayCardEventPayload<T = MatchEvent.PLAY_CARD> {
+export interface PlayCardEventPayload<T = MatchEvent.PLAY_CARD> {
   type: T
   playerId: IPlayer['id']
 
