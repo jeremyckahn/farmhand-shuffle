@@ -61,16 +61,18 @@ The project is structured as follows:
 
 ```text
 farmhand-shuffle/
-├── src/              # Source code directory
-│   ├── game/         # Game logic implementation
-│   ├── lib/          # Utility libraries
-│   ├── services/     # General services
-│   ├── test-utils/   # Testing utilities
-│   └── ui/           # User interface components
-├── package.json      # Project dependencies and scripts
-├── tsconfig.json     # TypeScript configuration
-├── vite.config.ts    # Vite build tool configuration
-└── ...               # Other configuration files
+├── src/                  # Source code directory
+│   ├── game/             # Game logic implementation
+│   ├── lib/              # Internal utility libraries
+│   ├── public/           # Published library entry point (npm package surface)
+│   ├── services/         # General services
+│   ├── test-utils/       # Testing utilities
+│   └── ui/               # User interface components
+├── package.json          # Project dependencies and scripts
+├── tsconfig.json         # TypeScript configuration
+├── vite.config.mjs       # Vite build tool configuration (app build + tests)
+├── vite.lib.config.mts   # Vite build tool configuration (library build)
+└── ...                   # Other configuration files
 ```
 
 ## Development
@@ -88,3 +90,31 @@ To get started with development:
 - Start Storybook: `npm run start:storybook`
 - Code formatting: `npm run fix:style`
 - Code linting: `npm run fix:lint`
+
+## Using Farmhand Shuffle as a library
+
+In addition to the standalone app, this package publishes its `Match`
+component (the full game UI, given a set of player seeds) as a library that
+other packages can install and render directly.
+
+Install it:
+
+```shell
+npm install @jeremyckahn/farmhand-shuffle
+```
+
+`react`, `react-dom`, `@mui/material`, `@mui/icons-material`,
+`@emotion/react`, and `@emotion/styled` are `peerDependencies` — install
+them alongside this package if your project doesn't already have them.
+
+```tsx
+import { Match } from '@jeremyckahn/farmhand-shuffle'
+
+function App() {
+  return <Match playerSeeds={playerSeeds} userPlayerId={userPlayerId} />
+}
+```
+
+The library build is ESM-only (`dist-lib/index.mjs`) and ships its own
+TypeScript declarations (`dist-lib/index.d.ts`), so no separate `@types`
+package is needed.
