@@ -34,6 +34,10 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
 
+      # Trusted publishing (OIDC) requires npm CLI >= 11.5.1; the version
+      # bundled with actions/setup-node's Node 22 can be older than that.
+      - run: npm install -g npm@latest
+
       - run: npm ci
 
       - name: Run checks
@@ -59,7 +63,14 @@ jobs:
           name: library-build-output
           path: dist-lib
 
+      # Publishes via npm Trusted Publishing (OIDC) once a trusted publisher
+      # is configured for this package at
+      # https://www.npmjs.com/package/@jeremyckahn/farmhand-shuffle/access
+      # (org/user: jeremyckahn, repo: farmhand-shuffle, workflow: publish.yml).
+      # npm tries OIDC first and only falls back to NPM_TOKEN if that secret
+      # is set — see the README for the one-time setup and why the very
+      # first publish still needs a token.
       - name: Publish to npm
-        run: npm publish --access public --provenance
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
