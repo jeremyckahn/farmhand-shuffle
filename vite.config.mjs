@@ -25,6 +25,7 @@ const vitestConfig = vitestDefineConfig({
         'src/setupTests.ts',
         'storybook-static',
         'dist',
+        'dist-lib',
         'src/ui/components/*/*.stories.ts',
         'src/ui/components/*/*.stories.tsx',
         'src/__mocks__',

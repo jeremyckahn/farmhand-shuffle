@@ -84,7 +84,7 @@ export default [
         },
       ],
     },
-    ignores: ['dist'],
+    ignores: ['dist', 'dist-lib'],
   },
   ...storybook.configs['flat/recommended'],
   {
