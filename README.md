@@ -118,3 +118,25 @@ function App() {
 The library build is ESM-only (`dist-lib/index.mjs`) and ships its own
 TypeScript declarations (`dist-lib/index.d.ts`), so no separate `@types`
 package is needed.
+
+### Releasing a new version
+
+Publishing to npm is handled by the [Publish
+Library](.github/workflows/publish.yml) GitHub Actions workflow — there's no
+manual `npm publish` step.
+
+1. Go to the repo's **Actions** tab → **Publish Library** → **Run workflow**.
+2. Make sure **main** is selected as the branch (the workflow refuses to run
+   from anything else).
+3. In the **version** field, type `patch` (the default), `minor`, `major`,
+   or an exact version like `1.4.0`.
+4. Run it. The workflow runs the full check suite, bumps `package.json`
+   (via `npm version`), commits and tags the bump, builds the library, and
+   publishes it to npm.
+
+**One-time setup required:** this workflow needs an `NPM_TOKEN` repository
+secret (Settings → Secrets and variables → Actions → New repository
+secret) containing an npm
+[Automation token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
+with publish access to the `@jeremyckahn` scope. Nothing publishes until
+that secret is set.

@@ -1,0 +1,65 @@
+name: Publish Library
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: >-
+          Version to publish: "patch", "minor", "major", or an exact semver
+          (e.g. 1.4.0). Passed straight through to `npm version`.
+        required: true
+        default: patch
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure running from main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::This workflow can only be run from the main branch (was ${{ github.ref }}). Re-run it with 'main' selected as the branch."
+          exit 1
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+
+      - name: Run checks
+        run: npm run check
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version, commit, and tag
+        run: |
+          npm version "${{ inputs.version }}" -m "chore(release): v%s"
+
+      - name: Push version commit and tag
+        run: git push --follow-tags
+
+      - name: Build library
+        run: npm run build:lib
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: library-build-output
+          path: dist-lib
+
+      - name: Publish to npm
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
