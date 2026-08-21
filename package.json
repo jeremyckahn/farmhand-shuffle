@@ -1,6 +1,6 @@
 {
   "name": "@jeremyckahn/farmhand-shuffle",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A card game for farmers",
   "main": "./dist-lib/index.mjs",
   "module": "./dist-lib/index.mjs",
