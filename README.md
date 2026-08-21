@@ -134,9 +134,31 @@ manual `npm publish` step.
    (via `npm version`), commits and tags the bump, builds the library, and
    publishes it to npm.
 
-**One-time setup required:** this workflow needs an `NPM_TOKEN` repository
-secret (Settings → Secrets and variables → Actions → New repository
-secret) containing an npm
-[Automation token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
-with publish access to the `@jeremyckahn` scope. Nothing publishes until
-that secret is set.
+**One-time setup required.** Publishing authenticates with npm via [Trusted
+Publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC) — no
+long-lived token to store or rotate in CI. But npm has a bootstrapping
+requirement: a trusted publisher can only be configured for a package that
+already exists on the registry, and this package has never been published.
+So the very first release needs one manual step; every release after that
+is token-free.
+
+1. **First release only:** publish once from your own machine.
+   ```shell
+   npm run build:lib
+   npm login
+   npm publish --access public
+   ```
+   This creates `@jeremyckahn/farmhand-shuffle` on the registry using your
+   own npm account and 2FA — no secret is stored anywhere.
+2. On npmjs.com, go to the package's **Settings** tab
+   (`https://www.npmjs.com/package/@jeremyckahn/farmhand-shuffle/access`) →
+   **Trusted Publisher** → add a GitHub Actions publisher:
+   - Organization or user: `jeremyckahn`
+   - Repository: `farmhand-shuffle`
+   - Workflow filename: `publish.yml`
+   - Environment: leave blank
+   - Allowed actions: `npm publish`
+3. From then on, running the **Publish Library** workflow (see steps above)
+   authenticates via GitHub's OIDC token automatically — nothing else to
+   configure, and nothing to rotate. There's no `NPM_TOKEN` secret involved
+   at any point, by design.
