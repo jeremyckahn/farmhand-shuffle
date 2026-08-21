@@ -160,13 +160,5 @@ is token-free.
    - Allowed actions: `npm publish`
 3. From then on, running the **Publish Library** workflow (see steps above)
    authenticates via GitHub's OIDC token automatically — nothing else to
-   configure, and nothing to rotate.
-
-If you'd rather not do the manual bootstrap publish, an `NPM_TOKEN`
-repository secret (an npm [access
-token](https://docs.npmjs.com/creating-and-viewing-access-tokens) with
-publish rights to the `@jeremyckahn` scope) works as a fallback — the
-workflow tries OIDC first and only falls back to `NPM_TOKEN` if that secret
-is set. That's a legitimate way to do the first release too, but then
-you're back to a token you'll eventually need to rotate, which is exactly
-what Trusted Publishing avoids.
+   configure, and nothing to rotate. There's no `NPM_TOKEN` secret involved
+   at any point, by design.

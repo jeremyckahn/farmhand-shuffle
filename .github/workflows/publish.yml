@@ -63,14 +63,11 @@ jobs:
           name: library-build-output
           path: dist-lib
 
-      # Publishes via npm Trusted Publishing (OIDC) once a trusted publisher
-      # is configured for this package at
+      # Publishes via npm Trusted Publishing (OIDC). Requires a trusted
+      # publisher configured for this package at
       # https://www.npmjs.com/package/@jeremyckahn/farmhand-shuffle/access
-      # (org/user: jeremyckahn, repo: farmhand-shuffle, workflow: publish.yml).
-      # npm tries OIDC first and only falls back to NPM_TOKEN if that secret
-      # is set — see the README for the one-time setup and why the very
-      # first publish still needs a token.
+      # (org/user: jeremyckahn, repo: farmhand-shuffle, workflow: publish.yml)
+      # — see the README for the one-time setup and why the very first
+      # publish still needs to happen manually, from a local machine.
       - name: Publish to npm
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
