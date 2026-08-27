@@ -14,13 +14,13 @@ import { water } from '../../game/cards/water'
 import { CardInstance, ICard } from '../../game/types'
 
 const CROPS = [
-  [carrot, 7],
-  [pumpkin, 8],
-  [potato, 3],
-  [corn, 3],
-  [pea, 3],
-  [garlic, 3],
-  [tomato, 3],
+  [carrot, 5],
+  [pumpkin, 5],
+  [potato, 4],
+  [corn, 4],
+  [pea, 4],
+  [garlic, 4],
+  [tomato, 4],
 ] as const
 
 const WATER_COUNT = 18
