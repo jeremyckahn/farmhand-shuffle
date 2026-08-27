@@ -36,6 +36,12 @@ const NON_WATER_CARD_TYPE_COUNT = CROPS.length + 3
 const WATER_COUNT =
   DECK_SIZE - NON_WATER_CARD_TYPE_COUNT * MAX_INSTANCES_PER_CARD
 
+if (WATER_COUNT <= 0) {
+  console.warn(
+    `stubDeck: WATER_COUNT computed as ${WATER_COUNT}. DECK_SIZE (${DECK_SIZE}) may be too small for NON_WATER_CARD_TYPE_COUNT (${NON_WATER_CARD_TYPE_COUNT}) at MAX_INSTANCES_PER_CARD (${MAX_INSTANCES_PER_CARD}) copies each.`
+  )
+}
+
 const buildCardGroup = <T extends ICard>(card: T, count: number) =>
   Array.from({ length: count }, () => instantiate(card))
 
