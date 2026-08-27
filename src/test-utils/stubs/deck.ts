@@ -1,9 +1,54 @@
-/* eslint-disable functional/immutable-data */
-import { carrot, instantiate, pumpkin, shovel } from '../../game/cards'
+import {
+  carrot,
+  corn,
+  garlic,
+  instantiate,
+  pea,
+  potato,
+  pumpkin,
+  shovel,
+  tomato,
+} from '../../game/cards'
 import { sprinkler } from '../../game/cards/tools/sprinkler'
 import { water } from '../../game/cards/water'
-import { DECK_SIZE } from '../../game/config'
-import { CardInstance } from '../../game/types'
+import { CardInstance, ICard } from '../../game/types'
+
+const CROPS = [
+  [carrot, 7],
+  [pumpkin, 8],
+  [potato, 3],
+  [corn, 3],
+  [pea, 3],
+  [garlic, 3],
+  [tomato, 3],
+] as const
+
+const WATER_COUNT = 18
+const SPRINKLER_COUNT = 6
+const SHOVEL_COUNT = 6
+
+const buildCardGroup = <T extends ICard>(card: T, count: number) =>
+  Array.from({ length: count }, () => instantiate(card))
+
+/**
+ * Alternates between two groups of cards (e.g. crops and water) so that
+ * every other card is drawn from each group. Once the shorter group is
+ * exhausted, the remaining cards from the longer group are appended.
+ *
+ * Several Rules tests mock `randomNumber` to be deterministic and draw
+ * from the front of the deck, so this alternation (rather than a random
+ * or clustered arrangement) is what guarantees a healthy mix of card
+ * types shows up early in the deck.
+ */
+const alternate = (a: CardInstance[], b: CardInstance[]): CardInstance[] => {
+  const pairedCount = Math.min(a.length, b.length)
+  const paired = Array.from({ length: pairedCount }, (_, i) => [
+    a[i] as CardInstance,
+    b[i] as CardInstance,
+  ]).flat()
+
+  return [...paired, ...a.slice(pairedCount), ...b.slice(pairedCount)]
+}
 
 /**
  * Creates a stub deck of cards for testing purposes. The deck is populated
@@ -12,29 +57,15 @@ import { CardInstance } from '../../game/types'
  * @returns A deck of cards.
  */
 export const stubDeck = () => {
-  const deck = new Array<CardInstance>(DECK_SIZE)
+  const crops = CROPS.flatMap(([card, count]) => buildCardGroup(card, count))
+  const waterCards = buildCardGroup(water, WATER_COUNT)
+  const sprinklers = buildCardGroup(sprinkler, SPRINKLER_COUNT)
+  const shovels = buildCardGroup(shovel, SHOVEL_COUNT)
 
-  // Populate first half with mixture of Carrots, Pumpkins, and Water
-  for (let i = 0; i < deck.length / 2; i += 2) {
-    if (i < 14) {
-      deck[i] = instantiate(carrot)
-    } else {
-      deck[i] = instantiate(pumpkin)
-    }
-  }
-
-  for (let i = 1; i < deck.length / 2; i += 2) {
-    deck[i] = instantiate(water)
-  }
-
-  // Populate second half with Rain and Shovels
-  for (let i = deck.length / 2 - 1; i < deck.length; i += 2) {
-    deck[i] = instantiate(sprinkler)
-  }
-
-  for (let i = deck.length / 2; i < deck.length; i += 2) {
-    deck[i] = instantiate(shovel)
-  }
+  const deck: CardInstance[] = [
+    ...alternate(crops, waterCards),
+    ...alternate(sprinklers, shovels),
+  ]
 
   return deck
 }
