@@ -13,7 +13,7 @@ import {
 import { sprinkler } from '../../game/cards/tools/sprinkler'
 import { water } from '../../game/cards/water'
 import { CardInstance, ICard } from '../../game/types'
-import { MAX_INSTANCES_PER_CARD } from '../../game/config'
+import { DECK_SIZE, MAX_INSTANCES_PER_CARD } from '../../game/config'
 
 const CROPS = [
   [carrot, MAX_INSTANCES_PER_CARD],
@@ -25,10 +25,16 @@ const CROPS = [
   [tomato, MAX_INSTANCES_PER_CARD],
 ] as const
 
-const WATER_COUNT = 20
 const RAIN_COUNT = MAX_INSTANCES_PER_CARD
 const SPRINKLER_COUNT = MAX_INSTANCES_PER_CARD
 const SHOVEL_COUNT = MAX_INSTANCES_PER_CARD
+
+// 7 crops + rain + sprinkler + shovel
+const NON_WATER_CARD_TYPE_COUNT = CROPS.length + 3
+
+// DECK_SIZE - NON_WATER_CARD_TYPE_COUNT * MAX_INSTANCES_PER_CARD = 60 - 10 * 4 = 20
+const WATER_COUNT =
+  DECK_SIZE - NON_WATER_CARD_TYPE_COUNT * MAX_INSTANCES_PER_CARD
 
 const buildCardGroup = <T extends ICard>(card: T, count: number) =>
   Array.from({ length: count }, () => instantiate(card))
