@@ -6,26 +6,29 @@ import {
   pea,
   potato,
   pumpkin,
+  rain,
   shovel,
   tomato,
 } from '../../game/cards'
 import { sprinkler } from '../../game/cards/tools/sprinkler'
 import { water } from '../../game/cards/water'
 import { CardInstance, ICard } from '../../game/types'
+import { MAX_INSTANCES_PER_CARD } from '../../game/config'
 
 const CROPS = [
-  [carrot, 5],
-  [pumpkin, 5],
-  [potato, 4],
-  [corn, 4],
-  [pea, 4],
-  [garlic, 4],
-  [tomato, 4],
+  [carrot, MAX_INSTANCES_PER_CARD],
+  [pumpkin, MAX_INSTANCES_PER_CARD],
+  [potato, MAX_INSTANCES_PER_CARD],
+  [corn, MAX_INSTANCES_PER_CARD],
+  [pea, MAX_INSTANCES_PER_CARD],
+  [garlic, MAX_INSTANCES_PER_CARD],
+  [tomato, MAX_INSTANCES_PER_CARD],
 ] as const
 
-const WATER_COUNT = 18
-const SPRINKLER_COUNT = 6
-const SHOVEL_COUNT = 6
+const WATER_COUNT = 20
+const RAIN_COUNT = MAX_INSTANCES_PER_CARD
+const SPRINKLER_COUNT = MAX_INSTANCES_PER_CARD
+const SHOVEL_COUNT = MAX_INSTANCES_PER_CARD
 
 const buildCardGroup = <T extends ICard>(card: T, count: number) =>
   Array.from({ length: count }, () => instantiate(card))
@@ -59,12 +62,13 @@ const alternate = (a: CardInstance[], b: CardInstance[]): CardInstance[] => {
 export const stubDeck = () => {
   const crops = CROPS.flatMap(([card, count]) => buildCardGroup(card, count))
   const waterCards = buildCardGroup(water, WATER_COUNT)
+  const rainCards = buildCardGroup(rain, RAIN_COUNT)
   const sprinklers = buildCardGroup(sprinkler, SPRINKLER_COUNT)
   const shovels = buildCardGroup(shovel, SHOVEL_COUNT)
 
   const deck: CardInstance[] = [
     ...alternate(crops, waterCards),
-    ...alternate(sprinklers, shovels),
+    ...alternate(alternate(rainCards, sprinklers), shovels),
   ]
 
   return deck
