@@ -9,11 +9,11 @@ import {
   rain,
   shovel,
   tomato,
-} from '../../game/cards'
-import { sprinkler } from '../../game/cards/tools/sprinkler'
-import { water } from '../../game/cards/water'
-import { CardInstance, ICard } from '../../game/types'
-import { DECK_SIZE, MAX_INSTANCES_PER_CARD } from '../../game/config'
+} from '../cards'
+import { sprinkler } from '../cards/tools/sprinkler'
+import { water } from '../cards/water'
+import { CardInstance, ICard } from '../types'
+import { DECK_SIZE, MAX_INSTANCES_PER_CARD } from '../config'
 
 const CROPS = [
   [carrot, MAX_INSTANCES_PER_CARD],
@@ -38,7 +38,7 @@ const WATER_COUNT =
 
 if (WATER_COUNT <= 0) {
   console.warn(
-    `stubDeck: WATER_COUNT computed as ${WATER_COUNT}. DECK_SIZE (${DECK_SIZE}) may be too small for NON_WATER_CARD_TYPE_COUNT (${NON_WATER_CARD_TYPE_COUNT}) at MAX_INSTANCES_PER_CARD (${MAX_INSTANCES_PER_CARD}) copies each.`
+    `starterDeck: WATER_COUNT computed as ${WATER_COUNT}. DECK_SIZE (${DECK_SIZE}) may be too small for NON_WATER_CARD_TYPE_COUNT (${NON_WATER_CARD_TYPE_COUNT}) at MAX_INSTANCES_PER_CARD (${MAX_INSTANCES_PER_CARD}) copies each.`
   )
 }
 
@@ -66,12 +66,15 @@ const alternate = (a: CardInstance[], b: CardInstance[]): CardInstance[] => {
 }
 
 /**
- * Creates a stub deck of cards for testing purposes. The deck is populated
- * with a mixture of crops, water, event, and tool cards.
+ * Builds the canonical starter deck: a full, freshly-instantiated 60-card
+ * deck (crops + water + rain/sprinkler/shovel, alternated for a healthy
+ * early mix). Every call mints a fresh set of CardInstances, since every
+ * match (and each side of a symmetric match) needs its own instances rather
+ * than a single shared, frozen array.
  *
  * @returns A deck of cards.
  */
-export const stubDeck = () => {
+export const starterDeck = () => {
   const crops = CROPS.flatMap(([card, count]) => buildCardGroup(card, count))
   const waterCards = buildCardGroup(water, WATER_COUNT)
   const rainCards = buildCardGroup(rain, RAIN_COUNT)

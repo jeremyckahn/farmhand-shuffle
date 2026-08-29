@@ -25,6 +25,12 @@ const MatchCore = ({
   userPlayerId,
   fullHeight = false,
   sx = [],
+  onMatchEnd,
+  onCheckpoint,
+  renderStatusBarContent,
+  renderGameOverContent,
+  hideDefaultGameOverActions = false,
+  initialMatch,
   ...rest
 }: MatchProps) => {
   const theme = useTheme()
@@ -38,7 +44,13 @@ const MatchCore = ({
     shellContextValue,
     showGameOver,
     showHand,
-  } = useMatch({ playerSeeds, userPlayerId })
+  } = useMatch({
+    playerSeeds,
+    userPlayerId,
+    onMatchEnd,
+    onCheckpoint,
+    initialMatch,
+  })
 
   const { winner } = match
 
@@ -70,6 +82,7 @@ const MatchCore = ({
         {...rest}
       >
         <TurnControl match={match} />
+        {renderStatusBarContent?.()}
         <Table sx={{ pt: 4 }} match={match} />
         <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
           <Fab
@@ -94,9 +107,12 @@ const MatchCore = ({
           <DialogTitle>Game Over</DialogTitle>
           <DialogContent>
             Winner: <strong>{winner ? funAnimalName(winner) : 'No one'}</strong>
+            {renderGameOverContent?.(winner)}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClickPlayAgain}>Play again</Button>
+            {!hideDefaultGameOverActions && (
+              <Button onClick={handleClickPlayAgain}>Play again</Button>
+            )}
           </DialogActions>
         </Dialog>
       </Container>

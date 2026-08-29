@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { MatchEvent, MatchState } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
@@ -13,9 +13,20 @@ import { useSnackbar } from './useSnackbar'
 export const useMatch = ({
   playerSeeds,
   userPlayerId,
-}: Pick<MatchProps, 'playerSeeds' | 'userPlayerId'>) => {
+  onMatchEnd,
+  onCheckpoint,
+  initialMatch,
+}: Pick<
+  MatchProps,
+  | 'playerSeeds'
+  | 'userPlayerId'
+  | 'onMatchEnd'
+  | 'onCheckpoint'
+  | 'initialMatch'
+>) => {
   const actorRef = ActorContext.useActorRef()
   const { match, matchState } = useMatchRules()
+  const botState = ActorContext.useSelector(({ context }) => context.botState)
   const [isHandInViewport, setIsHandInViewport] = useState(true)
 
   useEffect(() => {
@@ -33,9 +44,44 @@ export const useMatch = ({
 
   useEffect(() => {
     if (matchState === MatchState.UNINITIALIZED) {
-      actorRef.send({ type: MatchEvent.INIT, playerSeeds, userPlayerId })
+      if (initialMatch) {
+        actorRef.send({
+          type: MatchEvent.RESUME,
+          matchState: initialMatch.matchState,
+          match: initialMatch.match,
+          botState: initialMatch.botState,
+          userPlayerId,
+        })
+      } else {
+        actorRef.send({ type: MatchEvent.INIT, playerSeeds, userPlayerId })
+      }
     }
-  }, [matchState, playerSeeds, userPlayerId, actorRef])
+  }, [matchState, playerSeeds, userPlayerId, initialMatch, actorRef])
+
+  useEffect(() => {
+    if (
+      matchState === MatchState.WAITING_FOR_PLAYER_SETUP_ACTION ||
+      matchState === MatchState.WAITING_FOR_PLAYER_TURN_ACTION
+    ) {
+      onCheckpoint?.({ matchState, match, botState })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchState])
+
+  const hasFiredMatchEndRef = useRef(false)
+
+  useEffect(() => {
+    if (matchState === MatchState.GAME_OVER) {
+      if (!hasFiredMatchEndRef.current) {
+        // eslint-disable-next-line functional/immutable-data
+        hasFiredMatchEndRef.current = true
+        onMatchEnd?.(match.winner)
+      }
+    } else {
+      // eslint-disable-next-line functional/immutable-data
+      hasFiredMatchEndRef.current = false
+    }
+  }, [matchState, match.winner, onMatchEnd])
 
   const blockingOperation: ShellContextProps['blockingOperation'] = useCallback(
     async fn => {
@@ -104,6 +150,7 @@ export const useMatch = ({
 
   return {
     match,
+    botState,
     handleHandVisibilityToggle,
     handleClickPlayAgain,
     isHandDisabled,
