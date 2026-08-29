@@ -28,7 +28,7 @@
     "check": "npm test -- --coverage && npm run check:lint && npm run check:types",
     "check:lint": "eslint src --max-warnings=0",
     "check:types": "tsc",
-    "prepare": "husky install",
+    "prepare": "husky install || echo 'husky: not a git checkout, skipping' && npm run build:lib",
     "prepublishOnly": "npm run build:lib",
     "gitingest": "command -v gitingest >/dev/null 2>&1 || { echo \"gitingest not found. Please install it: https://github.com/cyclotruc/gitingest\"; exit 1; } && gitingest",
     "gitingest:app": "npm run gitingest -- --exclude-pattern=\"coverage,storybook-static,.vercel,*.piskel,*.test.*,*.stories.*,.github,.storybook\"",
