@@ -47,6 +47,20 @@ export default defineConfig({
         /^@mui\/icons-material\/.*/,
         '@emotion/react',
         '@emotion/styled',
+        // @xstate/react depends on this for its useSyncExternalStore
+        // shim. Left un-externalized, Rollup inlines a UMD-shaped copy
+        // whose runtime `require('react')` feature-detection branch
+        // survives bundling and throws when a consumer's dev server
+        // (e.g. Vite/Rolldown) prebundles this package a second time
+        // without a real `require` available. Every real-world React
+        // app already has this extremely common transitive dependency
+        // in its own tree, so externalizing it (like react/react-dom)
+        // is safe.
+        'use-sync-external-store',
+        /^use-sync-external-store\/.*/,
+        // Same runtime require('react') feature-detection pattern as
+        // use-sync-external-store above.
+        'react-node-to-string',
       ],
     },
   },
