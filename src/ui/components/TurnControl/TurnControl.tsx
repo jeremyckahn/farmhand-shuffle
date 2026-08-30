@@ -1,7 +1,3 @@
-import AccountBalance from '@mui/icons-material/AccountBalance.js'
-import AttachMoney from '@mui/icons-material/AttachMoney.js'
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown.js'
-import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp.js'
 import Accordion from '@mui/material/Accordion/index.js'
 import AccordionActions from '@mui/material/AccordionActions/index.js'
 import AccordionSummary from '@mui/material/AccordionSummary/index.js'
@@ -25,6 +21,12 @@ import {
 } from '../../../game/types'
 import { formatNumber } from '../../../lib/formatting/numbers'
 import { useMatchRules } from '../../hooks/useMatchRules'
+import {
+  AccountBalance,
+  AttachMoney,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+} from '../icons/index.js'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
 import { ActorContext } from '../Match/ActorContext'

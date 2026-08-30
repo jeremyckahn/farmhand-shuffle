@@ -1,4 +1,3 @@
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown.js'
 import Button from '@mui/material/Button/index.js'
 import Container from '@mui/material/Container/index.js'
 import Dialog from '@mui/material/Dialog/index.js'
@@ -12,6 +11,7 @@ import { funAnimalName } from 'fun-animal-names'
 
 import { isSxArray } from '../../type-guards'
 import { ui } from '../../img'
+import { KeyboardArrowDown } from '../icons/index.js'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 

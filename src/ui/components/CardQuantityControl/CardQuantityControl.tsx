@@ -1,5 +1,3 @@
-import AddIcon from '@mui/icons-material/Add.js'
-import RemoveIcon from '@mui/icons-material/Remove.js'
 import Box from '@mui/material/Box/index.js'
 import Fab from '@mui/material/Fab/index.js'
 import Paper from '@mui/material/Paper/index.js'
@@ -12,6 +10,7 @@ import { DECK_SIZE } from '../../../game/config'
 import { CardInstance } from '../../../game/types'
 import { CardSize } from '../../types'
 import { CardCore } from '../Card/CardCore'
+import { Add as AddIcon, Remove as RemoveIcon } from '../icons/index.js'
 
 import { CardQuantityControlProps } from './types'
 
