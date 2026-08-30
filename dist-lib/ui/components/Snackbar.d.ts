@@ -1,4 +1,4 @@
-import { AlertProps } from '@mui/material/Alert';
+import { AlertProps } from '@mui/material/Alert/index.js';
 import { ReactNode } from 'react';
 export interface SnackbarProps extends Pick<AlertProps, 'severity'> {
     message: ReactNode;

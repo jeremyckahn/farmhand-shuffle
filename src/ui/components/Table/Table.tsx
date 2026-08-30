@@ -1,7 +1,7 @@
-import Box from '@mui/material/Box'
-import Grid, { GridProps } from '@mui/material/Grid'
+import Box from '@mui/material/Box/index.js'
+import Grid, { GridProps } from '@mui/material/Grid/index.js'
 import useTheme from '@mui/material/styles/useTheme'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import useMediaQuery from '@mui/material/useMediaQuery/index.js'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch } from '../../../game/types'

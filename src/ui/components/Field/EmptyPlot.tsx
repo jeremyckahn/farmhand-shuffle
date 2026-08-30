@@ -1,4 +1,8 @@
-import { Box, darken, Grid, lighten, Typography, useTheme } from '@mui/material'
+import Box from '@mui/material/Box/index.js'
+import Grid from '@mui/material/Grid/index.js'
+import Typography from '@mui/material/Typography/index.js'
+import { darken, lighten } from '@mui/material/styles/index.js'
+import useTheme from '@mui/material/styles/useTheme'
 import { useContext } from 'react'
 
 import { MatchEvent, MatchState } from '../../../game/types'

@@ -1,4 +1,4 @@
-import { BoxProps } from '@mui/material/Box';
+import { BoxProps } from '@mui/material/Box/index.js';
 import { IMatch, IPlayer } from '../../../game/types';
 import { CardSize } from '../../types';
 export interface FieldProps extends BoxProps {

@@ -1,4 +1,4 @@
-import Box, { BoxProps } from '@mui/material/Box'
+import Box, { BoxProps } from '@mui/material/Box/index.js'
 import useTheme from '@mui/material/styles/useTheme'
 import React, { useCallback, useContext, useEffect, useRef } from 'react'
 

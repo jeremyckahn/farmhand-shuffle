@@ -1,5 +1,5 @@
-import Box, { BoxProps } from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
+import Box, { BoxProps } from '@mui/material/Box/index.js'
+import Grid from '@mui/material/Grid/index.js'
 import useTheme from '@mui/material/styles/useTheme'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useWindowSize } from 'usehooks-ts'

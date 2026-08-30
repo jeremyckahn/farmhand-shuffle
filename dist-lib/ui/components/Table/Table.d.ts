@@ -1,4 +1,4 @@
-import { GridProps } from '@mui/material/Grid';
+import { GridProps } from '@mui/material/Grid/index.js';
 import { IMatch } from '../../../game/types';
 export interface TableProps extends GridProps {
     match: IMatch;

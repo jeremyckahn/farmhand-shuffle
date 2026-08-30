@@ -1,6 +1,6 @@
-import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box/index.js'
+import Divider from '@mui/material/Divider/index.js'
+import Typography from '@mui/material/Typography/index.js'
 import React from 'react'
 
 import { DECK_SIZE, MAX_INSTANCES_PER_CARD } from '../../../game/config'

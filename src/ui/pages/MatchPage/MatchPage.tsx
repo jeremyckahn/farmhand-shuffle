@@ -1,5 +1,5 @@
-import CircularProgress from '@mui/material/CircularProgress'
-import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress/index.js'
+import Box from '@mui/material/Box/index.js'
 import { Suspense, useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 

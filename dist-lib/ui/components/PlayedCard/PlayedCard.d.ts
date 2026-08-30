@@ -1,4 +1,4 @@
-import { BoxProps } from '@mui/material/Box';
+import { BoxProps } from '@mui/material/Box/index.js';
 import { IPlayedCard } from '../../../game/types';
 import { BaseCardProps } from '../Card/types';
 export interface PlayedCropProps extends BoxProps {
