@@ -1,0 +1,51 @@
+name: Publish dist-lib preview
+
+# TEMPORARY: farmhand consumes this package via a GitHub tarball URL (no
+# real npm release exists yet - see publish.yml, which can only run from
+# main). Until that first real release happens post-merge, this keeps
+# dist-lib/ out of the feature branch's own history (avoiding a multi-
+# thousand-line diff on every rebuild) by publishing a minimal,
+# tarball-ready package (package.json + dist-lib, matching what `npm
+# pack` would include per the "files" field) to a dedicated branch that
+# farmhand's package.json points to instead.
+#
+# Delete this workflow, the branch it publishes to, and revert farmhand's
+# dependency back to a real npm version once this package has a real
+# release.
+
+on:
+  push:
+    branches:
+      - feature/753-farmhand-minigame-integration
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build:lib
+
+      - name: Publish package.json + dist-lib to the preview branch
+        run: |
+          set -e
+          publish_dir=$(mktemp -d)
+          cp package.json "$publish_dir"/
+          cp -r dist-lib "$publish_dir"/
+
+          cd "$publish_dir"
+          git init -q
+          git checkout -q -b dist-lib-preview
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Preview build from ${{ github.sha }}"
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push -q origin HEAD:dist-lib-preview --force
