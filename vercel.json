@@ -1,5 +1,5 @@
 {
-  "ignoreCommand": "stat .nojekyll || git log -1 --pretty=oneline --abbrev-commit | grep -wq '\\[skip deploy\\]' && exit 0 || exit 1",
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" = \"dist-lib-preview\" ] && exit 0 || (stat .nojekyll || git log -1 --pretty=oneline --abbrev-commit | grep -wq '\\[skip deploy\\]' && exit 0 || exit 1)",
   "rewrites": [
     {
       "source": "/(.*)",
