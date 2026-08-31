@@ -5,12 +5,14 @@ import DialogActions from '@mui/material/DialogActions/index.js'
 import DialogContent from '@mui/material/DialogContent/index.js'
 import DialogTitle from '@mui/material/DialogTitle/index.js'
 import Fab from '@mui/material/Fab/index.js'
+import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip/index.js'
 import { funAnimalName } from 'fun-animal-names'
 
 import { isSxArray } from '../../type-guards'
 import { ui } from '../../img'
+import { lightTheme } from '../../theme'
 import { KeyboardArrowDown } from '../icons/index.js'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
@@ -137,8 +139,17 @@ const MatchCore = ({
 
 export const Match = ({ ...rest }: MatchProps) => {
   return (
+    // Match is meant to be embedded in host apps with their own theme
+    // (see the farmhand integration), which would otherwise leak into
+    // Match's own colors - MUI ThemeProvider nests (a child provider
+    // overrides its ancestor's theme only for its own subtree), so this
+    // keeps Match visually self-contained regardless of what theme, if
+    // any, a consumer has active above it. Nested inside ActorContext.Provider
+    // (not around it) so MatchCore's own useTheme() call picks this up.
     <ActorContext.Provider>
-      <MatchCore {...rest} />
+      <ThemeProvider theme={lightTheme}>
+        <MatchCore {...rest} />
+      </ThemeProvider>
     </ActorContext.Provider>
   )
 }
