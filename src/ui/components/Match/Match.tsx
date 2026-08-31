@@ -70,6 +70,21 @@ const MatchCore = ({
             // Field cards.
             pb: 10,
             overflow: 'auto',
+            // Table positions the Hand with `position: fixed`, intending
+            // it to stay pinned to the bottom of this container's visible
+            // area while Field/Table content scrolls past above it - but
+            // per spec, a `fixed` element's containing block is always the
+            // viewport, not any ancestor, regardless of that ancestor's
+            // own position/overflow. In a host app that renders Match
+            // alongside other UI (e.g. a sidebar), that centers the Hand
+            // against the whole browser window instead of this container,
+            // visibly off-center. Any transform on an ancestor establishes
+            // a new containing block for fixed descendants (a spec'd CSS
+            // mechanism, not a hack) - this restores the intended
+            // "positioned relative to this container" behavior without
+            // giving up the "stays put while this container's own content
+            // scrolls" behavior fixed positioning provides.
+            transform: 'translateZ(0)',
             ...(isInputBlocked && {
               '*': {
                 pointerEvents: 'none',
