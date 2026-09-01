@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box/index.js'
 import Button from '@mui/material/Button/index.js'
 import Container from '@mui/material/Container/index.js'
 import Dialog from '@mui/material/Dialog/index.js'
@@ -67,11 +68,8 @@ const MatchCore = ({
             backgroundImage: `url(${ui.brownDotBackground})`,
             backgroundSize: theme.spacing(10),
             imageRendering: 'pixelated',
-            pt: 1,
-            // NOTE: This prevents the hide/show Hand button from obscuring
-            // Field cards.
-            pb: 10,
-            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
             // Table positions the Hand with `position: fixed`, intending
             // it to stay pinned to the bottom of this container's visible
             // area while Field/Table content scrolls past above it - but
@@ -83,9 +81,19 @@ const MatchCore = ({
             // visibly off-center. Any transform on an ancestor establishes
             // a new containing block for fixed descendants (a spec'd CSS
             // mechanism, not a hack) - this restores the intended
-            // "positioned relative to this container" behavior without
-            // giving up the "stays put while this container's own content
-            // scrolls" behavior fixed positioning provides.
+            // "positioned relative to this container" behavior.
+            //
+            // That containing-block redirection has a second consequence
+            // though: a `fixed` descendant of a scrolling containing block
+            // scrolls along with that block's content instead of staying
+            // pinned (also per spec - a scrolling containing block moves
+            // its own fixed descendants same as it would absolute ones).
+            // So this element itself must NOT be the scrolling element -
+            // scrolling is delegated to the plain (non-containing-block)
+            // inner Box below, which the Hand and hide/show button skip
+            // past on their way up to this Container, leaving them
+            // unaffected by its scroll.
+            overflow: 'hidden',
             transform: 'translateZ(0)',
             ...(isInputBlocked && {
               '*': {
@@ -98,9 +106,21 @@ const MatchCore = ({
         ]}
         {...rest}
       >
-        <TurnControl match={match} />
-        {renderStatusBarContent?.()}
-        <Table sx={{ pt: 4 }} match={match} />
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            overflow: 'auto',
+            pt: 1,
+            // NOTE: This prevents the hide/show Hand button from obscuring
+            // Field cards.
+            pb: 10,
+          }}
+        >
+          <TurnControl match={match} />
+          {renderStatusBarContent?.()}
+          <Table sx={{ pt: 4 }} match={match} />
+        </Box>
         <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
           <Fab
             color="secondary"
