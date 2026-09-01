@@ -39,6 +39,13 @@ jobs:
           publish_dir=$(mktemp -d)
           cp package.json "$publish_dir"/
           cp -r dist-lib "$publish_dir"/
+          # Vercel evaluates ignoreCommand from the vercel.json of the ref
+          # being built, not the feature branch's - this branch has no
+          # source vercel.json to inherit one from, so without its own
+          # copy Vercel falls back to actually building it (and failing,
+          # since this branch has no lockfile for `npm ci`). This branch
+          # is never meant to be deployed on its own, so always skip.
+          echo '{"ignoreCommand": "exit 0"}' > "$publish_dir"/vercel.json
 
           cd "$publish_dir"
           git init -q
