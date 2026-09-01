@@ -61,6 +61,12 @@ const MatchCore = ({
     <ShellContext.Provider value={shellContextValue}>
       <Container
         maxWidth={false}
+        // MUI Container applies its own left/right padding by default,
+        // which would inset the inner scrollable Box's edges (and thus its
+        // scrollbar) away from this Container's true edges. That padding
+        // is applied to the inner Box's content instead, below, so the
+        // scrollbar itself renders flush with this Container's edge.
+        disableGutters
         data-testid="match"
         sx={[
           {
@@ -110,8 +116,14 @@ const MatchCore = ({
           sx={{
             flex: 1,
             minHeight: 0,
-            overflow: 'auto',
+            overflowY: 'auto',
+            // Never horizontally scrollable: Table/Field content is sized
+            // to fit whatever width this container actually has (see
+            // useContainerWidth), so any horizontal overflow here would be
+            // a layout bug, not a legitimate need to scroll sideways.
+            overflowX: 'hidden',
             pt: 1,
+            px: 2,
             // NOTE: This prevents the hide/show Hand button from obscuring
             // Field cards.
             pb: 10,

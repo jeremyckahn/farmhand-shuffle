@@ -11,6 +11,7 @@ import {
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
+import { useContainerWidth } from '../../hooks/useContainerWidth'
 import { CardSize } from '../../types'
 import { PlayedCard, playedCardClassName } from '../PlayedCard'
 
@@ -38,7 +39,7 @@ export const Field = ({
   const player = lookup.getPlayer(match, playerId)
   const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
 
-  const containerRef = useRef<HTMLDivElement>()
+  const containerRef = useRef<HTMLDivElement>(null)
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
   const [selectedCardTransform, setSelectedCardTransform] = useState('')
@@ -47,6 +48,16 @@ export const Field = ({
     // to avoid resetSelectedCard from being unbound before it is called.
     debounceDelay: 1,
   })
+  // Not xs/sm/md breakpoint props on the Grid items below: those resolve
+  // via CSS media queries against the browser viewport, not this
+  // component's own rendered width - see useContainerWidth. A host app
+  // that gives Field less than the full viewport (e.g. alongside its own
+  // sidebar) would still report the viewport-wide breakpoint, causing
+  // cards sized for a wide layout to render (and overlap) in a narrow one.
+  const containerWidth = useContainerWidth(containerRef)
+  const useLargeLayout = containerWidth >= theme.breakpoints.values.md
+  const useMediumLayout = containerWidth >= theme.breakpoints.values.sm
+  const gridItemXs = useLargeLayout ? 2 : useMediumLayout ? 4 : 6
 
   const centerX = windowWidth / 2
   const centerY = windowHeight / 2
@@ -160,6 +171,7 @@ export const Field = ({
                 cardSize={cardSize}
                 playerId={playerId}
                 fieldIdx={fieldIdx}
+                gridItemXs={gridItemXs}
               />
             )
           }
@@ -171,7 +183,7 @@ export const Field = ({
             selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
-            <Grid key={cardInstance.instanceId} item xs={6} sm={4} md={2}>
+            <Grid key={cardInstance.instanceId} item xs={gridItemXs}>
               <PlayedCard
                 aria-label={
                   isSelected ? selectedCardLabel : unselectedCardLabel

@@ -18,8 +18,10 @@ export const EmptyPlot = ({
   cardSize = CardSize.SMALL,
   playerId,
   fieldIdx,
+  gridItemXs = 6,
 }: Pick<FieldProps, 'cardSize' | 'playerId'> & {
   fieldIdx: number
+  gridItemXs?: number
 }) => {
   const theme = useTheme()
 
@@ -50,7 +52,7 @@ export const EmptyPlot = ({
   }
 
   return (
-    <Grid item xs={6} sm={4} md={2}>
+    <Grid item xs={gridItemXs}>
       <Box
         height={CARD_DIMENSIONS[cardSize].height}
         width={CARD_DIMENSIONS[cardSize].width}
