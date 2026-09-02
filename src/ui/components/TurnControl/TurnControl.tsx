@@ -198,13 +198,18 @@ export const TurnControl = ({ match }: TurnControlProps) => {
       <Stack
         direction="row"
         justifyContent="space-between"
-        sx={{ color: theme.palette.common.white }}
+        // No color set here - CSS inheritance passes this through from
+        // whatever ancestor sets one (Match's own root Container, by
+        // default, sets it to white for the standalone/default look). A
+        // host embedding Match can override that from the outside via
+        // Match's own consumer-facing `sx` prop, without this component
+        // needing to know or care that it's embedded.
       >
         <Tooltip title="Your funds" arrow>
           <Stack
             direction="row"
             alignItems="center"
-            color={{
+            sx={{
               cursor: 'help',
               ...(sessionOwnerPlayerFunds <= playerFundWarningThreshold && {
                 color: theme.palette.error.dark,

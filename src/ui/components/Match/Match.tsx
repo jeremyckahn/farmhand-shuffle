@@ -74,6 +74,15 @@ const MatchCore = ({
             backgroundImage: `url(${ui.brownDotBackground})`,
             backgroundSize: theme.spacing(10),
             imageRendering: 'pixelated',
+            // Sets the base text color for everything inside (e.g.
+            // TurnControl's funds display), which otherwise has none of
+            // its own and just inherits this via normal CSS cascade. A
+            // host embedding Match with its own background (see the
+            // backgroundColor/backgroundImage overrides above) can
+            // override this the same way, through the same consumer-
+            // facing `sx` prop, without any component in between needing
+            // an embedding-specific prop of its own.
+            color: theme.palette.common.white,
             display: 'flex',
             flexDirection: 'column',
             // Table positions the Hand with `position: fixed`, intending
