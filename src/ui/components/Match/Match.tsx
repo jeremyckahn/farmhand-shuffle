@@ -149,22 +149,25 @@ const MatchCore = ({
             onClick={handleHandVisibilityToggle}
             sx={{
               position: 'fixed',
-              // Matches the host Farmhand app's own bottom nav controls
-              // (its `.bottom-controls`, 1em normally / 0.5em at
-              // <=400px) pixel-for-pixel, so this button lines up with
-              // them at every screen size instead of just some. rem, not
-              // em: Fab's own typography variant has a smaller font-size
-              // than the ambient page, so `em` here would resolve
-              // against that instead of the root font-size Farmhand's
-              // plain <div> uses for its own equivalent values. left
-              // matches bottom exactly rather than being independently
-              // chosen, so this button sits the same distance from each
-              // of its two nearest edges.
-              bottom: '1rem',
-              left: '1rem',
+              // Matches the host Farmhand app's own bottom nav row
+              // pixel-for-pixel, so this button lines up with it at
+              // every screen size instead of just some. That row's own
+              // vertical offset isn't just its container's `bottom`
+              // (1rem normally / 0.5rem at <=400px) - each button in it
+              // also carries its own margin-bottom (0.4375rem normally,
+              // 0.21875rem at <=400px, from a breakpoint-specific rule
+              // on the host's side), which stacks with the container's
+              // own offset. Measured directly against the host's
+              // rendered layout rather than derived, since the second
+              // number isn't otherwise discoverable from this package
+              // alone. left matches bottom exactly rather than being
+              // independently chosen, so this button sits the same
+              // distance from each of its two nearest edges.
+              bottom: '1.4375rem',
+              left: '1.4375rem',
               '@media (max-width: 400px)': {
-                bottom: '0.5rem',
-                left: '0.5rem',
+                bottom: '0.71875rem',
+                left: '0.71875rem',
               },
             }}
           >
