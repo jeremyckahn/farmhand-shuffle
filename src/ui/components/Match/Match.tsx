@@ -149,8 +149,23 @@ const MatchCore = ({
             onClick={handleHandVisibilityToggle}
             sx={{
               position: 'fixed',
-              bottom: theme.spacing(2),
-              left: theme.spacing(2),
+              // Matches the host Farmhand app's own bottom nav controls
+              // (its `.bottom-controls`, 1em normally / 0.5em at
+              // <=400px) pixel-for-pixel, so this button lines up with
+              // them at every screen size instead of just some. rem, not
+              // em: Fab's own typography variant has a smaller font-size
+              // than the ambient page, so `em` here would resolve
+              // against that instead of the root font-size Farmhand's
+              // plain <div> uses for its own equivalent values. left
+              // matches bottom exactly rather than being independently
+              // chosen, so this button sits the same distance from each
+              // of its two nearest edges.
+              bottom: '1rem',
+              left: '1rem',
+              '@media (max-width: 400px)': {
+                bottom: '0.5rem',
+                left: '0.5rem',
+              },
             }}
           >
             <KeyboardArrowDown
