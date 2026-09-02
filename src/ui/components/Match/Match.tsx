@@ -12,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip/index.js'
 import { funAnimalName } from 'fun-animal-names'
 
 import { isSxArray } from '../../type-guards'
+import { NotificationProvider } from '../../context/NotificationContext'
 import { ui } from '../../img'
 import { lightTheme } from '../../theme'
 import { KeyboardArrowDown } from '../icons/index.js'
@@ -205,9 +206,21 @@ export const Match = ({ ...rest }: MatchProps) => {
     // keeps Match visually self-contained regardless of what theme, if
     // any, a consumer has active above it. Nested inside ActorContext.Provider
     // (not around it) so MatchCore's own useTheme() call picks this up.
+    //
+    // NotificationProvider is needed for the same reason, for a different
+    // symptom: useSnackbar (used internally by Table/TurnControl to show
+    // bot-turn notifications - a crop harvested, a card drawn, etc.) reads
+    // it via useNotification(), whose context default throws if no
+    // NotificationProvider ancestor exists at all. The standalone app's
+    // own App.tsx happens to provide one, which masked this - a host app
+    // embedding just Match, with no reason to know it needs to supply an
+    // unrelated context this component never mentions in its own props,
+    // hits that throw the moment any bot action tries to notify.
     <ActorContext.Provider>
       <ThemeProvider theme={lightTheme}>
-        <MatchCore {...rest} />
+        <NotificationProvider>
+          <MatchCore {...rest} />
+        </NotificationProvider>
       </ThemeProvider>
     </ActorContext.Provider>
   )
