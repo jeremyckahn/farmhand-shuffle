@@ -10,6 +10,10 @@
       "types": "./dist-lib/index.d.ts",
       "import": "./dist-lib/index.mjs"
     },
+    "./testing": {
+      "types": "./dist-lib/testing.d.ts",
+      "import": "./dist-lib/testing.mjs"
+    },
     "./package.json": "./package.json"
   },
   "files": [

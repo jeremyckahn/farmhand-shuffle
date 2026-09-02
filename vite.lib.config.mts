@@ -5,6 +5,9 @@ import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
 const entry = fileURLToPath(new URL('./src/public/index.ts', import.meta.url))
+const testingEntry = fileURLToPath(
+  new URL('./src/public/testing.ts', import.meta.url)
+)
 
 export default defineConfig({
   plugins: [
@@ -31,9 +34,9 @@ export default defineConfig({
     // to configure static asset copying for this package.
     assetsInlineLimit: Number.MAX_SAFE_INTEGER,
     lib: {
-      entry,
+      entry: { index: entry, testing: testingEntry },
       formats: ['es'],
-      fileName: () => 'index.mjs',
+      fileName: (_format, entryName) => `${entryName}.mjs`,
     },
     rollupOptions: {
       external: [

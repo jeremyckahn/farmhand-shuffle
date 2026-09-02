@@ -50,8 +50,21 @@ own "End turn" button sends - is the entire trigger:
 not touch a live match actor, so it's a pure, synchronous function safe to
 call anywhere (build scripts included).
 
+**Import from `@jeremyckahn/farmhand-shuffle/testing`, not the main
+package entry.** The main entry re-exports the `Match` React component,
+whose React/MUI dependencies are externalized in the build for a
+consuming bundler to resolve - fine inside a real app, but it means a
+plain Node script (e.g. a host app's own fixture-generation script,
+running outside any bundler) can't import _anything_ from the main entry
+at all. `@jeremyckahn/farmhand-shuffle/testing` is a second, lighter
+entry point with zero React/MUI dependencies, containing exactly the
+exports this doc covers - usable anywhere Node runs.
+
 ```ts
-import { buildLowFundsMatch, MatchState } from '@jeremyckahn/farmhand-shuffle'
+import {
+  buildLowFundsMatch,
+  MatchState,
+} from '@jeremyckahn/farmhand-shuffle/testing'
 
 const sessionOwnerPlayerId = 'my-app-user-id'
 const opponentPlayerId = 'my-app-bot-id'
