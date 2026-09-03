@@ -31,14 +31,19 @@ import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
+import { genericOpponentPlayerLabel } from '../constants'
 
 export interface TurnControlProps {
   match: IMatch
+  useGenericPlayerLabels?: boolean
 }
 
 const playerFundWarningThreshold = STANDARD_TAX_AMOUNT * 2
 
-export const TurnControl = ({ match }: TurnControlProps) => {
+export const TurnControl = ({
+  match,
+  useGenericPlayerLabels = false,
+}: TurnControlProps) => {
   const theme = useTheme()
   const actorRef = ActorContext.useActorRef()
   const { setIsHandInViewport } = useContext(ShellContext)
@@ -48,7 +53,12 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     match: { currentPlayerId, sessionOwnerPlayerId },
   } = useMatchRules()
 
-  const currentPlayerName = funAnimalName(currentPlayerId ?? '')
+  // Only ever read below while it's the non-session-owner's turn (see
+  // PERFORMING_BOT_TURN_ACTION / PERFORMING_BOT_SETUP_ACTION), so it's safe
+  // to always resolve to the opponent label when generic labels are on.
+  const currentPlayerName = useGenericPlayerLabels
+    ? genericOpponentPlayerLabel
+    : funAnimalName(currentPlayerId ?? '')
 
   const handleCompleteSetup = () => {
     actorRef.send({ type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION })
@@ -191,7 +201,9 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   const opponentFunds = opponentPlayerId
     ? lookup.getPlayer(match, opponentPlayerId)?.funds
     : 0
-  const opponentName = funAnimalName(opponentPlayerId ?? '')
+  const opponentName = useGenericPlayerLabels
+    ? genericOpponentPlayerLabel
+    : funAnimalName(opponentPlayerId ?? '')
 
   return (
     <Stack spacing={1}>

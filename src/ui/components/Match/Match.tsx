@@ -13,6 +13,10 @@ import { funAnimalName } from 'fun-animal-names'
 
 import { isSxArray } from '../../type-guards'
 import { NotificationProvider } from '../../context/NotificationContext'
+import {
+  genericOpponentPlayerLabel,
+  genericSelfPlayerLabel,
+} from '../constants'
 import { ui } from '../../img'
 import { lightTheme } from '../../theme'
 import { KeyboardArrowDown } from '../icons/index.js'
@@ -35,6 +39,7 @@ const MatchCore = ({
   renderGameOverContent,
   hideDefaultGameOverActions = false,
   initialMatch,
+  useGenericPlayerLabels = false,
   ...rest
 }: MatchProps) => {
   const theme = useTheme()
@@ -54,6 +59,7 @@ const MatchCore = ({
     onMatchEnd,
     onCheckpoint,
     initialMatch,
+    useGenericPlayerLabels,
   })
 
   const { winner } = match
@@ -139,7 +145,10 @@ const MatchCore = ({
             pb: 10,
           }}
         >
-          <TurnControl match={match} />
+          <TurnControl
+            match={match}
+            useGenericPlayerLabels={useGenericPlayerLabels}
+          />
           {renderStatusBarContent?.()}
           <Table sx={{ pt: 4 }} match={match} />
         </Box>
@@ -183,7 +192,16 @@ const MatchCore = ({
         <Dialog open={showGameOver}>
           <DialogTitle>Game Over</DialogTitle>
           <DialogContent>
-            Winner: <strong>{winner ? funAnimalName(winner) : 'No one'}</strong>
+            Winner:{' '}
+            <strong>
+              {winner
+                ? useGenericPlayerLabels
+                  ? winner === match.sessionOwnerPlayerId
+                    ? genericSelfPlayerLabel
+                    : genericOpponentPlayerLabel
+                  : funAnimalName(winner)
+                : 'No one'}
+            </strong>
             {renderGameOverContent?.(winner)}
           </DialogContent>
           <DialogActions>

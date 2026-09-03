@@ -16,6 +16,7 @@ export const useMatch = ({
   onMatchEnd,
   onCheckpoint,
   initialMatch,
+  useGenericPlayerLabels,
 }: Pick<
   MatchProps,
   | 'playerSeeds'
@@ -23,6 +24,7 @@ export const useMatch = ({
   | 'onMatchEnd'
   | 'onCheckpoint'
   | 'initialMatch'
+  | 'useGenericPlayerLabels'
 >) => {
   const actorRef = ActorContext.useActorRef()
   const { match, matchState } = useMatchRules()
@@ -97,7 +99,11 @@ export const useMatch = ({
     [setIsBlockingOperationExecuting]
   )
 
-  const { showNotification } = useSnackbar({ actorRef, match })
+  const { showNotification } = useSnackbar({
+    actorRef,
+    match,
+    useGenericPlayerLabels,
+  })
 
   const [selectedHandCardIdx, _setSelectedHandCardIdx] =
     useState(deselectedHandIdx)

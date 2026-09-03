@@ -67,4 +67,13 @@ export interface MatchProps extends ContainerProps {
     match: IMatch
     botState: BotState
   }
+
+  /**
+   * When true, always refers to the session owner as "You" and every other
+   * player as "Opponent" instead of generating a name via funAnimalName.
+   * Intended for embedding hosts (e.g. Farmhand) where the opponent is
+   * always the same fixed bot and a generated animal name would be out of
+   * place. Standalone usage (MatchPage) leaves this unset.
+   */
+  useGenericPlayerLabels?: boolean
 }
