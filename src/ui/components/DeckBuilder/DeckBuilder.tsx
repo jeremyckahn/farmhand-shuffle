@@ -1,8 +1,8 @@
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
-import Paper from '@mui/material/Paper'
-import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box/index.js'
+import Button from '@mui/material/Button/index.js'
+import CircularProgress from '@mui/material/CircularProgress/index.js'
+import Paper from '@mui/material/Paper/index.js'
+import Typography from '@mui/material/Typography/index.js'
 
 import { DECK_SIZE } from '../../../game/config'
 

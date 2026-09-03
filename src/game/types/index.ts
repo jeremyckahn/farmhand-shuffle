@@ -286,6 +286,14 @@ export enum MatchEvent {
   INIT = 'INIT',
   OPERATION_ABORTED = 'OPERATION_ABORTED',
 
+  /**
+   * Resumes a match from a previously-checkpointed state. Restricted to the
+   * two states where a human is idle waiting to act:
+   * MatchState.WAITING_FOR_PLAYER_SETUP_ACTION and
+   * MatchState.WAITING_FOR_PLAYER_TURN_ACTION.
+   */
+  RESUME = 'RESUME',
+
   PLAY_CARD = 'PLAY_CARD',
   PLAY_CROP = 'PLAY_CROP',
   PLAY_EVENT = 'PLAY_EVENT',
@@ -433,6 +441,16 @@ export interface MatchEventPayload {
   [MatchEvent.INIT]: {
     type: MatchEvent.INIT
     playerSeeds: IPlayerSeed[]
+    userPlayerId: string
+  }
+
+  [MatchEvent.RESUME]: {
+    type: MatchEvent.RESUME
+    matchState:
+      | MatchState.WAITING_FOR_PLAYER_SETUP_ACTION
+      | MatchState.WAITING_FOR_PLAYER_TURN_ACTION
+    match: IMatch
+    botState: BotState
     userPlayerId: string
   }
 

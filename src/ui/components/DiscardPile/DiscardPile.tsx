@@ -1,6 +1,6 @@
-import Box, { BoxProps } from '@mui/material/Box'
+import Box, { BoxProps } from '@mui/material/Box/index.js'
 import useTheme from '@mui/material/styles/useTheme'
-import Tooltip from '@mui/material/Tooltip'
+import Tooltip from '@mui/material/Tooltip/index.js'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'

@@ -1,11 +1,12 @@
-import Box from '@mui/material/Box'
-import Grid, { GridProps } from '@mui/material/Grid'
+import { useRef } from 'react'
+import Box from '@mui/material/Box/index.js'
+import Grid, { GridProps } from '@mui/material/Grid/index.js'
 import useTheme from '@mui/material/styles/useTheme'
-import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch } from '../../../game/types'
 import { CardSize } from '../../types'
+import { useContainerWidth } from '../../hooks/useContainerWidth'
 import { Deck } from '../Deck/Deck'
 import { DiscardPile } from '../DiscardPile/DiscardPile'
 import { Field } from '../Field/Field'
@@ -19,7 +20,14 @@ export const Table = ({ match, ...rest }: TableProps) => {
   const theme = useTheme()
   const { sessionOwnerPlayerId: userPlayerId } = match
   const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
-  const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
+  const gridRef = useRef<HTMLDivElement>(null)
+  // Not useMediaQuery(theme.breakpoints.up('md')): that measures the
+  // browser viewport, not this component's own rendered width. A host app
+  // that gives Match less than the full viewport (e.g. alongside its own
+  // sidebar) would still report the viewport-wide breakpoint, rendering
+  // large-card layout in a space too narrow for it.
+  const containerWidth = useContainerWidth(gridRef)
+  const useLargeCards = containerWidth >= theme.breakpoints.values.md
   const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.SMALL
 
   return (
@@ -28,6 +36,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
         gap={4}
         container
         {...rest}
+        ref={gridRef}
         data-testid={`table_${match.sessionOwnerPlayerId}`}
       >
         <Grid item xs={12}>

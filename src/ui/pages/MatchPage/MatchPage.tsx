@@ -1,11 +1,11 @@
-import CircularProgress from '@mui/material/CircularProgress'
-import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress/index.js'
+import Box from '@mui/material/Box/index.js'
 import { Suspense, useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
 import { CardInstance, IPlayerSeed } from '../../../game/types'
 import { StorageService, storage } from '../../../services/StorageService'
-import { stubDeck } from '../../../test-utils/stubs/deck'
+import { starterDeck } from '../../../game/config/starterDeck'
 import { Match } from '../../components/Match'
 
 // Resource type definition
@@ -25,7 +25,7 @@ const createDeckResource = (): DeckResource => {
       if (savedDeck) {
         result = StorageService.instantiateDeserializedDeck(savedDeck)
       } else {
-        result = stubDeck()
+        result = starterDeck()
       }
       status = 'success'
     } catch (e) {
@@ -62,7 +62,7 @@ const MatchPageContent = ({ resource }: { resource: DeckResource }) => {
 
     const player2: IPlayerSeed = {
       id: player2Id,
-      deck: stubDeck(),
+      deck: starterDeck(),
     }
 
     return {
