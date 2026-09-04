@@ -159,6 +159,38 @@ describe('Field', () => {
     }
   })
 
+  test('the field row is not clipped while a card is zoomed/selected', async () => {
+    render(<StubField />)
+
+    const row = screen.getByTestId(
+      `field_${matchStub.sessionOwnerPlayerId}`
+    ).firstElementChild
+
+    if (!row) {
+      throw new Error('Field row not found')
+    }
+
+    expect(getComputedStyle(row).overflow).toEqual('auto')
+
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    if (!playedCrop1) {
+      throw new Error('Crop not found')
+    }
+
+    await userEvent.click(playedCrop1)
+
+    // NOTE: A selected card is translated toward the center of the
+    // viewport (see Field.tsx's handleCardFocus); the row must not clip it.
+    expect(getComputedStyle(row).overflow).toEqual('visible')
+
+    await waitFor(() => {
+      ;(document.activeElement as HTMLElement).blur()
+    })
+
+    expect(getComputedStyle(row).overflow).toEqual('auto')
+  })
+
   test("clicking an opponent's card selects it", async () => {
     render(<StubField playerId={opponentPlayerId} />)
 

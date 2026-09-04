@@ -147,7 +147,11 @@ export const Field = ({
       <Box
         display="flex"
         flexWrap="nowrap"
-        overflow="auto"
+        // NOTE: overflow is only clipped for horizontal scrolling when no
+        // card is selected. A selected card is translated toward the
+        // center of the viewport (see handleCardFocus) and would otherwise
+        // get clipped by this container as it moves outside its bounds.
+        overflow={selectedCardIdx === deselectedIdx ? 'auto' : 'visible'}
         gap={
           cardSize === CardSize.COMPACT ? theme.spacing(0.5) : theme.spacing(2)
         }
