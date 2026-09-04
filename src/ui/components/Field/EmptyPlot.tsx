@@ -58,7 +58,7 @@ export const EmptyPlot = ({
         outlineColor: canBeSelected
           ? theme.palette.primary.light
           : theme.palette.divider,
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: `${theme.shape.borderRadius}px`,
         transition: theme.transitions.create(['background', 'transform']),
         boxShadow: canBeSelected
           ? `0 0 12px 4px ${theme.palette.primary.light}`

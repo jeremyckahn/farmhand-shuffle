@@ -147,11 +147,15 @@ export const Field = ({
       <Box
         display="flex"
         flexWrap="nowrap"
-        // NOTE: overflow is only clipped for horizontal scrolling when no
-        // card is selected. A selected card is translated toward the
-        // center of the viewport (see handleCardFocus) and would otherwise
-        // get clipped by this container as it moves outside its bounds.
-        overflow={selectedCardIdx === deselectedIdx ? 'auto' : 'visible'}
+        // NOTE: This row is intentionally never clipped. Browsers force
+        // overflow-y back to 'auto' whenever overflow-x isn't 'visible'
+        // (per the CSS Overflow spec), and 'auto' still clips paint that
+        // extends past the box -- outlines, hover/selected box-shadows,
+        // and the tap-to-zoom transform in handleCardFocus -- even when
+        // there's nothing to scroll. Compact sizing is already tuned to
+        // fit real device widths without wrapping, so there's no
+        // horizontal-scroll safety net to trade off against.
+        overflow="visible"
         gap={
           cardSize === CardSize.COMPACT ? theme.spacing(0.5) : theme.spacing(2)
         }

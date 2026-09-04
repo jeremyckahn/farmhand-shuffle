@@ -53,6 +53,21 @@ describe('EmptyPlot', () => {
     expect(plot).toBeInTheDocument()
   })
 
+  test('has a subtle border radius, not the MUI sx multiplier value', () => {
+    const { container } = renderEmptyPlot(
+      MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      stubPlayer1.id
+    )
+
+    const plot = container.firstChild as HTMLElement
+
+    // NOTE: sx's `borderRadius` treats a bare number as a multiplier of
+    // theme.shape.borderRadius, not a pixel value -- passing
+    // theme.shape.borderRadius directly (without a unit) previously
+    // squared it (4 * 4 = 16px), making plots look like pills.
+    expect(getComputedStyle(plot).borderRadius).toEqual('4px')
+  })
+
   test('shows "Place card" when can be selected', () => {
     renderEmptyPlot(MatchState.CHOOSING_CARD_POSITION, stubPlayer1.id)
 

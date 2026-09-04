@@ -159,7 +159,7 @@ describe('Field', () => {
     }
   })
 
-  test('the field row is not clipped while a card is zoomed/selected', async () => {
+  test('the field row never clips its contents', async () => {
     render(<StubField />)
 
     const row = screen.getByTestId(
@@ -170,7 +170,11 @@ describe('Field', () => {
       throw new Error('Field row not found')
     }
 
-    expect(getComputedStyle(row).overflow).toEqual('auto')
+    // NOTE: Plot outlines/box-shadows paint outside their own layout box,
+    // and a selected card is translated toward the center of the viewport
+    // (see Field.tsx's handleCardFocus) -- the row must never clip any of
+    // that, whether or not a card is selected.
+    expect(getComputedStyle(row).overflow).toEqual('visible')
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
@@ -180,15 +184,13 @@ describe('Field', () => {
 
     await userEvent.click(playedCrop1)
 
-    // NOTE: A selected card is translated toward the center of the
-    // viewport (see Field.tsx's handleCardFocus); the row must not clip it.
     expect(getComputedStyle(row).overflow).toEqual('visible')
 
     await waitFor(() => {
       ;(document.activeElement as HTMLElement).blur()
     })
 
-    expect(getComputedStyle(row).overflow).toEqual('auto')
+    expect(getComputedStyle(row).overflow).toEqual('visible')
   })
 
   test("clicking an opponent's card selects it", async () => {
