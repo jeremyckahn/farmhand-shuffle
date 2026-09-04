@@ -47,10 +47,10 @@ describe('EmptyPlot', () => {
       stubPlayer1.id
     )
 
-    // NOTE: The Grid item is the top-level element
-    const gridItem = container.firstChild
+    // NOTE: The clickable Box is the top-level element
+    const plot = container.firstChild
 
-    expect(gridItem).toBeInTheDocument()
+    expect(plot).toBeInTheDocument()
   })
 
   test('shows "Place card" when can be selected', () => {
@@ -84,8 +84,7 @@ describe('EmptyPlot', () => {
       stubPlayer1.id
     )
 
-    const gridItem = container.firstChild
-    const plot = gridItem?.firstChild
+    const plot = container.firstChild
 
     if (!plot) throw new Error('Plot not found')
 
@@ -101,8 +100,7 @@ describe('EmptyPlot', () => {
       stubPlayer2.id
     )
 
-    const gridItem = container.firstChild
-    const plot = gridItem?.firstChild
+    const plot = container.firstChild
 
     if (!plot) throw new Error('Plot not found')
 

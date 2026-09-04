@@ -1,5 +1,4 @@
 import Box, { BoxProps } from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useWindowSize } from 'usehooks-ts'
@@ -11,6 +10,7 @@ import {
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
+import { getFieldZoomScale } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { PlayedCard, playedCardClassName } from '../PlayedCard'
 
@@ -104,7 +104,9 @@ export const Field = ({
       (isSessionOwnerPlayer ? selectedCardYOffset : -selectedCardYOffset)
 
     setSelectedCardTransform(
-      `translateX(${xDelta}px) translateY(${yDelta}px) scale(1.25)`
+      `translateX(${xDelta}px) translateY(${yDelta}px) scale(${getFieldZoomScale(
+        cardSize
+      )})`
     )
     setSelectedCardIdx(cardIdx)
   }
@@ -142,11 +144,15 @@ export const Field = ({
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
-      <Grid
-        container
-        spacing={2}
+      <Box
+        display="flex"
+        flexWrap="nowrap"
+        overflow="auto"
+        gap={
+          cardSize === CardSize.COMPACT ? theme.spacing(0.5) : theme.spacing(2)
+        }
         alignItems={isSessionOwnerPlayer ? 'flex-start' : 'flex-end'}
-        justifyContent="center"
+        justifyContent={cardSize === CardSize.COMPACT ? 'flex-start' : 'center'}
       >
         {displayedCards.map((playedCard, renderedIdx) => {
           const fieldIdx = isSessionOwnerPlayer
@@ -171,57 +177,55 @@ export const Field = ({
             selectedCardIdx !== deselectedIdx && !isSelected
 
           return (
-            <Grid key={cardInstance.instanceId} item xs={6} sm={4} md={2}>
-              <PlayedCard
-                aria-label={
-                  isSelected ? selectedCardLabel : unselectedCardLabel
-                }
-                tabIndex={0}
-                cardProps={{
-                  cardInstance,
-                  cardIdxInField: fieldIdx,
-                  cropIdxInFieldToWater: fieldIdx,
-                  cropIdxInFieldToHarvest: fieldIdx,
-                  isInField: true,
-                  isFocused: isSelected,
-                  playerId: player.id,
-                  size: cardSize,
+            <PlayedCard
+              key={cardInstance.instanceId}
+              aria-label={isSelected ? selectedCardLabel : unselectedCardLabel}
+              tabIndex={0}
+              cardProps={{
+                cardInstance,
+                cardIdxInField: fieldIdx,
+                cropIdxInFieldToWater: fieldIdx,
+                cropIdxInFieldToHarvest: fieldIdx,
+                isInField: true,
+                isFocused: isSelected,
+                playerId: player.id,
+                size: cardSize,
+                ...(isSelected && {
+                  elevation: SELECTED_CARD_ELEVATION,
+                }),
+                paperProps: {
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
                   }),
-                  paperProps: {
-                    ...(isSelected && {
-                      elevation: SELECTED_CARD_ELEVATION,
-                    }),
-                  },
-                }}
-                playedCard={playedCard}
-                isInBackground={isInBackground}
-                onFocus={event => handleCardFocus(event, fieldIdx)}
-                sx={{
-                  mx: 'auto',
-                  position: 'relative',
-                  transition: theme.transitions.create(['transform']),
-                  outline: 'none',
-                  // NOTE: This is needed to fix a Firefox bug that prevents
-                  // opponent fields from appearing upside down
-                  transformStyle: 'preserve-3d',
-                  ...(!isSessionOwnerPlayer && {
-                    transform: rotationTransform,
-                  }),
-                  ...(!isSelected && {
-                    cursor: 'pointer',
-                  }),
-                  ...(isSelected && {
-                    transform: selectedCardTransform,
-                    zIndex: 20,
-                  }),
-                }}
-              />
-            </Grid>
+                },
+              }}
+              playedCard={playedCard}
+              isInBackground={isInBackground}
+              onFocus={event => handleCardFocus(event, fieldIdx)}
+              sx={{
+                flexShrink: 0,
+                mx: 'auto',
+                position: 'relative',
+                transition: theme.transitions.create(['transform']),
+                outline: 'none',
+                // NOTE: This is needed to fix a Firefox bug that prevents
+                // opponent fields from appearing upside down
+                transformStyle: 'preserve-3d',
+                ...(!isSessionOwnerPlayer && {
+                  transform: rotationTransform,
+                }),
+                ...(!isSelected && {
+                  cursor: 'pointer',
+                }),
+                ...(isSelected && {
+                  transform: selectedCardTransform,
+                  zIndex: 20,
+                }),
+              }}
+            />
           )
         })}
-      </Grid>
+      </Box>
     </Box>
   )
 }

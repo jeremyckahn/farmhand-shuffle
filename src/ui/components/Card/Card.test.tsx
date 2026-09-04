@@ -21,6 +21,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import * as useMatchStateModule from '../../hooks/useMatchRules'
 import { StubShellContext } from '../../test-utils/StubShellContext'
+import { CardSize } from '../../types'
 import { ActorContext } from '../Match/ActorContext'
 import { deselectedHandIdx } from '../constants'
 
@@ -44,6 +45,16 @@ describe('Card', () => {
 
     expect(screen.getByText(stubCardInstance.name)).toBeInTheDocument()
     expect(screen.getByAltText(stubCardInstance.name)).toBeInTheDocument()
+  })
+
+  test('renders a truncated, smaller name at compact size', () => {
+    render(<StubCard size={CardSize.COMPACT} />)
+
+    const name = screen.getByText(stubCardInstance.name)
+    const { whiteSpace, fontSize } = getComputedStyle(name)
+
+    expect(whiteSpace).toEqual('nowrap')
+    expect(fontSize).toEqual('0.4375rem')
   })
 
   test('renders crop water requirements', () => {

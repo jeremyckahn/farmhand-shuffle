@@ -8,6 +8,7 @@ import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { cards as cardImages } from '../../img'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
+import { cropWaterIndicatorOutlineColor } from '../Card/CardCore'
 import { BaseCardProps } from '../Card/types'
 import { Image } from '../Image'
 
@@ -48,45 +49,75 @@ export const PlayedCard = ({
         canBeHarvested={canBeHarvested}
         {...cardProps}
       />
-      {isPlayedCrop(playedCard) && (
-        <Grid
-          container
-          spacing={1}
-          pt={2.5}
-          ml={theme.spacing(-0.5)}
-          justifyContent="flex-start"
-        >
-          {new Array(waterIconsToRender).fill(null).map((_, idx) => {
-            let opacity = 1
+      {isPlayedCrop(playedCard) &&
+        (size === CardSize.COMPACT ? (
+          <Box
+            display="flex"
+            gap={theme.spacing(0.25)}
+            pt={0.5}
+            aria-label="Water card indicator"
+          >
+            {new Array(waterIconsToRender).fill(null).map((_, idx) => {
+              const isFilled = idx < playedCard.waterCards
 
-            const isFilled = idx < playedCard.waterCards
-
-            if (isInBackground) {
-              opacity = 0
-            } else if (!isFilled) {
-              opacity = unfilledWaterIndicatorOpacity
-            }
-
-            return (
-              <Grid
-                key={idx}
-                item
-                sx={{ pt: `${theme.spacing(0)} !important` }}
-              >
-                <Image
-                  src={cardImages.water}
-                  alt="Water card indicator"
+              return (
+                <Box
+                  key={idx}
                   sx={{
-                    imageRendering: 'pixelated',
-                    opacity,
+                    flex: 1,
+                    height: '4px',
+                    borderRadius: '2px',
+                    background: cropWaterIndicatorOutlineColor,
+                    opacity: isInBackground
+                      ? 0
+                      : isFilled
+                      ? 1
+                      : unfilledWaterIndicatorOpacity,
                     transition: theme.transitions.create(['opacity']),
                   }}
                 />
-              </Grid>
-            )
-          })}
-        </Grid>
-      )}
+              )
+            })}
+          </Box>
+        ) : (
+          <Grid
+            container
+            spacing={1}
+            pt={2.5}
+            ml={theme.spacing(-0.5)}
+            justifyContent="flex-start"
+          >
+            {new Array(waterIconsToRender).fill(null).map((_, idx) => {
+              let opacity = 1
+
+              const isFilled = idx < playedCard.waterCards
+
+              if (isInBackground) {
+                opacity = 0
+              } else if (!isFilled) {
+                opacity = unfilledWaterIndicatorOpacity
+              }
+
+              return (
+                <Grid
+                  key={idx}
+                  item
+                  sx={{ pt: `${theme.spacing(0)} !important` }}
+                >
+                  <Image
+                    src={cardImages.water}
+                    alt="Water card indicator"
+                    sx={{
+                      imageRendering: 'pixelated',
+                      opacity,
+                      transition: theme.transitions.create(['opacity']),
+                    }}
+                  />
+                </Grid>
+              )
+            })}
+          </Grid>
+        ))}
     </Box>
   )
 }

@@ -30,7 +30,7 @@ import { CardViewProps } from './types'
 export const cardClassName = 'Card'
 export const cardFlipWrapperClassName = 'CardFlipWrapper'
 
-const cropWaterIndicatorOutlineColor = '#0072ff'
+export const cropWaterIndicatorOutlineColor = '#0072ff'
 const cropHarvestIndicatorSessionOwnerOutlineColor = '#0fc400'
 const cropHarvestIndicatorOpponentOutlineColor = '#ff7510'
 
@@ -174,17 +174,27 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                   ]}
                 >
                   <Typography
-                    variant={size === CardSize.SMALL ? 'caption' : 'overline'}
+                    variant={
+                      size === CardSize.SMALL || size === CardSize.COMPACT
+                        ? 'caption'
+                        : 'overline'
+                    }
+                    noWrap={size === CardSize.COMPACT}
                     sx={{
                       fontWeight: theme.typography.fontWeightBold,
                       textTransform: 'uppercase',
+                      ...(size === CardSize.COMPACT && {
+                        fontSize: theme.typography.pxToRem(7),
+                        lineHeight: 1.1,
+                        textOverflow: 'ellipsis',
+                      }),
                     }}
                   >
                     {card.name}
                   </Typography>
                   <Box
                     sx={{
-                      height: '50%',
+                      height: size === CardSize.COMPACT ? '40%' : '50%',
                       display: 'flex',
                       background: theme.palette.common.white,
                       backgroundImage: `url(${ui.dirt})`,
@@ -209,16 +219,30 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       }}
                     />
                   </Box>
-                  <Divider sx={{ my: theme.spacing(1) }} />
+                  <Divider
+                    sx={{
+                      my:
+                        size === CardSize.COMPACT
+                          ? theme.spacing(0.25)
+                          : theme.spacing(1),
+                    }}
+                  />
 
                   {/* Card actions */}
                   <Box
                     sx={{
-                      height: '50%',
+                      height: size === CardSize.COMPACT ? '60%' : '50%',
                       overflow: 'auto',
                       ...(size === CardSize.SMALL && {
                         fontSize: theme.typography.caption.fontSize,
                         lineHeight: theme.typography.caption.lineHeight,
+                        '> p': {
+                          my: 0,
+                        },
+                      }),
+                      ...(size === CardSize.COMPACT && {
+                        fontSize: theme.typography.pxToRem(6),
+                        lineHeight: 1.1,
                         '> p': {
                           my: 0,
                         },
@@ -299,6 +323,8 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                   <Typography
                     variant="h2"
                     sx={{
+                      ...(size === CardSize.COMPACT &&
+                        theme.typography.caption),
                       ...(size === CardSize.SMALL && theme.typography.h6),
                       ...(size === CardSize.MEDIUM && theme.typography.h5),
                       ...(size === CardSize.LARGE && theme.typography.h4),

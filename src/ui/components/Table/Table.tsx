@@ -21,6 +21,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
   const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
   const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
   const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.SMALL
+  const fieldCardSize = useLargeCards ? CardSize.SMALL : CardSize.COMPACT
 
   return (
     <>
@@ -37,7 +38,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
                 key={playerId}
                 match={match}
                 playerId={playerId}
-                cardSize={CardSize.SMALL}
+                cardSize={fieldCardSize}
               />
             )
           })}
@@ -57,7 +58,11 @@ export const Table = ({ match, ...rest }: TableProps) => {
           </Box>
         </Grid>
         <Grid item xs={12}>
-          <Field match={match} playerId={userPlayerId} />
+          <Field
+            match={match}
+            playerId={userPlayerId}
+            cardSize={fieldCardSize}
+          />
         </Grid>
       </Grid>
       <Box position="fixed" left="50%" right="50%" bottom={theme.spacing(-8)}>

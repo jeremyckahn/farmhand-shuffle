@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { carrot, instantiate, pumpkin } from '../../../game/cards'
+import { carrot, instantiate, pumpkin, sprinkler } from '../../../game/cards'
 import { updateField } from '../../../game/reducers/update-field'
 import { factory } from '../../../game/services/Factory'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
+import { CardSize } from '../../types'
 
 import { Field } from './Field'
 
@@ -66,5 +67,24 @@ export const OpponentField: Story = {
   args: {
     playerId: opponentPlayerId,
     match,
+  },
+}
+
+let compactMatch = stubMatch()
+
+compactMatch = updateField(compactMatch, compactMatch.sessionOwnerPlayerId, {
+  cards: [
+    { ...factory.buildPlayedCrop(instantiate(carrot)), waterCards: 1 },
+    { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 3 },
+    factory.buildPlayedTool(instantiate(sprinkler)),
+    { ...factory.buildPlayedCrop(instantiate(pumpkin)), waterCards: 12 },
+  ],
+})
+
+export const CompactField: Story = {
+  args: {
+    playerId: compactMatch.sessionOwnerPlayerId,
+    match: compactMatch,
+    cardSize: CardSize.COMPACT,
   },
 }

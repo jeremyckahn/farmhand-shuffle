@@ -4,6 +4,7 @@ import { render } from '@testing-library/react'
 import { IPlayedCrop } from '../../../game/types'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { StubShellContext } from '../../test-utils/StubShellContext'
+import { CardSize } from '../../types'
 import { ActorContext } from '../Match/ActorContext'
 
 import {
@@ -100,5 +101,49 @@ describe('PlayedCard', () => {
     expect(screen.getAllByAltText('Water card indicator')).toHaveLength(
       waterCards
     )
+  })
+
+  describe('compact size', () => {
+    const stubCompactCardProps: PlayedCropProps['cardProps'] = {
+      ...stubCropCardProps,
+      size: CardSize.COMPACT,
+    }
+
+    test('renders one notch per water unit instead of icons', () => {
+      render(<StubCropCard cardProps={stubCompactCardProps} />)
+
+      expect(screen.queryAllByAltText('Water card indicator')).toHaveLength(0)
+
+      const notchRow = screen.getByLabelText('Water card indicator')
+
+      expect(notchRow.children).toHaveLength(stubCardInstance.waterToMature)
+    })
+
+    test('filled notches are fully opaque, unfilled notches are dimmed', () => {
+      render(<StubCropCard cardProps={stubCompactCardProps} />)
+
+      const notches = Array.from(
+        screen.getByLabelText('Water card indicator').children
+      )
+
+      expect(getComputedStyle(notches[0]!).opacity).toEqual('1')
+      expect(getComputedStyle(notches[1]!).opacity).toEqual(
+        String(unfilledWaterIndicatorOpacity)
+      )
+    })
+
+    test('background notches are not visible', () => {
+      render(
+        <StubCropCard cardProps={stubCompactCardProps} isInBackground={true} />
+      )
+
+      const notches = Array.from(
+        screen.getByLabelText('Water card indicator').children
+      )
+
+      for (const notch of notches) {
+        expect(getComputedStyle(notch).opacity).toEqual('0')
+      }
+    })
   })
 })
