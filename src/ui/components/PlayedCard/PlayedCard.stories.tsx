@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { StubShellContext } from '../../test-utils/StubShellContext'
+import { CardSize } from '../../types'
 
 import { PlayedCard } from './PlayedCard'
 
@@ -52,6 +53,22 @@ export const PlayedCropCardWithExtraWater: Story = {
       instance: stubCarrot,
       wasWateredDuringTurn: false,
       waterCards: 5,
+    },
+    isInBackground: false,
+  },
+}
+
+export const PlayedCropCardCompact: Story = {
+  args: {
+    cardProps: {
+      cardInstance: stubCarrot,
+      playerId: '',
+      size: CardSize.COMPACT,
+    },
+    playedCard: {
+      instance: stubCarrot,
+      wasWateredDuringTurn: false,
+      waterCards: 1,
     },
     isInBackground: false,
   },

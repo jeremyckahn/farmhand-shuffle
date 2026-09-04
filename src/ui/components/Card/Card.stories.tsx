@@ -279,6 +279,15 @@ export const ShovelCard: Story = {
   },
 }
 
+export const CompactCard: Story = {
+  args: {
+    cardInstance: stubPumpkin,
+    playerId: '',
+    size: CardSize.COMPACT,
+    isFlipped: false,
+  },
+}
+
 export const SmallCard: Story = {
   args: {
     cardInstance: stubPumpkin,
