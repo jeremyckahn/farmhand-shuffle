@@ -97,6 +97,29 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       '(prefers-reduced-motion: reduce)'
     )
 
+    // NOTE: At compact size the card's name and description aren't shown on
+    // the card face (there isn't room), so they're surfaced in the tooltip
+    // instead. Any existing state-hint tooltip (e.g. "Needs water") is kept
+    // and shown above them.
+    const displayedTooltipTitle =
+      size === CardSize.COMPACT ? (
+        <>
+          {tooltipTitle && (
+            <>
+              {tooltipTitle}
+              <br />
+            </>
+          )}
+          <Typography component="span" sx={{ fontWeight: 'bold' }}>
+            {card.name}
+          </Typography>
+          <br />
+          {children}
+        </>
+      ) : (
+        tooltipTitle
+      )
+
     return (
       <AnimatePresence>
         <Box
@@ -117,7 +140,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
             animate={{ scale: 1 }}
             style={{ originX: 0.5, originY: 0.5 }}
           >
-            <Tooltip title={tooltipTitle} placement="top" arrow>
+            <Tooltip title={displayedTooltipTitle} placement="top" arrow>
               <Box
                 className={cardFlipWrapperClassName}
                 sx={[
@@ -173,84 +196,82 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                     },
                   ]}
                 >
-                  <Typography
-                    variant={
-                      size === CardSize.SMALL || size === CardSize.COMPACT
-                        ? 'caption'
-                        : 'overline'
-                    }
-                    noWrap={size === CardSize.COMPACT}
-                    sx={{
-                      fontWeight: theme.typography.fontWeightBold,
-                      textTransform: 'uppercase',
-                      ...(size === CardSize.COMPACT && {
-                        fontSize: theme.typography.pxToRem(7),
-                        lineHeight: 1.1,
-                        textOverflow: 'ellipsis',
-                      }),
-                    }}
-                  >
-                    {card.name}
-                  </Typography>
-                  <Box
-                    sx={{
-                      height: size === CardSize.COMPACT ? '40%' : '50%',
-                      display: 'flex',
-                      background: theme.palette.common.white,
-                      backgroundImage: `url(${ui.dirt})`,
-                      backgroundSize: '100%',
-                      backgroundRepeat: 'repeat',
-                      borderColor: theme.palette.divider,
-                      borderRadius: `${theme.shape.borderRadius}px`,
-                      borderWidth: 1,
-                      borderStyle: 'solid',
-                      imageRendering: 'pixelated',
-                    }}
-                  >
+                  {size === CardSize.COMPACT ? (
+                    // NOTE: The name and description are surfaced in the
+                    // tooltip instead (see displayedTooltipTitle above) so
+                    // the card's art can use nearly all of the available
+                    // space.
                     <Image
                       src={getCardImageSrc(card)}
                       alt={card.name}
                       sx={{
-                        height: `${100 * imageScale}%`,
-                        p: 0,
-                        m: 'auto',
+                        height: '100%',
+                        width: '100%',
+                        objectFit: 'contain',
                         imageRendering: 'pixelated',
                         filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
                       }}
                     />
-                  </Box>
-                  <Divider
-                    sx={{
-                      my:
-                        size === CardSize.COMPACT
-                          ? theme.spacing(0.25)
-                          : theme.spacing(1),
-                    }}
-                  />
+                  ) : (
+                    <>
+                      <Typography
+                        variant={
+                          size === CardSize.SMALL ? 'caption' : 'overline'
+                        }
+                        sx={{
+                          fontWeight: theme.typography.fontWeightBold,
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {card.name}
+                      </Typography>
+                      <Box
+                        sx={{
+                          height: '50%',
+                          display: 'flex',
+                          background: theme.palette.common.white,
+                          backgroundImage: `url(${ui.dirt})`,
+                          backgroundSize: '100%',
+                          backgroundRepeat: 'repeat',
+                          borderColor: theme.palette.divider,
+                          borderRadius: `${theme.shape.borderRadius}px`,
+                          borderWidth: 1,
+                          borderStyle: 'solid',
+                          imageRendering: 'pixelated',
+                        }}
+                      >
+                        <Image
+                          src={getCardImageSrc(card)}
+                          alt={card.name}
+                          sx={{
+                            height: `${100 * imageScale}%`,
+                            p: 0,
+                            m: 'auto',
+                            imageRendering: 'pixelated',
+                            filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
+                          }}
+                        />
+                      </Box>
+                      <Divider sx={{ my: theme.spacing(1) }} />
 
-                  {/* Card actions */}
-                  <Box
-                    sx={{
-                      height: size === CardSize.COMPACT ? '60%' : '50%',
-                      overflow: 'auto',
-                      ...(size === CardSize.SMALL && {
-                        fontSize: theme.typography.caption.fontSize,
-                        lineHeight: theme.typography.caption.lineHeight,
-                        '> p': {
-                          my: 0,
-                        },
-                      }),
-                      ...(size === CardSize.COMPACT && {
-                        fontSize: theme.typography.pxToRem(6),
-                        lineHeight: 1.1,
-                        '> p': {
-                          my: 0,
-                        },
-                      }),
-                    }}
-                  >
-                    {children}
-                  </Box>
+                      {/* Card actions */}
+                      <Box
+                        sx={{
+                          height: '50%',
+                          overflow: 'auto',
+                          ...(size === CardSize.SMALL && {
+                            fontSize: theme.typography.caption.fontSize,
+                            lineHeight: theme.typography.caption.lineHeight,
+                            '> p': {
+                              my: 0,
+                            },
+                          }),
+                        }}
+                      >
+                        {children}
+                      </Box>
+                    </>
+                  )}
                   {showPlayCardButton && (
                     <Box position="absolute" right="-100%" width={1} px={1}>
                       <Typography>

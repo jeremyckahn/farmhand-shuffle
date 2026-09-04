@@ -47,14 +47,30 @@ describe('Card', () => {
     expect(screen.getByAltText(stubCardInstance.name)).toBeInTheDocument()
   })
 
-  test('renders a truncated, smaller name at compact size', () => {
+  test('hides the name and description at compact size', () => {
     render(<StubCard size={CardSize.COMPACT} />)
 
-    const name = screen.getByText(stubCardInstance.name)
-    const { whiteSpace, fontSize } = getComputedStyle(name)
+    expect(screen.queryByText(stubCardInstance.name)).not.toBeInTheDocument()
+    expect(
+      screen.queryByText(
+        `Water needed to mature: ${stubCardInstance.waterToMature}`
+      )
+    ).not.toBeInTheDocument()
+    expect(screen.getByAltText(stubCardInstance.name)).toBeInTheDocument()
+  })
 
-    expect(whiteSpace).toEqual('nowrap')
-    expect(fontSize).toEqual('0.4375rem')
+  test('shows the name (bold) and description in a tooltip at compact size', async () => {
+    render(<StubCard size={CardSize.COMPACT} />)
+
+    fireEvent.mouseOver(screen.getByAltText(stubCardInstance.name))
+
+    const tooltipName = await screen.findByText(stubCardInstance.name)
+    const tooltipDescription = await screen.findByText(
+      `Water needed to mature: ${stubCardInstance.waterToMature}`
+    )
+
+    expect(getComputedStyle(tooltipName).fontWeight).toEqual('700')
+    expect(tooltipDescription).toBeInTheDocument()
   })
 
   test('renders crop water requirements', () => {
