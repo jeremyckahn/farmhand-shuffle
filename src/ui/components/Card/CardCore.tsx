@@ -341,18 +341,18 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                     width: 1,
                   }}
                 >
-                  <Typography
-                    variant="h2"
-                    sx={{
-                      ...(size === CardSize.COMPACT &&
-                        theme.typography.caption),
-                      ...(size === CardSize.SMALL && theme.typography.h6),
-                      ...(size === CardSize.MEDIUM && theme.typography.h5),
-                      ...(size === CardSize.LARGE && theme.typography.h4),
-                    }}
-                  >
-                    Farmhand Shuffle
-                  </Typography>
+                  {size !== CardSize.COMPACT && (
+                    <Typography
+                      variant="h2"
+                      sx={{
+                        ...(size === CardSize.SMALL && theme.typography.h6),
+                        ...(size === CardSize.MEDIUM && theme.typography.h5),
+                        ...(size === CardSize.LARGE && theme.typography.h4),
+                      }}
+                    >
+                      Farmhand Shuffle
+                    </Typography>
+                  )}
                 </Paper>
               </Box>
             </Tooltip>

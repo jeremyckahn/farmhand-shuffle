@@ -59,6 +59,18 @@ describe('Card', () => {
     expect(screen.getByAltText(stubCardInstance.name)).toBeInTheDocument()
   })
 
+  test('hides the "Farmhand Shuffle" card-back text at compact size', () => {
+    render(<StubCard size={CardSize.COMPACT} isFlipped />)
+
+    expect(screen.queryByText('Farmhand Shuffle')).not.toBeInTheDocument()
+  })
+
+  test('shows the "Farmhand Shuffle" card-back text at other sizes', () => {
+    render(<StubCard size={CardSize.SMALL} isFlipped />)
+
+    expect(screen.getByText('Farmhand Shuffle')).toBeInTheDocument()
+  })
+
   test('shows the name (bold) and description in a tooltip at compact size', async () => {
     render(<StubCard size={CardSize.COMPACT} />)
 
