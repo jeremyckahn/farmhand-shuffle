@@ -21,7 +21,9 @@ export const Table = ({ match, ...rest }: TableProps) => {
   const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
   const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
   const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.SMALL
-  const fieldCardSize = useLargeCards ? CardSize.SMALL : CardSize.COMPACT
+  // NOTE: Used by Field, Deck, and DiscardPile so all of a player's cards
+  // shrink together on narrow viewports.
+  const responsiveCardSize = useLargeCards ? CardSize.SMALL : CardSize.COMPACT
 
   return (
     <>
@@ -38,7 +40,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
                 key={playerId}
                 match={match}
                 playerId={playerId}
-                cardSize={fieldCardSize}
+                cardSize={responsiveCardSize}
               />
             )
           })}
@@ -52,16 +54,20 @@ export const Table = ({ match, ...rest }: TableProps) => {
             <Deck
               match={match}
               playerId={userPlayerId}
-              cardSize={CardSize.SMALL}
+              cardSize={responsiveCardSize}
             />
-            <DiscardPile match={match} playerId={userPlayerId} />
+            <DiscardPile
+              match={match}
+              playerId={userPlayerId}
+              cardSize={responsiveCardSize}
+            />
           </Box>
         </Grid>
         <Grid item xs={12}>
           <Field
             match={match}
             playerId={userPlayerId}
-            cardSize={fieldCardSize}
+            cardSize={responsiveCardSize}
           />
         </Grid>
       </Grid>

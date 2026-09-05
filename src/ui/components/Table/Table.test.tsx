@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 
+import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'
 import { lookup } from '../../../game/services/Lookup'
 import { stubMatch } from '../../../test-utils/stubs/match'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
 import { ActorContext } from '../Match/ActorContext'
@@ -21,9 +23,13 @@ vi.mock('../Card', () => ({
     cropIdxInFieldToWater,
     playerId,
     isFlipped,
+    size,
     ...rest
-  }: // @ts-expect-error Type errors are irrelevant for the tests
-  CardProps) => <div {...rest} />,
+  }: // NOTE: `size` is dropped by React when rendered on a plain <div> (it's
+  // only a valid HTML attribute on <input>/<select>), so it's surfaced
+  // explicitly here as a data attribute instead.
+  // @ts-expect-error Type errors are irrelevant for the tests
+  CardProps) => <div data-size={size} {...rest} />,
 }))
 
 const mockUseMediaQuery = vi.fn<() => boolean>()
@@ -40,6 +46,14 @@ vi.mock('../Field/Field', () => ({
 
 const match = stubMatch()
 const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
+
+// NOTE: stubMatch's discard piles start empty, so DiscardPile renders no
+// cards by default -- seed one to test its cardSize propagation.
+const matchWithDiscardPileCard = addToDiscardPile(
+  match,
+  match.sessionOwnerPlayerId,
+  stubCarrot
+)
 
 const StubTable = (overrides: Partial<TableProps>) => {
   return (
@@ -114,5 +128,43 @@ describe('Table', () => {
 
     expect(selfField.getAttribute('data-card-size')).toBe(CardSize.COMPACT)
     expect(opponentField.getAttribute('data-card-size')).toBe(CardSize.COMPACT)
+  })
+
+  test('passes CardSize.SMALL to Deck and DiscardPile on large viewports', () => {
+    mockUseMediaQuery.mockReturnValue(true)
+    render(<StubTable match={matchWithDiscardPileCard} />)
+
+    const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
+    const discardPile = screen.getByTestId(
+      `discard-pile_${match.sessionOwnerPlayerId}`
+    )
+
+    expect(deck.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.SMALL
+    )
+    expect(discardPile.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.SMALL
+    )
+  })
+
+  test('passes CardSize.COMPACT to Deck and DiscardPile on narrow viewports', () => {
+    mockUseMediaQuery.mockReturnValue(false)
+    render(<StubTable match={matchWithDiscardPileCard} />)
+
+    const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
+    const discardPile = screen.getByTestId(
+      `discard-pile_${match.sessionOwnerPlayerId}`
+    )
+
+    expect(deck.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.COMPACT
+    )
+    expect(discardPile.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.COMPACT
+    )
   })
 })
