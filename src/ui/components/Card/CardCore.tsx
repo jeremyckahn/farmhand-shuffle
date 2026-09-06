@@ -152,7 +152,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     // card. Larger viewports are unaffected (buttons stay beside the card).
     const mobileActionButtonHeight = '2.5rem'
     const mobileActionButtonGap = theme.spacing(1)
-    const mobileActionButtonStackTopGap = theme.spacing(1)
+    const mobileActionButtonStackTopGap = '1rem'
     const stackOnNarrowViewport = isNarrowViewport && actionButtons.length > 0
     const mobileActionButtonStackHeight = stackOnNarrowViewport
       ? `calc(${mobileActionButtonStackTopGap} + ${
