@@ -301,6 +301,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       <Typography>
                         <Button
                           variant="contained"
+                          fullWidth
                           disabled={playButtonDisabled}
                           onClick={() => void onPlayCard?.()}
                         >
@@ -315,7 +316,11 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                   {showWaterCropButton && (
                     <Box position="absolute" right="-100%" width={1} px={1}>
                       <Typography>
-                        <Button variant="contained" onClick={onWaterCrop}>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          onClick={onWaterCrop}
+                        >
                           Water crop
                         </Button>
                       </Typography>
@@ -326,6 +331,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       <Typography>
                         <Button
                           variant="contained"
+                          fullWidth
                           color="success"
                           onClick={onHarvestCrop}
                         >
@@ -339,6 +345,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       <Typography>
                         <Button
                           variant="contained"
+                          fullWidth
                           color="error"
                           onClick={onDiscardCard}
                         >

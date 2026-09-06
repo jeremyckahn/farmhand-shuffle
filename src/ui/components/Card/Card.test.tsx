@@ -314,6 +314,33 @@ describe('Card', () => {
     })
   })
 
+  test('action buttons stretch to fill their reserved space', () => {
+    // NOTE: The button's containing Box reserves a full card-width so the
+    // narrow-viewport shift (below) can assume the button occupies that
+    // whole width. Without fullWidth, the visible button is only as wide
+    // as its label, leaving a large, misleadingly-empty gap next to it.
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+      />
+    )
+
+    const button = screen.getByText('Water crop').closest('button')
+
+    expect(button).toHaveClass('MuiButton-fullWidth')
+  })
+
   test('shifts left on a narrow viewport when an action button is shown', () => {
     mockUseMediaQuery.mockReturnValue(true)
 
