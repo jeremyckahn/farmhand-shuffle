@@ -336,13 +336,11 @@ describe('Card', () => {
 
     expect(screen.getByText('Water crop')).toBeInTheDocument()
 
-    const shiftWrapper = screen
+    const card = screen
       .getByText(stubCardInstance.name)
-      .closest(`.${cardClassName}`)?.firstElementChild
+      .closest(`.${cardClassName}`)
 
-    expect(getComputedStyle(shiftWrapper!).transform).toEqual(
-      'translateX(-50%)'
-    )
+    expect(getComputedStyle(card!).marginLeft).toEqual('calc(-6rem)')
   })
 
   test('does not shift on a large viewport, even with an action button shown', () => {
@@ -367,11 +365,11 @@ describe('Card', () => {
 
     expect(screen.getByText('Water crop')).toBeInTheDocument()
 
-    const shiftWrapper = screen
+    const card = screen
       .getByText(stubCardInstance.name)
-      .closest(`.${cardClassName}`)?.firstElementChild
+      .closest(`.${cardClassName}`)
 
-    expect(getComputedStyle(shiftWrapper!).transform).toEqual('')
+    expect(getComputedStyle(card!).marginLeft).toEqual('')
   })
 
   test('does not shift on a narrow viewport when no action button is shown', () => {
@@ -379,11 +377,11 @@ describe('Card', () => {
 
     render(<StubCard />)
 
-    const shiftWrapper = screen
+    const card = screen
       .getByText(stubCardInstance.name)
-      .closest(`.${cardClassName}`)?.firstElementChild
+      .closest(`.${cardClassName}`)
 
-    expect(getComputedStyle(shiftWrapper!).transform).toEqual('')
+    expect(getComputedStyle(card!).marginLeft).toEqual('')
   })
 
   test('allows player to harvest a crop card', () => {

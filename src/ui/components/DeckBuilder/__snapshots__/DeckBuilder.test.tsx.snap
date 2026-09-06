@@ -38,52 +38,48 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-1lnx0i2"
+              class="Card MuiBox-root css-rewmz8"
             >
               <div
-                class="MuiBox-root css-1pt7gta"
+                style="transform: none; transform-origin: 50% 50% 0;"
               >
                 <div
-                  style="transform: none; transform-origin: 50% 50% 0;"
+                  aria-label=""
+                  class="CardFlipWrapper MuiBox-root css-1nybwua"
+                  data-mui-internal-clone-element="true"
                 >
                   <div
-                    aria-label=""
-                    class="CardFlipWrapper MuiBox-root css-1nybwua"
-                    data-mui-internal-clone-element="true"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
                   >
-                    <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    <span
+                      class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
                     >
-                      <span
-                        class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
-                      >
-                        Pumpkin
-                      </span>
-                      <div
-                        class="MuiBox-root css-a4w1rr"
-                      >
-                        <img
-                          alt="Pumpkin"
-                          class="css-1cs2h9x"
-                          src="/src/ui/img/cards/pumpkin.png"
-                        />
-                      </div>
-                      <hr
-                        class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
-                      />
-                      <div
-                        class="MuiBox-root css-17uj34z"
+                      Pumpkin
+                    </span>
+                    <div
+                      class="MuiBox-root css-a4w1rr"
+                    >
+                      <img
+                        alt="Pumpkin"
+                        class="css-1cs2h9x"
+                        src="/src/ui/img/cards/pumpkin.png"
                       />
                     </div>
+                    <hr
+                      class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
+                    />
                     <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                      class="MuiBox-root css-17uj34z"
+                    />
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                  >
+                    <h2
+                      class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
                     >
-                      <h2
-                        class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
-                      >
-                        Farmhand Shuffle
-                      </h2>
-                    </div>
+                      Farmhand Shuffle
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -154,52 +150,48 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-1lnx0i2"
+              class="Card MuiBox-root css-rewmz8"
             >
               <div
-                class="MuiBox-root css-1pt7gta"
+                style="transform: none; transform-origin: 50% 50% 0;"
               >
                 <div
-                  style="transform: none; transform-origin: 50% 50% 0;"
+                  aria-label=""
+                  class="CardFlipWrapper MuiBox-root css-1nybwua"
+                  data-mui-internal-clone-element="true"
                 >
                   <div
-                    aria-label=""
-                    class="CardFlipWrapper MuiBox-root css-1nybwua"
-                    data-mui-internal-clone-element="true"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
                   >
-                    <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    <span
+                      class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
                     >
-                      <span
-                        class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
-                      >
-                        Carrot
-                      </span>
-                      <div
-                        class="MuiBox-root css-a4w1rr"
-                      >
-                        <img
-                          alt="Carrot"
-                          class="css-1cs2h9x"
-                          src="/src/ui/img/cards/carrot.png"
-                        />
-                      </div>
-                      <hr
-                        class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
-                      />
-                      <div
-                        class="MuiBox-root css-17uj34z"
+                      Carrot
+                    </span>
+                    <div
+                      class="MuiBox-root css-a4w1rr"
+                    >
+                      <img
+                        alt="Carrot"
+                        class="css-1cs2h9x"
+                        src="/src/ui/img/cards/carrot.png"
                       />
                     </div>
+                    <hr
+                      class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
+                    />
                     <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                      class="MuiBox-root css-17uj34z"
+                    />
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                  >
+                    <h2
+                      class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
                     >
-                      <h2
-                        class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
-                      >
-                        Farmhand Shuffle
-                      </h2>
-                    </div>
+                      Farmhand Shuffle
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -286,52 +278,48 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-1lnx0i2"
+              class="Card MuiBox-root css-rewmz8"
             >
               <div
-                class="MuiBox-root css-1pt7gta"
+                style="transform: none; transform-origin: 50% 50% 0;"
               >
                 <div
-                  style="transform: none; transform-origin: 50% 50% 0;"
+                  aria-label=""
+                  class="CardFlipWrapper MuiBox-root css-1nybwua"
+                  data-mui-internal-clone-element="true"
                 >
                   <div
-                    aria-label=""
-                    class="CardFlipWrapper MuiBox-root css-1nybwua"
-                    data-mui-internal-clone-element="true"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
                   >
-                    <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    <span
+                      class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
                     >
-                      <span
-                        class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
-                      >
-                        Water
-                      </span>
-                      <div
-                        class="MuiBox-root css-a4w1rr"
-                      >
-                        <img
-                          alt="Water"
-                          class="css-1cs2h9x"
-                          src="/src/ui/img/cards/watering-can.png"
-                        />
-                      </div>
-                      <hr
-                        class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
-                      />
-                      <div
-                        class="MuiBox-root css-17uj34z"
+                      Water
+                    </span>
+                    <div
+                      class="MuiBox-root css-a4w1rr"
+                    >
+                      <img
+                        alt="Water"
+                        class="css-1cs2h9x"
+                        src="/src/ui/img/cards/watering-can.png"
                       />
                     </div>
+                    <hr
+                      class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
+                    />
                     <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                      class="MuiBox-root css-17uj34z"
+                    />
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                  >
+                    <h2
+                      class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
                     >
-                      <h2
-                        class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
-                      >
-                        Farmhand Shuffle
-                      </h2>
-                    </div>
+                      Farmhand Shuffle
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -418,52 +406,48 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-1lnx0i2"
+              class="Card MuiBox-root css-rewmz8"
             >
               <div
-                class="MuiBox-root css-1pt7gta"
+                style="transform: none; transform-origin: 50% 50% 0;"
               >
                 <div
-                  style="transform: none; transform-origin: 50% 50% 0;"
+                  aria-label=""
+                  class="CardFlipWrapper MuiBox-root css-1nybwua"
+                  data-mui-internal-clone-element="true"
                 >
                   <div
-                    aria-label=""
-                    class="CardFlipWrapper MuiBox-root css-1nybwua"
-                    data-mui-internal-clone-element="true"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
                   >
-                    <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    <span
+                      class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
                     >
-                      <span
-                        class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
-                      >
-                        Shovel
-                      </span>
-                      <div
-                        class="MuiBox-root css-a4w1rr"
-                      >
-                        <img
-                          alt="Shovel"
-                          class="css-1cs2h9x"
-                          src="/src/ui/img/cards/shovel.png"
-                        />
-                      </div>
-                      <hr
-                        class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
-                      />
-                      <div
-                        class="MuiBox-root css-17uj34z"
+                      Shovel
+                    </span>
+                    <div
+                      class="MuiBox-root css-a4w1rr"
+                    >
+                      <img
+                        alt="Shovel"
+                        class="css-1cs2h9x"
+                        src="/src/ui/img/cards/shovel.png"
                       />
                     </div>
+                    <hr
+                      class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
+                    />
                     <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                      class="MuiBox-root css-17uj34z"
+                    />
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                  >
+                    <h2
+                      class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
                     >
-                      <h2
-                        class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
-                      >
-                        Farmhand Shuffle
-                      </h2>
-                    </div>
+                      Farmhand Shuffle
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -550,52 +534,48 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-1lnx0i2"
+              class="Card MuiBox-root css-rewmz8"
             >
               <div
-                class="MuiBox-root css-1pt7gta"
+                style="transform: none; transform-origin: 50% 50% 0;"
               >
                 <div
-                  style="transform: none; transform-origin: 50% 50% 0;"
+                  aria-label=""
+                  class="CardFlipWrapper MuiBox-root css-1nybwua"
+                  data-mui-internal-clone-element="true"
                 >
                   <div
-                    aria-label=""
-                    class="CardFlipWrapper MuiBox-root css-1nybwua"
-                    data-mui-internal-clone-element="true"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
                   >
-                    <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    <span
+                      class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
                     >
-                      <span
-                        class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
-                      >
-                        Rain
-                      </span>
-                      <div
-                        class="MuiBox-root css-a4w1rr"
-                      >
-                        <img
-                          alt="Rain"
-                          class="css-1cs2h9x"
-                          src="/src/ui/img/cards/raincloud.png"
-                        />
-                      </div>
-                      <hr
-                        class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
-                      />
-                      <div
-                        class="MuiBox-root css-17uj34z"
+                      Rain
+                    </span>
+                    <div
+                      class="MuiBox-root css-a4w1rr"
+                    >
+                      <img
+                        alt="Rain"
+                        class="css-1cs2h9x"
+                        src="/src/ui/img/cards/raincloud.png"
                       />
                     </div>
+                    <hr
+                      class="MuiDivider-root MuiDivider-fullWidth css-1b008ma-MuiDivider-root"
+                    />
                     <div
-                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                      class="MuiBox-root css-17uj34z"
+                    />
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                  >
+                    <h2
+                      class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
                     >
-                      <h2
-                        class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
-                      >
-                        Farmhand Shuffle
-                      </h2>
-                    </div>
+                      Farmhand Shuffle
+                    </h2>
                   </div>
                 </div>
               </div>
