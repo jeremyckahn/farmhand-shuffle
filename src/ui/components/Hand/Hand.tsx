@@ -19,6 +19,11 @@ import { deselectedHandIdx } from '../constants'
 const foregroundCardScale = 1
 const backgroundCardScale = 0.65
 
+// NOTE: The focused/selected hand card is always rendered at this fixed
+// size, regardless of the viewport-responsive `cardSize` used for the rest
+// of the hand -- it should read the same size on every screen.
+export const focusedCardSize = CardSize.MEDIUM
+
 export const getGapPixelWidth = (numberOfCards: number) => {
   if (numberOfCards > 60) {
     return 3
@@ -58,7 +63,7 @@ export const Hand = ({
   const { setRejectingTimeout } = useRejectingTimeout()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
-    cardSize,
+    cardSize: focusedCardSize,
   })
 
   const player = lookup.getPlayer(match, playerId)
@@ -115,7 +120,15 @@ export const Hand = ({
     }
   }
 
-  const gapWidthPx = getGapPixelWidth(player.hand.length)
+  // NOTE: getGapPixelWidth's thresholds were tuned against
+  // focusedCardSize (the size hand cards have always rendered at) -- scale
+  // them by how much smaller/larger cardSize actually is so the fan-out
+  // spacing stays proportional to the cards' own size instead of going
+  // stale on narrow viewports where cardSize shrinks.
+  const gapSizeScale =
+    parseFloat(CARD_DIMENSIONS[cardSize].width) /
+    parseFloat(CARD_DIMENSIONS[focusedCardSize].width)
+  const gapWidthPx = getGapPixelWidth(player.hand.length) * gapSizeScale
 
   const { width: containerWidth } =
     // eslint-disable-next-line react-hooks/refs
@@ -185,7 +198,7 @@ export const Hand = ({
             cardInstance={cardInstance}
             cardIdxInHand={idx}
             playerId={playerId}
-            size={cardSize}
+            size={isSelected ? focusedCardSize : cardSize}
             paperProps={{
               ...(isSelected && {
                 elevation: SELECTED_CARD_ELEVATION,

@@ -20,7 +20,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
   const { sessionOwnerPlayerId: userPlayerId } = match
   const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
   const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
-  const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.SMALL
+  const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.COMPACT
   // NOTE: Used by Field, Deck, and DiscardPile so all of a player's cards
   // shrink together on narrow viewports.
   const responsiveCardSize = useLargeCards ? CardSize.SMALL : CardSize.COMPACT

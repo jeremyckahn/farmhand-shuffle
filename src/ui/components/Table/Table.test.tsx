@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'
+import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
@@ -54,6 +55,12 @@ const matchWithDiscardPileCard = addToDiscardPile(
   match.sessionOwnerPlayerId,
   stubCarrot
 )
+
+// NOTE: stubMatch's hands start empty, so Hand renders no cards by
+// default -- seed one to test its cardSize propagation.
+const matchWithHandCard = updatePlayer(match, match.sessionOwnerPlayerId, {
+  hand: [stubCarrot],
+})
 
 const StubTable = (overrides: Partial<TableProps>) => {
   return (
@@ -163,6 +170,30 @@ describe('Table', () => {
       CardSize.COMPACT
     )
     expect(discardPile.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.COMPACT
+    )
+  })
+
+  test('passes CardSize.MEDIUM to Hand on large viewports', () => {
+    mockUseMediaQuery.mockReturnValue(true)
+    render(<StubTable match={matchWithHandCard} />)
+
+    const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
+
+    expect(hand.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.MEDIUM
+    )
+  })
+
+  test('passes CardSize.COMPACT to Hand on narrow viewports', () => {
+    mockUseMediaQuery.mockReturnValue(false)
+    render(<StubTable match={matchWithHandCard} />)
+
+    const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
+
+    expect(hand.querySelector('[data-size]')).toHaveAttribute(
       'data-size',
       CardSize.COMPACT
     )
