@@ -96,38 +96,70 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
-    // NOTE: On narrow viewports, a full card-width action button (as used
-    // on larger screens) pushes the card+button group edge-to-edge across
-    // the whole screen -- there's no room left to center the group with any
-    // breathing space around it. Below, the button's reserved width shrinks
-    // to this fraction of the card's width (wrapping its label onto a
-    // second line instead) so the group is narrower than the viewport, and
-    // the card is shifted left by half of *that* narrower width -- not the
-    // full card width -- to re-center the card+button group as a unit. The
-    // shift is a margin (not a second `transform`), since this card already
-    // carries its own `transform` for positioning/zooming and a
-    // `transformStyle: preserve-3d` flip -- a second transform layer
-    // visually broke the card-back flip rendering. Margin composes
-    // independently of all that: it shifts the box before the existing
-    // transform is applied on top, so it still works with any ancestor
-    // zoom/scale (e.g. Field's tap-to-zoom). Larger viewports have room to
-    // spare and are intentionally left unchanged (full card-width button).
-    const narrowActionButtonWidthFraction = 0.55
     const isNarrowViewport = useMediaQuery(theme.breakpoints.down('sm'))
-    const hasActionButton =
-      showPlayCardButton ||
-      showWaterCropButton ||
-      showHarvestCropButton ||
-      showDiscardButton
-    const shiftLeftForActionButton = isNarrowViewport && hasActionButton
-    const actionButtonWidth = shiftLeftForActionButton
-      ? `calc(${CARD_DIMENSIONS[size].width} * ${narrowActionButtonWidthFraction})`
-      : 1
-    // NOTE: The narrower mobile button needs to wrap its label onto a
-    // second line rather than overflowing or forcing the button wider than
-    // actionButtonWidth.
-    const actionButtonSx = shiftLeftForActionButton
-      ? { whiteSpace: 'normal', lineHeight: 1.3 }
+
+    const actionButtons: Array<{
+      key: string
+      label: React.ReactNode
+      color?: 'success' | 'error'
+      disabled?: boolean
+      onClick?: () => void
+    }> = [
+      showPlayCardButton && {
+        key: 'play',
+        label: (
+          <>
+            {isCropCardInstance(card) && 'Play crop'}
+            {isWaterCardInstance(card) && 'Water a crop'}
+            {isEventCardInstance(card) && 'Play event'}
+            {isToolCardInstance(card) && 'Play tool'}
+          </>
+        ),
+        disabled: playButtonDisabled,
+        onClick: () => void onPlayCard?.(),
+      },
+      showWaterCropButton && {
+        key: 'water',
+        label: 'Water crop',
+        onClick: onWaterCrop,
+      },
+      showHarvestCropButton && {
+        key: 'harvest',
+        label: 'Harvest crop',
+        color: 'success' as const,
+        onClick: onHarvestCrop,
+      },
+      showDiscardButton && {
+        key: 'discard',
+        label: 'Discard',
+        color: 'error' as const,
+        onClick: onDiscardCard,
+      },
+    ].filter((button): button is Exclude<typeof button, false> =>
+      Boolean(button)
+    )
+
+    // NOTE: On narrow viewports, action buttons stack below the card
+    // instead of beside it -- there's no horizontal room to spare. The
+    // card+button-stack group is shifted up by half of the stack's height
+    // (a margin, not a second `transform` -- this card already carries its
+    // own `transform` for positioning/zooming and a `transformStyle:
+    // preserve-3d` flip, and a second transform layer visually broke the
+    // card-back flip rendering; margin composes independently since it
+    // resolves before the existing transform is applied) so that whatever
+    // already centers the card (e.g. Field's tap-to-zoom, Hand's selected
+    // card centering) ends up centering the whole group instead of just the
+    // card. Larger viewports are unaffected (buttons stay beside the card).
+    const mobileActionButtonHeight = '2.5rem'
+    const mobileActionButtonGap = theme.spacing(1)
+    const mobileActionButtonStackTopGap = theme.spacing(1)
+    const stackOnNarrowViewport = isNarrowViewport && actionButtons.length > 0
+    const mobileActionButtonStackHeight = stackOnNarrowViewport
+      ? `calc(${mobileActionButtonStackTopGap} + ${
+          actionButtons.length
+        } * ${mobileActionButtonHeight} + ${
+          actionButtons.length - 1
+        } * ${mobileActionButtonGap})`
       : undefined
 
     // NOTE: At compact size the card's name and description aren't shown on
@@ -163,10 +195,10 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
               perspective: '1000px',
               height: CARD_DIMENSIONS[size].height,
               width: CARD_DIMENSIONS[size].width,
-              marginLeft: shiftLeftForActionButton
-                ? `calc(${CARD_DIMENSIONS[size].width} * ${narrowActionButtonWidthFraction} / -2)`
+              marginTop: stackOnNarrowViewport
+                ? `calc(${mobileActionButtonStackHeight} / -2)`
                 : undefined,
-              transition: theme.transitions.create(['margin-left']),
+              transition: theme.transitions.create(['margin-top']),
             },
             ...(isSxArray(sx) ? sx : [sx]),
           ]}
@@ -309,88 +341,32 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       </Box>
                     </>
                   )}
-                  {showPlayCardButton && (
+                  {actionButtons.map((button, idx) => (
                     <Box
+                      key={button.key}
                       position="absolute"
-                      left="100%"
-                      width={actionButtonWidth}
+                      width={1}
                       px={1}
+                      {...(isNarrowViewport
+                        ? {
+                            left: 0,
+                            top: `calc(100% + ${mobileActionButtonStackTopGap} + ${idx} * (${mobileActionButtonHeight} + ${mobileActionButtonGap}))`,
+                          }
+                        : { left: '100%' })}
                     >
                       <Typography>
                         <Button
                           variant="contained"
-                          fullWidth
-                          disabled={playButtonDisabled}
-                          onClick={() => void onPlayCard?.()}
-                          sx={actionButtonSx}
+                          fullWidth={isNarrowViewport}
+                          color={button.color}
+                          disabled={button.disabled}
+                          onClick={button.onClick}
                         >
-                          {isCropCardInstance(card) && 'Play crop'}
-                          {isWaterCardInstance(card) && 'Water a crop'}
-                          {isEventCardInstance(card) && 'Play event'}
-                          {isToolCardInstance(card) && 'Play tool'}
+                          {button.label}
                         </Button>
                       </Typography>
                     </Box>
-                  )}
-                  {showWaterCropButton && (
-                    <Box
-                      position="absolute"
-                      left="100%"
-                      width={actionButtonWidth}
-                      px={1}
-                    >
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          onClick={onWaterCrop}
-                          sx={actionButtonSx}
-                        >
-                          Water crop
-                        </Button>
-                      </Typography>
-                    </Box>
-                  )}
-                  {showHarvestCropButton && (
-                    <Box
-                      position="absolute"
-                      left="100%"
-                      width={actionButtonWidth}
-                      px={1}
-                    >
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          color="success"
-                          onClick={onHarvestCrop}
-                          sx={actionButtonSx}
-                        >
-                          Harvest crop
-                        </Button>
-                      </Typography>
-                    </Box>
-                  )}
-                  {showDiscardButton && (
-                    <Box
-                      position="absolute"
-                      left="100%"
-                      width={actionButtonWidth}
-                      px={1}
-                    >
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          color="error"
-                          onClick={onDiscardCard}
-                          sx={actionButtonSx}
-                        >
-                          Discard
-                        </Button>
-                      </Typography>
-                    </Box>
-                  )}
+                  ))}
                 </Paper>
 
                 {/* Back of the card */}

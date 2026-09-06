@@ -38,7 +38,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-rewmz8"
+              class="Card MuiBox-root css-1dkq9t3"
             >
               <div
                 style="transform: none; transform-origin: 50% 50% 0;"
@@ -150,7 +150,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-rewmz8"
+              class="Card MuiBox-root css-1dkq9t3"
             >
               <div
                 style="transform: none; transform-origin: 50% 50% 0;"
@@ -278,7 +278,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-rewmz8"
+              class="Card MuiBox-root css-1dkq9t3"
             >
               <div
                 style="transform: none; transform-origin: 50% 50% 0;"
@@ -406,7 +406,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-rewmz8"
+              class="Card MuiBox-root css-1dkq9t3"
             >
               <div
                 style="transform: none; transform-origin: 50% 50% 0;"
@@ -534,7 +534,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-p5ews7-MuiPaper-root"
           >
             <div
-              class="Card MuiBox-root css-rewmz8"
+              class="Card MuiBox-root css-1dkq9t3"
             >
               <div
                 style="transform: none; transform-origin: 50% 50% 0;"

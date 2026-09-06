@@ -314,11 +314,9 @@ describe('Card', () => {
     })
   })
 
-  test('action buttons stretch to fill their reserved space', () => {
-    // NOTE: The button's containing Box reserves a full card-width so the
-    // narrow-viewport shift (below) can assume the button occupies that
-    // whole width. Without fullWidth, the visible button is only as wide
-    // as its label, leaving a large, misleadingly-empty gap next to it.
+  test('renders the action button beside the card on a large viewport', () => {
+    mockUseMediaQuery.mockReturnValue(false)
+
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.PLAYER_WATERING_CROP,
       match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
@@ -336,12 +334,42 @@ describe('Card', () => {
       />
     )
 
-    const button = screen.getByText('Water crop').closest('button')
+    const button = screen.getByText('Water crop').closest('button')!
+    const buttonBox = button.parentElement?.parentElement
 
+    expect(getComputedStyle(buttonBox!).left).toEqual('100%')
+    expect(button).not.toHaveClass('MuiButton-fullWidth')
+  })
+
+  test('stacks the action button below the card on a narrow viewport', () => {
+    mockUseMediaQuery.mockReturnValue(true)
+
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+      />
+    )
+
+    const button = screen.getByText('Water crop').closest('button')!
+    const buttonBox = button.parentElement?.parentElement
+
+    expect(getComputedStyle(buttonBox!).left).toEqual('0px')
+    expect(getComputedStyle(buttonBox!).top).not.toEqual('')
     expect(button).toHaveClass('MuiButton-fullWidth')
   })
 
-  test('shifts left on a narrow viewport when an action button is shown', () => {
+  test('shifts the card up on a narrow viewport when an action button is shown, to vertically center the card+button group', () => {
     mockUseMediaQuery.mockReturnValue(true)
 
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
@@ -367,42 +395,13 @@ describe('Card', () => {
       .getByText(stubCardInstance.name)
       .closest(`.${cardClassName}`)
 
-    // NOTE: -3.3rem = card width (12rem) * the narrow action button width
-    // fraction (0.55) / -2 -- see CardCore.tsx's narrowActionButtonWidthFraction.
-    expect(getComputedStyle(card!).marginLeft).toEqual('calc(-3.3rem)')
+    const { marginTop } = getComputedStyle(card!)
+
+    expect(marginTop).not.toEqual('')
+    expect(marginTop.startsWith('calc(-')).toBe(true)
   })
 
-  test('narrows and wraps the action button on a narrow viewport, leaving room to center', () => {
-    mockUseMediaQuery.mockReturnValue(true)
-
-    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
-      matchState: MatchState.PLAYER_WATERING_CROP,
-      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
-      botTurnActionState: null,
-    })
-
-    render(
-      <StubCard
-        cardInstance={stubCarrot}
-        playerId={stubPlayer1.id}
-        cropIdxInFieldToWater={0}
-        isFocused
-        isInField
-        canBeWatered
-      />
-    )
-
-    const button = screen.getByText('Water crop').closest('button')!
-    const buttonBox = button.parentElement?.parentElement
-
-    // NOTE: 6.6rem = card width (12rem) * narrowActionButtonWidthFraction
-    // (0.55) -- narrower than the full card width, so the card+button group
-    // doesn't span edge-to-edge on a narrow screen.
-    expect(getComputedStyle(buttonBox!).width).toEqual('calc(6.6rem)')
-    expect(getComputedStyle(button).whiteSpace).toEqual('normal')
-  })
-
-  test('does not shift on a large viewport, even with an action button shown', () => {
+  test('does not shift vertically on a large viewport, even with an action button shown', () => {
     mockUseMediaQuery.mockReturnValue(false)
 
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
@@ -428,10 +427,10 @@ describe('Card', () => {
       .getByText(stubCardInstance.name)
       .closest(`.${cardClassName}`)
 
-    expect(getComputedStyle(card!).marginLeft).toEqual('')
+    expect(getComputedStyle(card!).marginTop).toEqual('')
   })
 
-  test('does not shift on a narrow viewport when no action button is shown', () => {
+  test('does not shift vertically on a narrow viewport when no action button is shown', () => {
     mockUseMediaQuery.mockReturnValue(true)
 
     render(<StubCard />)
@@ -440,7 +439,7 @@ describe('Card', () => {
       .getByText(stubCardInstance.name)
       .closest(`.${cardClassName}`)
 
-    expect(getComputedStyle(card!).marginLeft).toEqual('')
+    expect(getComputedStyle(card!).marginTop).toEqual('')
   })
 
   test('allows player to harvest a crop card', () => {
