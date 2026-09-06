@@ -6,6 +6,7 @@ import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
 import { ActorContext } from '../Match/ActorContext'
@@ -197,5 +198,32 @@ describe('Table', () => {
       'data-size',
       CardSize.COMPACT
     )
+  })
+
+  test("keeps the same fraction of the hand card peeking into view, regardless of the hand's cardSize", () => {
+    // NOTE: The Hand is anchored below the viewport bottom by a fixed
+    // number of theme spacing units, tuned against CardSize.MEDIUM (see
+    // Table.tsx). That offset must scale with the hand card's actual
+    // height, or a much shorter card (e.g. COMPACT) ends up almost
+    // entirely hidden below the fold instead of peeking into view the
+    // same proportional amount as on large screens.
+    const referenceOffsetPx = -64
+    const mediumHeightPx =
+      parseFloat(CARD_DIMENSIONS[CardSize.MEDIUM].height) * 16
+    const referenceVisibleFraction =
+      (mediumHeightPx + referenceOffsetPx) / mediumHeightPx
+
+    mockUseMediaQuery.mockReturnValue(false)
+    render(<StubTable match={matchWithHandCard} />)
+
+    const handContainer = screen.getByTestId(
+      `hand_${match.sessionOwnerPlayerId}`
+    ).parentElement as HTMLElement
+    const offsetPx = parseFloat(getComputedStyle(handContainer).bottom)
+    const compactHeightPx =
+      parseFloat(CARD_DIMENSIONS[CardSize.COMPACT].height) * 16
+    const visibleFraction = (compactHeightPx + offsetPx) / compactHeightPx
+
+    expect(visibleFraction).toBeCloseTo(referenceVisibleFraction, 5)
   })
 })
