@@ -367,7 +367,39 @@ describe('Card', () => {
       .getByText(stubCardInstance.name)
       .closest(`.${cardClassName}`)
 
-    expect(getComputedStyle(card!).marginLeft).toEqual('calc(-6rem)')
+    // NOTE: -3.3rem = card width (12rem) * the narrow action button width
+    // fraction (0.55) / -2 -- see CardCore.tsx's narrowActionButtonWidthFraction.
+    expect(getComputedStyle(card!).marginLeft).toEqual('calc(-3.3rem)')
+  })
+
+  test('narrows and wraps the action button on a narrow viewport, leaving room to center', () => {
+    mockUseMediaQuery.mockReturnValue(true)
+
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+      />
+    )
+
+    const button = screen.getByText('Water crop').closest('button')!
+    const buttonBox = button.parentElement?.parentElement
+
+    // NOTE: 6.6rem = card width (12rem) * narrowActionButtonWidthFraction
+    // (0.55) -- narrower than the full card width, so the card+button group
+    // doesn't span edge-to-edge on a narrow screen.
+    expect(getComputedStyle(buttonBox!).width).toEqual('calc(6.6rem)')
+    expect(getComputedStyle(button).whiteSpace).toEqual('normal')
   })
 
   test('does not shift on a large viewport, even with an action button shown', () => {

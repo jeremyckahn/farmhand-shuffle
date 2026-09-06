@@ -96,19 +96,23 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
-    // NOTE: On narrow viewports, a card centered on screen doesn't leave
-    // room for its action button, which renders immediately to its right
-    // at the same width (see the `right: '-100%'` boxes below) -- it gets
-    // clipped by the edge of the screen. Shifting the card left by half its
-    // own width re-centers the card+button pair as a unit instead of just
-    // the card. This is expressed as a margin (below), not a second
-    // `transform`, since this card already carries its own `transform` for
-    // positioning/zooming and a `transformStyle: preserve-3d` flip -- a
-    // second transform layer visually broke the card-back flip rendering.
-    // Margin composes independently of all that: it shifts the box before
-    // the existing transform is applied on top, so it still works with any
-    // ancestor zoom/scale (e.g. Field's tap-to-zoom). Larger viewports have
-    // room to spare and are intentionally left unchanged.
+    // NOTE: On narrow viewports, a full card-width action button (as used
+    // on larger screens) pushes the card+button group edge-to-edge across
+    // the whole screen -- there's no room left to center the group with any
+    // breathing space around it. Below, the button's reserved width shrinks
+    // to this fraction of the card's width (wrapping its label onto a
+    // second line instead) so the group is narrower than the viewport, and
+    // the card is shifted left by half of *that* narrower width -- not the
+    // full card width -- to re-center the card+button group as a unit. The
+    // shift is a margin (not a second `transform`), since this card already
+    // carries its own `transform` for positioning/zooming and a
+    // `transformStyle: preserve-3d` flip -- a second transform layer
+    // visually broke the card-back flip rendering. Margin composes
+    // independently of all that: it shifts the box before the existing
+    // transform is applied on top, so it still works with any ancestor
+    // zoom/scale (e.g. Field's tap-to-zoom). Larger viewports have room to
+    // spare and are intentionally left unchanged (full card-width button).
+    const narrowActionButtonWidthFraction = 0.55
     const isNarrowViewport = useMediaQuery(theme.breakpoints.down('sm'))
     const hasActionButton =
       showPlayCardButton ||
@@ -116,6 +120,15 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       showHarvestCropButton ||
       showDiscardButton
     const shiftLeftForActionButton = isNarrowViewport && hasActionButton
+    const actionButtonWidth = shiftLeftForActionButton
+      ? `calc(${CARD_DIMENSIONS[size].width} * ${narrowActionButtonWidthFraction})`
+      : 1
+    // NOTE: The narrower mobile button needs to wrap its label onto a
+    // second line rather than overflowing or forcing the button wider than
+    // actionButtonWidth.
+    const actionButtonSx = shiftLeftForActionButton
+      ? { whiteSpace: 'normal', lineHeight: 1.3 }
+      : undefined
 
     // NOTE: At compact size the card's name and description aren't shown on
     // the card face (there isn't room), so they're surfaced in the tooltip
@@ -151,7 +164,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
               height: CARD_DIMENSIONS[size].height,
               width: CARD_DIMENSIONS[size].width,
               marginLeft: shiftLeftForActionButton
-                ? `calc(${CARD_DIMENSIONS[size].width} / -2)`
+                ? `calc(${CARD_DIMENSIONS[size].width} * ${narrowActionButtonWidthFraction} / -2)`
                 : undefined,
               transition: theme.transitions.create(['margin-left']),
             },
@@ -297,13 +310,19 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                     </>
                   )}
                   {showPlayCardButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
+                    <Box
+                      position="absolute"
+                      left="100%"
+                      width={actionButtonWidth}
+                      px={1}
+                    >
                       <Typography>
                         <Button
                           variant="contained"
                           fullWidth
                           disabled={playButtonDisabled}
                           onClick={() => void onPlayCard?.()}
+                          sx={actionButtonSx}
                         >
                           {isCropCardInstance(card) && 'Play crop'}
                           {isWaterCardInstance(card) && 'Water a crop'}
@@ -314,12 +333,18 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                     </Box>
                   )}
                   {showWaterCropButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
+                    <Box
+                      position="absolute"
+                      left="100%"
+                      width={actionButtonWidth}
+                      px={1}
+                    >
                       <Typography>
                         <Button
                           variant="contained"
                           fullWidth
                           onClick={onWaterCrop}
+                          sx={actionButtonSx}
                         >
                           Water crop
                         </Button>
@@ -327,13 +352,19 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                     </Box>
                   )}
                   {showHarvestCropButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
+                    <Box
+                      position="absolute"
+                      left="100%"
+                      width={actionButtonWidth}
+                      px={1}
+                    >
                       <Typography>
                         <Button
                           variant="contained"
                           fullWidth
                           color="success"
                           onClick={onHarvestCrop}
+                          sx={actionButtonSx}
                         >
                           Harvest crop
                         </Button>
@@ -341,13 +372,19 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                     </Box>
                   )}
                   {showDiscardButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
+                    <Box
+                      position="absolute"
+                      left="100%"
+                      width={actionButtonWidth}
+                      px={1}
+                    >
                       <Typography>
                         <Button
                           variant="contained"
                           fullWidth
                           color="error"
                           onClick={onDiscardCard}
+                          sx={actionButtonSx}
                         >
                           Discard
                         </Button>
