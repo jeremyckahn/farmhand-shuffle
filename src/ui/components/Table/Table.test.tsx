@@ -200,18 +200,25 @@ describe('Table', () => {
     )
   })
 
-  test("keeps the same fraction of the hand card peeking into view, regardless of the hand's cardSize", () => {
-    // NOTE: The Hand is anchored below the viewport bottom by a fixed
-    // number of theme spacing units, tuned against CardSize.MEDIUM (see
-    // Table.tsx). That offset must scale with the hand card's actual
-    // height, or a much shorter card (e.g. COMPACT) ends up almost
-    // entirely hidden below the fold instead of peeking into view the
-    // same proportional amount as on large screens.
-    const referenceOffsetPx = -64
-    const mediumHeightPx =
-      parseFloat(CARD_DIMENSIONS[CardSize.MEDIUM].height) * 16
-    const referenceVisibleFraction =
-      (mediumHeightPx + referenceOffsetPx) / mediumHeightPx
+  test('centers the idle hand between the player field and the bottom of the screen on narrow viewports', () => {
+    // NOTE: On narrow viewports, the hand's idle (unselected) position is a
+    // special case -- rather than mostly-hidden cards peeking up from the
+    // bottom edge (the large-screen behavior), the hand is fully visible
+    // and vertically centered in the gap between the player's own Field
+    // and the bottom of the screen.
+    const fieldBottomPx = 300
+
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: fieldBottomPx,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => undefined,
+    })
 
     mockUseMediaQuery.mockReturnValue(false)
     render(<StubTable match={matchWithHandCard} />)
@@ -222,7 +229,40 @@ describe('Table', () => {
     const offsetPx = parseFloat(getComputedStyle(handContainer).bottom)
     const compactHeightPx =
       parseFloat(CARD_DIMENSIONS[CardSize.COMPACT].height) * 16
-    const visibleFraction = (compactHeightPx + offsetPx) / compactHeightPx
+    const expectedOffsetPx =
+      (window.innerHeight - fieldBottomPx - compactHeightPx) / 2
+
+    expect(offsetPx).toBeCloseTo(expectedOffsetPx, 5)
+  })
+
+  test('does not affect the idle hand position on large viewports', () => {
+    const fieldBottomPx = 300
+
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: fieldBottomPx,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => undefined,
+    })
+
+    mockUseMediaQuery.mockReturnValue(true)
+    render(<StubTable match={matchWithHandCard} />)
+
+    const handContainer = screen.getByTestId(
+      `hand_${match.sessionOwnerPlayerId}`
+    ).parentElement as HTMLElement
+    const offsetPx = parseFloat(getComputedStyle(handContainer).bottom)
+    const mediumHeightPx =
+      parseFloat(CARD_DIMENSIONS[CardSize.MEDIUM].height) * 16
+    const referenceOffsetPx = -64
+    const visibleFraction = (mediumHeightPx + offsetPx) / mediumHeightPx
+    const referenceVisibleFraction =
+      (mediumHeightPx + referenceOffsetPx) / mediumHeightPx
 
     expect(visibleFraction).toBeCloseTo(referenceVisibleFraction, 5)
   })

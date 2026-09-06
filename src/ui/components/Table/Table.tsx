@@ -2,6 +2,8 @@ import Box from '@mui/material/Box'
 import Grid, { GridProps } from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
 import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { useWindowSize } from 'usehooks-ts'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch } from '../../../game/types'
@@ -40,12 +42,68 @@ export const Table = ({ match, ...rest }: TableProps) => {
         parseFloat(CARD_DIMENSIONS[CardSize.MEDIUM].height))
   )
 
+  // NOTE: On mobile, the hand's idle (unselected) position is a special
+  // case -- instead of mostly-hidden cards peeking up from the bottom edge
+  // (the large-screen behavior above), the hand is fully visible and
+  // vertically centered in the gap between the player's own Field and the
+  // bottom of the screen. This only affects the idle position: a focused
+  // card is positioned independently via useSelectedCardPosition, which
+  // targets the true viewport center regardless of this offset.
+  const gridContainerRef = useRef<HTMLDivElement>(null)
+  const ownFieldContainerRef = useRef<HTMLDivElement>(null)
+  const [ownFieldBottom, setOwnFieldBottom] = useState<number | null>(null)
+  const { height: windowHeight } = useWindowSize({ debounceDelay: 1 })
+
+  useLayoutEffect(() => {
+    const gridContainer = gridContainerRef.current
+    const ownFieldContainer = ownFieldContainerRef.current
+
+    if (!gridContainer || !ownFieldContainer) {
+      return
+    }
+
+    const updateOwnFieldBottom = () => {
+      setOwnFieldBottom(ownFieldContainer.getBoundingClientRect().bottom)
+    }
+
+    updateOwnFieldBottom()
+
+    // NOTE: A plain effect dependency (e.g. on windowHeight) only catches
+    // the viewport resizing -- it misses layout shifts above the field
+    // (opponent field/deck/discard images finishing their async load,
+    // etc.) that move the field's position without resizing the field
+    // itself. ResizeObserver on the whole Grid container catches both.
+    // jsdom (the test environment) doesn't implement ResizeObserver, so
+    // this falls back to the one-time measurement above there.
+    if (typeof ResizeObserver === 'undefined') {
+      return
+    }
+
+    const resizeObserver = new ResizeObserver(updateOwnFieldBottom)
+
+    resizeObserver.observe(gridContainer)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [windowHeight, useLargeCards])
+
+  const handHeightPx = parseFloat(CARD_DIMENSIONS[handCardSize].height) * 16
+  const mobileIdleHandBottomOffset =
+    ownFieldBottom === null
+      ? handBottomOffset
+      : `${(windowHeight - ownFieldBottom - handHeightPx) / 2}px`
+  const idleHandBottomOffset = useLargeCards
+    ? handBottomOffset
+    : mobileIdleHandBottomOffset
+
   return (
     <>
       <Grid
         gap={4}
         container
         {...rest}
+        ref={gridContainerRef}
         data-testid={`table_${match.sessionOwnerPlayerId}`}
       >
         <Grid item xs={12}>
@@ -78,7 +136,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
             />
           </Box>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} ref={ownFieldContainerRef}>
           <Field
             match={match}
             playerId={userPlayerId}
@@ -86,7 +144,12 @@ export const Table = ({ match, ...rest }: TableProps) => {
           />
         </Grid>
       </Grid>
-      <Box position="fixed" left="50%" right="50%" bottom={handBottomOffset}>
+      <Box
+        position="fixed"
+        left="50%"
+        right="50%"
+        bottom={idleHandBottomOffset}
+      >
         <Hand match={match} playerId={userPlayerId} cardSize={handCardSize} />
       </Box>
     </>
