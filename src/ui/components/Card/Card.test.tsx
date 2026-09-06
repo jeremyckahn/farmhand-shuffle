@@ -27,7 +27,7 @@ import { deselectedHandIdx } from '../constants'
 
 import { Card } from './Card'
 import { CardProps } from './types'
-import { cardFlipWrapperClassName } from './CardCore'
+import { cardClassName, cardFlipWrapperClassName } from './CardCore'
 
 const stubCardInstance = stubCarrot
 
@@ -39,7 +39,21 @@ const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
   </StubShellContext>
 )
 
+// NOTE: Defaults to `false`, matching jsdom's real fallback (there's no
+// matchMedia mock in this repo, so useMediaQuery normally resolves to
+// `defaultMatches: false`) -- only the "narrow viewport" tests below
+// override this.
+const mockUseMediaQuery = vi.fn<() => boolean>(() => false)
+
+vi.mock('@mui/material/useMediaQuery/useMediaQuery', () => ({
+  default: () => mockUseMediaQuery(),
+}))
+
 describe('Card', () => {
+  beforeEach(() => {
+    mockUseMediaQuery.mockReturnValue(false)
+  })
+
   test('renders card', () => {
     render(<StubCard />)
 
@@ -298,6 +312,78 @@ describe('Card', () => {
       waterCardInHandIdx: selectedWaterCardInHandIdx,
       playerId: stubPlayer1.id,
     })
+  })
+
+  test('shifts left on a narrow viewport when an action button is shown', () => {
+    mockUseMediaQuery.mockReturnValue(true)
+
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+      />
+    )
+
+    expect(screen.getByText('Water crop')).toBeInTheDocument()
+
+    const shiftWrapper = screen
+      .getByText(stubCardInstance.name)
+      .closest(`.${cardClassName}`)?.firstElementChild
+
+    expect(getComputedStyle(shiftWrapper!).transform).toEqual(
+      'translateX(-50%)'
+    )
+  })
+
+  test('does not shift on a large viewport, even with an action button shown', () => {
+    mockUseMediaQuery.mockReturnValue(false)
+
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+      />
+    )
+
+    expect(screen.getByText('Water crop')).toBeInTheDocument()
+
+    const shiftWrapper = screen
+      .getByText(stubCardInstance.name)
+      .closest(`.${cardClassName}`)?.firstElementChild
+
+    expect(getComputedStyle(shiftWrapper!).transform).toEqual('')
+  })
+
+  test('does not shift on a narrow viewport when no action button is shown', () => {
+    mockUseMediaQuery.mockReturnValue(true)
+
+    render(<StubCard />)
+
+    const shiftWrapper = screen
+      .getByText(stubCardInstance.name)
+      .closest(`.${cardClassName}`)?.firstElementChild
+
+    expect(getComputedStyle(shiftWrapper!).transform).toEqual('')
   })
 
   test('allows player to harvest a crop card', () => {

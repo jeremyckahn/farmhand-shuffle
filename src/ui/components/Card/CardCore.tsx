@@ -96,6 +96,22 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
+    // NOTE: On narrow viewports, a card centered on screen doesn't leave
+    // room for its action button, which renders immediately to its right
+    // at the same width (see the `right: '-100%'` boxes below) -- it gets
+    // clipped by the edge of the screen. Shifting the card left by half its
+    // own width re-centers the card+button pair as a unit instead of just
+    // the card. This is unconditional on the card's own width (not the
+    // viewport's), so it composes correctly with any ancestor zoom/scale
+    // transform (e.g. Field's tap-to-zoom). Larger viewports have room to
+    // spare and are intentionally left unchanged.
+    const isNarrowViewport = useMediaQuery(theme.breakpoints.down('sm'))
+    const hasActionButton =
+      showPlayCardButton ||
+      showWaterCropButton ||
+      showHarvestCropButton ||
+      showDiscardButton
+    const shiftLeftForActionButton = isNarrowViewport && hasActionButton
 
     // NOTE: At compact size the card's name and description aren't shown on
     // the card face (there isn't room), so they're surfaced in the tooltip
@@ -135,228 +151,240 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
           ]}
           {...props}
         >
-          <motion.div
-            initial={disableEnterAnimation ? false : { scale: 0 }}
-            animate={{ scale: 1 }}
-            style={{ originX: 0.5, originY: 0.5 }}
+          <Box
+            sx={{
+              height: '100%',
+              width: '100%',
+              transformStyle: 'preserve-3d',
+              transform: shiftLeftForActionButton
+                ? 'translateX(-50%)'
+                : undefined,
+              transition: theme.transitions.create(['transform']),
+            }}
           >
-            <Tooltip title={displayedTooltipTitle} placement="top" arrow>
-              <Box
-                className={cardFlipWrapperClassName}
-                sx={[
-                  {
-                    height: CARD_DIMENSIONS[size].height,
-                    position: 'relative',
-                    transformStyle: 'preserve-3d',
-                    width: CARD_DIMENSIONS[size].width,
-                    ...(isFlipped && {
-                      transform: 'rotateY(180deg)',
-                    }),
-                    transition: theme.transitions.create([
-                      'transform',
-                      'box-shadow',
-                    ]),
-                  },
-                ]}
-              >
-                {/* Front of the card */}
-                <Paper
-                  ref={cardRef}
-                  {...paperProps}
+            <motion.div
+              initial={disableEnterAnimation ? false : { scale: 0 }}
+              animate={{ scale: 1 }}
+              style={{ originX: 0.5, originY: 0.5 }}
+            >
+              <Tooltip title={displayedTooltipTitle} placement="top" arrow>
+                <Box
+                  className={cardFlipWrapperClassName}
                   sx={[
                     {
-                      backfaceVisibility: 'hidden',
-                      background:
-                        theme.palette.mode === 'light'
-                          ? darken(theme.palette.background.paper, 0.05)
-                          : lighten(theme.palette.background.paper, 0.15),
-                      display: 'flex',
-                      flexDirection: 'column',
-                      height: 1,
-                      outlineColor: theme.palette.background.default,
-                      outlineStyle: 'solid',
-                      outlineWidth: 2,
-                      p: theme.spacing(1),
-                      position: 'absolute',
-                      width: 1,
-                      ...(showWaterableState && {
-                        filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
+                      height: CARD_DIMENSIONS[size].height,
+                      position: 'relative',
+                      transformStyle: 'preserve-3d',
+                      width: CARD_DIMENSIONS[size].width,
+                      ...(isFlipped && {
+                        transform: 'rotateY(180deg)',
                       }),
-                      ...(showHarvestableState && {
-                        ...(isSessionOwnersCard &&
-                          getCropHarvestIndicatorSessionOwnerOutlineStyle({
-                            theme,
-                            isBuffedCrop,
-                            prefersReducedMotion,
-                          })),
-                        ...(!isSessionOwnersCard && {
-                          filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
-                        }),
-                      }),
+                      transition: theme.transitions.create([
+                        'transform',
+                        'box-shadow',
+                      ]),
                     },
                   ]}
                 >
-                  {size === CardSize.COMPACT ? (
-                    // NOTE: The name and description are surfaced in the
-                    // tooltip instead (see displayedTooltipTitle above) so
-                    // the card's art can use nearly all of the available
-                    // space.
-                    <Image
-                      src={getCardImageSrc(card)}
-                      alt={card.name}
-                      sx={{
-                        height: '100%',
-                        width: '100%',
-                        objectFit: 'contain',
-                        imageRendering: 'pixelated',
-                        filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
-                      }}
-                    />
-                  ) : (
-                    <>
-                      <Typography
-                        variant={
-                          size === CardSize.SMALL ? 'caption' : 'overline'
-                        }
-                        sx={{
-                          fontWeight: theme.typography.fontWeightBold,
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {card.name}
-                      </Typography>
-                      <Box
-                        sx={{
-                          height: '50%',
-                          display: 'flex',
-                          background: theme.palette.common.white,
-                          backgroundImage: `url(${ui.dirt})`,
-                          backgroundSize: '100%',
-                          backgroundRepeat: 'repeat',
-                          borderColor: theme.palette.divider,
-                          borderRadius: `${theme.shape.borderRadius}px`,
-                          borderWidth: 1,
-                          borderStyle: 'solid',
-                          imageRendering: 'pixelated',
-                        }}
-                      >
-                        <Image
-                          src={getCardImageSrc(card)}
-                          alt={card.name}
-                          sx={{
-                            height: `${100 * imageScale}%`,
-                            p: 0,
-                            m: 'auto',
-                            imageRendering: 'pixelated',
-                            filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
-                          }}
-                        />
-                      </Box>
-                      <Divider sx={{ my: theme.spacing(1) }} />
-
-                      {/* Card actions */}
-                      <Box
-                        sx={{
-                          height: '50%',
-                          overflow: 'auto',
-                          ...(size === CardSize.SMALL && {
-                            fontSize: theme.typography.caption.fontSize,
-                            lineHeight: theme.typography.caption.lineHeight,
-                            '> p': {
-                              my: 0,
-                            },
+                  {/* Front of the card */}
+                  <Paper
+                    ref={cardRef}
+                    {...paperProps}
+                    sx={[
+                      {
+                        backfaceVisibility: 'hidden',
+                        background:
+                          theme.palette.mode === 'light'
+                            ? darken(theme.palette.background.paper, 0.05)
+                            : lighten(theme.palette.background.paper, 0.15),
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: 1,
+                        outlineColor: theme.palette.background.default,
+                        outlineStyle: 'solid',
+                        outlineWidth: 2,
+                        p: theme.spacing(1),
+                        position: 'absolute',
+                        width: 1,
+                        ...(showWaterableState && {
+                          filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
+                        }),
+                        ...(showHarvestableState && {
+                          ...(isSessionOwnersCard &&
+                            getCropHarvestIndicatorSessionOwnerOutlineStyle({
+                              theme,
+                              isBuffedCrop,
+                              prefersReducedMotion,
+                            })),
+                          ...(!isSessionOwnersCard && {
+                            filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
                           }),
+                        }),
+                      },
+                    ]}
+                  >
+                    {size === CardSize.COMPACT ? (
+                      // NOTE: The name and description are surfaced in the
+                      // tooltip instead (see displayedTooltipTitle above) so
+                      // the card's art can use nearly all of the available
+                      // space.
+                      <Image
+                        src={getCardImageSrc(card)}
+                        alt={card.name}
+                        sx={{
+                          height: '100%',
+                          width: '100%',
+                          objectFit: 'contain',
+                          imageRendering: 'pixelated',
+                          filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <Typography
+                          variant={
+                            size === CardSize.SMALL ? 'caption' : 'overline'
+                          }
+                          sx={{
+                            fontWeight: theme.typography.fontWeightBold,
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {card.name}
+                        </Typography>
+                        <Box
+                          sx={{
+                            height: '50%',
+                            display: 'flex',
+                            background: theme.palette.common.white,
+                            backgroundImage: `url(${ui.dirt})`,
+                            backgroundSize: '100%',
+                            backgroundRepeat: 'repeat',
+                            borderColor: theme.palette.divider,
+                            borderRadius: `${theme.shape.borderRadius}px`,
+                            borderWidth: 1,
+                            borderStyle: 'solid',
+                            imageRendering: 'pixelated',
+                          }}
+                        >
+                          <Image
+                            src={getCardImageSrc(card)}
+                            alt={card.name}
+                            sx={{
+                              height: `${100 * imageScale}%`,
+                              p: 0,
+                              m: 'auto',
+                              imageRendering: 'pixelated',
+                              filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
+                            }}
+                          />
+                        </Box>
+                        <Divider sx={{ my: theme.spacing(1) }} />
+
+                        {/* Card actions */}
+                        <Box
+                          sx={{
+                            height: '50%',
+                            overflow: 'auto',
+                            ...(size === CardSize.SMALL && {
+                              fontSize: theme.typography.caption.fontSize,
+                              lineHeight: theme.typography.caption.lineHeight,
+                              '> p': {
+                                my: 0,
+                              },
+                            }),
+                          }}
+                        >
+                          {children}
+                        </Box>
+                      </>
+                    )}
+                    {showPlayCardButton && (
+                      <Box position="absolute" right="-100%" width={1} px={1}>
+                        <Typography>
+                          <Button
+                            variant="contained"
+                            disabled={playButtonDisabled}
+                            onClick={() => void onPlayCard?.()}
+                          >
+                            {isCropCardInstance(card) && 'Play crop'}
+                            {isWaterCardInstance(card) && 'Water a crop'}
+                            {isEventCardInstance(card) && 'Play event'}
+                            {isToolCardInstance(card) && 'Play tool'}
+                          </Button>
+                        </Typography>
+                      </Box>
+                    )}
+                    {showWaterCropButton && (
+                      <Box position="absolute" right="-100%" width={1} px={1}>
+                        <Typography>
+                          <Button variant="contained" onClick={onWaterCrop}>
+                            Water crop
+                          </Button>
+                        </Typography>
+                      </Box>
+                    )}
+                    {showHarvestCropButton && (
+                      <Box position="absolute" right="-100%" width={1} px={1}>
+                        <Typography>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={onHarvestCrop}
+                          >
+                            Harvest crop
+                          </Button>
+                        </Typography>
+                      </Box>
+                    )}
+                    {showDiscardButton && (
+                      <Box position="absolute" right="-100%" width={1} px={1}>
+                        <Typography>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            onClick={onDiscardCard}
+                          >
+                            Discard
+                          </Button>
+                        </Typography>
+                      </Box>
+                    )}
+                  </Paper>
+
+                  {/* Back of the card */}
+                  <Paper
+                    {...paperProps}
+                    sx={{
+                      alignItems: 'center',
+                      backgroundColor: theme.palette.background.default,
+                      backfaceVisibility: 'hidden',
+                      color: theme.palette.common.white,
+                      display: 'flex',
+                      height: 1,
+                      position: 'absolute',
+                      textAlign: 'center',
+                      transform: 'rotateY(180deg)',
+                      width: 1,
+                    }}
+                  >
+                    {size !== CardSize.COMPACT && (
+                      <Typography
+                        variant="h2"
+                        sx={{
+                          ...(size === CardSize.SMALL && theme.typography.h6),
+                          ...(size === CardSize.MEDIUM && theme.typography.h5),
+                          ...(size === CardSize.LARGE && theme.typography.h4),
                         }}
                       >
-                        {children}
-                      </Box>
-                    </>
-                  )}
-                  {showPlayCardButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          disabled={playButtonDisabled}
-                          onClick={() => void onPlayCard?.()}
-                        >
-                          {isCropCardInstance(card) && 'Play crop'}
-                          {isWaterCardInstance(card) && 'Water a crop'}
-                          {isEventCardInstance(card) && 'Play event'}
-                          {isToolCardInstance(card) && 'Play tool'}
-                        </Button>
+                        Farmhand Shuffle
                       </Typography>
-                    </Box>
-                  )}
-                  {showWaterCropButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
-                      <Typography>
-                        <Button variant="contained" onClick={onWaterCrop}>
-                          Water crop
-                        </Button>
-                      </Typography>
-                    </Box>
-                  )}
-                  {showHarvestCropButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={onHarvestCrop}
-                        >
-                          Harvest crop
-                        </Button>
-                      </Typography>
-                    </Box>
-                  )}
-                  {showDiscardButton && (
-                    <Box position="absolute" right="-100%" width={1} px={1}>
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          onClick={onDiscardCard}
-                        >
-                          Discard
-                        </Button>
-                      </Typography>
-                    </Box>
-                  )}
-                </Paper>
-
-                {/* Back of the card */}
-                <Paper
-                  {...paperProps}
-                  sx={{
-                    alignItems: 'center',
-                    backgroundColor: theme.palette.background.default,
-                    backfaceVisibility: 'hidden',
-                    color: theme.palette.common.white,
-                    display: 'flex',
-                    height: 1,
-                    position: 'absolute',
-                    textAlign: 'center',
-                    transform: 'rotateY(180deg)',
-                    width: 1,
-                  }}
-                >
-                  {size !== CardSize.COMPACT && (
-                    <Typography
-                      variant="h2"
-                      sx={{
-                        ...(size === CardSize.SMALL && theme.typography.h6),
-                        ...(size === CardSize.MEDIUM && theme.typography.h5),
-                        ...(size === CardSize.LARGE && theme.typography.h4),
-                      }}
-                    >
-                      Farmhand Shuffle
-                    </Typography>
-                  )}
-                </Paper>
-              </Box>
-            </Tooltip>
-          </motion.div>
+                    )}
+                  </Paper>
+                </Box>
+              </Tooltip>
+            </motion.div>
+          </Box>
         </Box>
       </AnimatePresence>
     )
