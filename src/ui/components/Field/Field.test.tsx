@@ -12,6 +12,7 @@ import {
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { isSxArray } from '../../type-guards'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
@@ -302,7 +303,7 @@ describe('Field', () => {
       )
     })
 
-    test('centers the focused card with a fixed position instead of a translate+scale', async () => {
+    test('centers the focused card with a translate, not a scale', async () => {
       render(<StubField cardSize={CardSize.COMPACT} />)
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
@@ -315,13 +316,18 @@ describe('Field', () => {
 
       const style = getComputedStyle(playedCrop1)
 
-      expect(style.position).toEqual('fixed')
-      expect(style.top).toEqual('50%')
-      expect(style.left).toEqual('50%')
-      expect(style.transform).toEqual('translate(-50%, -50%)')
+      // NOTE: position stays 'relative' (unchanged from the unselected
+      // state) throughout -- that's what lets the transform below
+      // transition smoothly from the card's actual position in the
+      // field, rather than jumping there. See the sx comment in
+      // Field.tsx for why.
+      expect(style.position).toEqual('relative')
+      expect(style.transform).toContain('translateX(')
+      expect(style.transform).toContain('translateY(')
+      expect(style.transform).not.toContain('scale(')
     })
 
-    test("reserves the focused card's slot so the row does not reflow", async () => {
+    test("pins the focused card's own layout box to cardSize so the row does not reflow", async () => {
       render(<StubField cardSize={CardSize.COMPACT} />)
 
       const row = screen.getByTestId(
@@ -342,10 +348,14 @@ describe('Field', () => {
 
       await userEvent.click(playedCrop1)
 
-      expect(row.children.length).toEqual(childCountBeforeSelection + 1)
+      const style = getComputedStyle(playedCrop1)
+
+      expect(style.width).toEqual(CARD_DIMENSIONS[CardSize.COMPACT].width)
+      expect(style.height).toEqual(CARD_DIMENSIONS[CardSize.COMPACT].height)
+      expect(row.children.length).toEqual(childCountBeforeSelection)
     })
 
-    test('does not scale or reposition the focused card on blur', async () => {
+    test('does not reposition the focused card on blur', async () => {
       render(<StubField cardSize={CardSize.COMPACT} />)
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
@@ -360,7 +370,7 @@ describe('Field', () => {
         ;(document.activeElement as HTMLElement).blur()
       })
 
-      expect(getComputedStyle(playedCrop1).position).not.toEqual('fixed')
+      expect(getComputedStyle(playedCrop1).transform).toEqual('')
       expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
     })
   })

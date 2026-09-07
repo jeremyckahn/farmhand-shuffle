@@ -102,12 +102,33 @@ export const Field = ({
       return
     }
 
-    // NOTE: On narrow viewports, the focused card is centered with a
-    // self-adjusting CSS-only transform (see the isFocusedCompactCard sx
-    // below) instead of a scale computed from this card's current
-    // bounding rect -- there's no need to measure or scale anything here.
-    if (cardSize !== CardSize.COMPACT) {
-      const boundingClientRect = target.getBoundingClientRect()
+    const boundingClientRect = target.getBoundingClientRect()
+
+    if (cardSize === CardSize.COMPACT) {
+      // NOTE: On narrow viewports, the focused card renders at a larger,
+      // fixed size (focusedFieldCardSize, via the cardProps.size override
+      // below) instead of being scaled up from this card's actual
+      // (illegibly small) rendered size. This card's own layout box stays
+      // pinned at cardSize the whole time regardless of selection (see
+      // the sx below), so it never reflows the row and this translate is
+      // the only thing that ever changes -- letting it transition
+      // smoothly from the card's actual position in the field, exactly
+      // like the desktop path below. The translate target below aims for
+      // where the BIGGER card's center needs to land, using
+      // focusedFieldCardSize's dimensions rather than this bounding
+      // rect's own (smaller) ones -- otherwise the resulting position
+      // would be off by half of the size difference.
+      const focusedWidthPx =
+        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].width) * 16
+      const focusedHeightPx =
+        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].height) * 16
+      const xDelta = centerX - (boundingClientRect.left + focusedWidthPx / 2)
+      const yDelta = centerY - (boundingClientRect.top + focusedHeightPx / 2)
+
+      setSelectedCardTransform(
+        `translateX(${xDelta}px) translateY(${yDelta}px)`
+      )
+    } else {
       const xDelta =
         centerX - (boundingClientRect.left + boundingClientRect.width / 2)
       const yDelta =
@@ -201,93 +222,70 @@ export const Field = ({
             isSelected && cardSize === CardSize.COMPACT
 
           return (
-            <React.Fragment key={cardInstance.instanceId}>
-              {isFocusedCompactCard && (
-                // NOTE: The focused card below escapes the row's flex
-                // layout (position: fixed) to render larger without
-                // reflowing its neighbors -- this invisible placeholder
-                // keeps its slot's space reserved so the row doesn't
-                // collapse around the gap it leaves behind.
-                <Box
-                  aria-hidden
-                  sx={{
-                    flexShrink: 0,
-                    width: CARD_DIMENSIONS[cardSize].width,
-                    height: CARD_DIMENSIONS[cardSize].height,
-                  }}
-                />
-              )}
-              <PlayedCard
-                aria-label={
-                  isSelected ? selectedCardLabel : unselectedCardLabel
-                }
-                tabIndex={0}
-                cardProps={{
-                  cardInstance,
-                  cardIdxInField: fieldIdx,
-                  cropIdxInFieldToWater: fieldIdx,
-                  cropIdxInFieldToHarvest: fieldIdx,
-                  isInField: true,
-                  isFocused: isSelected,
-                  playerId: player.id,
-                  size: isFocusedCompactCard ? focusedFieldCardSize : cardSize,
+            <PlayedCard
+              key={cardInstance.instanceId}
+              aria-label={isSelected ? selectedCardLabel : unselectedCardLabel}
+              tabIndex={0}
+              cardProps={{
+                cardInstance,
+                cardIdxInField: fieldIdx,
+                cropIdxInFieldToWater: fieldIdx,
+                cropIdxInFieldToHarvest: fieldIdx,
+                isInField: true,
+                isFocused: isSelected,
+                playerId: player.id,
+                size: isFocusedCompactCard ? focusedFieldCardSize : cardSize,
+                ...(isSelected && {
+                  elevation: SELECTED_CARD_ELEVATION,
+                }),
+                paperProps: {
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
                   }),
-                  paperProps: {
-                    ...(isSelected && {
-                      elevation: SELECTED_CARD_ELEVATION,
-                    }),
-                  },
-                }}
-                playedCard={playedCard}
-                isInBackground={isInBackground}
-                // NOTE: The full (non-compact) card face already surfaces
-                // this same "water needed" information as text -- hide
-                // the icon-grid indicator row so it doesn't collide with
-                // action buttons CardCore stacks below the card on narrow
-                // viewports.
-                hideWaterIndicator={isFocusedCompactCard}
-                onFocus={event => handleCardFocus(event, fieldIdx)}
-                sx={{
-                  flexShrink: 0,
-                  mx: 'auto',
-                  position: 'relative',
-                  transition: theme.transitions.create(['transform']),
-                  outline: 'none',
-                  // NOTE: This is needed to fix a Firefox bug that prevents
-                  // opponent fields from appearing upside down
-                  transformStyle: 'preserve-3d',
-                  ...(!isSessionOwnerPlayer && {
-                    transform: rotationTransform,
-                  }),
-                  ...(!isSelected && {
-                    cursor: 'pointer',
-                  }),
-                  ...(isSelected &&
-                    !isFocusedCompactCard && {
-                      transform: selectedCardTransform,
-                      zIndex: 20,
-                    }),
-                  ...(isFocusedCompactCard && {
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 20,
-                    // NOTE: CardCore shifts the card upward (a negative
-                    // margin-top) to make room to vertically center its
-                    // action-button stack, which renders below the card
-                    // via absolute positioning and so doesn't contribute
-                    // to this wrapper's own auto height. Pinning the
-                    // wrapper to the card's nominal (pre-shift) height
-                    // keeps the -50% centering trick above targeting the
-                    // card+button group as a whole, not just the card.
-                    height: CARD_DIMENSIONS[focusedFieldCardSize].height,
-                  }),
-                }}
-              />
-            </React.Fragment>
+                },
+              }}
+              playedCard={playedCard}
+              isInBackground={isInBackground}
+              // NOTE: The full (non-compact) card face already surfaces
+              // this same "water needed" information as text -- hide
+              // the icon-grid indicator row so it doesn't collide with
+              // action buttons CardCore stacks below the card on narrow
+              // viewports.
+              hideWaterIndicator={isFocusedCompactCard}
+              onFocus={event => handleCardFocus(event, fieldIdx)}
+              sx={{
+                flexShrink: 0,
+                mx: 'auto',
+                position: 'relative',
+                transition: theme.transitions.create(['transform']),
+                outline: 'none',
+                // NOTE: This is needed to fix a Firefox bug that prevents
+                // opponent fields from appearing upside down
+                transformStyle: 'preserve-3d',
+                ...(!isSessionOwnerPlayer && {
+                  transform: rotationTransform,
+                }),
+                ...(!isSelected && {
+                  cursor: 'pointer',
+                }),
+                ...(isSelected && {
+                  transform: selectedCardTransform,
+                  zIndex: 20,
+                }),
+                ...(cardSize === CardSize.COMPACT && {
+                  // NOTE: Pin this wrapper's own layout box to the row's
+                  // normal (small) card size at all times, whether or not
+                  // it's focused -- the focused card's actual (larger)
+                  // content is rendered via cardProps.size above and just
+                  // overflows this box (the row uses overflow: visible),
+                  // so the row never reflows, and this box's position
+                  // never has to jump for the transform transition above
+                  // to animate smoothly from the card's actual position.
+                  width: CARD_DIMENSIONS[cardSize].width,
+                  height: CARD_DIMENSIONS[cardSize].height,
+                }),
+              }}
+            />
           )
         })}
       </Box>
