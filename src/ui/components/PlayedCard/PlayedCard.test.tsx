@@ -86,6 +86,22 @@ describe('PlayedCard', () => {
     }
   })
 
+  test('the water indicator row is stacked behind the card', () => {
+    // NOTE: A focused card's action button(s) render below the card and
+    // overflow past its own box (see CardCore.tsx) -- this indicator row
+    // must stay behind that overflowing content, or it paints over the
+    // button and makes it look translucent.
+    render(<StubCropCard />)
+
+    const waterIndicatorRow = screen.getAllByAltText('Water card indicator')[0]!
+      .parentElement?.parentElement
+
+    const style = getComputedStyle(waterIndicatorRow!)
+
+    expect(style.position).toEqual('relative')
+    expect(style.zIndex).toEqual('-1')
+  })
+
   test('extra water indicators are rendered', () => {
     const waterCards = 6
 
@@ -117,6 +133,16 @@ describe('PlayedCard', () => {
       const notchRow = screen.getByLabelText('Water card indicator')
 
       expect(notchRow.children).toHaveLength(stubCardInstance.waterToMature)
+    })
+
+    test('the notch row is stacked behind the card', () => {
+      render(<StubCropCard cardProps={stubCompactCardProps} />)
+
+      const notchRow = screen.getByLabelText('Water card indicator')
+      const style = getComputedStyle(notchRow)
+
+      expect(style.position).toEqual('relative')
+      expect(style.zIndex).toEqual('-1')
     })
 
     test('filled notches are fully opaque, unfilled notches are dimmed', () => {

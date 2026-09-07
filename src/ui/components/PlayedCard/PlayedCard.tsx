@@ -56,6 +56,16 @@ export const PlayedCard = ({
             gap={theme.spacing(0.25)}
             pt={0.5}
             aria-label="Water card indicator"
+            // NOTE: On narrow viewports, a focused card's action button(s)
+            // render below the card via absolute positioning and overflow
+            // past its own box (see CardCore.tsx). Without this, this
+            // indicator row -- an unpositioned sibling that comes after
+            // Card in the DOM -- paints on top of that overflowing
+            // content regardless, making the button look translucent.
+            // Negative z-index (on now-positioned relative) drops it
+            // behind Card's own stacking layer instead.
+            position="relative"
+            zIndex={-1}
           >
             {new Array(waterIconsToRender).fill(null).map((_, idx) => {
               const isFilled = idx < playedCard.waterCards
@@ -87,6 +97,11 @@ export const PlayedCard = ({
             width={CARD_DIMENSIONS[size].width}
             ml={theme.spacing(-0.5)}
             justifyContent="flex-start"
+            // NOTE: See the matching comment on the compact notch row above
+            // -- this keeps the indicator row from painting over a focused
+            // card's overflowing action button(s).
+            position="relative"
+            zIndex={-1}
           >
             {new Array(waterIconsToRender).fill(null).map((_, idx) => {
               let opacity = 1
