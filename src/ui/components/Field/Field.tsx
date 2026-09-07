@@ -246,12 +246,6 @@ export const Field = ({
               }}
               playedCard={playedCard}
               isInBackground={isInBackground}
-              // NOTE: The full (non-compact) card face already surfaces
-              // this same "water needed" information as text -- hide
-              // the icon-grid indicator row so it doesn't collide with
-              // action buttons CardCore stacks below the card on narrow
-              // viewports.
-              hideWaterIndicator={isFocusedCompactCard}
               onFocus={event => handleCardFocus(event, fieldIdx)}
               sx={{
                 flexShrink: 0,
