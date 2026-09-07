@@ -10,6 +10,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Fab from '@mui/material/Fab'
+import Fade from '@mui/material/Fade'
 import useTheme from '@mui/material/styles/useTheme'
 import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 import Tooltip from '@mui/material/Tooltip'
@@ -43,6 +44,7 @@ const MatchCore = ({
     handleClickPlayAgain,
     isHandDisabled,
     isInputBlocked,
+    isSelectingFieldPosition,
     shellContextValue,
     showGameOver,
     showHand,
@@ -54,7 +56,9 @@ const MatchCore = ({
   const isCardFocused =
     selectedHandCardIdx !== deselectedHandIdx ||
     selectedFieldCardIdx !== deselectedHandIdx
-  const showCardNavFabs = isNarrowViewport && isCardFocused
+  // NOTE: The Fabs stay mounted (see isNarrowViewport below) so Fade can
+  // animate them out, rather than this condition unmounting them outright.
+  const showCardNavFabs = isCardFocused && !isSelectingFieldPosition
 
   // NOTE: On mobile, the focused Hand/Field card can be hard to move away
   // from by touch alone (its neighbors are mostly hidden behind it) -- these
@@ -184,36 +188,40 @@ const MatchCore = ({
             />
           </Fab>
         </Tooltip>
-        {showCardNavFabs && (
+        {isNarrowViewport && (
           <>
-            <Fab
-              color="secondary"
-              aria-label="Previous card"
-              onPointerDown={handleCardNavFabPointerDown}
-              onClick={() => handleCardNav(-1)}
-              sx={{
-                position: 'fixed',
-                top: '50%',
-                left: theme.spacing(2),
-                transform: 'translateY(-50%)',
-              }}
-            >
-              <ChevronLeft />
-            </Fab>
-            <Fab
-              color="secondary"
-              aria-label="Next card"
-              onPointerDown={handleCardNavFabPointerDown}
-              onClick={() => handleCardNav(1)}
-              sx={{
-                position: 'fixed',
-                top: '50%',
-                right: theme.spacing(2),
-                transform: 'translateY(-50%)',
-              }}
-            >
-              <ChevronRight />
-            </Fab>
+            <Fade in={showCardNavFabs} unmountOnExit>
+              <Fab
+                color="secondary"
+                aria-label="Previous card"
+                onPointerDown={handleCardNavFabPointerDown}
+                onClick={() => handleCardNav(-1)}
+                sx={{
+                  position: 'fixed',
+                  top: '50%',
+                  left: theme.spacing(2),
+                  transform: 'translateY(-50%)',
+                }}
+              >
+                <ChevronLeft />
+              </Fab>
+            </Fade>
+            <Fade in={showCardNavFabs} unmountOnExit>
+              <Fab
+                color="secondary"
+                aria-label="Next card"
+                onPointerDown={handleCardNavFabPointerDown}
+                onClick={() => handleCardNav(1)}
+                sx={{
+                  position: 'fixed',
+                  top: '50%',
+                  right: theme.spacing(2),
+                  transform: 'translateY(-50%)',
+                }}
+              >
+                <ChevronRight />
+              </Fab>
+            </Fade>
           </>
         )}
         <Dialog open={showGameOver}>

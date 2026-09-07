@@ -248,6 +248,49 @@ describe('useMatch', () => {
     expect(showNotificationMock).toHaveBeenCalledWith('Test message', 'success')
   })
 
+  it.each([MatchState.CHOOSING_CARD_POSITION, MatchState.PLAYER_WATERING_CROP])(
+    'should set isSelectingFieldPosition to true in %s state',
+    matchState => {
+      vi.mocked(useMatchRules).mockReturnValue({
+        match: {
+          ...mockMatch,
+          selectedWaterCardInHandIdx: 0,
+        },
+        matchState,
+        botTurnActionState: null,
+      })
+
+      const { result } = renderHook(() =>
+        useMatch({
+          playerSeeds: mockPlayerSeeds,
+          userPlayerId: mockUserPlayerId,
+        })
+      )
+
+      expect(result.current.isSelectingFieldPosition).toBe(true)
+    }
+  )
+
+  it('should set isSelectingFieldPosition to false in WAITING_FOR_PLAYER_TURN_ACTION state', () => {
+    vi.mocked(useMatchRules).mockReturnValue({
+      match: {
+        ...mockMatch,
+        selectedWaterCardInHandIdx: 0,
+      },
+      matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      botTurnActionState: null,
+    })
+
+    const { result } = renderHook(() =>
+      useMatch({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+      })
+    )
+
+    expect(result.current.isSelectingFieldPosition).toBe(false)
+  })
+
   it('should update isHandInViewport when setIsHandInViewport is called', () => {
     const { result } = renderHook(() =>
       useMatch({

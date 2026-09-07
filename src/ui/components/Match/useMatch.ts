@@ -108,6 +108,15 @@ export const useMatch = ({
   const isHandDisabled = [MatchState.PLAYER_WATERING_CROP].includes(matchState)
   const showHand = isHandInViewport || isHandDisabled
   const showGameOver = matchState === MatchState.GAME_OVER
+  // NOTE: In both of these states, the player is choosing a position/target
+  // in the Field (see TurnControl.tsx's "Select a position in the field"/
+  // "Select a crop to water" messaging for these same states) -- the
+  // Hand/Field card-navigation Fabs would just be in the way of that, so
+  // they're hidden for the duration.
+  const isSelectingFieldPosition = [
+    MatchState.CHOOSING_CARD_POSITION,
+    MatchState.PLAYER_WATERING_CROP,
+  ].includes(matchState)
 
   return {
     match,
@@ -115,6 +124,7 @@ export const useMatch = ({
     handleClickPlayAgain,
     isHandDisabled,
     isInputBlocked,
+    isSelectingFieldPosition,
     shellContextValue,
     showGameOver,
     showHand,
