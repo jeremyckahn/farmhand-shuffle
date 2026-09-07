@@ -12,12 +12,14 @@ import {
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { isSxArray } from '../../type-guards'
+import { CardSize } from '../../types'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
 
 import {
   Field,
   FieldProps,
+  focusedFieldCardSize,
   rotationTransform,
   selectedCardLabel,
   unselectedCardLabel,
@@ -39,6 +41,7 @@ vi.mock('../Card', () => ({
     isFocused,
     paperProps,
     sx,
+    size,
     ...rest
   }: CardProps) => {
     const style = sx && isSxArray(sx) ? sx?.[0] || {} : {}
@@ -51,7 +54,7 @@ vi.mock('../Card', () => ({
 
     return (
       // @ts-expect-error Type error is acceptable for tests
-      <div {...rest} style={style}>
+      <div {...rest} data-size={size} style={style}>
         <label>{cardInstance.name}</label>
       </div>
     )
@@ -279,5 +282,86 @@ describe('Field', () => {
 
     expect(card1Transform).toMatchInlineSnapshot(`""`)
     expect(document.activeElement).toBe(document.body)
+  })
+
+  describe('on a compact (narrow-viewport) field', () => {
+    test('renders the focused card at focusedFieldCardSize instead of scaling it', async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      if (!playedCrop1) {
+        throw new Error('Crop not found')
+      }
+
+      await userEvent.click(playedCrop1)
+
+      expect(playedCrop1.querySelector('[data-size]')).toHaveAttribute(
+        'data-size',
+        focusedFieldCardSize
+      )
+    })
+
+    test('centers the focused card with a fixed position instead of a translate+scale', async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      if (!playedCrop1) {
+        throw new Error('Crop not found')
+      }
+
+      await userEvent.click(playedCrop1)
+
+      const style = getComputedStyle(playedCrop1)
+
+      expect(style.position).toEqual('fixed')
+      expect(style.top).toEqual('50%')
+      expect(style.left).toEqual('50%')
+      expect(style.transform).toEqual('translate(-50%, -50%)')
+    })
+
+    test("reserves the focused card's slot so the row does not reflow", async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const row = screen.getByTestId(
+        `field_${matchStub.sessionOwnerPlayerId}`
+      ).firstElementChild
+
+      if (!row) {
+        throw new Error('Field row not found')
+      }
+
+      const childCountBeforeSelection = row.children.length
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      if (!playedCrop1) {
+        throw new Error('Crop not found')
+      }
+
+      await userEvent.click(playedCrop1)
+
+      expect(row.children.length).toEqual(childCountBeforeSelection + 1)
+    })
+
+    test('does not scale or reposition the focused card on blur', async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      if (!playedCrop1) {
+        throw new Error('Crop not found')
+      }
+
+      await userEvent.click(playedCrop1)
+
+      await waitFor(() => {
+        ;(document.activeElement as HTMLElement).blur()
+      })
+
+      expect(getComputedStyle(playedCrop1).position).not.toEqual('fixed')
+      expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
+    })
   })
 })

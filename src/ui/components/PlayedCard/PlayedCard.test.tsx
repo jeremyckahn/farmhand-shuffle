@@ -86,6 +86,15 @@ describe('PlayedCard', () => {
     }
   })
 
+  test('hideWaterIndicator suppresses the water indicator row entirely', () => {
+    render(<StubCropCard hideWaterIndicator />)
+
+    expect(screen.queryAllByAltText('Water card indicator')).toHaveLength(0)
+    expect(
+      screen.queryByLabelText('Water card indicator')
+    ).not.toBeInTheDocument()
+  })
+
   test('extra water indicators are rendered', () => {
     const waterCards = 6
 

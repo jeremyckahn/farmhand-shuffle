@@ -10,7 +10,7 @@ import {
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
-import { getFieldZoomScale } from '../../config/dimensions'
+import { CARD_DIMENSIONS, getFieldZoomScale } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { PlayedCard, playedCardClassName } from '../PlayedCard'
 
@@ -18,6 +18,13 @@ import { EmptyPlot } from './EmptyPlot'
 
 const deselectedIdx = -1
 const selectedCardYOffset = -25
+
+// NOTE: On narrow viewports (cardSize === CardSize.COMPACT), a focused
+// field card is rendered at this larger, fixed size instead of being
+// scaled up via CSS transform -- crisp/readable rather than blurry
+// upscaled pixel art, the same treatment (and the same size) Hand.tsx
+// gives its focused card (see focusedCardSize there).
+export const focusedFieldCardSize = CardSize.MEDIUM
 
 export interface FieldProps extends BoxProps {
   match: IMatch
@@ -95,19 +102,26 @@ export const Field = ({
       return
     }
 
-    const boundingClientRect = target.getBoundingClientRect()
-    const xDelta =
-      centerX - (boundingClientRect.left + boundingClientRect.width / 2)
-    const yDelta =
-      centerY -
-      (boundingClientRect.top + boundingClientRect.height / 2) +
-      (isSessionOwnerPlayer ? selectedCardYOffset : -selectedCardYOffset)
+    // NOTE: On narrow viewports, the focused card is centered with a
+    // self-adjusting CSS-only transform (see the isFocusedCompactCard sx
+    // below) instead of a scale computed from this card's current
+    // bounding rect -- there's no need to measure or scale anything here.
+    if (cardSize !== CardSize.COMPACT) {
+      const boundingClientRect = target.getBoundingClientRect()
+      const xDelta =
+        centerX - (boundingClientRect.left + boundingClientRect.width / 2)
+      const yDelta =
+        centerY -
+        (boundingClientRect.top + boundingClientRect.height / 2) +
+        (isSessionOwnerPlayer ? selectedCardYOffset : -selectedCardYOffset)
 
-    setSelectedCardTransform(
-      `translateX(${xDelta}px) translateY(${yDelta}px) scale(${getFieldZoomScale(
-        cardSize
-      )})`
-    )
+      setSelectedCardTransform(
+        `translateX(${xDelta}px) translateY(${yDelta}px) scale(${getFieldZoomScale(
+          cardSize
+        )})`
+      )
+    }
+
     setSelectedCardIdx(cardIdx)
   }
 
@@ -183,54 +197,97 @@ export const Field = ({
           const isSelected = selectedCardIdx === fieldIdx
           const isInBackground =
             selectedCardIdx !== deselectedIdx && !isSelected
+          const isFocusedCompactCard =
+            isSelected && cardSize === CardSize.COMPACT
 
           return (
-            <PlayedCard
-              key={cardInstance.instanceId}
-              aria-label={isSelected ? selectedCardLabel : unselectedCardLabel}
-              tabIndex={0}
-              cardProps={{
-                cardInstance,
-                cardIdxInField: fieldIdx,
-                cropIdxInFieldToWater: fieldIdx,
-                cropIdxInFieldToHarvest: fieldIdx,
-                isInField: true,
-                isFocused: isSelected,
-                playerId: player.id,
-                size: cardSize,
-                ...(isSelected && {
-                  elevation: SELECTED_CARD_ELEVATION,
-                }),
-                paperProps: {
+            <React.Fragment key={cardInstance.instanceId}>
+              {isFocusedCompactCard && (
+                // NOTE: The focused card below escapes the row's flex
+                // layout (position: fixed) to render larger without
+                // reflowing its neighbors -- this invisible placeholder
+                // keeps its slot's space reserved so the row doesn't
+                // collapse around the gap it leaves behind.
+                <Box
+                  aria-hidden
+                  sx={{
+                    flexShrink: 0,
+                    width: CARD_DIMENSIONS[cardSize].width,
+                    height: CARD_DIMENSIONS[cardSize].height,
+                  }}
+                />
+              )}
+              <PlayedCard
+                aria-label={
+                  isSelected ? selectedCardLabel : unselectedCardLabel
+                }
+                tabIndex={0}
+                cardProps={{
+                  cardInstance,
+                  cardIdxInField: fieldIdx,
+                  cropIdxInFieldToWater: fieldIdx,
+                  cropIdxInFieldToHarvest: fieldIdx,
+                  isInField: true,
+                  isFocused: isSelected,
+                  playerId: player.id,
+                  size: isFocusedCompactCard ? focusedFieldCardSize : cardSize,
                   ...(isSelected && {
                     elevation: SELECTED_CARD_ELEVATION,
                   }),
-                },
-              }}
-              playedCard={playedCard}
-              isInBackground={isInBackground}
-              onFocus={event => handleCardFocus(event, fieldIdx)}
-              sx={{
-                flexShrink: 0,
-                mx: 'auto',
-                position: 'relative',
-                transition: theme.transitions.create(['transform']),
-                outline: 'none',
-                // NOTE: This is needed to fix a Firefox bug that prevents
-                // opponent fields from appearing upside down
-                transformStyle: 'preserve-3d',
-                ...(!isSessionOwnerPlayer && {
-                  transform: rotationTransform,
-                }),
-                ...(!isSelected && {
-                  cursor: 'pointer',
-                }),
-                ...(isSelected && {
-                  transform: selectedCardTransform,
-                  zIndex: 20,
-                }),
-              }}
-            />
+                  paperProps: {
+                    ...(isSelected && {
+                      elevation: SELECTED_CARD_ELEVATION,
+                    }),
+                  },
+                }}
+                playedCard={playedCard}
+                isInBackground={isInBackground}
+                // NOTE: The full (non-compact) card face already surfaces
+                // this same "water needed" information as text -- hide
+                // the icon-grid indicator row so it doesn't collide with
+                // action buttons CardCore stacks below the card on narrow
+                // viewports.
+                hideWaterIndicator={isFocusedCompactCard}
+                onFocus={event => handleCardFocus(event, fieldIdx)}
+                sx={{
+                  flexShrink: 0,
+                  mx: 'auto',
+                  position: 'relative',
+                  transition: theme.transitions.create(['transform']),
+                  outline: 'none',
+                  // NOTE: This is needed to fix a Firefox bug that prevents
+                  // opponent fields from appearing upside down
+                  transformStyle: 'preserve-3d',
+                  ...(!isSessionOwnerPlayer && {
+                    transform: rotationTransform,
+                  }),
+                  ...(!isSelected && {
+                    cursor: 'pointer',
+                  }),
+                  ...(isSelected &&
+                    !isFocusedCompactCard && {
+                      transform: selectedCardTransform,
+                      zIndex: 20,
+                    }),
+                  ...(isFocusedCompactCard && {
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 20,
+                    // NOTE: CardCore shifts the card upward (a negative
+                    // margin-top) to make room to vertically center its
+                    // action-button stack, which renders below the card
+                    // via absolute positioning and so doesn't contribute
+                    // to this wrapper's own auto height. Pinning the
+                    // wrapper to the card's nominal (pre-shift) height
+                    // keeps the -50% centering trick above targeting the
+                    // card+button group as a whole, not just the card.
+                    height: CARD_DIMENSIONS[focusedFieldCardSize].height,
+                  }),
+                }}
+              />
+            </React.Fragment>
           )
         })}
       </Box>

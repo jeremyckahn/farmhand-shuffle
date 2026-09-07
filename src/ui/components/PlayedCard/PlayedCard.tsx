@@ -18,6 +18,7 @@ export interface PlayedCropProps extends BoxProps {
   cardProps: BaseCardProps
   playedCard: IPlayedCard
   isInBackground: boolean
+  hideWaterIndicator?: boolean
 }
 
 export const unfilledWaterIndicatorOpacity = 0.25
@@ -28,6 +29,7 @@ export const PlayedCard = ({
   isInBackground,
   playedCard,
   cardProps: { ref, ...cardProps },
+  hideWaterIndicator = false,
   ...props
 }: PlayedCropProps) => {
   const theme = useTheme()
@@ -50,6 +52,7 @@ export const PlayedCard = ({
         {...cardProps}
       />
       {isPlayedCrop(playedCard) &&
+        !hideWaterIndicator &&
         (size === CardSize.COMPACT ? (
           <Box
             display="flex"
