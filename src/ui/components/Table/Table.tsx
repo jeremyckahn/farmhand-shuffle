@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import Grid, { GridProps } from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
 import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useContext, useLayoutEffect, useRef, useState } from 'react'
 import { useWindowSize } from 'usehooks-ts'
 
 import { lookup } from '../../../game/services/Lookup'
@@ -13,6 +13,7 @@ import { Deck } from '../Deck/Deck'
 import { DiscardPile } from '../DiscardPile/DiscardPile'
 import { Field } from '../Field/Field'
 import { Hand } from '../Hand/Hand'
+import { ShellContext } from '../Match/ShellContext'
 
 export interface TableProps extends GridProps {
   match: IMatch
@@ -29,6 +30,7 @@ const handBottomOffsetSpacingUnitsAtMediumSize = -8
 
 export const Table = ({ match, ...rest }: TableProps) => {
   const theme = useTheme()
+  const { setSelectedFieldCardIdx } = useContext(ShellContext)
   const { sessionOwnerPlayerId: userPlayerId } = match
   const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
   const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
@@ -141,6 +143,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
             match={match}
             playerId={userPlayerId}
             cardSize={responsiveCardSize}
+            onSelectedCardIdxChange={setSelectedFieldCardIdx}
           />
         </Grid>
       </Grid>

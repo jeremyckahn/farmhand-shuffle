@@ -30,6 +30,8 @@ export const StubShellContext = ({
 } & Partial<ShellContextProps>) => {
   const [selectedHandCardIdx, setSelectedHandCardIdx] =
     useState(deselectedHandIdx)
+  const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
+    useState(deselectedHandIdx)
 
   const setIsHandInViewport = useMemo(
     () => (useVitestMocks ? vi.fn() : () => {}),
@@ -44,6 +46,8 @@ export const StubShellContext = ({
       showNotification: mockShowNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
       ...overrides,
     }),
     [
@@ -51,6 +55,8 @@ export const StubShellContext = ({
       useVitestMocks,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
       setIsHandInViewport,
     ]
   )

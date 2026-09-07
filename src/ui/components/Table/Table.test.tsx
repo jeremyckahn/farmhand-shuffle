@@ -41,8 +41,14 @@ vi.mock('@mui/material/useMediaQuery/useMediaQuery', () => ({
 }))
 
 vi.mock('../Field/Field', () => ({
-  Field: ({ playerId, cardSize }: FieldProps) => (
-    <div data-testid={`field_${playerId}`} data-card-size={cardSize} />
+  Field: ({ playerId, cardSize, onSelectedCardIdxChange }: FieldProps) => (
+    <div
+      data-testid={`field_${playerId}`}
+      data-card-size={cardSize}
+      data-has-onselectedcardidxchange={String(
+        typeof onSelectedCardIdxChange === 'function'
+      )}
+    />
   ),
 }))
 
@@ -83,6 +89,16 @@ describe('Table', () => {
     const field = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
 
     expect(field).toBeInTheDocument()
+  })
+
+  test('wires onSelectedCardIdxChange to the session owner field only', () => {
+    render(<StubTable />)
+
+    const ownField = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
+    const opponentField = screen.getByTestId(`field_${opponentPlayerIds[0]}`)
+
+    expect(ownField.dataset.hasOnselectedcardidxchange).toEqual('true')
+    expect(opponentField.dataset.hasOnselectedcardidxchange).toEqual('false')
   })
 
   test.each([opponentPlayerIds])(

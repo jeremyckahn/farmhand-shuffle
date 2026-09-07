@@ -13,6 +13,8 @@ export interface ShellContextProps {
   showNotification: (message: ReactNode, severity: AlertColor) => void
   selectedHandCardIdx: number
   setSelectedHandCardIdx: React.Dispatch<SetStateAction<number>>
+  selectedFieldCardIdx: number
+  setSelectedFieldCardIdx: React.Dispatch<SetStateAction<number>>
 }
 
 export const ShellContext = createContext<ShellContextProps>({
@@ -28,6 +30,10 @@ export const ShellContext = createContext<ShellContextProps>({
   },
   selectedHandCardIdx: deselectedHandIdx,
   setSelectedHandCardIdx: () => {
+    throw new Error('Calling context method outside of ShellContext.Provider')
+  },
+  selectedFieldCardIdx: deselectedHandIdx,
+  setSelectedFieldCardIdx: () => {
     throw new Error('Calling context method outside of ShellContext.Provider')
   },
 })

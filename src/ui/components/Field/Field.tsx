@@ -30,6 +30,12 @@ export interface FieldProps extends BoxProps {
   match: IMatch
   playerId: IPlayer['id']
   cardSize?: CardSize
+  /**
+   * Notified whenever the currently-selected field card index changes.
+   * Lets an ancestor (e.g. Table.tsx) track this field's selection without
+   * owning it -- selection itself stays fully internal to this component.
+   */
+  onSelectedCardIdxChange?: (idx: number) => void
 }
 
 export const rotationTransform = 'rotate(180deg)'
@@ -40,6 +46,7 @@ export const Field = ({
   playerId,
   match,
   cardSize = CardSize.SMALL,
+  onSelectedCardIdxChange,
   ...rest
 }: FieldProps) => {
   const player = lookup.getPlayer(match, playerId)
@@ -49,6 +56,10 @@ export const Field = ({
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
   const [selectedCardTransform, setSelectedCardTransform] = useState('')
+
+  useEffect(() => {
+    onSelectedCardIdxChange?.(selectedCardIdx)
+  }, [selectedCardIdx, onSelectedCardIdxChange])
   const { width: windowWidth, height: windowHeight } = useWindowSize({
     // NOTE: debounceDelay value needs to be set to some number greater than 0
     // to avoid resetSelectedCard from being unbound before it is called.

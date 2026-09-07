@@ -374,4 +374,54 @@ describe('Field', () => {
       expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
     })
   })
+
+  describe('onSelectedCardIdxChange', () => {
+    test('is called with the deselected index on mount', () => {
+      const onSelectedCardIdxChange = vi.fn()
+
+      render(<StubField onSelectedCardIdxChange={onSelectedCardIdxChange} />)
+
+      expect(onSelectedCardIdxChange).toHaveBeenCalledWith(-1)
+    })
+
+    test('is called with the field index when a card is focused', async () => {
+      const onSelectedCardIdxChange = vi.fn()
+
+      render(<StubField onSelectedCardIdxChange={onSelectedCardIdxChange} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      if (!playedCrop1) {
+        throw new Error('Crop not found')
+      }
+
+      onSelectedCardIdxChange.mockClear()
+
+      await userEvent.click(playedCrop1)
+
+      expect(onSelectedCardIdxChange).toHaveBeenCalledWith(1)
+    })
+
+    test('is called with the deselected index again when the card loses focus', async () => {
+      const onSelectedCardIdxChange = vi.fn()
+
+      render(<StubField onSelectedCardIdxChange={onSelectedCardIdxChange} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      if (!playedCrop1) {
+        throw new Error('Crop not found')
+      }
+
+      await userEvent.click(playedCrop1)
+
+      onSelectedCardIdxChange.mockClear()
+
+      await waitFor(() => {
+        ;(document.activeElement as HTMLElement).blur()
+      })
+
+      expect(onSelectedCardIdxChange).toHaveBeenCalledWith(-1)
+    })
+  })
 })

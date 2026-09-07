@@ -67,6 +67,9 @@ export const useMatch = ({
     [match]
   )
 
+  const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
+    useState(deselectedHandIdx)
+
   const shellContextValue: ShellContextProps = useMemo(
     () => ({
       blockingOperation,
@@ -75,6 +78,8 @@ export const useMatch = ({
       showNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
     }),
     [
       blockingOperation,
@@ -83,6 +88,8 @@ export const useMatch = ({
       showNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
     ]
   )
 
