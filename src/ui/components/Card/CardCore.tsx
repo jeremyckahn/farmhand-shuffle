@@ -96,7 +96,18 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
-    const isNarrowViewport = useMediaQuery(theme.breakpoints.down('sm'))
+    // NOTE: This must match the breakpoint Table.tsx uses to decide
+    // CardSize.COMPACT (theme.breakpoints.up('md')) -- it used to check a
+    // different breakpoint (down('sm')), so on viewports between the two
+    // thresholds cards rendered COMPACT-sized but this stayed false, and
+    // action buttons rendered full-width beside a card with no room for
+    // them instead of stacking below it. It can't be derived from this
+    // card's own `size` prop instead: a focused compact card is
+    // deliberately rendered at a larger fixed size for legibility (see
+    // focusedFieldCardSize/focusedCardSize in Field.tsx/Hand.tsx), which is
+    // exactly when action buttons are shown, so that would misfire in the
+    // one case that matters.
+    const isNarrowViewport = useMediaQuery(theme.breakpoints.down('md'))
 
     const actionButtons: Array<{
       key: string

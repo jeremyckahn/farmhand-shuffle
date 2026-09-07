@@ -350,6 +350,11 @@ describe('Card', () => {
       botTurnActionState: null,
     })
 
+    // NOTE: A focused compact-field/hand card is deliberately rendered at a
+    // larger size for legibility (see focusedFieldCardSize/focusedCardSize),
+    // so this deliberately renders at the default (non-COMPACT) size to
+    // prove the mobile stacking behavior is driven by viewport width, not by
+    // this card's own rendered size.
     render(
       <StubCard
         cardInstance={stubCarrot}
@@ -389,11 +394,8 @@ describe('Card', () => {
       />
     )
 
-    expect(screen.getByText('Water crop')).toBeInTheDocument()
-
-    const card = screen
-      .getByText(stubCardInstance.name)
-      .closest(`.${cardClassName}`)
+    const button = screen.getByText('Water crop')
+    const card = button.closest(`.${cardClassName}`)
 
     const { marginTop } = getComputedStyle(card!)
 

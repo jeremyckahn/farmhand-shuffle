@@ -4,7 +4,7 @@ import { SxProps, useTheme } from '@mui/material'
 import { CARD_DIMENSIONS } from '../config/dimensions'
 import { CardSize } from '../types'
 
-const foregroundCardZIndex = 20
+export const foregroundCardZIndex = 20
 
 const defaultContainerRect: DOMRect = {
   bottom: 0,

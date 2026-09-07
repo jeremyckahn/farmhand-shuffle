@@ -94,7 +94,11 @@ export const Table = ({ match, ...rest }: TableProps) => {
   const mobileIdleHandBottomOffset =
     ownFieldBottom === null
       ? handBottomOffset
-      : `${(windowHeight - ownFieldBottom - handHeightPx) / 2}px`
+      : // NOTE: Clamped to 0 -- if the field's bottom edge is close to or
+        // past the viewport's own bottom (a short viewport, or a tall
+        // field), the unclamped midpoint goes negative and pushes the Hand
+        // off-screen below the fold instead of just resting at the bottom.
+        `${Math.max(0, (windowHeight - ownFieldBottom - handHeightPx) / 2)}px`
   const idleHandBottomOffset = useLargeCards
     ? handBottomOffset
     : mobileIdleHandBottomOffset

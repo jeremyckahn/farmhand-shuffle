@@ -11,6 +11,7 @@ import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
 import { CARD_DIMENSIONS, getFieldZoomScale } from '../../config/dimensions'
+import { foregroundCardZIndex } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
 import { PlayedCard, playedCardClassName } from '../PlayedCard'
 
@@ -129,10 +130,18 @@ export const Field = ({
       // focusedFieldCardSize's dimensions rather than this bounding
       // rect's own (smaller) ones -- otherwise the resulting position
       // would be off by half of the size difference.
+      // NOTE: rem is relative to the root font size, which isn't always
+      // 16px (e.g. a browser's accessibility text-size setting) -- reading
+      // it directly keeps this translate accurate instead of assuming the
+      // default. Falls back to the standard 16px default when the
+      // environment doesn't report one (e.g. no font-size set in jsdom).
+      const rootFontSizePx =
+        parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
       const focusedWidthPx =
-        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].width) * 16
+        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].width) * rootFontSizePx
       const focusedHeightPx =
-        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].height) * 16
+        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].height) *
+        rootFontSizePx
       const xDelta = centerX - (boundingClientRect.left + focusedWidthPx / 2)
       const yDelta = centerY - (boundingClientRect.top + focusedHeightPx / 2)
 
@@ -262,6 +271,16 @@ export const Field = ({
                 flexShrink: 0,
                 mx: 'auto',
                 position: 'relative',
+                // NOTE: Always given a real (non-auto) z-index -- combined
+                // with position: 'relative' above, this makes this box a
+                // stacking context of its own at all times, not just while
+                // selected. PlayedCard's water-indicator row (a sibling of
+                // Card, both rendered inside this box) relies on that: its
+                // negative z-index is meant to stay behind Card's own paint
+                // layer, but without an actual stacking context here to
+                // contain it, it would otherwise escape to whatever
+                // ancestor further up the tree happens to establish one.
+                zIndex: 0,
                 transition: theme.transitions.create(['transform']),
                 outline: 'none',
                 // NOTE: This is needed to fix a Firefox bug that prevents
@@ -275,7 +294,7 @@ export const Field = ({
                 }),
                 ...(isSelected && {
                   transform: selectedCardTransform,
-                  zIndex: 20,
+                  zIndex: foregroundCardZIndex,
                 }),
                 ...(cardSize === CardSize.COMPACT && {
                   // NOTE: Pin this wrapper's own layout box to the row's

@@ -20,6 +20,7 @@ import { PointerEvent } from 'react'
 import { lookup } from '../../../game/services/Lookup'
 import { isSxArray } from '../../type-guards'
 import { ui } from '../../img'
+import { selectedCardLabel } from '../Field/Field'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 import { deselectedHandIdx } from '../constants'
@@ -114,7 +115,7 @@ const MatchCore = ({
       // Field's own React state, so (unlike document.activeElement) it's
       // unaffected by the Fab momentarily taking DOM focus.
       const selectedCard = fieldContainer?.querySelector(
-        '[aria-label="Selected field card"]'
+        `[aria-label="${selectedCardLabel}"]`
       )
       const currentIdx = selectedCard
         ? cards.indexOf(selectedCard as HTMLElement)
