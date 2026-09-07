@@ -1,13 +1,13 @@
 import Box from '@mui/material/Box'
 import Grid, { GridProps } from '@mui/material/Grid'
 import useTheme from '@mui/material/styles/useTheme'
-import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 import { useContext, useLayoutEffect, useRef, useState } from 'react'
 import { useWindowSize } from 'usehooks-ts'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { CardSize } from '../../types'
 import { Deck } from '../Deck/Deck'
 import { DiscardPile } from '../DiscardPile/DiscardPile'
@@ -33,7 +33,7 @@ export const Table = ({ match, ...rest }: TableProps) => {
   const { setSelectedFieldCardIdx } = useContext(ShellContext)
   const { sessionOwnerPlayerId: userPlayerId } = match
   const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
-  const useLargeCards = useMediaQuery(theme.breakpoints.up('md'))
+  const useLargeCards = !useIsNarrowViewport()
   const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.COMPACT
   // NOTE: Used by Field, Deck, and DiscardPile so all of a player's cards
   // shrink together on narrow viewports.
@@ -56,39 +56,50 @@ export const Table = ({ match, ...rest }: TableProps) => {
   const [ownFieldBottom, setOwnFieldBottom] = useState<number | null>(null)
   const { height: windowHeight } = useWindowSize({ debounceDelay: 1 })
 
+  // NOTE: windowHeight/useLargeCards changing doesn't necessarily resize the
+  // Grid container itself (e.g. a window resize that only changes height,
+  // not width, may not affect the container's own box), so it isn't
+  // guaranteed to be caught by the ResizeObserver below -- re-measure
+  // directly whenever either changes.
+  useLayoutEffect(() => {
+    const ownFieldContainer = ownFieldContainerRef.current
+
+    if (!ownFieldContainer) {
+      return
+    }
+
+    setOwnFieldBottom(ownFieldContainer.getBoundingClientRect().bottom)
+  }, [windowHeight, useLargeCards])
+
+  // NOTE: This catches layout shifts the effect above misses -- e.g.
+  // opponent field/deck/discard images finishing their async load, which
+  // move the field's position without a window resize. Set up once (rather
+  // than on every windowHeight tick) since the observer itself doesn't need
+  // to change; the refs it reads are stable across renders. jsdom (the test
+  // environment) doesn't implement ResizeObserver, so this is a no-op there
+  // and the effect above (which does run in jsdom) is the only measurement.
   useLayoutEffect(() => {
     const gridContainer = gridContainerRef.current
     const ownFieldContainer = ownFieldContainerRef.current
 
-    if (!gridContainer || !ownFieldContainer) {
+    if (
+      !gridContainer ||
+      !ownFieldContainer ||
+      typeof ResizeObserver === 'undefined'
+    ) {
       return
     }
 
-    const updateOwnFieldBottom = () => {
+    const resizeObserver = new ResizeObserver(() => {
       setOwnFieldBottom(ownFieldContainer.getBoundingClientRect().bottom)
-    }
-
-    updateOwnFieldBottom()
-
-    // NOTE: A plain effect dependency (e.g. on windowHeight) only catches
-    // the viewport resizing -- it misses layout shifts above the field
-    // (opponent field/deck/discard images finishing their async load,
-    // etc.) that move the field's position without resizing the field
-    // itself. ResizeObserver on the whole Grid container catches both.
-    // jsdom (the test environment) doesn't implement ResizeObserver, so
-    // this falls back to the one-time measurement above there.
-    if (typeof ResizeObserver === 'undefined') {
-      return
-    }
-
-    const resizeObserver = new ResizeObserver(updateOwnFieldBottom)
+    })
 
     resizeObserver.observe(gridContainer)
 
     return () => {
       resizeObserver.disconnect()
     }
-  }, [windowHeight, useLargeCards])
+  }, [])
 
   const handHeightPx = parseFloat(CARD_DIMENSIONS[handCardSize].height) * 16
   const mobileIdleHandBottomOffset =

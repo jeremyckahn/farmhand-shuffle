@@ -37,6 +37,16 @@ export const PlayedCard = ({
   const { canBeWatered, canBeHarvested, waterIconsToRender } =
     usePlayedCardLogic({ playedCard })
 
+  // NOTE: Shared by both the compact (notch) and full (icon) water
+  // indicator renderers below -- only the visual differs between them.
+  const waterIndicatorOpacities = isPlayedCrop(playedCard)
+    ? Array.from({ length: waterIconsToRender }, (_, idx) => {
+        const isFilled = idx < playedCard.waterCards
+
+        return isInBackground ? 0 : isFilled ? 1 : unfilledWaterIndicatorOpacity
+      })
+    : []
+
   return (
     <Box
       className={playedCardClassName}
@@ -67,27 +77,19 @@ export const PlayedCard = ({
             position="relative"
             zIndex={-1}
           >
-            {new Array(waterIconsToRender).fill(null).map((_, idx) => {
-              const isFilled = idx < playedCard.waterCards
-
-              return (
-                <Box
-                  key={idx}
-                  sx={{
-                    flex: 1,
-                    height: '4px',
-                    borderRadius: '2px',
-                    background: cropWaterIndicatorOutlineColor,
-                    opacity: isInBackground
-                      ? 0
-                      : isFilled
-                      ? 1
-                      : unfilledWaterIndicatorOpacity,
-                    transition: theme.transitions.create(['opacity']),
-                  }}
-                />
-              )
-            })}
+            {waterIndicatorOpacities.map((opacity, idx) => (
+              <Box
+                key={idx}
+                sx={{
+                  flex: 1,
+                  height: '4px',
+                  borderRadius: '2px',
+                  background: cropWaterIndicatorOutlineColor,
+                  opacity,
+                  transition: theme.transitions.create(['opacity']),
+                }}
+              />
+            ))}
           </Box>
         ) : (
           <Grid
@@ -103,35 +105,23 @@ export const PlayedCard = ({
             position="relative"
             zIndex={-1}
           >
-            {new Array(waterIconsToRender).fill(null).map((_, idx) => {
-              let opacity = 1
-
-              const isFilled = idx < playedCard.waterCards
-
-              if (isInBackground) {
-                opacity = 0
-              } else if (!isFilled) {
-                opacity = unfilledWaterIndicatorOpacity
-              }
-
-              return (
-                <Grid
-                  key={idx}
-                  item
-                  sx={{ pt: `${theme.spacing(0)} !important` }}
-                >
-                  <Image
-                    src={cardImages.water}
-                    alt="Water card indicator"
-                    sx={{
-                      imageRendering: 'pixelated',
-                      opacity,
-                      transition: theme.transitions.create(['opacity']),
-                    }}
-                  />
-                </Grid>
-              )
-            })}
+            {waterIndicatorOpacities.map((opacity, idx) => (
+              <Grid
+                key={idx}
+                item
+                sx={{ pt: `${theme.spacing(0)} !important` }}
+              >
+                <Image
+                  src={cardImages.water}
+                  alt="Water card indicator"
+                  sx={{
+                    imageRendering: 'pixelated',
+                    opacity,
+                    transition: theme.transitions.create(['opacity']),
+                  }}
+                />
+              </Grid>
+            ))}
           </Grid>
         ))}
     </Box>

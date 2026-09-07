@@ -12,13 +12,12 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Fab from '@mui/material/Fab'
 import Fade from '@mui/material/Fade'
 import useTheme from '@mui/material/styles/useTheme'
-import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
 import Tooltip from '@mui/material/Tooltip'
 import { funAnimalName } from 'fun-animal-names'
 import { PointerEvent } from 'react'
 
-import { lookup } from '../../../game/services/Lookup'
 import { isSxArray } from '../../type-guards'
+import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { ui } from '../../img'
 import { selectedCardLabel } from '../Field/Field'
 import { Table } from '../Table'
@@ -53,7 +52,7 @@ const MatchCore = ({
 
   const { winner } = match
   const { selectedHandCardIdx, selectedFieldCardIdx } = shellContextValue
-  const isNarrowViewport = useMediaQuery(theme.breakpoints.down('md'))
+  const isNarrowViewport = useIsNarrowViewport()
   const isCardFocused =
     selectedHandCardIdx !== deselectedHandIdx ||
     selectedFieldCardIdx !== deselectedHandIdx
@@ -61,13 +60,28 @@ const MatchCore = ({
   // animate them out, rather than this condition unmounting them outright.
   const showCardNavFabs = isCardFocused && !isSelectingFieldPosition
 
+  // NOTE: Shared by both branches of handleCardNav below -- wraps `currentIdx`
+  // by `direction` around `cards.length` and focuses the resulting card,
+  // exactly like Tab already does, so all of the existing focus-driven
+  // positioning/centering logic in Hand.tsx and Field.tsx applies unchanged.
+  const focusAdjacentCard = (
+    cards: HTMLElement[],
+    currentIdx: number,
+    direction: 1 | -1
+  ) => {
+    if (cards.length === 0) {
+      return
+    }
+
+    const nextIdx = (currentIdx + direction + cards.length) % cards.length
+
+    cards[nextIdx]?.focus()
+  }
+
   // NOTE: On mobile, the focused Hand/Field card can be hard to move away
   // from by touch alone (its neighbors are mostly hidden behind it) -- these
-  // buttons step focus to the next/previous focusable card in whichever
-  // collection (Hand or the player's own Field) currently has a card
-  // focused, by calling .focus() on the target card exactly like Tab
-  // already does, so all of the existing focus-driven positioning/
-  // centering logic in Hand.tsx and Field.tsx applies unchanged. This
+  // buttons step focus to the next/previous card in whichever collection
+  // (Hand or the player's own Field) currently has a card focused. This
   // deliberately reads the current selection from React state
   // (selectedHandCardIdx/selectedFieldCardIdx) rather than
   // document.activeElement -- clicking the Fab itself can shift DOM focus
@@ -75,14 +89,6 @@ const MatchCore = ({
   // activeElement-based lookup see the wrong (or no) card.
   const handleCardNav = (direction: 1 | -1) => {
     if (selectedHandCardIdx !== deselectedHandIdx) {
-      const player = lookup.getPlayer(match, match.sessionOwnerPlayerId)
-      const handCount = player.hand.length
-
-      if (handCount === 0) {
-        return
-      }
-
-      const nextIdx = (selectedHandCardIdx + direction + handCount) % handCount
       const handContainer = document.querySelector(
         `[data-testid="hand_${match.sessionOwnerPlayerId}"]`
       )
@@ -90,7 +96,7 @@ const MatchCore = ({
         ? [...handContainer.querySelectorAll<HTMLElement>('.Card')]
         : []
 
-      cards[nextIdx]?.focus()
+      focusAdjacentCard(cards, selectedHandCardIdx, direction)
 
       return
     }
@@ -102,10 +108,6 @@ const MatchCore = ({
       const cards = fieldContainer
         ? [...fieldContainer.querySelectorAll<HTMLElement>('.PlayedCard')]
         : []
-
-      if (cards.length === 0) {
-        return
-      }
 
       // NOTE: selectedFieldCardIdx is a field slot index, which can be
       // sparse (played cards don't have to fill every slot), so its value
@@ -125,9 +127,7 @@ const MatchCore = ({
         return
       }
 
-      const nextIdx = (currentIdx + direction + cards.length) % cards.length
-
-      cards[nextIdx]?.focus()
+      focusAdjacentCard(cards, currentIdx, direction)
     }
   }
 

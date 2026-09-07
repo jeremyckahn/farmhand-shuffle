@@ -81,7 +81,10 @@ const StubTable = (overrides: Partial<TableProps>) => {
 
 describe('Table', () => {
   beforeEach(() => {
-    mockUseMediaQuery.mockReturnValue(true)
+    // NOTE: mockUseMediaQuery stands in for useIsNarrowViewport's underlying
+    // theme.breakpoints.down('md') query -- false means "large viewport"
+    // (the default for tests that don't care about responsive sizing).
+    mockUseMediaQuery.mockReturnValue(false)
   })
 
   test('renders field for user player', () => {
@@ -135,7 +138,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.SMALL to Field components on large viewports', () => {
-    mockUseMediaQuery.mockReturnValue(true)
+    mockUseMediaQuery.mockReturnValue(false)
     render(<StubTable />)
 
     const field = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
@@ -144,7 +147,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.COMPACT to Field components on narrow viewports', () => {
-    mockUseMediaQuery.mockReturnValue(false)
+    mockUseMediaQuery.mockReturnValue(true)
     render(<StubTable />)
 
     const selfField = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
@@ -155,7 +158,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.SMALL to Deck and DiscardPile on large viewports', () => {
-    mockUseMediaQuery.mockReturnValue(true)
+    mockUseMediaQuery.mockReturnValue(false)
     render(<StubTable match={matchWithDiscardPileCard} />)
 
     const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
@@ -174,7 +177,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.COMPACT to Deck and DiscardPile on narrow viewports', () => {
-    mockUseMediaQuery.mockReturnValue(false)
+    mockUseMediaQuery.mockReturnValue(true)
     render(<StubTable match={matchWithDiscardPileCard} />)
 
     const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
@@ -193,7 +196,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.MEDIUM to Hand on large viewports', () => {
-    mockUseMediaQuery.mockReturnValue(true)
+    mockUseMediaQuery.mockReturnValue(false)
     render(<StubTable match={matchWithHandCard} />)
 
     const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
@@ -205,7 +208,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.COMPACT to Hand on narrow viewports', () => {
-    mockUseMediaQuery.mockReturnValue(false)
+    mockUseMediaQuery.mockReturnValue(true)
     render(<StubTable match={matchWithHandCard} />)
 
     const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
@@ -236,7 +239,7 @@ describe('Table', () => {
       toJSON: () => undefined,
     })
 
-    mockUseMediaQuery.mockReturnValue(false)
+    mockUseMediaQuery.mockReturnValue(true)
     render(<StubTable match={matchWithHandCard} />)
 
     const handContainer = screen.getByTestId(
@@ -266,7 +269,7 @@ describe('Table', () => {
       toJSON: () => undefined,
     })
 
-    mockUseMediaQuery.mockReturnValue(true)
+    mockUseMediaQuery.mockReturnValue(false)
     render(<StubTable match={matchWithHandCard} />)
 
     const handContainer = screen.getByTestId(

@@ -20,6 +20,7 @@ import {
 import { isCropCardInstance } from '../../../game/types/guards'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
@@ -96,18 +97,14 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
-    // NOTE: This must match the breakpoint Table.tsx uses to decide
-    // CardSize.COMPACT (theme.breakpoints.up('md')) -- it used to check a
-    // different breakpoint (down('sm')), so on viewports between the two
-    // thresholds cards rendered COMPACT-sized but this stayed false, and
-    // action buttons rendered full-width beside a card with no room for
-    // them instead of stacking below it. It can't be derived from this
-    // card's own `size` prop instead: a focused compact card is
-    // deliberately rendered at a larger fixed size for legibility (see
-    // focusedFieldCardSize/focusedCardSize in Field.tsx/Hand.tsx), which is
-    // exactly when action buttons are shown, so that would misfire in the
-    // one case that matters.
-    const isNarrowViewport = useMediaQuery(theme.breakpoints.down('md'))
+    // NOTE: It can't be derived from this card's own `size` prop instead: a
+    // focused compact card is deliberately rendered at a larger fixed size
+    // for legibility (see focusedFieldCardSize/focusedCardSize in
+    // Field.tsx/Hand.tsx), which is exactly when action buttons are shown,
+    // so that would misfire in the one case that matters. See
+    // useIsNarrowViewport's own comment for why this has to share its
+    // breakpoint with Table.tsx's CardSize.COMPACT decision.
+    const isNarrowViewport = useIsNarrowViewport()
 
     const actionButtons: Array<{
       key: string
@@ -116,39 +113,47 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       disabled?: boolean
       onClick?: () => void
     }> = [
-      showPlayCardButton && {
-        key: 'play',
-        label: (
-          <>
-            {isCropCardInstance(card) && 'Play crop'}
-            {isWaterCardInstance(card) && 'Water a crop'}
-            {isEventCardInstance(card) && 'Play event'}
-            {isToolCardInstance(card) && 'Play tool'}
-          </>
-        ),
-        disabled: playButtonDisabled,
-        onClick: () => void onPlayCard?.(),
-      },
-      showWaterCropButton && {
-        key: 'water',
-        label: 'Water crop',
-        onClick: onWaterCrop,
-      },
-      showHarvestCropButton && {
-        key: 'harvest',
-        label: 'Harvest crop',
-        color: 'success' as const,
-        onClick: onHarvestCrop,
-      },
-      showDiscardButton && {
-        key: 'discard',
-        label: 'Discard',
-        color: 'error' as const,
-        onClick: onDiscardCard,
-      },
-    ].filter((button): button is Exclude<typeof button, false> =>
-      Boolean(button)
-    )
+      ...(showPlayCardButton
+        ? [
+            {
+              key: 'play',
+              label: (
+                <>
+                  {isCropCardInstance(card) && 'Play crop'}
+                  {isWaterCardInstance(card) && 'Water a crop'}
+                  {isEventCardInstance(card) && 'Play event'}
+                  {isToolCardInstance(card) && 'Play tool'}
+                </>
+              ),
+              disabled: playButtonDisabled,
+              onClick: () => void onPlayCard?.(),
+            },
+          ]
+        : []),
+      ...(showWaterCropButton
+        ? [{ key: 'water', label: 'Water crop', onClick: onWaterCrop }]
+        : []),
+      ...(showHarvestCropButton
+        ? [
+            {
+              key: 'harvest',
+              label: 'Harvest crop',
+              color: 'success' as const,
+              onClick: onHarvestCrop,
+            },
+          ]
+        : []),
+      ...(showDiscardButton
+        ? [
+            {
+              key: 'discard',
+              label: 'Discard',
+              color: 'error' as const,
+              onClick: onDiscardCard,
+            },
+          ]
+        : []),
+    ]
 
     // NOTE: On narrow viewports, action buttons stack below the card
     // instead of beside it -- there's no horizontal room to spare. The
