@@ -11,6 +11,7 @@ import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
 import { CARD_DIMENSIONS, getFieldZoomScale } from '../../config/dimensions'
+import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { foregroundCardZIndex } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
 import { PlayedCard, playedCardClassName } from '../PlayedCard'
@@ -52,6 +53,7 @@ export const Field = ({
 }: FieldProps) => {
   const player = lookup.getPlayer(match, playerId)
   const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
+  const isNarrowViewport = useIsNarrowViewport()
 
   const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -255,6 +257,7 @@ export const Field = ({
                 isFocused: isSelected,
                 playerId: player.id,
                 size: isFocusedCompactCard ? focusedFieldCardSize : cardSize,
+                stackActionButtonsBelowCard: isNarrowViewport,
                 ...(isSelected && {
                   elevation: SELECTED_CARD_ELEVATION,
                 }),

@@ -39,10 +39,11 @@ const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
   </StubShellContext>
 )
 
-// NOTE: Defaults to `false`, matching jsdom's real fallback (there's no
-// matchMedia mock in this repo, so useMediaQuery normally resolves to
-// `defaultMatches: false`) -- only the "narrow viewport" tests below
-// override this.
+// NOTE: CardCore's only remaining useMediaQuery call is for
+// prefers-reduced-motion -- mobile/narrow-viewport stacking is driven by the
+// stackActionButtonsBelowCard prop instead (see the tests below), so this
+// just needs a stable, jsdom-safe default (there's no matchMedia mock in
+// this repo, so useMediaQuery would otherwise resolve unpredictably).
 const mockUseMediaQuery = vi.fn<() => boolean>(() => false)
 
 vi.mock('@mui/material/useMediaQuery/useMediaQuery', () => ({
@@ -314,9 +315,7 @@ describe('Card', () => {
     })
   })
 
-  test('renders the action button beside the card on a large viewport', () => {
-    mockUseMediaQuery.mockReturnValue(false)
-
+  test('renders the action button beside the card when stackActionButtonsBelowCard is false', () => {
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.PLAYER_WATERING_CROP,
       match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
@@ -341,9 +340,7 @@ describe('Card', () => {
     expect(button).not.toHaveClass('MuiButton-fullWidth')
   })
 
-  test('stacks the action button below the card on a narrow viewport', () => {
-    mockUseMediaQuery.mockReturnValue(true)
-
+  test('stacks the action button below the card when stackActionButtonsBelowCard is true', () => {
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.PLAYER_WATERING_CROP,
       match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
@@ -353,8 +350,8 @@ describe('Card', () => {
     // NOTE: A focused compact-field/hand card is deliberately rendered at a
     // larger size for legibility (see focusedFieldCardSize/focusedCardSize),
     // so this deliberately renders at the default (non-COMPACT) size to
-    // prove the mobile stacking behavior is driven by viewport width, not by
-    // this card's own rendered size.
+    // prove the stacking behavior is driven by stackActionButtonsBelowCard,
+    // not by this card's own rendered size.
     render(
       <StubCard
         cardInstance={stubCarrot}
@@ -363,6 +360,7 @@ describe('Card', () => {
         isFocused
         isInField
         canBeWatered
+        stackActionButtonsBelowCard
       />
     )
 
@@ -374,9 +372,7 @@ describe('Card', () => {
     expect(button).toHaveClass('MuiButton-fullWidth')
   })
 
-  test('shifts the card up on a narrow viewport when an action button is shown, to vertically center the card+button group', () => {
-    mockUseMediaQuery.mockReturnValue(true)
-
+  test('shifts the card up when stackActionButtonsBelowCard is true and an action button is shown, to vertically center the card+button group', () => {
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.PLAYER_WATERING_CROP,
       match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
@@ -391,6 +387,7 @@ describe('Card', () => {
         isFocused
         isInField
         canBeWatered
+        stackActionButtonsBelowCard
       />
     )
 
@@ -403,9 +400,7 @@ describe('Card', () => {
     expect(marginTop.startsWith('calc(-')).toBe(true)
   })
 
-  test('does not shift vertically on a large viewport, even with an action button shown', () => {
-    mockUseMediaQuery.mockReturnValue(false)
-
+  test('does not shift vertically when stackActionButtonsBelowCard is false, even with an action button shown', () => {
     vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
       matchState: MatchState.PLAYER_WATERING_CROP,
       match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
@@ -432,10 +427,8 @@ describe('Card', () => {
     expect(getComputedStyle(card!).marginTop).toEqual('')
   })
 
-  test('does not shift vertically on a narrow viewport when no action button is shown', () => {
-    mockUseMediaQuery.mockReturnValue(true)
-
-    render(<StubCard />)
+  test('does not shift vertically when stackActionButtonsBelowCard is true but no action button is shown', () => {
+    render(<StubCard stackActionButtonsBelowCard />)
 
     const card = screen
       .getByText(stubCardInstance.name)

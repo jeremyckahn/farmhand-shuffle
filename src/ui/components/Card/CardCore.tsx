@@ -20,7 +20,6 @@ import {
 import { isCropCardInstance } from '../../../game/types/guards'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
@@ -79,6 +78,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
       showWaterableState = false,
       showHarvestableState = false,
       showDiscardButton = false,
+      stackActionButtonsBelowCard = false,
       tooltipTitle = '',
       onPlayCard,
       onWaterCrop,
@@ -97,15 +97,6 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
-    // NOTE: It can't be derived from this card's own `size` prop instead: a
-    // focused compact card is deliberately rendered at a larger fixed size
-    // for legibility (see focusedFieldCardSize/focusedCardSize in
-    // Field.tsx/Hand.tsx), which is exactly when action buttons are shown,
-    // so that would misfire in the one case that matters. See
-    // useIsNarrowViewport's own comment for why this has to share its
-    // breakpoint with Table.tsx's CardSize.COMPACT decision.
-    const isNarrowViewport = useIsNarrowViewport()
-
     const actionButtons: Array<{
       key: string
       label: React.ReactNode
@@ -169,8 +160,9 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const mobileActionButtonHeight = '2.5rem'
     const mobileActionButtonGap = theme.spacing(1)
     const mobileActionButtonStackTopGap = '1rem'
-    const stackOnNarrowViewport = isNarrowViewport && actionButtons.length > 0
-    const mobileActionButtonStackHeight = stackOnNarrowViewport
+    const stackActionButtons =
+      stackActionButtonsBelowCard && actionButtons.length > 0
+    const mobileActionButtonStackHeight = stackActionButtons
       ? `calc(${mobileActionButtonStackTopGap} + ${
           actionButtons.length
         } * ${mobileActionButtonHeight} + ${
@@ -211,7 +203,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
               perspective: '1000px',
               height: CARD_DIMENSIONS[size].height,
               width: CARD_DIMENSIONS[size].width,
-              marginTop: stackOnNarrowViewport
+              marginTop: stackActionButtons
                 ? `calc(${mobileActionButtonStackHeight} / -2)`
                 : undefined,
               transition: theme.transitions.create(['margin-top']),
@@ -363,7 +355,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       position="absolute"
                       width={1}
                       px={1}
-                      {...(isNarrowViewport
+                      {...(stackActionButtonsBelowCard
                         ? {
                             left: 0,
                             top: `calc(100% + ${mobileActionButtonStackTopGap} + ${idx} * (${mobileActionButtonHeight} + ${mobileActionButtonGap}))`,
@@ -373,7 +365,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       <Typography>
                         <Button
                           variant="contained"
-                          fullWidth={isNarrowViewport}
+                          fullWidth={stackActionButtonsBelowCard}
                           color={button.color}
                           disabled={button.disabled}
                           onClick={button.onClick}

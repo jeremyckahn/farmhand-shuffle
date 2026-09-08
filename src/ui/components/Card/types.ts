@@ -34,6 +34,14 @@ export interface BaseCardProps extends BoxProps, CardInteractionProps {
   paperProps?: Partial<Omit<PaperProps, 'sx'>>
   playerId: string
   size?: CardSize
+  /**
+   * Renders any shown action button(s) stacked below the card (full width)
+   * instead of beside it. The caller decides this -- typically based on
+   * viewport width -- rather than CardCore querying the viewport itself, so
+   * that a focused card's own `size` (which is deliberately upsized for
+   * legibility even on narrow viewports) can't be mistaken for the signal.
+   */
+  stackActionButtonsBelowCard?: boolean
 }
 
 export interface CropCardProps extends BaseCardProps {

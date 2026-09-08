@@ -8,6 +8,7 @@ import { IMatch, IPlayer } from '../../../game/types'
 import { useRejectingTimeout } from '../../../lib/hooks/useRejectingTimeout'
 import { math } from '../../../services/Math'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { useSelectedCardPosition } from '../../hooks/useSelectedCardPosition'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
@@ -61,6 +62,7 @@ export const Hand = ({
     setSelectedHandCardIdx,
   } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
+  const isNarrowViewport = useIsNarrowViewport()
 
   const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
     cardSize: focusedCardSize,
@@ -215,6 +217,7 @@ export const Hand = ({
             onFocus={() => handleCardFocus(idx)}
             tabIndex={isHandInViewport ? 0 : -1}
             isFocused={isSelected}
+            stackActionButtonsBelowCard={isNarrowViewport}
             ref={isSelected ? selectedCardRef : undefined}
           />
         )
