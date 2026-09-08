@@ -170,25 +170,33 @@ const MatchCore = ({
       >
         <TurnControl match={match} />
         <Table sx={{ pt: 4 }} match={match} />
-        <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
-          <Fab
-            color="secondary"
-            disabled={isInputBlocked || isHandDisabled}
-            onClick={handleHandVisibilityToggle}
-            sx={{
-              position: 'fixed',
-              bottom: theme.spacing(2),
-              left: theme.spacing(2),
-            }}
-          >
-            <KeyboardArrowDown
-              sx={{
-                transform: `rotate(${showHand ? 0 : 180}deg)`,
-                transition: theme.transitions.create(['transform']),
-              }}
-            />
-          </Fab>
-        </Tooltip>
+        {
+          // NOTE: Hidden on narrow viewports -- with the card-navigation
+          // Fabs and Table.tsx's mobile-specific hand positioning already in
+          // play there, a separate always-visible hide/show control is one
+          // more affordance than the mobile layout needs.
+          !isNarrowViewport && (
+            <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
+              <Fab
+                color="secondary"
+                disabled={isInputBlocked || isHandDisabled}
+                onClick={handleHandVisibilityToggle}
+                sx={{
+                  position: 'fixed',
+                  bottom: theme.spacing(2),
+                  left: theme.spacing(2),
+                }}
+              >
+                <KeyboardArrowDown
+                  sx={{
+                    transform: `rotate(${showHand ? 0 : 180}deg)`,
+                    transition: theme.transitions.create(['transform']),
+                  }}
+                />
+              </Fab>
+            </Tooltip>
+          )
+        }
         {isNarrowViewport && (
           <>
             <Fade in={showCardNavFabs} unmountOnExit>
