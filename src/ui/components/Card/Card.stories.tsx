@@ -63,6 +63,34 @@ export const PlayableCropCard: Story = {
   ],
 }
 
+export const PlayableCropCardStackedActionButton: Story = {
+  args: {
+    cardInstance: stubPumpkin,
+    playerId: stubPlayer1.id,
+    isFlipped: false,
+    size: CardSize.MEDIUM,
+    isFocused: true,
+    cardIdxInHand: 0,
+    // NOTE: On narrow viewports, Field.tsx/Hand.tsx pass this based on the
+    // real viewport width -- forced here to show that layout regardless of
+    // the Storybook viewport, since this is exactly the state that's
+    // regressed twice in the past (see CardCore.tsx's comment on this prop).
+    stackActionButtonsBelowCard: true,
+  },
+  decorators: [
+    Story => {
+      spyOn(ActorContext, 'useSelector').mockReturnValueOnce(
+        stubSelectorState({
+          matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+          match: stubMatch(),
+        })
+      )
+
+      return <Story />
+    },
+  ],
+}
+
 export const PlayableWaterCard: Story = {
   args: {
     cardInstance: stubWater,
