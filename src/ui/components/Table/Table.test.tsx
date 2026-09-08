@@ -6,6 +6,7 @@ import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { mockUseMediaQuery } from '../../../test-utils/mocks/useMediaQuery'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
@@ -32,12 +33,6 @@ vi.mock('../Card', () => ({
   // explicitly here as a data attribute instead.
   // @ts-expect-error Type errors are irrelevant for the tests
   CardProps) => <div data-size={size} {...rest} />,
-}))
-
-const mockUseMediaQuery = vi.fn<() => boolean>()
-
-vi.mock('@mui/material/useMediaQuery/useMediaQuery', () => ({
-  default: () => mockUseMediaQuery(),
 }))
 
 vi.mock('../Field/Field', () => ({

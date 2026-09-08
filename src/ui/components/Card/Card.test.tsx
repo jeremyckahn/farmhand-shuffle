@@ -10,6 +10,7 @@ import {
   IPlayer,
 } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
+import { mockUseMediaQuery } from '../../../test-utils/mocks/useMediaQuery'
 import {
   stubCarrot,
   stubRain,
@@ -39,19 +40,13 @@ const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
   </StubShellContext>
 )
 
-// NOTE: CardCore's only remaining useMediaQuery call is for
-// prefers-reduced-motion -- mobile/narrow-viewport stacking is driven by the
-// stackActionButtonsBelowCard prop instead (see the tests below), so this
-// just needs a stable, jsdom-safe default (there's no matchMedia mock in
-// this repo, so useMediaQuery would otherwise resolve unpredictably).
-const mockUseMediaQuery = vi.fn<() => boolean>(() => false)
-
-vi.mock('@mui/material/useMediaQuery/useMediaQuery', () => ({
-  default: () => mockUseMediaQuery(),
-}))
-
 describe('Card', () => {
   beforeEach(() => {
+    // NOTE: CardCore's only useMediaQuery call is for prefers-reduced-motion
+    // -- mobile/narrow-viewport stacking is driven by the
+    // stackActionButtonsBelowCard prop instead (see the tests below), so
+    // this just needs a stable default. See
+    // test-utils/mocks/useMediaQuery.ts for why this is mocked at all.
     mockUseMediaQuery.mockReturnValue(false)
   })
 
