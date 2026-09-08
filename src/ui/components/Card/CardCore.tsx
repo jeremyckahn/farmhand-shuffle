@@ -34,6 +34,28 @@ export const cropWaterIndicatorOutlineColor = '#0072ff'
 const cropHarvestIndicatorSessionOwnerOutlineColor = '#0fc400'
 const cropHarvestIndicatorOpponentOutlineColor = '#ff7510'
 
+// NOTE: Exported (along with getStackedActionButtonStackHeight/
+// getStackedActionButtonsMarginTop below) so tests can derive their
+// expectations from these actual production values instead of a
+// hand-copied formula that could silently drift from this one.
+export const mobileActionButtonHeight = '2.5rem'
+export const mobileActionButtonStackTopGap = '1rem'
+
+export const getStackedActionButtonStackHeight = (
+  actionButtonCount: number,
+  gap: string
+) =>
+  `calc(${mobileActionButtonStackTopGap} + ${actionButtonCount} * ${mobileActionButtonHeight} + ${
+    actionButtonCount - 1
+  } * ${gap})`
+
+// NOTE: See the NOTE beside this function's call site (in CardCore) for why
+// the card is shifted up by half the button stack's height via a margin.
+export const getStackedActionButtonsMarginTop = (
+  actionButtonCount: number,
+  gap: string
+) => `calc(${getStackedActionButtonStackHeight(actionButtonCount, gap)} / -2)`
+
 const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
   theme,
   isBuffedCrop,
@@ -157,18 +179,9 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     // already centers the card (e.g. Field's tap-to-zoom, Hand's selected
     // card centering) ends up centering the whole group instead of just the
     // card. Larger viewports are unaffected (buttons stay beside the card).
-    const mobileActionButtonHeight = '2.5rem'
     const mobileActionButtonGap = theme.spacing(1)
-    const mobileActionButtonStackTopGap = '1rem'
     const stackActionButtons =
       stackActionButtonsBelowCard && actionButtons.length > 0
-    const mobileActionButtonStackHeight = stackActionButtons
-      ? `calc(${mobileActionButtonStackTopGap} + ${
-          actionButtons.length
-        } * ${mobileActionButtonHeight} + ${
-          actionButtons.length - 1
-        } * ${mobileActionButtonGap})`
-      : undefined
 
     // NOTE: At compact size the card's name and description aren't shown on
     // the card face (there isn't room), so they're surfaced in the tooltip
@@ -204,7 +217,10 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
               height: CARD_DIMENSIONS[size].height,
               width: CARD_DIMENSIONS[size].width,
               marginTop: stackActionButtons
-                ? `calc(${mobileActionButtonStackHeight} / -2)`
+                ? getStackedActionButtonsMarginTop(
+                    actionButtons.length,
+                    mobileActionButtonGap
+                  )
                 : undefined,
               transition: theme.transitions.create(['margin-top']),
             },

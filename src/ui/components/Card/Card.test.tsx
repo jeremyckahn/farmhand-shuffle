@@ -1,3 +1,4 @@
+import { createTheme } from '@mui/material/styles'
 import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
@@ -28,7 +29,11 @@ import { deselectedHandIdx } from '../constants'
 
 import { Card } from './Card'
 import { CardProps } from './types'
-import { cardClassName, cardFlipWrapperClassName } from './CardCore'
+import {
+  cardClassName,
+  cardFlipWrapperClassName,
+  getStackedActionButtonsMarginTop,
+} from './CardCore'
 
 const stubCardInstance = stubCarrot
 
@@ -39,6 +44,33 @@ const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
     </ActorContext.Provider>
   </StubShellContext>
 )
+
+// NOTE: No ThemeProvider wraps StubCard, so CardCore's useTheme() resolves
+// to MUI's default theme -- this is that same default, used to derive the
+// same spacing value CardCore itself uses.
+const defaultTheme = createTheme()
+
+// NOTE: jsdom can't resolve calc() to a real pixel value (it has no layout
+// engine), so getComputedStyle().marginTop returns the calc() expression
+// jsdom's CSS parser happens to normalize it to (e.g. reordering terms,
+// turning `/ -2` into `* -0.5`) rather than a computed number. Asserting on
+// that normalized shape directly would be fragile and tied to jsdom/cssstyle
+// internals. Round-tripping the expected value through the same parser --
+// by setting it on a scratch element and reading it back -- means the
+// comparison only depends on both sides being normalized the same way, not
+// on knowing what that normalization looks like.
+const resolveComputedMarginTop = (marginTop: string) => {
+  const scratch = document.createElement('div')
+
+  scratch.style.setProperty('margin-top', marginTop)
+  document.body.appendChild(scratch)
+
+  const { marginTop: resolved } = getComputedStyle(scratch)
+
+  document.body.removeChild(scratch)
+
+  return resolved
+}
 
 describe('Card', () => {
   beforeEach(() => {
@@ -391,8 +423,13 @@ describe('Card', () => {
 
     const { marginTop } = getComputedStyle(card!)
 
-    expect(marginTop).not.toEqual('')
-    expect(marginTop.startsWith('calc(-')).toBe(true)
+    // NOTE: Only the "water" button is shown here, so actionButtonCount is 1.
+    const expectedMarginTop = getStackedActionButtonsMarginTop(
+      1,
+      defaultTheme.spacing(1)
+    )
+
+    expect(marginTop).toEqual(resolveComputedMarginTop(expectedMarginTop))
   })
 
   test('does not shift vertically when stackActionButtonsBelowCard is false, even with an action button shown', () => {
