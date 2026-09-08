@@ -365,32 +365,60 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       </Box>
                     </>
                   )}
-                  {actionButtons.map((button, idx) => (
+                  {stackActionButtonsBelowCard ? (
+                    // NOTE: A single positioned container with the buttons
+                    // stacked in normal flow (rather than each button
+                    // individually positioned via a `top` calc assuming a
+                    // fixed height) -- this lets the browser lay out each
+                    // button at its own actual rendered height, so a
+                    // longer/wrapped label pushes the next button down
+                    // instead of being overlapped by it.
                     <Box
-                      key={button.key}
                       position="absolute"
+                      top={`calc(100% + ${mobileActionButtonStackTopGap})`}
+                      left={0}
                       width={1}
                       px={1}
-                      {...(stackActionButtonsBelowCard
-                        ? {
-                            left: 0,
-                            top: `calc(100% + ${mobileActionButtonStackTopGap} + ${idx} * (${mobileActionButtonHeight} + ${mobileActionButtonGap}))`,
-                          }
-                        : { left: '100%' })}
+                      display="flex"
+                      flexDirection="column"
+                      gap={mobileActionButtonGap}
                     >
-                      <Typography>
-                        <Button
-                          variant="contained"
-                          fullWidth={stackActionButtonsBelowCard}
-                          color={button.color}
-                          disabled={button.disabled}
-                          onClick={button.onClick}
-                        >
-                          {button.label}
-                        </Button>
-                      </Typography>
+                      {actionButtons.map(button => (
+                        <Typography key={button.key}>
+                          <Button
+                            variant="contained"
+                            fullWidth
+                            color={button.color}
+                            disabled={button.disabled}
+                            onClick={button.onClick}
+                          >
+                            {button.label}
+                          </Button>
+                        </Typography>
+                      ))}
                     </Box>
-                  ))}
+                  ) : (
+                    actionButtons.map(button => (
+                      <Box
+                        key={button.key}
+                        position="absolute"
+                        width={1}
+                        px={1}
+                        left="100%"
+                      >
+                        <Typography>
+                          <Button
+                            variant="contained"
+                            color={button.color}
+                            disabled={button.disabled}
+                            onClick={button.onClick}
+                          >
+                            {button.label}
+                          </Button>
+                        </Typography>
+                      </Box>
+                    ))
+                  )}
                 </Paper>
 
                 {/* Back of the card */}
