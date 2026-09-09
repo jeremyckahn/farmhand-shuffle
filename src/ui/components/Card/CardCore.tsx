@@ -198,19 +198,13 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     // and shown above them.
     const displayedTooltipTitle =
       size === CardSize.COMPACT ? (
-        <>
-          {tooltipTitle && (
-            <>
-              {tooltipTitle}
-              <br />
-            </>
-          )}
+        <Box display="flex" flexDirection="column" gap={0.5}>
+          {tooltipTitle}
           <Typography component="span" sx={{ fontWeight: 'bold' }}>
             {card.name}
           </Typography>
-          <br />
           {children}
-        </>
+        </Box>
       ) : (
         tooltipTitle
       )
