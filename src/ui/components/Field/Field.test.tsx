@@ -17,6 +17,8 @@ import { CardSize } from '../../types'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
 
+import { assertIsNonNullable } from '../../../game/types/assertions'
+
 import {
   Field,
   FieldProps,
@@ -65,9 +67,7 @@ vi.mock('../Card', () => ({
 let matchStub = stubMatch()
 const opponentPlayerId = Object.keys(matchStub.table.players)[1]
 
-if (!opponentPlayerId) {
-  throw new Error('Opponent player not found')
-}
+assertIsNonNullable(opponentPlayerId)
 
 const cropsStub = [
   undefined,
@@ -142,9 +142,7 @@ describe('Field', () => {
     const [playedCrop1, ...restPlayedCrops] =
       screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
@@ -170,9 +168,7 @@ describe('Field', () => {
       `field_${matchStub.sessionOwnerPlayerId}`
     ).firstElementChild
 
-    if (!row) {
-      throw new Error('Field row not found')
-    }
+    assertIsNonNullable(row)
 
     // NOTE: Plot outlines/box-shadows paint outside their own layout box,
     // and a selected card is translated toward the center of the viewport
@@ -182,9 +178,7 @@ describe('Field', () => {
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
@@ -202,9 +196,7 @@ describe('Field', () => {
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
@@ -221,9 +213,7 @@ describe('Field', () => {
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
@@ -243,9 +233,8 @@ describe('Field', () => {
     const [playedCrop1, playedCrop2] =
       screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1 || !playedCrop2) {
-      throw new Error('Crops not found')
-    }
+    assertIsNonNullable(playedCrop1)
+    assertIsNonNullable(playedCrop2)
 
     await userEvent.click(playedCrop1)
 
@@ -269,9 +258,7 @@ describe('Field', () => {
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
@@ -291,9 +278,7 @@ describe('Field', () => {
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-      if (!playedCrop1) {
-        throw new Error('Crop not found')
-      }
+      assertIsNonNullable(playedCrop1)
 
       await userEvent.click(playedCrop1)
 
@@ -308,9 +293,7 @@ describe('Field', () => {
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-      if (!playedCrop1) {
-        throw new Error('Crop not found')
-      }
+      assertIsNonNullable(playedCrop1)
 
       await userEvent.click(playedCrop1)
 
@@ -334,17 +317,13 @@ describe('Field', () => {
         `field_${matchStub.sessionOwnerPlayerId}`
       ).firstElementChild
 
-      if (!row) {
-        throw new Error('Field row not found')
-      }
+      assertIsNonNullable(row)
 
       const childCountBeforeSelection = row.children.length
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-      if (!playedCrop1) {
-        throw new Error('Crop not found')
-      }
+      assertIsNonNullable(playedCrop1)
 
       await userEvent.click(playedCrop1)
 
@@ -360,9 +339,7 @@ describe('Field', () => {
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-      if (!playedCrop1) {
-        throw new Error('Crop not found')
-      }
+      assertIsNonNullable(playedCrop1)
 
       await userEvent.click(playedCrop1)
 
@@ -391,9 +368,7 @@ describe('Field', () => {
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-      if (!playedCrop1) {
-        throw new Error('Crop not found')
-      }
+      assertIsNonNullable(playedCrop1)
 
       onSelectedCardIdxChange.mockClear()
 
@@ -409,9 +384,7 @@ describe('Field', () => {
 
       const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-      if (!playedCrop1) {
-        throw new Error('Crop not found')
-      }
+      assertIsNonNullable(playedCrop1)
 
       await userEvent.click(playedCrop1)
 
