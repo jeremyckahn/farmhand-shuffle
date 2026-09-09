@@ -119,54 +119,63 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
     const prefersReducedMotion = useMediaQuery(
       '(prefers-reduced-motion: reduce)'
     )
-    const actionButtons: Array<{
+    let actionButtons: Array<{
       key: string
       label: React.ReactNode
       color?: 'success' | 'error'
       disabled?: boolean
       onClick?: () => void
-    }> = [
-      ...(showPlayCardButton
-        ? [
-            {
-              key: 'play',
-              label: (
-                <>
-                  {isCropCardInstance(card) && 'Play crop'}
-                  {isWaterCardInstance(card) && 'Water a crop'}
-                  {isEventCardInstance(card) && 'Play event'}
-                  {isToolCardInstance(card) && 'Play tool'}
-                </>
-              ),
-              disabled: playButtonDisabled,
-              onClick: () => void onPlayCard?.(),
-            },
-          ]
-        : []),
-      ...(showWaterCropButton
-        ? [{ key: 'water', label: 'Water crop', onClick: onWaterCrop }]
-        : []),
-      ...(showHarvestCropButton
-        ? [
-            {
-              key: 'harvest',
-              label: 'Harvest crop',
-              color: 'success' as const,
-              onClick: onHarvestCrop,
-            },
-          ]
-        : []),
-      ...(showDiscardButton
-        ? [
-            {
-              key: 'discard',
-              label: 'Discard',
-              color: 'error' as const,
-              onClick: onDiscardCard,
-            },
-          ]
-        : []),
-    ]
+    }> = []
+
+    if (showPlayCardButton) {
+      actionButtons = [
+        ...actionButtons,
+        {
+          key: 'play',
+          label: (
+            <>
+              {isCropCardInstance(card) && 'Play crop'}
+              {isWaterCardInstance(card) && 'Water a crop'}
+              {isEventCardInstance(card) && 'Play event'}
+              {isToolCardInstance(card) && 'Play tool'}
+            </>
+          ),
+          disabled: playButtonDisabled,
+          onClick: () => void onPlayCard?.(),
+        },
+      ]
+    }
+
+    if (showWaterCropButton) {
+      actionButtons = [
+        ...actionButtons,
+        { key: 'water', label: 'Water crop', onClick: onWaterCrop },
+      ]
+    }
+
+    if (showHarvestCropButton) {
+      actionButtons = [
+        ...actionButtons,
+        {
+          key: 'harvest',
+          label: 'Harvest crop',
+          color: 'success',
+          onClick: onHarvestCrop,
+        },
+      ]
+    }
+
+    if (showDiscardButton) {
+      actionButtons = [
+        ...actionButtons,
+        {
+          key: 'discard',
+          label: 'Discard',
+          color: 'error',
+          onClick: onDiscardCard,
+        },
+      ]
+    }
 
     // NOTE: On narrow viewports, action buttons stack below the card
     // instead of beside it -- there's no horizontal room to spare. The
