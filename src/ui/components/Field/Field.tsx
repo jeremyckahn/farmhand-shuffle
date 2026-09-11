@@ -132,22 +132,15 @@ export const Field = ({
       // rect's own (smaller) ones -- otherwise the resulting position
       // would be off by half of the size difference.
       // NOTE: rem is relative to the root font size, which isn't always
-      // 16px (e.g. a browser's accessibility text-size setting) -- reading
-      // it directly keeps this translate accurate instead of assuming the
-      // default. Falls back to the standard 16px default when the
-      // environment doesn't report one (e.g. no font-size set in jsdom).
-      const rootFontSizePx =
-        parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
-      const focusedWidthPx =
-        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].width) * rootFontSizePx
-      const focusedHeightPx =
-        parseFloat(CARD_DIMENSIONS[focusedFieldCardSize].height) *
-        rootFontSizePx
-      const xDelta = centerX - (boundingClientRect.left + focusedWidthPx / 2)
-      const yDelta = centerY - (boundingClientRect.top + focusedHeightPx / 2)
+      // 16px (e.g. a browser's accessibility text-size setting) -- using
+      // calc() here lets the browser resolve focusedWidth/Height's rem
+      // units against the real root font size, instead of this needing to
+      // read and convert it in JS.
+      const focusedWidth = CARD_DIMENSIONS[focusedFieldCardSize].width
+      const focusedHeight = CARD_DIMENSIONS[focusedFieldCardSize].height
 
       setSelectedCardTransform(
-        `translateX(${xDelta}px) translateY(${yDelta}px)`
+        `translateX(calc(${centerX}px - ${boundingClientRect.left}px - (${focusedWidth} / 2))) translateY(calc(${centerY}px - ${boundingClientRect.top}px - (${focusedHeight} / 2)))`
       )
     } else {
       const xDelta =
