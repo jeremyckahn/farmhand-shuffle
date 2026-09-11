@@ -91,6 +91,14 @@ export class RandomNumberService {
   }
 }
 
-const seed = new URLSearchParams(window.location.search).get('seed')
+// window is unavailable in non-browser consumers of this module (e.g. a
+// Node script importing this package's ./testing entry to build match
+// fixtures) - this service has no need of a URL-seeded PRNG there, so it
+// just falls through to the unseeded Math.random() default below instead
+// of throwing on import.
+const seed =
+  typeof window === 'undefined'
+    ? null
+    : new URLSearchParams(window.location.search).get('seed')
 
 export const randomNumber = new RandomNumberService(seed)

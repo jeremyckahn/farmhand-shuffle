@@ -1,4 +1,4 @@
-import CssBaseline from '@mui/material/CssBaseline'
+import CssBaseline from '@mui/material/CssBaseline/index.js'
 import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 

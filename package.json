@@ -10,6 +10,10 @@
       "types": "./dist-lib/index.d.ts",
       "import": "./dist-lib/index.mjs"
     },
+    "./testing": {
+      "types": "./dist-lib/testing.d.ts",
+      "import": "./dist-lib/testing.mjs"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -28,7 +32,7 @@
     "check": "npm test -- --coverage && npm run check:lint && npm run check:types",
     "check:lint": "eslint src --max-warnings=0",
     "check:types": "tsc",
-    "prepare": "husky install",
+    "prepare": "husky install || echo 'husky: not a git checkout, skipping' && npm run build:lib",
     "prepublishOnly": "npm run build:lib",
     "gitingest": "command -v gitingest >/dev/null 2>&1 || { echo \"gitingest not found. Please install it: https://github.com/cyclotruc/gitingest\"; exit 1; } && gitingest",
     "gitingest:app": "npm run gitingest -- --exclude-pattern=\"coverage,storybook-static,.vercel,*.piskel,*.test.*,*.stories.*,.github,.storybook\"",
@@ -104,8 +108,8 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^17.0.2 || ^18.2.0",
+    "react-dom": "^17.0.2 || ^18.2.0"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {

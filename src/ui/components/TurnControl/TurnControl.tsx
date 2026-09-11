@@ -1,16 +1,12 @@
-import AccountBalance from '@mui/icons-material/AccountBalance'
-import AttachMoney from '@mui/icons-material/AttachMoney'
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp'
-import Accordion from '@mui/material/Accordion'
-import AccordionActions from '@mui/material/AccordionActions'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Stack from '@mui/material/Stack'
+import Accordion from '@mui/material/Accordion/index.js'
+import AccordionActions from '@mui/material/AccordionActions/index.js'
+import AccordionSummary from '@mui/material/AccordionSummary/index.js'
+import Button from '@mui/material/Button/index.js'
+import Chip from '@mui/material/Chip/index.js'
+import Stack from '@mui/material/Stack/index.js'
 import useTheme from '@mui/material/styles/useTheme'
-import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
+import Tooltip from '@mui/material/Tooltip/index.js'
+import Typography from '@mui/material/Typography/index.js'
 import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useContext } from 'react'
 
@@ -25,18 +21,29 @@ import {
 } from '../../../game/types'
 import { formatNumber } from '../../../lib/formatting/numbers'
 import { useMatchRules } from '../../hooks/useMatchRules'
+import {
+  AccountBalance,
+  AttachMoney,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+} from '../icons/index.js'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
+import { genericOpponentPlayerLabel } from '../constants'
 
 export interface TurnControlProps {
   match: IMatch
+  useGenericPlayerLabels?: boolean
 }
 
 const playerFundWarningThreshold = STANDARD_TAX_AMOUNT * 2
 
-export const TurnControl = ({ match }: TurnControlProps) => {
+export const TurnControl = ({
+  match,
+  useGenericPlayerLabels = false,
+}: TurnControlProps) => {
   const theme = useTheme()
   const actorRef = ActorContext.useActorRef()
   const { setIsHandInViewport } = useContext(ShellContext)
@@ -46,7 +53,12 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     match: { currentPlayerId, sessionOwnerPlayerId },
   } = useMatchRules()
 
-  const currentPlayerName = funAnimalName(currentPlayerId ?? '')
+  // Only ever read below while it's the non-session-owner's turn (see
+  // PERFORMING_BOT_TURN_ACTION / PERFORMING_BOT_SETUP_ACTION), so it's safe
+  // to always resolve to the opponent label when generic labels are on.
+  const currentPlayerName = useGenericPlayerLabels
+    ? genericOpponentPlayerLabel
+    : funAnimalName(currentPlayerId ?? '')
 
   const handleCompleteSetup = () => {
     actorRef.send({ type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION })
@@ -189,20 +201,27 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   const opponentFunds = opponentPlayerId
     ? lookup.getPlayer(match, opponentPlayerId)?.funds
     : 0
-  const opponentName = funAnimalName(opponentPlayerId ?? '')
+  const opponentName = useGenericPlayerLabels
+    ? genericOpponentPlayerLabel
+    : funAnimalName(opponentPlayerId ?? '')
 
   return (
     <Stack spacing={1}>
       <Stack
         direction="row"
         justifyContent="space-between"
-        sx={{ color: theme.palette.common.white }}
+        // No color set here - CSS inheritance passes this through from
+        // whatever ancestor sets one (Match's own root Container, by
+        // default, sets it to white for the standalone/default look). A
+        // host embedding Match can override that from the outside via
+        // Match's own consumer-facing `sx` prop, without this component
+        // needing to know or care that it's embedded.
       >
         <Tooltip title="Your funds" arrow>
           <Stack
             direction="row"
             alignItems="center"
-            color={{
+            sx={{
               cursor: 'help',
               ...(sessionOwnerPlayerFunds <= playerFundWarningThreshold && {
                 color: theme.palette.error.dark,

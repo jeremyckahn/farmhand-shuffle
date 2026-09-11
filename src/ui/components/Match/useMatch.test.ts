@@ -264,4 +264,138 @@ describe('useMatch', () => {
 
     expect(result.current.shellContextValue.isHandInViewport).toBe(false)
   })
+
+  it('should dispatch RESUME instead of INIT when initialMatch is provided and matchState is UNINITIALIZED', () => {
+    const initialMatch: NonNullable<
+      Parameters<typeof useMatch>[0]['initialMatch']
+    > = {
+      matchState: MatchState.WAITING_FOR_PLAYER_SETUP_ACTION,
+      match: mockMatch,
+      botState: {
+        cropCardIndicesToHarvest: [],
+        cropsToPlayDuringTurn: 0,
+        fieldCropIndicesToWaterDuringTurn: [],
+        toolCardsThatCanBePlayed: 0,
+      },
+    }
+
+    renderHook(() =>
+      useMatch({
+        playerSeeds: mockPlayerSeeds,
+        userPlayerId: mockUserPlayerId,
+        initialMatch,
+      })
+    )
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockActorRef.send).toHaveBeenCalledWith({
+      type: MatchEvent.RESUME,
+      matchState: initialMatch.matchState,
+      match: initialMatch.match,
+      botState: initialMatch.botState,
+      userPlayerId: mockUserPlayerId,
+    })
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockActorRef.send).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: MatchEvent.INIT })
+    )
+  })
+
+  describe('onMatchEnd', () => {
+    it('fires once with the winner id on transition into GAME_OVER', () => {
+      const onMatchEnd = vi.fn()
+
+      vi.mocked(useMatchRules).mockReturnValue({
+        match: {
+          ...mockMatch,
+          winner: 'player1',
+          selectedWaterCardInHandIdx: 0,
+        },
+        matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+        botTurnActionState: null,
+      })
+
+      const { rerender } = renderHook(
+        props =>
+          useMatch({
+            playerSeeds: mockPlayerSeeds,
+            userPlayerId: mockUserPlayerId,
+            ...props,
+          }),
+        { initialProps: { onMatchEnd } }
+      )
+
+      expect(onMatchEnd).not.toHaveBeenCalled()
+
+      vi.mocked(useMatchRules).mockReturnValue({
+        match: {
+          ...mockMatch,
+          winner: 'player1',
+          selectedWaterCardInHandIdx: 0,
+        },
+        matchState: MatchState.GAME_OVER,
+        botTurnActionState: null,
+      })
+
+      rerender({ onMatchEnd })
+
+      expect(onMatchEnd).toHaveBeenCalledTimes(1)
+      expect(onMatchEnd).toHaveBeenCalledWith('player1')
+
+      // NOTE: Re-rendering while still GAME_OVER must not re-fire.
+      rerender({ onMatchEnd })
+
+      expect(onMatchEnd).toHaveBeenCalledTimes(1)
+    })
+
+    it('fires again after leaving and re-entering GAME_OVER (e.g. Play again)', () => {
+      const onMatchEnd = vi.fn()
+
+      vi.mocked(useMatchRules).mockReturnValue({
+        match: {
+          ...mockMatch,
+          winner: 'player2',
+          selectedWaterCardInHandIdx: 0,
+        },
+        matchState: MatchState.GAME_OVER,
+        botTurnActionState: null,
+      })
+
+      const { rerender } = renderHook(
+        props =>
+          useMatch({
+            playerSeeds: mockPlayerSeeds,
+            userPlayerId: mockUserPlayerId,
+            ...props,
+          }),
+        { initialProps: { onMatchEnd } }
+      )
+
+      expect(onMatchEnd).toHaveBeenCalledTimes(1)
+      expect(onMatchEnd).toHaveBeenCalledWith('player2')
+
+      vi.mocked(useMatchRules).mockReturnValue({
+        match: { ...mockMatch, winner: null, selectedWaterCardInHandIdx: 0 },
+        matchState: MatchState.WAITING_FOR_PLAYER_SETUP_ACTION,
+        botTurnActionState: null,
+      })
+
+      rerender({ onMatchEnd })
+
+      vi.mocked(useMatchRules).mockReturnValue({
+        match: {
+          ...mockMatch,
+          winner: 'player1',
+          selectedWaterCardInHandIdx: 0,
+        },
+        matchState: MatchState.GAME_OVER,
+        botTurnActionState: null,
+      })
+
+      rerender({ onMatchEnd })
+
+      expect(onMatchEnd).toHaveBeenCalledTimes(2)
+      expect(onMatchEnd).toHaveBeenLastCalledWith('player1')
+    })
+  })
 })

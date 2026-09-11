@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Mock } from 'vitest'
 
-import { stubDeck } from '../../../test-utils/stubs/deck'
+import { starterDeck } from '../../../game/config/starterDeck'
 import { stubPlayer } from '../../../test-utils/stubs/players'
 
 import { ActorContext } from './ActorContext'
@@ -38,7 +38,7 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const deck = stubDeck()
+const deck = starterDeck()
 
 const player1 = stubPlayer({ id: 'player-1', deck })
 const player2 = stubPlayer({ id: 'player-2', deck })

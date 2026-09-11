@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles/index.js'
 
 import { ICard } from '../../../game/types'
 import { isCardImageKey, cards, ui } from '../../img'

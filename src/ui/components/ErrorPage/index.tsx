@@ -1,5 +1,5 @@
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box/index.js'
+import Typography from '@mui/material/Typography/index.js'
 import { useTheme } from '@mui/material/styles'
 
 export const ErrorPage = () => {

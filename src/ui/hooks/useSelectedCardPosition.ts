@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
-import { SxProps, useTheme } from '@mui/material'
+import { SxProps } from '@mui/material'
+import useTheme from '@mui/material/styles/useTheme'
 
 import { CARD_DIMENSIONS } from '../config/dimensions'
 import { CardSize } from '../types'
