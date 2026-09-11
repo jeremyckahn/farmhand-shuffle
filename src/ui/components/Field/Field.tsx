@@ -60,9 +60,6 @@ export const Field = ({
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
   const [selectedCardTransform, setSelectedCardTransform] = useState('')
 
-  useEffect(() => {
-    onSelectedCardIdxChange?.(selectedCardIdx)
-  }, [selectedCardIdx, onSelectedCardIdxChange])
   const { width: windowWidth, height: windowHeight } = useWindowSize({
     // NOTE: debounceDelay value needs to be set to some number greater than 0
     // to avoid resetSelectedCard from being unbound before it is called.
@@ -74,6 +71,7 @@ export const Field = ({
 
   const resetSelectedCard = () => {
     setSelectedCardIdx(deselectedIdx)
+    onSelectedCardIdxChange?.(deselectedIdx)
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
@@ -100,7 +98,8 @@ export const Field = ({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedCardIdx(deselectedIdx)
-  }, [player.field])
+    onSelectedCardIdxChange?.(deselectedIdx)
+  }, [player.field, onSelectedCardIdxChange])
 
   const handleCardFocus = (
     event: React.FocusEvent<HTMLDivElement, Element>,
@@ -166,6 +165,7 @@ export const Field = ({
     }
 
     setSelectedCardIdx(cardIdx)
+    onSelectedCardIdxChange?.(cardIdx)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

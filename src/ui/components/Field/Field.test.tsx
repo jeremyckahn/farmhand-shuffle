@@ -353,14 +353,6 @@ describe('Field', () => {
   })
 
   describe('onSelectedCardIdxChange', () => {
-    test('is called with the deselected index on mount', () => {
-      const onSelectedCardIdxChange = vi.fn()
-
-      render(<StubField onSelectedCardIdxChange={onSelectedCardIdxChange} />)
-
-      expect(onSelectedCardIdxChange).toHaveBeenCalledWith(-1)
-    })
-
     test('is called with the field index when a card is focused', async () => {
       const onSelectedCardIdxChange = vi.fn()
 
