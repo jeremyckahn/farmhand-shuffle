@@ -40,6 +40,7 @@ vi.mock('../Card/Card', async () => {
         paperProps,
         onBeforePlay,
         isFocused,
+        stackActionButtonsBelowCard,
         ...props
       }: CardProps) => {
         const style: React.CSSProperties = {}
@@ -61,7 +62,14 @@ vi.mock('../Card/Card', async () => {
 
         return (
           // @ts-expect-error This is enough for the mock
-          <div {...props} className={cardClassName} style={style}>
+          <div
+            {...props}
+            className={cardClassName}
+            style={style}
+            data-stack-action-buttons-below-card={String(
+              stackActionButtonsBelowCard
+            )}
+          >
             {cardInstance.name}
           </div>
         )
@@ -77,9 +85,12 @@ const match = updatePlayer(baseMatch, baseMatch.sessionOwnerPlayerId, {
   hand: handCards,
 })
 
-const StubHand = (overrides: Partial<HandProps>) => {
+const StubHand = ({
+  isNarrowViewport = false,
+  ...overrides
+}: Partial<HandProps> & { isNarrowViewport?: boolean }) => {
   return (
-    <StubShellContext>
+    <StubShellContext isNarrowViewport={isNarrowViewport}>
       <ActorContext.Provider>
         <Hand
           match={match}
@@ -260,6 +271,32 @@ describe('Hand', () => {
     const expectedGapWidthPx = 50 * expectedScale
 
     expect(transform).toContain(`${expectedGapWidthPx}px`)
+  })
+
+  test('stacks action buttons below the card on a narrow viewport', () => {
+    render(<StubHand isNarrowViewport={true} />)
+
+    const card1 = screen
+      .getByText(handCards[0]!.name)
+      .closest(`.${cardClassName}`)
+
+    expect(card1).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'true'
+    )
+  })
+
+  test('does not stack action buttons below the card on a large viewport', () => {
+    render(<StubHand isNarrowViewport={false} />)
+
+    const card1 = screen
+      .getByText(handCards[0]!.name)
+      .closest(`.${cardClassName}`)
+
+    expect(card1).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'false'
+    )
   })
 
   describe('getGapPixelWidth', () => {

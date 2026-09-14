@@ -45,6 +45,7 @@ vi.mock('../Card', () => ({
     paperProps,
     sx,
     size,
+    stackActionButtonsBelowCard,
     ...rest
   }: CardProps) => {
     const style = sx && isSxArray(sx) ? sx?.[0] || {} : {}
@@ -56,8 +57,15 @@ vi.mock('../Card', () => ({
     }
 
     return (
-      // @ts-expect-error Type error is acceptable for tests
-      <div {...rest} data-size={size} style={style}>
+      <div
+        {...rest}
+        data-size={size}
+        data-stack-action-buttons-below-card={String(
+          stackActionButtonsBelowCard
+        )}
+        // @ts-expect-error Type error is acceptable for tests
+        style={style}
+      >
         <label>{cardInstance.name}</label>
       </div>
     )
@@ -84,9 +92,12 @@ matchStub = updateField(matchStub, opponentPlayerId, {
   cards: cropsStub,
 })
 
-const StubField = (overrides: Partial<FieldProps>) => {
+const StubField = ({
+  isNarrowViewport = false,
+  ...overrides
+}: Partial<FieldProps> & { isNarrowViewport?: boolean }) => {
   return (
-    <StubShellContext>
+    <StubShellContext isNarrowViewport={isNarrowViewport}>
       <ActorContext.Provider>
         <Field
           match={matchStub}
@@ -350,6 +361,30 @@ describe('Field', () => {
       expect(getComputedStyle(playedCrop1).transform).toEqual('')
       expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
     })
+  })
+
+  test('stacks action buttons below the card on a narrow viewport', () => {
+    render(<StubField isNarrowViewport={true} />)
+
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    assertIsNonNullable(playedCrop1)
+
+    expect(
+      playedCrop1.querySelector('[data-stack-action-buttons-below-card]')
+    ).toHaveAttribute('data-stack-action-buttons-below-card', 'true')
+  })
+
+  test('does not stack action buttons below the card on a large viewport', () => {
+    render(<StubField isNarrowViewport={false} />)
+
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    assertIsNonNullable(playedCrop1)
+
+    expect(
+      playedCrop1.querySelector('[data-stack-action-buttons-below-card]')
+    ).toHaveAttribute('data-stack-action-buttons-below-card', 'false')
   })
 
   describe('onSelectedCardIdxChange', () => {
