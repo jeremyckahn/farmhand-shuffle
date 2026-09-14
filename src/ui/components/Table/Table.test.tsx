@@ -6,7 +6,6 @@ import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubCarrot } from '../../../test-utils/stubs/cards'
-import { mockUseMediaQuery } from '../../../test-utils/mocks/useMediaQuery'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
@@ -64,9 +63,12 @@ const matchWithHandCard = updatePlayer(match, match.sessionOwnerPlayerId, {
   hand: [stubCarrot],
 })
 
-const StubTable = (overrides: Partial<TableProps>) => {
+const StubTable = ({
+  isNarrowViewport = false,
+  ...overrides
+}: Partial<TableProps> & { isNarrowViewport?: boolean }) => {
   return (
-    <StubShellContext>
+    <StubShellContext isNarrowViewport={isNarrowViewport}>
       <ActorContext.Provider>
         <Table match={match} {...overrides} />
       </ActorContext.Provider>
@@ -75,13 +77,6 @@ const StubTable = (overrides: Partial<TableProps>) => {
 }
 
 describe('Table', () => {
-  beforeEach(() => {
-    // NOTE: mockUseMediaQuery stands in for useIsNarrowViewport's underlying
-    // theme.breakpoints.down('md') query -- false means "large viewport"
-    // (the default for tests that don't care about responsive sizing).
-    mockUseMediaQuery.mockReturnValue(false)
-  })
-
   test('renders field for user player', () => {
     render(<StubTable />)
     const field = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
@@ -133,8 +128,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.SMALL to Field components on large viewports', () => {
-    mockUseMediaQuery.mockReturnValue(false)
-    render(<StubTable />)
+    render(<StubTable isNarrowViewport={false} />)
 
     const field = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
 
@@ -142,8 +136,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.COMPACT to Field components on narrow viewports', () => {
-    mockUseMediaQuery.mockReturnValue(true)
-    render(<StubTable />)
+    render(<StubTable isNarrowViewport={true} />)
 
     const selfField = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
     const opponentField = screen.getByTestId(`field_${opponentPlayerIds[0]}`)
@@ -153,8 +146,9 @@ describe('Table', () => {
   })
 
   test('passes CardSize.SMALL to Deck and DiscardPile on large viewports', () => {
-    mockUseMediaQuery.mockReturnValue(false)
-    render(<StubTable match={matchWithDiscardPileCard} />)
+    render(
+      <StubTable isNarrowViewport={false} match={matchWithDiscardPileCard} />
+    )
 
     const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
     const discardPile = screen.getByTestId(
@@ -172,8 +166,9 @@ describe('Table', () => {
   })
 
   test('passes CardSize.COMPACT to Deck and DiscardPile on narrow viewports', () => {
-    mockUseMediaQuery.mockReturnValue(true)
-    render(<StubTable match={matchWithDiscardPileCard} />)
+    render(
+      <StubTable isNarrowViewport={true} match={matchWithDiscardPileCard} />
+    )
 
     const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
     const discardPile = screen.getByTestId(
@@ -191,8 +186,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.MEDIUM to Hand on large viewports', () => {
-    mockUseMediaQuery.mockReturnValue(false)
-    render(<StubTable match={matchWithHandCard} />)
+    render(<StubTable isNarrowViewport={false} match={matchWithHandCard} />)
 
     const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
 
@@ -203,8 +197,7 @@ describe('Table', () => {
   })
 
   test('passes CardSize.COMPACT to Hand on narrow viewports', () => {
-    mockUseMediaQuery.mockReturnValue(true)
-    render(<StubTable match={matchWithHandCard} />)
+    render(<StubTable isNarrowViewport={true} match={matchWithHandCard} />)
 
     const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
 
@@ -234,8 +227,7 @@ describe('Table', () => {
       toJSON: () => undefined,
     })
 
-    mockUseMediaQuery.mockReturnValue(true)
-    render(<StubTable match={matchWithHandCard} />)
+    render(<StubTable isNarrowViewport={true} match={matchWithHandCard} />)
 
     const handContainer = screen.getByTestId(
       `hand_${match.sessionOwnerPlayerId}`
@@ -264,8 +256,7 @@ describe('Table', () => {
       toJSON: () => undefined,
     })
 
-    mockUseMediaQuery.mockReturnValue(false)
-    render(<StubTable match={matchWithHandCard} />)
+    render(<StubTable isNarrowViewport={false} match={matchWithHandCard} />)
 
     const handContainer = screen.getByTestId(
       `hand_${match.sessionOwnerPlayerId}`

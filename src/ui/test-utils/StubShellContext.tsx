@@ -43,6 +43,7 @@ export const StubShellContext = ({
       blockingOperation: useVitestMocks ? vi.fn() : () => Promise.resolve(),
       isHandInViewport: true,
       setIsHandInViewport,
+      isNarrowViewport: false,
       showNotification: mockShowNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,

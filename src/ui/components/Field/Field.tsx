@@ -1,6 +1,6 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import useTheme from '@mui/material/styles/useTheme'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useWindowSize } from 'usehooks-ts'
 
 import {
@@ -11,9 +11,9 @@ import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
 import { CARD_DIMENSIONS, getFieldZoomScale } from '../../config/dimensions'
-import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { foregroundCardZIndex } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
+import { ShellContext } from '../Match/ShellContext'
 import { PlayedCard, playedCardClassName } from '../PlayedCard'
 
 import { EmptyPlot } from './EmptyPlot'
@@ -33,9 +33,9 @@ export interface FieldProps extends BoxProps {
   playerId: IPlayer['id']
   cardSize?: CardSize
   /**
-   * Notified whenever the currently-selected field card index changes.
-   * Lets an ancestor (e.g. Table.tsx) track this field's selection without
-   * owning it -- selection itself stays fully internal to this component.
+   * Called whenever the currently-selected field card index changes. Lets an
+   * ancestor (e.g. Table.tsx) track this field's selection without owning it
+   * -- selection itself stays fully internal to this component.
    */
   onSelectedCardIdxChange?: (idx: number) => void
 }
@@ -53,7 +53,7 @@ export const Field = ({
 }: FieldProps) => {
   const player = lookup.getPlayer(match, playerId)
   const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
-  const isNarrowViewport = useIsNarrowViewport()
+  const { isNarrowViewport } = useContext(ShellContext)
 
   const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()

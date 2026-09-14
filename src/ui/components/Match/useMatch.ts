@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { MatchEvent, MatchState } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
+import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { deselectedHandIdx } from '../constants'
 
@@ -17,6 +18,7 @@ export const useMatch = ({
   const actorRef = ActorContext.useActorRef()
   const { match, matchState } = useMatchRules()
   const [isHandInViewport, setIsHandInViewport] = useState(true)
+  const isNarrowViewport = useIsNarrowViewport()
 
   useEffect(() => {
     if (isDebugEnabled) {
@@ -75,6 +77,7 @@ export const useMatch = ({
       blockingOperation,
       isHandInViewport,
       setIsHandInViewport,
+      isNarrowViewport,
       showNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
@@ -85,6 +88,7 @@ export const useMatch = ({
       blockingOperation,
       isHandInViewport,
       setIsHandInViewport,
+      isNarrowViewport,
       showNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,

@@ -7,7 +7,6 @@ import { useWindowSize } from 'usehooks-ts'
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
-import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { CardSize } from '../../types'
 import { Deck } from '../Deck/Deck'
 import { DiscardPile } from '../DiscardPile/DiscardPile'
@@ -30,10 +29,10 @@ const handBottomOffsetSpacingUnitsAtMediumSize = -8
 
 export const Table = ({ match, ...rest }: TableProps) => {
   const theme = useTheme()
-  const { setSelectedFieldCardIdx } = useContext(ShellContext)
+  const { setSelectedFieldCardIdx, isNarrowViewport } = useContext(ShellContext)
   const { sessionOwnerPlayerId: userPlayerId } = match
   const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
-  const useLargeCards = !useIsNarrowViewport()
+  const useLargeCards = !isNarrowViewport
   const handCardSize = useLargeCards ? CardSize.MEDIUM : CardSize.COMPACT
   // NOTE: Used by Field, Deck, and DiscardPile so all of a player's cards
   // shrink together on narrow viewports.

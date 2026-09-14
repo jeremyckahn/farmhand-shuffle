@@ -10,6 +10,12 @@ export interface ShellContextProps {
   blockingOperation: (fn: () => Promise<void>) => Promise<void>
   isHandInViewport: boolean
   setIsHandInViewport: React.Dispatch<React.SetStateAction<boolean>>
+  /**
+   * Whether the viewport is narrow (mobile-sized). Computed once here
+   * (rather than via useIsNarrowViewport in each consumer) so the whole
+   * Match tree shares a single useMediaQuery subscription.
+   */
+  isNarrowViewport: boolean
   showNotification: (message: ReactNode, severity: AlertColor) => void
   selectedHandCardIdx: number
   setSelectedHandCardIdx: React.Dispatch<SetStateAction<number>>
@@ -25,6 +31,7 @@ export const ShellContext = createContext<ShellContextProps>({
   setIsHandInViewport: () => {
     throw new Error('Calling context method outside of ShellContext.Provider')
   },
+  isNarrowViewport: false,
   showNotification: () => {
     throw new Error('Calling context method outside of ShellContext.Provider')
   },

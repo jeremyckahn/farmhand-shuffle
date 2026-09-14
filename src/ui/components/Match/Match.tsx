@@ -17,7 +17,6 @@ import { funAnimalName } from 'fun-animal-names'
 import { PointerEvent } from 'react'
 
 import { isSxArray } from '../../type-guards'
-import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { ui } from '../../img'
 import { selectedCardLabel } from '../Field/Field'
 import { Table } from '../Table'
@@ -51,8 +50,8 @@ const MatchCore = ({
   } = useMatch({ playerSeeds, userPlayerId })
 
   const { winner } = match
-  const { selectedHandCardIdx, selectedFieldCardIdx } = shellContextValue
-  const isNarrowViewport = useIsNarrowViewport()
+  const { selectedHandCardIdx, selectedFieldCardIdx, isNarrowViewport } =
+    shellContextValue
   const isCardFocused =
     selectedHandCardIdx !== deselectedHandIdx ||
     selectedFieldCardIdx !== deselectedHandIdx
