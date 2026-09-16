@@ -45,6 +45,40 @@ export const useSelectedCardPosition = ({
     }
   }, [containerRef])
 
+  // NOTE: The container itself (e.g. Hand.tsx's outer Box) can be the
+  // target of its own CSS transition -- e.g. Hand.tsx transitions its
+  // `transform` to slide the whole hand off/on screen when hidden/shown.
+  // Reading getBoundingClientRect() synchronously right after that kind of
+  // change (as the layout effect below does, on every render) can catch
+  // the transition's *starting* value rather than its resting one, since
+  // the browser hasn't advanced the transition yet at that point --
+  // leaving the focused card centered against a stale, mid-transition
+  // position. Re-measuring once the transition actually finishes corrects
+  // that, without needing to touch the deliberately dependency-less effect
+  // below (still needed for a container that moves without any transition
+  // at all, e.g. Table.tsx's ResizeObserver-driven repositioning).
+  useEffect(() => {
+    const container = containerRef.current
+
+    if (!container) {
+      return
+    }
+
+    const handleTransitionEnd = (event: TransitionEvent) => {
+      if (event.propertyName !== 'transform') {
+        return
+      }
+
+      setContainerRect(container.getBoundingClientRect())
+    }
+
+    container.addEventListener('transitionend', handleTransitionEnd)
+
+    return () => {
+      container.removeEventListener('transitionend', handleTransitionEnd)
+    }
+  }, [containerRef])
+
   // NOTE: The container can move without a `resize` event firing -- e.g.
   // Table.tsx repositions the Hand container in response to an unrelated
   // layout shift elsewhere on the page (a ResizeObserver-driven update, not
