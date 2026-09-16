@@ -1,1 +1,1 @@
-export const deselectedHandIdx = -1
+export const deselectedCardIdx = -1

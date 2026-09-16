@@ -25,7 +25,7 @@ import * as useMatchStateModule from '../../hooks/useMatchRules'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
 import { ActorContext } from '../Match/ActorContext'
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 import { Card } from './Card'
 import { CardProps } from './types'
@@ -748,7 +748,7 @@ describe('Card', () => {
 
       fireEvent.click(playCardButton)
 
-      expect(mockSetSelectedHandCardIdx).toHaveBeenCalledWith(deselectedHandIdx)
+      expect(mockSetSelectedHandCardIdx).toHaveBeenCalledWith(deselectedCardIdx)
       expect(mockSetIsHandInViewport).not.toHaveBeenCalled()
     })
 

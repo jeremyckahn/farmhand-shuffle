@@ -6,7 +6,7 @@ import {
   ShellContext,
   ShellContextProps,
 } from '../components/Match/ShellContext'
-import { deselectedHandIdx } from '../components/constants'
+import { deselectedCardIdx } from '../components/constants'
 
 import { isStorybook } from './isStorybook'
 
@@ -29,9 +29,9 @@ export const StubShellContext = ({
   mockImplementation?: Mock
 } & Partial<ShellContextProps>) => {
   const [selectedHandCardIdx, setSelectedHandCardIdx] =
-    useState(deselectedHandIdx)
+    useState(deselectedCardIdx)
   const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
-    useState(deselectedHandIdx)
+    useState(deselectedCardIdx)
 
   const setIsHandInViewport = useMemo(
     () => (useVitestMocks ? vi.fn() : () => {}),

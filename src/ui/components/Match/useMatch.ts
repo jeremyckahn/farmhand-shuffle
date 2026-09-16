@@ -4,7 +4,7 @@ import { MatchEvent, MatchState } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
 import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { useMatchRules } from '../../hooks/useMatchRules'
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 import { ActorContext } from './ActorContext'
 import { ShellContextProps } from './ShellContext'
@@ -56,7 +56,7 @@ export const useMatch = ({
   const { showNotification } = useSnackbar({ actorRef, match })
 
   const [selectedHandCardIdx, _setSelectedHandCardIdx] =
-    useState(deselectedHandIdx)
+    useState(deselectedCardIdx)
 
   const setSelectedHandCardIdx: typeof _setSelectedHandCardIdx = useCallback(
     (...args) => {
@@ -70,7 +70,7 @@ export const useMatch = ({
   )
 
   const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
-    useState(deselectedHandIdx)
+    useState(deselectedCardIdx)
 
   const shellContextValue: ShellContextProps = useMemo(
     () => ({

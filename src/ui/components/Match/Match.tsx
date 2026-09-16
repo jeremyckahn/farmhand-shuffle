@@ -21,7 +21,7 @@ import { ui } from '../../img'
 import { selectedCardLabel } from '../Field/Field'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 import { ActorContext } from './ActorContext'
 import { ShellContext } from './ShellContext'
@@ -53,8 +53,8 @@ const MatchCore = ({
   const { selectedHandCardIdx, selectedFieldCardIdx, isNarrowViewport } =
     shellContextValue
   const isCardFocused =
-    selectedHandCardIdx !== deselectedHandIdx ||
-    selectedFieldCardIdx !== deselectedHandIdx
+    selectedHandCardIdx !== deselectedCardIdx ||
+    selectedFieldCardIdx !== deselectedCardIdx
   // NOTE: The Fabs stay mounted (see isNarrowViewport below) so Fade can
   // animate them out, rather than this condition unmounting them outright.
   const showCardNavFabs = isCardFocused && !isSelectingFieldPosition
@@ -87,7 +87,7 @@ const MatchCore = ({
   // to the Fab before this handler runs, which would make an
   // activeElement-based lookup see the wrong (or no) card.
   const handleCardNav = (direction: 1 | -1) => {
-    if (selectedHandCardIdx !== deselectedHandIdx) {
+    if (selectedHandCardIdx !== deselectedCardIdx) {
       const handContainer = document.querySelector(
         `[data-testid="hand_${match.sessionOwnerPlayerId}"]`
       )
@@ -100,7 +100,7 @@ const MatchCore = ({
       return
     }
 
-    if (selectedFieldCardIdx !== deselectedHandIdx) {
+    if (selectedFieldCardIdx !== deselectedCardIdx) {
       const fieldContainer = document.querySelector(
         `[data-testid="field_${match.sessionOwnerPlayerId}"]`
       )

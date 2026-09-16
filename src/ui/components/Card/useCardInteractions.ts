@@ -11,7 +11,7 @@ import { assertIsNonNullable } from '../../../game/types/assertions'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 import { CardInteractions, CardProps } from './types'
 
@@ -46,7 +46,7 @@ export const useCardInteractions = (props: CardProps): CardInteractions => {
     // transition animation back to the hand before the card is unmounted. This
     // prevents adjacent cards from visually jumping into the active slot.
     if (!isPlantingAction) {
-      setSelectedHandCardIdx(deselectedHandIdx)
+      setSelectedHandCardIdx(deselectedCardIdx)
     }
 
     if (onBeforePlay) {

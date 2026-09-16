@@ -14,7 +14,7 @@ import { CardSize } from '../../types'
 import { Card } from '../Card'
 import { ShellContext } from '../Match/ShellContext'
 
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 const foregroundCardScale = 1
 const backgroundCardScale = 0.65
@@ -75,13 +75,13 @@ export const Hand = ({
 
   useEffect(() => {
     // NOTE: Regains card focus when the player cancels placement
-    if (isHandInViewport && selectedHandCardIdx !== deselectedHandIdx) {
+    if (isHandInViewport && selectedHandCardIdx !== deselectedCardIdx) {
       selectedCardRef.current?.focus()
     }
   }, [isHandInViewport, selectedCardRef, selectedHandCardIdx])
 
   const resetSelectedCard = useCallback(() => {
-    setSelectedHandCardIdx(deselectedHandIdx)
+    setSelectedHandCardIdx(deselectedCardIdx)
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
@@ -175,7 +175,7 @@ export const Hand = ({
         const xOffsetPx = containerWidth / 2 + multipliedGap
         const isSelected = selectedHandCardIdx === idx && isHandInViewport
         const isVisuallySelected =
-          selectedHandCardIdx !== deselectedHandIdx && isHandInViewport
+          selectedHandCardIdx !== deselectedCardIdx && isHandInViewport
 
         let transform = ''
 
