@@ -58,24 +58,28 @@ export const useSelectedCardPosition = ({
   // below (still needed for a container that moves without any transition
   // at all, e.g. Table.tsx's ResizeObserver-driven repositioning).
   useEffect(() => {
-    const container = containerRef.current
-
-    if (!container) {
-      return
-    }
-
+    // NOTE: Listens on window (like the resize handler above) rather than
+    // adding the listener directly to the container node -- that lets this
+    // read containerRef.current lazily, at event time, so it isn't tied to
+    // whatever the container happened to be when this effect was set up.
     const handleTransitionEnd = (event: TransitionEvent) => {
-      if (event.propertyName !== 'transform') {
+      const container = containerRef.current
+
+      if (
+        event.propertyName !== 'transform' ||
+        !container ||
+        event.target !== container
+      ) {
         return
       }
 
       setContainerRect(container.getBoundingClientRect())
     }
 
-    container.addEventListener('transitionend', handleTransitionEnd)
+    window.addEventListener('transitionend', handleTransitionEnd)
 
     return () => {
-      container.removeEventListener('transitionend', handleTransitionEnd)
+      window.removeEventListener('transitionend', handleTransitionEnd)
     }
   }, [containerRef])
 

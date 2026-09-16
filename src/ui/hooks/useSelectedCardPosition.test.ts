@@ -77,4 +77,83 @@ describe('useSelectedCardPosition', () => {
       `"translate(calc(512px - calc(50px + 12rem / 2)), calc(384px - calc(50px + 21rem / 2))) scale(1)"`
     )
   })
+
+  it("should re-measure containerRect when the container's own transform transition ends", () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => children
+
+    const { result } = renderHook(
+      () => useSelectedCardPosition({ cardSize: CardSize.MEDIUM }),
+      { wrapper }
+    )
+
+    // NOTE: The transitionend listener is registered on window and matches
+    // by event.target, so the container must actually be in the document
+    // (for the event to bubble up to window) rather than a detached node
+    // like the resize test above uses.
+    const div = document.createElement('div')
+
+    document.body.appendChild(div)
+
+    vi.spyOn(div, 'getBoundingClientRect').mockImplementation(
+      () => mockBoundingClientRect
+    )
+
+    // eslint-disable-next-line functional/immutable-data
+    result.current.containerRef.current = div
+
+    // NOTE: Simulates the container settling after a CSS transition on its
+    // own `transform` (e.g. Hand.tsx sliding the whole hand off/on screen)
+    // -- this is what corrects a stale mid-transition measurement.
+    act(() => {
+      div.dispatchEvent(
+        new TransitionEvent('transitionend', {
+          propertyName: 'transform',
+          bubbles: true,
+        })
+      )
+    })
+
+    document.body.removeChild(div)
+
+    expect(result.current.selectedCardSxProps.transform).toMatchInlineSnapshot(
+      `"translate(calc(512px - calc(50px + 12rem / 2)), calc(384px - calc(50px + 21rem / 2))) scale(1)"`
+    )
+  })
+
+  it('should ignore transitionend events for unrelated properties', () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => children
+
+    const { result } = renderHook(
+      () => useSelectedCardPosition({ cardSize: CardSize.MEDIUM }),
+      { wrapper }
+    )
+
+    const div = document.createElement('div')
+
+    document.body.appendChild(div)
+
+    const originalTransform = result.current.selectedCardSxProps.transform
+
+    vi.spyOn(div, 'getBoundingClientRect').mockImplementation(
+      () => mockBoundingClientRect
+    )
+
+    // eslint-disable-next-line functional/immutable-data
+    result.current.containerRef.current = div
+
+    act(() => {
+      div.dispatchEvent(
+        new TransitionEvent('transitionend', {
+          propertyName: 'opacity',
+          bubbles: true,
+        })
+      )
+    })
+
+    document.body.removeChild(div)
+
+    expect(result.current.selectedCardSxProps.transform).toEqual(
+      originalTransform
+    )
+  })
 })
