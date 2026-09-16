@@ -16,6 +16,7 @@ import { CardSize } from '../../types'
 import { cardClassName } from '../Card/CardCore'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
+import { assertIsNonNullable } from '../../../game/types/assertions'
 
 import { focusedCardSize, getGapPixelWidth, Hand, HandProps } from './Hand'
 
@@ -240,9 +241,11 @@ describe('Hand', () => {
       .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
 
-    await userEvent.click(card1!)
+    assertIsNonNullable(card1)
 
-    const { transform: card1Transform } = getComputedStyle(card1!)
+    await userEvent.click(card1)
+
+    const { transform: card1Transform } = getComputedStyle(card1)
 
     expect(card1Transform).toContain(
       `${CARD_DIMENSIONS[focusedCardSize].width} / 2`
@@ -259,12 +262,14 @@ describe('Hand', () => {
       .getByText(handCards[0]!.name)
       .closest(`.${cardClassName}`)
 
-    await userEvent.click(card1!)
+    assertIsNonNullable(card1)
+
+    await userEvent.click(card1)
     await waitFor(() => {
       ;(document.activeElement as HTMLElement).blur()
     })
 
-    const { transform } = getComputedStyle(card1!)
+    const { transform } = getComputedStyle(card1)
     const expectedScale =
       parseFloat(CARD_DIMENSIONS[CardSize.COMPACT].width) /
       parseFloat(CARD_DIMENSIONS[focusedCardSize].width)
