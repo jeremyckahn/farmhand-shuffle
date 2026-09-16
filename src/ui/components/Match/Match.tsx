@@ -50,8 +50,13 @@ const MatchCore = ({
   } = useMatch({ playerSeeds, userPlayerId })
 
   const { winner } = match
-  const { selectedHandCardIdx, selectedFieldCardIdx, isNarrowViewport } =
-    shellContextValue
+  const {
+    selectedHandCardIdx,
+    selectedFieldCardIdx,
+    isNarrowViewport,
+    handContainerRef,
+    fieldContainerRef,
+  } = shellContextValue
   const isCardFocused =
     selectedHandCardIdx !== deselectedCardIdx ||
     selectedFieldCardIdx !== deselectedCardIdx
@@ -88,11 +93,8 @@ const MatchCore = ({
   // activeElement-based lookup see the wrong (or no) card.
   const handleCardNav = (direction: 1 | -1) => {
     if (selectedHandCardIdx !== deselectedCardIdx) {
-      const handContainer = document.querySelector(
-        `[data-testid="hand_${match.sessionOwnerPlayerId}"]`
-      )
-      const cards = handContainer
-        ? [...handContainer.querySelectorAll<HTMLElement>('.Card')]
+      const cards = handContainerRef.current
+        ? [...handContainerRef.current.querySelectorAll<HTMLElement>('.Card')]
         : []
 
       focusAdjacentCard(cards, selectedHandCardIdx, direction)
@@ -101,11 +103,12 @@ const MatchCore = ({
     }
 
     if (selectedFieldCardIdx !== deselectedCardIdx) {
-      const fieldContainer = document.querySelector(
-        `[data-testid="field_${match.sessionOwnerPlayerId}"]`
-      )
-      const cards = fieldContainer
-        ? [...fieldContainer.querySelectorAll<HTMLElement>('.PlayedCard')]
+      const cards = fieldContainerRef.current
+        ? [
+            ...fieldContainerRef.current.querySelectorAll<HTMLElement>(
+              '.PlayedCard'
+            ),
+          ]
         : []
 
       // NOTE: selectedFieldCardIdx is a field slot index, which can be
@@ -115,7 +118,7 @@ const MatchCore = ({
       // position among them via its aria-label instead -- that reflects
       // Field's own React state, so (unlike document.activeElement) it's
       // unaffected by the Fab momentarily taking DOM focus.
-      const selectedCard = fieldContainer?.querySelector(
+      const selectedCard = fieldContainerRef.current?.querySelector(
         `[aria-label="${selectedCardLabel}"]`
       )
       const currentIdx = selectedCard

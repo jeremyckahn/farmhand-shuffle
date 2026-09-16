@@ -60,6 +60,7 @@ export const Hand = ({
     isNarrowViewport,
     selectedHandCardIdx,
     setSelectedHandCardIdx,
+    handContainerRef,
   } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
 
@@ -147,7 +148,12 @@ export const Hand = ({
     <Box
       {...rest}
       data-testid={`hand_${playerId}`}
-      ref={containerRef}
+      ref={(node: HTMLDivElement | null) => {
+        // eslint-disable-next-line functional/immutable-data
+        containerRef.current = node ?? undefined
+        // eslint-disable-next-line functional/immutable-data
+        handContainerRef.current = node
+      }}
       sx={[
         {
           position: 'relative',

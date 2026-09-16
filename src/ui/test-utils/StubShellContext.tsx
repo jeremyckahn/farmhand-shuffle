@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react'
+import { ReactNode, useMemo, useRef, useState } from 'react'
 
 import { Mock } from 'vitest'
 
@@ -38,6 +38,9 @@ export const StubShellContext = ({
     [useVitestMocks]
   )
 
+  const handContainerRef = useRef<HTMLDivElement | null>(null)
+  const fieldContainerRef = useRef<HTMLDivElement | null>(null)
+
   const contextValue: ShellContextProps = useMemo(
     () => ({
       blockingOperation: useVitestMocks ? vi.fn() : () => Promise.resolve(),
@@ -49,6 +52,8 @@ export const StubShellContext = ({
       setSelectedHandCardIdx,
       selectedFieldCardIdx,
       setSelectedFieldCardIdx,
+      handContainerRef,
+      fieldContainerRef,
       ...overrides,
     }),
     [
@@ -59,6 +64,8 @@ export const StubShellContext = ({
       selectedFieldCardIdx,
       setSelectedFieldCardIdx,
       setIsHandInViewport,
+      handContainerRef,
+      fieldContainerRef,
     ]
   )
 

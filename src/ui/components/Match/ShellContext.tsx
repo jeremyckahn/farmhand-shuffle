@@ -21,6 +21,17 @@ export interface ShellContextProps {
   setSelectedHandCardIdx: React.Dispatch<SetStateAction<number>>
   selectedFieldCardIdx: number
   setSelectedFieldCardIdx: React.Dispatch<SetStateAction<number>>
+  /**
+   * The DOM node of the user's own Hand container. Lets Match navigate
+   * between rendered cards (see handleCardNav in Match.tsx) via this
+   * component-owned ref instead of a global document.querySelector.
+   */
+  handContainerRef: React.MutableRefObject<HTMLDivElement | null>
+  /**
+   * The DOM node of the user's own Field container (not any opponent's).
+   * Same purpose as handContainerRef above.
+   */
+  fieldContainerRef: React.MutableRefObject<HTMLDivElement | null>
 }
 
 export const ShellContext = createContext<ShellContextProps>({
@@ -43,4 +54,6 @@ export const ShellContext = createContext<ShellContextProps>({
   setSelectedFieldCardIdx: () => {
     throw new Error('Calling context method outside of ShellContext.Provider')
   },
+  handContainerRef: { current: null },
+  fieldContainerRef: { current: null },
 })

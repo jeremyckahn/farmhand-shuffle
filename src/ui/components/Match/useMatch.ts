@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { MatchEvent, MatchState } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
@@ -72,6 +72,9 @@ export const useMatch = ({
   const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
     useState(deselectedCardIdx)
 
+  const handContainerRef = useRef<HTMLDivElement | null>(null)
+  const fieldContainerRef = useRef<HTMLDivElement | null>(null)
+
   const shellContextValue: ShellContextProps = useMemo(
     () => ({
       blockingOperation,
@@ -83,6 +86,8 @@ export const useMatch = ({
       setSelectedHandCardIdx,
       selectedFieldCardIdx,
       setSelectedFieldCardIdx,
+      handContainerRef,
+      fieldContainerRef,
     }),
     [
       blockingOperation,
@@ -94,6 +99,8 @@ export const useMatch = ({
       setSelectedHandCardIdx,
       selectedFieldCardIdx,
       setSelectedFieldCardIdx,
+      handContainerRef,
+      fieldContainerRef,
     ]
   )
 

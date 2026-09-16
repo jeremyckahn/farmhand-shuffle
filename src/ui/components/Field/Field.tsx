@@ -53,7 +53,7 @@ export const Field = ({
 }: FieldProps) => {
   const player = lookup.getPlayer(match, playerId)
   const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
-  const { isNarrowViewport } = useContext(ShellContext)
+  const { isNarrowViewport, fieldContainerRef } = useContext(ShellContext)
 
   const containerRef = useRef<HTMLDivElement>()
   const theme = useTheme()
@@ -190,7 +190,18 @@ export const Field = ({
     <Box
       {...rest}
       data-testid={`field_${playerId}`}
-      ref={containerRef}
+      ref={(node: HTMLDivElement | null) => {
+        // eslint-disable-next-line functional/immutable-data
+        containerRef.current = node ?? undefined
+
+        // NOTE: Field is also rendered once per opponent -- only the
+        // session owner's own field is relevant to Match's card-nav
+        // Fabs, so only it should claim the shared context ref.
+        if (isSessionOwnerPlayer) {
+          // eslint-disable-next-line functional/immutable-data
+          fieldContainerRef.current = node
+        }
+      }}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
