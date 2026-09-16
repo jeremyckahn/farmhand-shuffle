@@ -370,9 +370,10 @@ describe('Field', () => {
 
     assertIsNonNullable(playedCrop1)
 
-    expect(
-      playedCrop1.querySelector('[data-stack-action-buttons-below-card]')
-    ).toHaveAttribute('data-stack-action-buttons-below-card', 'true')
+    expect(playedCrop1.querySelector('[data-size]')).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'true'
+    )
   })
 
   test('does not stack action buttons below the card on a large viewport', () => {
@@ -382,9 +383,10 @@ describe('Field', () => {
 
     assertIsNonNullable(playedCrop1)
 
-    expect(
-      playedCrop1.querySelector('[data-stack-action-buttons-below-card]')
-    ).toHaveAttribute('data-stack-action-buttons-below-card', 'false')
+    expect(playedCrop1.querySelector('[data-size]')).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'false'
+    )
   })
 
   describe('onSelectedCardIdxChange', () => {
