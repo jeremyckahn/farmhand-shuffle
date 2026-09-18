@@ -23,7 +23,6 @@ import { selectedCardLabel } from '../Field/Field'
 import { playedCardClassName } from '../PlayedCard'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
-import { deselectedCardIdx } from '../constants'
 
 import { ActorContext } from './ActorContext'
 import { ShellContext } from './ShellContext'
@@ -59,13 +58,12 @@ const MatchCore = ({
   const { winner } = match
   const {
     selectedHandCardIdx,
-    selectedFieldCardIdx,
     isNarrowViewport,
+    isHandCardSelected,
+    isFieldCardSelected,
     handContainerRef,
     fieldContainerRef,
   } = shellContextValue
-  const isHandCardSelected = selectedHandCardIdx !== deselectedCardIdx
-  const isFieldCardSelected = selectedFieldCardIdx !== deselectedCardIdx
   const isCardFocused = isHandCardSelected || isFieldCardSelected
   // NOTE: The Fabs stay mounted (see isNarrowViewport below) so Fade can
   // animate them out, rather than this condition unmounting them outright.

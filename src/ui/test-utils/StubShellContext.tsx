@@ -52,6 +52,8 @@ export const StubShellContext = ({
       setSelectedHandCardIdx,
       selectedFieldCardIdx,
       setSelectedFieldCardIdx,
+      isHandCardSelected: selectedHandCardIdx !== deselectedCardIdx,
+      isFieldCardSelected: selectedFieldCardIdx !== deselectedCardIdx,
       handContainerRef,
       fieldContainerRef,
       ...overrides,

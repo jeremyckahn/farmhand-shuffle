@@ -60,6 +60,7 @@ export const Hand = ({
     isNarrowViewport,
     selectedHandCardIdx,
     setSelectedHandCardIdx,
+    isHandCardSelected,
     handContainerRef,
   } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
@@ -77,10 +78,10 @@ export const Hand = ({
 
   useEffect(() => {
     // NOTE: Regains card focus when the player cancels placement
-    if (isHandInViewport && selectedHandCardIdx !== deselectedCardIdx) {
+    if (isHandInViewport && isHandCardSelected) {
       selectedCardRef.current?.focus()
     }
-  }, [isHandInViewport, selectedCardRef, selectedHandCardIdx])
+  }, [isHandInViewport, selectedCardRef, isHandCardSelected])
 
   const resetSelectedCard = useCallback(() => {
     setSelectedHandCardIdx(deselectedCardIdx)
@@ -177,8 +178,7 @@ export const Hand = ({
         )
         const xOffsetPx = containerWidth / 2 + multipliedGap
         const isSelected = selectedHandCardIdx === idx && isHandInViewport
-        const isVisuallySelected =
-          selectedHandCardIdx !== deselectedCardIdx && isHandInViewport
+        const isVisuallySelected = isHandCardSelected && isHandInViewport
 
         let transform = ''
 

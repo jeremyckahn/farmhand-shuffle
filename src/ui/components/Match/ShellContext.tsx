@@ -22,6 +22,14 @@ export interface ShellContextProps {
   selectedFieldCardIdx: number
   setSelectedFieldCardIdx: React.Dispatch<SetStateAction<number>>
   /**
+   * Whether a hand/field card is currently selected -- i.e. whether its
+   * respective *CardIdx above is not deselectedCardIdx. Derived here
+   * (rather than at each usage site) so Match.tsx and Hand.tsx share one
+   * computation instead of each re-deriving it from the raw index.
+   */
+  isHandCardSelected: boolean
+  isFieldCardSelected: boolean
+  /**
    * The DOM node of the user's own Hand container. Lets Match navigate
    * between rendered cards (see handleCardNav in Match.tsx) via this
    * component-owned ref instead of a global document.querySelector.
@@ -54,6 +62,8 @@ export const ShellContext = createContext<ShellContextProps>({
   setSelectedFieldCardIdx: () => {
     throw new Error('Calling context method outside of ShellContext.Provider')
   },
+  isHandCardSelected: false,
+  isFieldCardSelected: false,
   handContainerRef: { current: null },
   fieldContainerRef: { current: null },
 })

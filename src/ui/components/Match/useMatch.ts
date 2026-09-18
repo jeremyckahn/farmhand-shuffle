@@ -72,6 +72,9 @@ export const useMatch = ({
   const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
     useState(deselectedCardIdx)
 
+  const isHandCardSelected = selectedHandCardIdx !== deselectedCardIdx
+  const isFieldCardSelected = selectedFieldCardIdx !== deselectedCardIdx
+
   const handContainerRef = useRef<HTMLDivElement | null>(null)
   const fieldContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -86,6 +89,8 @@ export const useMatch = ({
       setSelectedHandCardIdx,
       selectedFieldCardIdx,
       setSelectedFieldCardIdx,
+      isHandCardSelected,
+      isFieldCardSelected,
       handContainerRef,
       fieldContainerRef,
     }),
@@ -99,6 +104,8 @@ export const useMatch = ({
       setSelectedHandCardIdx,
       selectedFieldCardIdx,
       setSelectedFieldCardIdx,
+      isHandCardSelected,
+      isFieldCardSelected,
       handContainerRef,
       fieldContainerRef,
     ]
