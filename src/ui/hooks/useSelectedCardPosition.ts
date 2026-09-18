@@ -45,44 +45,6 @@ export const useSelectedCardPosition = ({
     }
   }, [containerRef])
 
-  // NOTE: The container itself (e.g. Hand.tsx's outer Box) can be the
-  // target of its own CSS transition -- e.g. Hand.tsx transitions its
-  // `transform` to slide the whole hand off/on screen when hidden/shown.
-  // Reading getBoundingClientRect() synchronously right after that kind of
-  // change (as the layout effect below does, on every render) can catch
-  // the transition's *starting* value rather than its resting one, since
-  // the browser hasn't advanced the transition yet at that point --
-  // leaving the focused card centered against a stale, mid-transition
-  // position. Re-measuring once the transition actually finishes corrects
-  // that, without needing to touch the deliberately dependency-less effect
-  // below (still needed for a container that moves without any transition
-  // at all, e.g. Table.tsx's ResizeObserver-driven repositioning).
-  useEffect(() => {
-    // NOTE: Listens on window (like the resize handler above) rather than
-    // adding the listener directly to the container node -- that lets this
-    // read containerRef.current lazily, at event time, so it isn't tied to
-    // whatever the container happened to be when this effect was set up.
-    const handleTransitionEnd = (event: TransitionEvent) => {
-      const container = containerRef.current
-
-      if (
-        event.propertyName !== 'transform' ||
-        !container ||
-        event.target !== container
-      ) {
-        return
-      }
-
-      setContainerRect(container.getBoundingClientRect())
-    }
-
-    window.addEventListener('transitionend', handleTransitionEnd)
-
-    return () => {
-      window.removeEventListener('transitionend', handleTransitionEnd)
-    }
-  }, [containerRef])
-
   // NOTE: The container can move without a `resize` event firing -- e.g.
   // Table.tsx repositions the Hand container in response to an unrelated
   // layout shift elsewhere on the page (a ResizeObserver-driven update, not
@@ -119,14 +81,22 @@ export const useSelectedCardPosition = ({
   const translateX = `calc(${centerX}px - ${cardCenterX})`
   const translateY = `calc(${centerY}px - ${cardCenterY})`
 
+  const selectedCardTransform = `translate(${translateX}, ${translateY}) scale(1)`
+
   const selectedCardSxProps: SxProps = {
     boxShadow: theme.shadows['11'],
-    transform: `translate(${translateX}, ${translateY}) scale(1)`,
+    transform: selectedCardTransform,
     zIndex: foregroundCardZIndex,
   }
 
   return {
     containerRef,
+    // NOTE: Exposed separately (not just via selectedCardSxProps.transform)
+    // so a caller that needs to compose it with its own additional
+    // transform (e.g. Hand.tsx appending a hide/show slide offset) has a
+    // precisely-typed string to work with, rather than SxProps's much
+    // wider `transform` type.
+    selectedCardTransform,
     selectedCardSxProps,
   }
 }

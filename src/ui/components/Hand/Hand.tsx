@@ -64,9 +64,10 @@ export const Hand = ({
   } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
 
-  const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
-    cardSize: focusedCardSize,
-  })
+  const { containerRef, selectedCardSxProps, selectedCardTransform } =
+    useSelectedCardPosition({
+      cardSize: focusedCardSize,
+    })
 
   const player = lookup.getPlayer(match, playerId)
 
@@ -158,10 +159,6 @@ export const Hand = ({
         {
           position: 'relative',
           minHeight: CARD_DIMENSIONS[cardSize].height,
-          transform: `translateY(${
-            isHandInViewport ? 0 : CARD_DIMENSIONS[cardSize].height
-          })`,
-          transition: theme.transitions.create(['transform']),
           pointerEvents: isHandInViewport ? undefined : 'none',
         },
         ...(isSxArray(sx) ? sx : [sx]),
@@ -198,6 +195,19 @@ export const Hand = ({
           transform = `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
         }
 
+        // NOTE: The hide/show slide used to live on the shared container's
+        // own transform, but that container is also what centering math
+        // (useSelectedCardPosition) measures via getBoundingClientRect --
+        // a CSS transition on that same element could be caught by that
+        // measurement mid-flight, briefly centering the focused card
+        // against a stale, still-transitioning position. Applying the
+        // slide to each card's own transform instead keeps the container
+        // itself static (and thus always measurable at rest), with no
+        // correctness cost since translateY offsets compose additively.
+        const hideOffsetTranslateY = `translateY(${
+          isHandInViewport ? 0 : CARD_DIMENSIONS[cardSize].height
+        })`
+
         return (
           <Card
             key={cardInstance.instanceId}
@@ -212,11 +222,13 @@ export const Hand = ({
               }),
             }}
             sx={{
-              transform,
               position: 'absolute',
               transition: theme.transitions.create(['transform']),
               cursor: 'pointer',
               ...(isSelected && selectedCardSxProps),
+              transform: `${
+                isSelected ? selectedCardTransform : transform
+              } ${hideOffsetTranslateY}`,
             }}
             onBeforePlay={handleBeforePlay}
             onFocus={() => handleCardFocus(idx)}

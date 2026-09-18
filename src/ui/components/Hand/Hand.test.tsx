@@ -128,7 +128,7 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translate(calc(512px - calc(0px + 12rem / 2)), calc(384px - calc(0px + 21rem / 2))) scale(1)"`
+      `"translate(calc(512px - calc(0px + 12rem / 2)), calc(384px - calc(0px + 21rem / 2))) scale(1) translateY(0)"`
     )
 
     for (const { name } of handCards.slice(1)) {
@@ -156,7 +156,7 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg) translateY(0)"`
     )
   })
 
@@ -179,13 +179,13 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg) translateY(0)"`
     )
 
     const { transform: card2Transform } = getComputedStyle(card2!)
 
     expect(card2Transform).toMatchInlineSnapshot(
-      `"translate(calc(512px - calc(0px + 12rem / 2)), calc(384px - calc(0px + 21rem / 2))) scale(1)"`
+      `"translate(calc(512px - calc(0px + 12rem / 2)), calc(384px - calc(0px + 21rem / 2))) scale(1) translateY(0)"`
     )
   })
 
@@ -205,7 +205,7 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg) translateY(0)"`
     )
     expect(document.activeElement).toBe(document.body)
   })
@@ -229,7 +229,7 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg) translateY(0)"`
     )
     expect(document.activeElement).toBe(document.body)
   })
