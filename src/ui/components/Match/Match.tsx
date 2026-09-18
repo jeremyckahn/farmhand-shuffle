@@ -18,7 +18,9 @@ import { PointerEvent } from 'react'
 
 import { isSxArray } from '../../type-guards'
 import { ui } from '../../img'
+import { cardClassName } from '../Card/CardCore'
 import { selectedCardLabel } from '../Field/Field'
+import { playedCardClassName } from '../PlayedCard'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 import { deselectedCardIdx } from '../constants'
@@ -99,7 +101,11 @@ const MatchCore = ({
   const handleCardNav = (direction: Direction) => {
     if (selectedHandCardIdx !== deselectedCardIdx) {
       const cards = handContainerRef.current
-        ? [...handContainerRef.current.querySelectorAll<HTMLElement>('.Card')]
+        ? [
+            ...handContainerRef.current.querySelectorAll<HTMLElement>(
+              `.${cardClassName}`
+            ),
+          ]
         : []
 
       focusAdjacentCard(cards, selectedHandCardIdx, direction)
@@ -111,7 +117,7 @@ const MatchCore = ({
       const cards = fieldContainerRef.current
         ? [
             ...fieldContainerRef.current.querySelectorAll<HTMLElement>(
-              '.PlayedCard'
+              `.${playedCardClassName}`
             ),
           ]
         : []
