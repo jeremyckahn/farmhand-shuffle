@@ -26,6 +26,7 @@ vi.mock('../Card', () => ({
     playerId,
     isFlipped,
     size,
+    stackActionButtonsBelowCard,
     ...rest
   }: // NOTE: `size` is dropped by React when rendered on a plain <div> (it's
   // only a valid HTML attribute on <input>/<select>), so it's surfaced
