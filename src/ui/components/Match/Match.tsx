@@ -28,6 +28,11 @@ import { ShellContext } from './ShellContext'
 import { MatchProps } from './types'
 import { useMatch } from './useMatch'
 
+enum Direction {
+  NEXT = 1,
+  PREVIOUS = -1,
+}
+
 const MatchCore = ({
   playerSeeds,
   userPlayerId,
@@ -71,7 +76,7 @@ const MatchCore = ({
   const focusAdjacentCard = (
     cards: HTMLElement[],
     currentIdx: number,
-    direction: 1 | -1
+    direction: Direction
   ) => {
     if (cards.length === 0) {
       return
@@ -91,7 +96,7 @@ const MatchCore = ({
   // document.activeElement -- clicking the Fab itself can shift DOM focus
   // to the Fab before this handler runs, which would make an
   // activeElement-based lookup see the wrong (or no) card.
-  const handleCardNav = (direction: 1 | -1) => {
+  const handleCardNav = (direction: Direction) => {
     if (selectedHandCardIdx !== deselectedCardIdx) {
       const cards = handContainerRef.current
         ? [...handContainerRef.current.querySelectorAll<HTMLElement>('.Card')]
@@ -206,7 +211,7 @@ const MatchCore = ({
                 color="secondary"
                 aria-label="Previous card"
                 onPointerDown={handleCardNavFabPointerDown}
-                onClick={() => handleCardNav(-1)}
+                onClick={() => handleCardNav(Direction.PREVIOUS)}
                 sx={{
                   position: 'fixed',
                   top: '50%',
@@ -222,7 +227,7 @@ const MatchCore = ({
                 color="secondary"
                 aria-label="Next card"
                 onPointerDown={handleCardNavFabPointerDown}
-                onClick={() => handleCardNav(1)}
+                onClick={() => handleCardNav(Direction.NEXT)}
                 sx={{
                   position: 'fixed',
                   top: '50%',
