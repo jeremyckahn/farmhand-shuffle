@@ -64,9 +64,9 @@ const MatchCore = ({
     handContainerRef,
     fieldContainerRef,
   } = shellContextValue
-  const isCardFocused =
-    selectedHandCardIdx !== deselectedCardIdx ||
-    selectedFieldCardIdx !== deselectedCardIdx
+  const isHandCardSelected = selectedHandCardIdx !== deselectedCardIdx
+  const isFieldCardSelected = selectedFieldCardIdx !== deselectedCardIdx
+  const isCardFocused = isHandCardSelected || isFieldCardSelected
   // NOTE: The Fabs stay mounted (see isNarrowViewport below) so Fade can
   // animate them out, rather than this condition unmounting them outright.
   const showCardNavFabs = isCardFocused && !isSelectingFieldPosition
@@ -99,7 +99,7 @@ const MatchCore = ({
   // to the Fab before this handler runs, which would make an
   // activeElement-based lookup see the wrong (or no) card.
   const handleCardNav = (direction: Direction) => {
-    if (selectedHandCardIdx !== deselectedCardIdx) {
+    if (isHandCardSelected) {
       const cards = handContainerRef.current
         ? [
             ...handContainerRef.current.querySelectorAll<HTMLElement>(
@@ -113,7 +113,7 @@ const MatchCore = ({
       return
     }
 
-    if (selectedFieldCardIdx !== deselectedCardIdx) {
+    if (isFieldCardSelected) {
       const cards = fieldContainerRef.current
         ? [
             ...fieldContainerRef.current.querySelectorAll<HTMLElement>(
