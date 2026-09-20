@@ -179,11 +179,47 @@ const MatchCore = ({
         <TurnControl match={match} />
         <Table sx={{ pt: 4 }} match={match} />
         {
-          // NOTE: Hidden on narrow viewports -- with the card-navigation
-          // Fabs and Table.tsx's mobile-specific hand positioning already in
-          // play there, a separate always-visible hide/show control is one
-          // more affordance than the mobile layout needs.
-          !isNarrowViewport && (
+          // NOTE: On narrow viewports, the card-navigation Fabs replace the
+          // always-visible hide/show control below -- with those Fabs and
+          // Table.tsx's mobile-specific hand positioning already in play
+          // there, a separate hide/show control is one more affordance than
+          // the mobile layout needs.
+          isNarrowViewport ? (
+            <>
+              <Fade in={showCardNavFabs} unmountOnExit>
+                <Fab
+                  color="secondary"
+                  aria-label="Previous card"
+                  onPointerDown={handleCardNavFabPointerDown}
+                  onClick={() => handleCardNav(Direction.PREVIOUS)}
+                  sx={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: theme.spacing(2),
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  <ChevronLeft />
+                </Fab>
+              </Fade>
+              <Fade in={showCardNavFabs} unmountOnExit>
+                <Fab
+                  color="secondary"
+                  aria-label="Next card"
+                  onPointerDown={handleCardNavFabPointerDown}
+                  onClick={() => handleCardNav(Direction.NEXT)}
+                  sx={{
+                    position: 'fixed',
+                    top: '50%',
+                    right: theme.spacing(2),
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  <ChevronRight />
+                </Fab>
+              </Fade>
+            </>
+          ) : (
             <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
               <Fab
                 color="secondary"
@@ -205,42 +241,6 @@ const MatchCore = ({
             </Tooltip>
           )
         }
-        {isNarrowViewport && (
-          <>
-            <Fade in={showCardNavFabs} unmountOnExit>
-              <Fab
-                color="secondary"
-                aria-label="Previous card"
-                onPointerDown={handleCardNavFabPointerDown}
-                onClick={() => handleCardNav(Direction.PREVIOUS)}
-                sx={{
-                  position: 'fixed',
-                  top: '50%',
-                  left: theme.spacing(2),
-                  transform: 'translateY(-50%)',
-                }}
-              >
-                <ChevronLeft />
-              </Fab>
-            </Fade>
-            <Fade in={showCardNavFabs} unmountOnExit>
-              <Fab
-                color="secondary"
-                aria-label="Next card"
-                onPointerDown={handleCardNavFabPointerDown}
-                onClick={() => handleCardNav(Direction.NEXT)}
-                sx={{
-                  position: 'fixed',
-                  top: '50%',
-                  right: theme.spacing(2),
-                  transform: 'translateY(-50%)',
-                }}
-              >
-                <ChevronRight />
-              </Fab>
-            </Fade>
-          </>
-        )}
         <Dialog open={showGameOver}>
           <DialogTitle>Game Over</DialogTitle>
           <DialogContent>
