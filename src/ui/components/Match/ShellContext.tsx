@@ -11,9 +11,7 @@ export interface ShellContextProps {
   isHandInViewport: boolean
   setIsHandInViewport: React.Dispatch<React.SetStateAction<boolean>>
   /**
-   * Whether the viewport is narrow (mobile-sized). Computed once here
-   * (rather than via useIsNarrowViewport in each consumer) so the whole
-   * Match tree shares a single useMediaQuery subscription.
+   * Whether the viewport is narrow (mobile-sized).
    */
   isNarrowViewport: boolean
   showNotification: (message: ReactNode, severity: AlertColor) => void
@@ -23,9 +21,7 @@ export interface ShellContextProps {
   setSelectedFieldCardIdx: React.Dispatch<SetStateAction<number>>
   /**
    * Whether a hand/field card is currently selected -- i.e. whether its
-   * respective *CardIdx above is not deselectedCardIdx. Derived here
-   * (rather than at each usage site) so Match.tsx and Hand.tsx share one
-   * computation instead of each re-deriving it from the raw index.
+   * respective *CardIdx above is not deselectedCardIdx.
    */
   isHandCardSelected: boolean
   isFieldCardSelected: boolean
