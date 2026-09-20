@@ -127,12 +127,9 @@ const MatchCore = ({
       // position among them via its aria-label instead -- that reflects
       // Field's own React state, so (unlike document.activeElement) it's
       // unaffected by the Fab momentarily taking DOM focus.
-      const selectedCard = fieldContainerRef.current?.querySelector(
-        `[aria-label="${selectedCardLabel}"]`
+      const currentIdx = cards.findIndex(
+        card => card.getAttribute('aria-label') === selectedCardLabel
       )
-      const currentIdx = selectedCard
-        ? cards.indexOf(selectedCard as HTMLElement)
-        : -1
 
       if (currentIdx === -1) {
         return
