@@ -41,9 +41,13 @@ export const PlayedCard = ({
   // indicator renderers below -- only the visual differs between them.
   const waterIndicatorOpacities = isPlayedCrop(playedCard)
     ? Array.from({ length: waterIconsToRender }, (_, idx) => {
+        if (isInBackground) {
+          return 0
+        }
+
         const isFilled = idx < playedCard.waterCards
 
-        return isInBackground ? 0 : isFilled ? 1 : unfilledWaterIndicatorOpacity
+        return isFilled ? 1 : unfilledWaterIndicatorOpacity
       })
     : []
 
