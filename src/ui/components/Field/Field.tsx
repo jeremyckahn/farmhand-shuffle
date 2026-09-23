@@ -19,7 +19,6 @@ import { PlayedCard, playedCardClassName } from '../PlayedCard'
 import { EmptyPlot } from './EmptyPlot'
 
 const deselectedIdx = -1
-const selectedCardYOffset = -25
 
 // NOTE: On narrow viewports (cardSize === CardSize.COMPACT), a focused
 // field card is rendered at this larger, fixed size instead of being
@@ -146,9 +145,7 @@ export const Field = ({
       const xDelta =
         centerX - (boundingClientRect.left + boundingClientRect.width / 2)
       const yDelta =
-        centerY -
-        (boundingClientRect.top + boundingClientRect.height / 2) +
-        (isSessionOwnerPlayer ? selectedCardYOffset : -selectedCardYOffset)
+        centerY - (boundingClientRect.top + boundingClientRect.height / 2)
 
       setSelectedCardTransform(
         `translateX(${xDelta}px) translateY(${yDelta}px) scale(${getFieldZoomScale(
