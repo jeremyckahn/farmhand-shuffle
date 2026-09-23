@@ -14,10 +14,15 @@ import { CardSize } from '../../types'
 import { Card } from '../Card'
 import { ShellContext } from '../Match/ShellContext'
 
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 const foregroundCardScale = 1
 const backgroundCardScale = 0.65
+
+// NOTE: The focused/selected hand card is always rendered at this fixed
+// size, regardless of the viewport-responsive `cardSize` used for the rest
+// of the hand -- it should read the same size on every screen.
+export const focusedCardSize = CardSize.MEDIUM
 
 export const getGapPixelWidth = (numberOfCards: number) => {
   if (numberOfCards > 60) {
@@ -52,14 +57,18 @@ export const Hand = ({
     blockingOperation,
     isHandInViewport,
     setIsHandInViewport,
+    isNarrowViewport,
     selectedHandCardIdx,
     setSelectedHandCardIdx,
+    isHandCardSelected,
+    handContainerRef,
   } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
 
-  const { containerRef, selectedCardSxProps } = useSelectedCardPosition({
-    cardSize,
-  })
+  const { containerRef, selectedCardSxProps, selectedCardTransform } =
+    useSelectedCardPosition({
+      cardSize: focusedCardSize,
+    })
 
   const player = lookup.getPlayer(match, playerId)
 
@@ -69,13 +78,13 @@ export const Hand = ({
 
   useEffect(() => {
     // NOTE: Regains card focus when the player cancels placement
-    if (isHandInViewport && selectedHandCardIdx !== deselectedHandIdx) {
+    if (isHandInViewport && isHandCardSelected) {
       selectedCardRef.current?.focus()
     }
-  }, [isHandInViewport, selectedCardRef, selectedHandCardIdx])
+  }, [isHandInViewport, selectedCardRef, isHandCardSelected])
 
   const resetSelectedCard = useCallback(() => {
-    setSelectedHandCardIdx(deselectedHandIdx)
+    setSelectedHandCardIdx(deselectedCardIdx)
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
@@ -115,7 +124,15 @@ export const Hand = ({
     }
   }
 
-  const gapWidthPx = getGapPixelWidth(player.hand.length)
+  // NOTE: getGapPixelWidth's thresholds were tuned against
+  // focusedCardSize (the size hand cards have always rendered at) -- scale
+  // them by how much smaller/larger cardSize actually is so the fan-out
+  // spacing stays proportional to the cards' own size instead of going
+  // stale on narrow viewports where cardSize shrinks.
+  const gapSizeScale =
+    parseFloat(CARD_DIMENSIONS[cardSize].width) /
+    parseFloat(CARD_DIMENSIONS[focusedCardSize].width)
+  const gapWidthPx = getGapPixelWidth(player.hand.length) * gapSizeScale
 
   const { width: containerWidth } =
     // eslint-disable-next-line react-hooks/refs
@@ -133,15 +150,16 @@ export const Hand = ({
     <Box
       {...rest}
       data-testid={`hand_${playerId}`}
-      ref={containerRef}
+      ref={(node: HTMLDivElement | null) => {
+        // eslint-disable-next-line functional/immutable-data
+        containerRef.current = node ?? undefined
+        // eslint-disable-next-line functional/immutable-data
+        handContainerRef.current = node
+      }}
       sx={[
         {
           position: 'relative',
           minHeight: CARD_DIMENSIONS[cardSize].height,
-          transform: `translateY(${
-            isHandInViewport ? 0 : CARD_DIMENSIONS[cardSize].height
-          })`,
-          transition: theme.transitions.create(['transform']),
           pointerEvents: isHandInViewport ? undefined : 'none',
         },
         ...(isSxArray(sx) ? sx : [sx]),
@@ -160,8 +178,7 @@ export const Hand = ({
         )
         const xOffsetPx = containerWidth / 2 + multipliedGap
         const isSelected = selectedHandCardIdx === idx && isHandInViewport
-        const isVisuallySelected =
-          selectedHandCardIdx !== deselectedHandIdx && isHandInViewport
+        const isVisuallySelected = isHandCardSelected && isHandInViewport
 
         let transform = ''
 
@@ -178,6 +195,19 @@ export const Hand = ({
           transform = `translateX(${translateX}) translateY(${translateY}) rotate(${rotationDeg}deg) scale(${scale}) rotateY(25deg)`
         }
 
+        // NOTE: The hide/show slide used to live on the shared container's
+        // own transform, but that container is also what centering math
+        // (useSelectedCardPosition) measures via getBoundingClientRect --
+        // a CSS transition on that same element could be caught by that
+        // measurement mid-flight, briefly centering the focused card
+        // against a stale, still-transitioning position. Applying the
+        // slide to each card's own transform instead keeps the container
+        // itself static (and thus always measurable at rest), with no
+        // correctness cost since translateY offsets compose additively.
+        const hideOffsetTranslateY = `translateY(${
+          isHandInViewport ? 0 : CARD_DIMENSIONS[cardSize].height
+        })`
+
         return (
           <Card
             key={cardInstance.instanceId}
@@ -185,23 +215,26 @@ export const Hand = ({
             cardInstance={cardInstance}
             cardIdxInHand={idx}
             playerId={playerId}
-            size={cardSize}
+            size={isSelected ? focusedCardSize : cardSize}
             paperProps={{
               ...(isSelected && {
                 elevation: SELECTED_CARD_ELEVATION,
               }),
             }}
             sx={{
-              transform,
               position: 'absolute',
               transition: theme.transitions.create(['transform']),
               cursor: 'pointer',
               ...(isSelected && selectedCardSxProps),
+              transform: `${
+                isSelected ? selectedCardTransform : transform
+              } ${hideOffsetTranslateY}`,
             }}
             onBeforePlay={handleBeforePlay}
             onFocus={() => handleCardFocus(idx)}
             tabIndex={isHandInViewport ? 0 : -1}
             isFocused={isSelected}
+            stackActionButtonsBelowCard={isNarrowViewport}
             ref={isSelected ? selectedCardRef : undefined}
           />
         )

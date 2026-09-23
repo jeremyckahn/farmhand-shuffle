@@ -1,4 +1,5 @@
 export enum CardSize {
+  COMPACT = 'COMPACT',
   SMALL = 'SMALL',
   MEDIUM = 'MEDIUM',
   LARGE = 'LARGE',

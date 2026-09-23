@@ -47,10 +47,25 @@ describe('EmptyPlot', () => {
       stubPlayer1.id
     )
 
-    // NOTE: The Grid item is the top-level element
-    const gridItem = container.firstChild
+    // NOTE: The clickable Box is the top-level element
+    const plot = container.firstChild
 
-    expect(gridItem).toBeInTheDocument()
+    expect(plot).toBeInTheDocument()
+  })
+
+  test('has a subtle border radius, not the MUI sx multiplier value', () => {
+    const { container } = renderEmptyPlot(
+      MatchState.WAITING_FOR_PLAYER_TURN_ACTION,
+      stubPlayer1.id
+    )
+
+    const plot = container.firstChild as HTMLElement
+
+    // NOTE: sx's `borderRadius` treats a bare number as a multiplier of
+    // theme.shape.borderRadius, not a pixel value -- passing
+    // theme.shape.borderRadius directly (without a unit) previously
+    // squared it (4 * 4 = 16px), making plots look like pills.
+    expect(getComputedStyle(plot).borderRadius).toEqual('4px')
   })
 
   test('shows "Place card" when can be selected', () => {
@@ -84,8 +99,7 @@ describe('EmptyPlot', () => {
       stubPlayer1.id
     )
 
-    const gridItem = container.firstChild
-    const plot = gridItem?.firstChild
+    const plot = container.firstChild
 
     if (!plot) throw new Error('Plot not found')
 
@@ -101,8 +115,7 @@ describe('EmptyPlot', () => {
       stubPlayer2.id
     )
 
-    const gridItem = container.firstChild
-    const plot = gridItem?.firstChild
+    const plot = container.firstChild
 
     if (!plot) throw new Error('Plot not found')
 

@@ -10,12 +10,15 @@ import {
 } from '../../../test-utils/stubs/cards'
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { isSxArray } from '../../type-guards'
+import { CardSize } from '../../types'
 import { cardClassName } from '../Card/CardCore'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
+import { assertIsNonNullable } from '../../../game/types/assertions'
 
-import { getGapPixelWidth, Hand, HandProps } from './Hand'
+import { focusedCardSize, getGapPixelWidth, Hand, HandProps } from './Hand'
 
 // NOTE: Mocking out the Card component improves test execution speed
 vi.mock('../Card/Card', async () => {
@@ -38,6 +41,7 @@ vi.mock('../Card/Card', async () => {
         paperProps,
         onBeforePlay,
         isFocused,
+        stackActionButtonsBelowCard,
         ...props
       }: CardProps) => {
         const style: React.CSSProperties = {}
@@ -59,7 +63,14 @@ vi.mock('../Card/Card', async () => {
 
         return (
           // @ts-expect-error This is enough for the mock
-          <div {...props} className={cardClassName} style={style}>
+          <div
+            {...props}
+            className={cardClassName}
+            style={style}
+            data-stack-action-buttons-below-card={String(
+              stackActionButtonsBelowCard
+            )}
+          >
             {cardInstance.name}
           </div>
         )
@@ -75,9 +86,12 @@ const match = updatePlayer(baseMatch, baseMatch.sessionOwnerPlayerId, {
   hand: handCards,
 })
 
-const StubHand = (overrides: Partial<HandProps>) => {
+const StubHand = ({
+  isNarrowViewport = false,
+  ...overrides
+}: Partial<HandProps> & { isNarrowViewport?: boolean }) => {
   return (
-    <StubShellContext>
+    <StubShellContext isNarrowViewport={isNarrowViewport}>
       <ActorContext.Provider>
         <Hand
           match={match}
@@ -114,7 +128,7 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
+      `"translate(calc(512px - calc(0px + 12rem / 2)), calc(384px - calc(0px + 21rem / 2))) scale(1) translateY(0)"`
     )
 
     for (const { name } of handCards.slice(1)) {
@@ -142,7 +156,7 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg) translateY(0)"`
     )
   })
 
@@ -165,13 +179,13 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 50px + -150px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(calc(28rem / 2)) rotate(-5deg) scale(0.65) rotateY(25deg) translateY(0)"`
     )
 
     const { transform: card2Transform } = getComputedStyle(card2!)
 
     expect(card2Transform).toMatchInlineSnapshot(
-      `"translate(calc(512px - calc(0px + 16rem / 2)), calc(384px - calc(0px + 28rem / 2))) scale(1)"`
+      `"translate(calc(512px - calc(0px + 12rem / 2)), calc(384px - calc(0px + 21rem / 2))) scale(1) translateY(0)"`
     )
   })
 
@@ -191,7 +205,7 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg) translateY(0)"`
     )
     expect(document.activeElement).toBe(document.body)
   })
@@ -215,9 +229,79 @@ describe('Hand', () => {
     const { transform: card1Transform } = getComputedStyle(card1!)
 
     expect(card1Transform).toMatchInlineSnapshot(
-      `"translateX(calc(-50% + 50px + -150px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg)"`
+      `"translateX(calc(-50% + 66.66666666666666px + -199.99999999999997px)) translateY(0rem) rotate(-5deg) scale(1) rotateY(25deg) translateY(0)"`
     )
     expect(document.activeElement).toBe(document.body)
+  })
+
+  test('the focused card is always focusedCardSize, regardless of the hand baseline cardSize', async () => {
+    render(<StubHand cardSize={CardSize.COMPACT} />)
+
+    const card1 = screen
+      .getByText(handCards[0]!.name)
+      .closest(`.${cardClassName}`)
+
+    assertIsNonNullable(card1)
+
+    await userEvent.click(card1)
+
+    const { transform: card1Transform } = getComputedStyle(card1)
+
+    expect(card1Transform).toContain(
+      `${CARD_DIMENSIONS[focusedCardSize].width} / 2`
+    )
+    expect(card1Transform).toContain(
+      `${CARD_DIMENSIONS[focusedCardSize].height} / 2`
+    )
+  })
+
+  test('fan-out spacing shrinks proportionally with a smaller cardSize', async () => {
+    render(<StubHand cardSize={CardSize.COMPACT} />)
+
+    const card1 = screen
+      .getByText(handCards[0]!.name)
+      .closest(`.${cardClassName}`)
+
+    assertIsNonNullable(card1)
+
+    await userEvent.click(card1)
+    await waitFor(() => {
+      ;(document.activeElement as HTMLElement).blur()
+    })
+
+    const { transform } = getComputedStyle(card1)
+    const expectedScale =
+      parseFloat(CARD_DIMENSIONS[CardSize.COMPACT].width) /
+      parseFloat(CARD_DIMENSIONS[focusedCardSize].width)
+    const expectedGapWidthPx = 50 * expectedScale
+
+    expect(transform).toContain(`${expectedGapWidthPx}px`)
+  })
+
+  test('stacks action buttons below the card on a narrow viewport', () => {
+    render(<StubHand isNarrowViewport={true} />)
+
+    const card1 = screen
+      .getByText(handCards[0]!.name)
+      .closest(`.${cardClassName}`)
+
+    expect(card1).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'true'
+    )
+  })
+
+  test('does not stack action buttons below the card on a large viewport', () => {
+    render(<StubHand isNarrowViewport={false} />)
+
+    const card1 = screen
+      .getByText(handCards[0]!.name)
+      .closest(`.${cardClassName}`)
+
+    expect(card1).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'false'
+    )
   })
 
   describe('getGapPixelWidth', () => {

@@ -1,3 +1,4 @@
+import { createTheme } from '@mui/material/styles'
 import { fireEvent, screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
@@ -10,6 +11,7 @@ import {
   IPlayer,
 } from '../../../game/types'
 import { mockSend } from '../../../test-utils/mocks/send'
+import { mockUseMediaQuery } from '../../../test-utils/mocks/useMediaQuery'
 import {
   stubCarrot,
   stubRain,
@@ -21,12 +23,17 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 import * as useMatchStateModule from '../../hooks/useMatchRules'
 import { StubShellContext } from '../../test-utils/StubShellContext'
+import { CardSize } from '../../types'
 import { ActorContext } from '../Match/ActorContext'
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 import { Card } from './Card'
 import { CardProps } from './types'
-import { cardFlipWrapperClassName } from './CardCore'
+import {
+  cardClassName,
+  cardFlipWrapperClassName,
+  getStackedActionButtonsMarginTop,
+} from './CardCore'
 
 const stubCardInstance = stubCarrot
 
@@ -38,12 +45,86 @@ const StubCard = ({ ref, ...overrides }: Partial<CardProps> = {}) => (
   </StubShellContext>
 )
 
+// NOTE: No ThemeProvider wraps StubCard, so CardCore's useTheme() resolves
+// to MUI's default theme -- this is that same default, used to derive the
+// same spacing value CardCore itself uses.
+const defaultTheme = createTheme()
+
+// NOTE: jsdom can't resolve calc() to a real pixel value (it has no layout
+// engine), so getComputedStyle().marginTop returns the calc() expression
+// jsdom's CSS parser happens to normalize it to (e.g. reordering terms,
+// turning `/ -2` into `* -0.5`) rather than a computed number. Asserting on
+// that normalized shape directly would be fragile and tied to jsdom/cssstyle
+// internals. Round-tripping the expected value through the same parser --
+// by setting it on a scratch element and reading it back -- means the
+// comparison only depends on both sides being normalized the same way, not
+// on knowing what that normalization looks like.
+const resolveComputedMarginTop = (marginTop: string) => {
+  const scratch = document.createElement('div')
+
+  scratch.style.setProperty('margin-top', marginTop)
+  document.body.appendChild(scratch)
+
+  const { marginTop: resolved } = getComputedStyle(scratch)
+
+  document.body.removeChild(scratch)
+
+  return resolved
+}
+
 describe('Card', () => {
+  beforeEach(() => {
+    // NOTE: CardCore's only useMediaQuery call is for prefers-reduced-motion
+    // -- mobile/narrow-viewport stacking is driven by the
+    // stackActionButtonsBelowCard prop instead (see the tests below), so
+    // this just needs a stable default. See
+    // test-utils/mocks/useMediaQuery.ts for why this is mocked at all.
+    mockUseMediaQuery.mockReturnValue(false)
+  })
+
   test('renders card', () => {
     render(<StubCard />)
 
     expect(screen.getByText(stubCardInstance.name)).toBeInTheDocument()
     expect(screen.getByAltText(stubCardInstance.name)).toBeInTheDocument()
+  })
+
+  test('hides the name and description at compact size', () => {
+    render(<StubCard size={CardSize.COMPACT} />)
+
+    expect(screen.queryByText(stubCardInstance.name)).not.toBeInTheDocument()
+    expect(
+      screen.queryByText(
+        `Water needed to mature: ${stubCardInstance.waterToMature}`
+      )
+    ).not.toBeInTheDocument()
+    expect(screen.getByAltText(stubCardInstance.name)).toBeInTheDocument()
+  })
+
+  test('hides the "Farmhand Shuffle" card-back text at compact size', () => {
+    render(<StubCard size={CardSize.COMPACT} isFlipped />)
+
+    expect(screen.queryByText('Farmhand Shuffle')).not.toBeInTheDocument()
+  })
+
+  test('shows the "Farmhand Shuffle" card-back text at other sizes', () => {
+    render(<StubCard size={CardSize.SMALL} isFlipped />)
+
+    expect(screen.getByText('Farmhand Shuffle')).toBeInTheDocument()
+  })
+
+  test('shows the name (bold) and description in a tooltip at compact size', async () => {
+    render(<StubCard size={CardSize.COMPACT} />)
+
+    fireEvent.mouseOver(screen.getByAltText(stubCardInstance.name))
+
+    const tooltipName = await screen.findByText(stubCardInstance.name)
+    const tooltipDescription = await screen.findByText(
+      `Water needed to mature: ${stubCardInstance.waterToMature}`
+    )
+
+    expect(getComputedStyle(tooltipName).fontWeight).toEqual('700')
+    expect(tooltipDescription).toBeInTheDocument()
   })
 
   test('renders crop water requirements', () => {
@@ -259,6 +340,133 @@ describe('Card', () => {
       waterCardInHandIdx: selectedWaterCardInHandIdx,
       playerId: stubPlayer1.id,
     })
+  })
+
+  test('renders the action button beside the card when stackActionButtonsBelowCard is false', () => {
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+      />
+    )
+
+    const button = screen.getByText('Water crop').closest('button')!
+    const buttonBox = button.parentElement?.parentElement
+
+    expect(getComputedStyle(buttonBox!).left).toEqual('100%')
+    expect(button).not.toHaveClass('MuiButton-fullWidth')
+  })
+
+  test('stacks the action button below the card when stackActionButtonsBelowCard is true', () => {
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    // NOTE: A focused compact-field/hand card is deliberately rendered at a
+    // larger size for legibility (see focusedFieldCardSize/focusedCardSize),
+    // so this deliberately renders at the default (non-COMPACT) size to
+    // prove the stacking behavior is driven by stackActionButtonsBelowCard,
+    // not by this card's own rendered size.
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+        stackActionButtonsBelowCard
+      />
+    )
+
+    const button = screen.getByText('Water crop').closest('button')!
+    const buttonBox = button.parentElement?.parentElement
+
+    expect(getComputedStyle(buttonBox!).left).toEqual('0px')
+    expect(getComputedStyle(buttonBox!).top).not.toEqual('')
+    expect(button).toHaveClass('MuiButton-fullWidth')
+  })
+
+  test('shifts the card up when stackActionButtonsBelowCard is true and an action button is shown, to vertically center the card+button group', () => {
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+        stackActionButtonsBelowCard
+      />
+    )
+
+    const button = screen.getByText('Water crop')
+    const card = button.closest(`.${cardClassName}`)
+
+    const { marginTop } = getComputedStyle(card!)
+
+    // NOTE: Only the "water" button is shown here, so actionButtonCount is 1.
+    const expectedMarginTop = getStackedActionButtonsMarginTop(
+      1,
+      defaultTheme.spacing(1)
+    )
+
+    expect(marginTop).toEqual(resolveComputedMarginTop(expectedMarginTop))
+  })
+
+  test('does not shift vertically when stackActionButtonsBelowCard is false, even with an action button shown', () => {
+    vi.spyOn(useMatchStateModule, 'useMatchRules').mockReturnValueOnce({
+      matchState: MatchState.PLAYER_WATERING_CROP,
+      match: stubMatch({ selectedWaterCardInHandIdx: 0 }),
+      botTurnActionState: null,
+    })
+
+    render(
+      <StubCard
+        cardInstance={stubCarrot}
+        playerId={stubPlayer1.id}
+        cropIdxInFieldToWater={0}
+        isFocused
+        isInField
+        canBeWatered
+      />
+    )
+
+    expect(screen.getByText('Water crop')).toBeInTheDocument()
+
+    const card = screen
+      .getByText(stubCardInstance.name)
+      .closest(`.${cardClassName}`)
+
+    expect(getComputedStyle(card!).marginTop).toEqual('')
+  })
+
+  test('does not shift vertically when stackActionButtonsBelowCard is true but no action button is shown', () => {
+    render(<StubCard stackActionButtonsBelowCard />)
+
+    const card = screen
+      .getByText(stubCardInstance.name)
+      .closest(`.${cardClassName}`)
+
+    expect(getComputedStyle(card!).marginTop).toEqual('')
   })
 
   test('allows player to harvest a crop card', () => {
@@ -540,7 +748,7 @@ describe('Card', () => {
 
       fireEvent.click(playCardButton)
 
-      expect(mockSetSelectedHandCardIdx).toHaveBeenCalledWith(deselectedHandIdx)
+      expect(mockSetSelectedHandCardIdx).toHaveBeenCalledWith(deselectedCardIdx)
       expect(mockSetIsHandInViewport).not.toHaveBeenCalled()
     })
 
