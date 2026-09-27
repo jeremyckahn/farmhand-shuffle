@@ -14,12 +14,11 @@ import { isPlayedCard } from '../../../game/types/guards'
 import { CARD_DIMENSIONS, getFieldZoomScale } from '../../config/dimensions'
 import { foregroundCardZIndex } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
+import { deselectedCardIdx } from '../constants'
 import { ShellContext } from '../Match/ShellContext'
 import { PlayedCard, playedCardClassName } from '../PlayedCard'
 
 import { EmptyPlot } from './EmptyPlot'
-
-const deselectedIdx = -1
 
 // NOTE: On narrow viewports (cardSize === CardSize.COMPACT), a focused
 // field card is rendered at this larger, fixed size instead of being
@@ -64,7 +63,7 @@ export const Field = ({
     isSessionOwnerPlayer ? fieldContainerRef : undefined
   )
   const theme = useTheme()
-  const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
+  const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedCardIdx)
   const [selectedCardTransform, setSelectedCardTransform] = useState('')
 
   const { width: windowWidth, height: windowHeight } = useWindowSize({
@@ -77,8 +76,8 @@ export const Field = ({
   const centerY = windowHeight / 2
 
   const resetSelectedCard = () => {
-    setSelectedCardIdx(deselectedIdx)
-    onSelectedCardIdxChange?.(deselectedIdx)
+    setSelectedCardIdx(deselectedCardIdx)
+    onSelectedCardIdxChange?.(deselectedCardIdx)
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
@@ -104,8 +103,8 @@ export const Field = ({
   // NOTE: When the player.field data is changed, reset the selected card state
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSelectedCardIdx(deselectedIdx)
-    onSelectedCardIdxChange?.(deselectedIdx)
+    setSelectedCardIdx(deselectedCardIdx)
+    onSelectedCardIdxChange?.(deselectedCardIdx)
   }, [player.field, onSelectedCardIdxChange])
 
   const handleCardFocus = (
@@ -237,7 +236,7 @@ export const Field = ({
 
           const isSelected = selectedCardIdx === fieldIdx
           const isInBackground =
-            selectedCardIdx !== deselectedIdx && !isSelected
+            selectedCardIdx !== deselectedCardIdx && !isSelected
           const isFocusedCompactCard =
             isSelected && cardSize === CardSize.COMPACT
 
