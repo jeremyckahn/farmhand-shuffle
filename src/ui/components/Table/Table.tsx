@@ -27,6 +27,13 @@ export interface TableProps extends GridProps {
 // below the fold instead of the same proportion peeking into view.
 const handBottomOffsetSpacingUnitsAtMediumSize = -8
 
+// NOTE: Exported so tests can derive their expectation from this actual
+// production formula rather than a hand-copied one.
+export const getMobileIdleHandBottomOffset = (
+  gapBelowFieldPx: number,
+  handHeight: string
+) => `max(0px, calc((${gapBelowFieldPx}px - ${handHeight}) / 2))`
+
 export const Table = ({ match, ...rest }: TableProps) => {
   const theme = useTheme()
   const { setSelectedFieldCardIdx, isNarrowViewport } = useContext(ShellContext)
@@ -100,7 +107,6 @@ export const Table = ({ match, ...rest }: TableProps) => {
     }
   }, [])
 
-  const handHeightPx = parseFloat(CARD_DIMENSIONS[handCardSize].height) * 16
   const mobileIdleHandBottomOffset =
     ownFieldBottom === null
       ? handBottomOffset
@@ -108,7 +114,13 @@ export const Table = ({ match, ...rest }: TableProps) => {
         // past the viewport's own bottom (a short viewport, or a tall
         // field), the unclamped midpoint goes negative and pushes the Hand
         // off-screen below the fold instead of just resting at the bottom.
-        `${Math.max(0, (windowHeight - ownFieldBottom - handHeightPx) / 2)}px`
+        // The hand's rem height is resolved by the browser via CSS math
+        // rather than converted in JS, since the root font size isn't
+        // always 16px (e.g. a browser's accessibility text-size setting).
+        getMobileIdleHandBottomOffset(
+          windowHeight - ownFieldBottom,
+          CARD_DIMENSIONS[handCardSize].height
+        )
   const idleHandBottomOffset = useLargeCards
     ? handBottomOffset
     : mobileIdleHandBottomOffset

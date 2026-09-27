@@ -13,7 +13,7 @@ import { ActorContext } from '../Match/ActorContext'
 import { CardProps } from '../Card/types'
 import { FieldProps } from '../Field/Field'
 
-import { Table, TableProps } from './Table'
+import { getMobileIdleHandBottomOffset, Table, TableProps } from './Table'
 
 // NOTE: Mocking out the Card component improves test execution speed
 vi.mock('../Card', () => ({
@@ -233,13 +233,21 @@ describe('Table', () => {
     const handContainer = screen.getByTestId(
       `hand_${match.sessionOwnerPlayerId}`
     ).parentElement as HTMLElement
-    const offsetPx = parseFloat(getComputedStyle(handContainer).bottom)
-    const compactHeightPx =
-      parseFloat(CARD_DIMENSIONS[CardSize.COMPACT].height) * 16
-    const expectedOffsetPx =
-      (window.innerHeight - fieldBottomPx - compactHeightPx) / 2
+    const expectedBottom = getMobileIdleHandBottomOffset(
+      window.innerHeight - fieldBottomPx,
+      CARD_DIMENSIONS[CardSize.COMPACT].height
+    )
+    // NOTE: jsdom's CSS parser can't handle max() over mixed px/rem units
+    // (so getComputedStyle reports nothing), so this checks the rule Emotion
+    // emitted for the hand container's class instead.
+    const emittedStyles = [...document.querySelectorAll('style')]
+      .map(style => style.textContent)
+      .join('')
+    const handContainerRule = [...handContainer.classList]
+      .map(className => emittedStyles.split(`.${className}{`)[1]?.split('}')[0])
+      .find(Boolean)
 
-    expect(offsetPx).toBeCloseTo(expectedOffsetPx, 5)
+    expect(handContainerRule).toContain(`bottom:${expectedBottom};`)
   })
 
   test('does not affect the idle hand position on large viewports', () => {
