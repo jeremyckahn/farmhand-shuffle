@@ -5,6 +5,7 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react'
 import { SELECTED_CARD_ELEVATION } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
+import { useMergedRefs } from '../../../lib/hooks/useMergedRefs'
 import { useRejectingTimeout } from '../../../lib/hooks/useRejectingTimeout'
 import { math } from '../../../services/Math'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -140,6 +141,8 @@ export const Hand = ({
       width: 0,
     }
 
+  const containerRefs = useMergedRefs(containerRef, handContainerRef)
+
   const handleBeforePlay = async () => {
     await blockingOperation(async () => {
       await setRejectingTimeout(theme.transitions.duration.shortest)
@@ -150,12 +153,7 @@ export const Hand = ({
     <Box
       {...rest}
       data-testid={`hand_${playerId}`}
-      ref={(node: HTMLDivElement | null) => {
-        // eslint-disable-next-line functional/immutable-data
-        containerRef.current = node ?? undefined
-        // eslint-disable-next-line functional/immutable-data
-        handContainerRef.current = node
-      }}
+      ref={containerRefs}
       sx={[
         {
           position: 'relative',

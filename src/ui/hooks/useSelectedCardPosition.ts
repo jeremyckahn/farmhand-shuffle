@@ -26,7 +26,7 @@ export const useSelectedCardPosition = ({
   cardSize: CardSize
 }) => {
   const theme = useTheme()
-  const containerRef = useRef<HTMLDivElement>()
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const [containerRect, setContainerRect] =
     useState<DOMRect>(defaultContainerRect)
 

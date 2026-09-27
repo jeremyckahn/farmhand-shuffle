@@ -8,6 +8,7 @@ import {
   STANDARD_FIELD_SIZE,
 } from '../../../game/config'
 import { lookup } from '../../../game/services/Lookup'
+import { useMergedRefs } from '../../../lib/hooks/useMergedRefs'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
 import { CARD_DIMENSIONS, getFieldZoomScale } from '../../config/dimensions'
@@ -54,7 +55,14 @@ export const Field = ({
   const isSessionOwnerPlayer = playerId === match.sessionOwnerPlayerId
   const { isNarrowViewport, fieldContainerRef } = useContext(ShellContext)
 
-  const containerRef = useRef<HTMLDivElement>()
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  // NOTE: Field is also rendered once per opponent -- only the session
+  // owner's own field is relevant to Match's card-nav Fabs, so only it
+  // should claim the shared context ref.
+  const containerRefs = useMergedRefs(
+    containerRef,
+    isSessionOwnerPlayer ? fieldContainerRef : undefined
+  )
   const theme = useTheme()
   const [selectedCardIdx, setSelectedCardIdx] = useState(deselectedIdx)
   const [selectedCardTransform, setSelectedCardTransform] = useState('')
@@ -187,18 +195,7 @@ export const Field = ({
     <Box
       {...rest}
       data-testid={`field_${playerId}`}
-      ref={(node: HTMLDivElement | null) => {
-        // eslint-disable-next-line functional/immutable-data
-        containerRef.current = node ?? undefined
-
-        // NOTE: Field is also rendered once per opponent -- only the
-        // session owner's own field is relevant to Match's card-nav
-        // Fabs, so only it should claim the shared context ref.
-        if (isSessionOwnerPlayer) {
-          // eslint-disable-next-line functional/immutable-data
-          fieldContainerRef.current = node
-        }
-      }}
+      ref={containerRefs}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
     >
