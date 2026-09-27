@@ -20,18 +20,3 @@ export const CARD_DIMENSIONS = {
     width: '16rem',
   },
 }
-
-const DEFAULT_FIELD_ZOOM_SCALE = 1.25
-
-/**
- * The Field's tap-to-zoom interaction (see Field.tsx's handleCardFocus)
- * scales the focused card up from wherever it's actually rendered. A fixed
- * 1.25x is legible for SMALL/MEDIUM/LARGE cards, but far too little at
- * COMPACT size (1.25 * 48px =~ 60px) to read anything. Scale COMPACT cards
- * up to roughly SMALL's rendered width instead.
- */
-export const getFieldZoomScale = (size: CardSize) =>
-  size === CardSize.COMPACT
-    ? parseFloat(CARD_DIMENSIONS[CardSize.SMALL].width) /
-      parseFloat(CARD_DIMENSIONS[CardSize.COMPACT].width)
-    : DEFAULT_FIELD_ZOOM_SCALE

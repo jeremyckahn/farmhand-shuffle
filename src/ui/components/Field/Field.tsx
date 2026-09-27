@@ -11,7 +11,7 @@ import { lookup } from '../../../game/services/Lookup'
 import { useMergedRefs } from '../../../lib/hooks/useMergedRefs'
 import { IMatch, IPlayer } from '../../../game/types'
 import { isPlayedCard } from '../../../game/types/guards'
-import { CARD_DIMENSIONS, getFieldZoomScale } from '../../config/dimensions'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { foregroundCardZIndex } from '../../hooks/useSelectedCardPosition'
 import { CardSize } from '../../types'
 import { deselectedCardIdx } from '../constants'
@@ -26,6 +26,10 @@ import { EmptyPlot } from './EmptyPlot'
 // upscaled pixel art, the same treatment (and the same size) Hand.tsx
 // gives its focused card (see focusedCardSize there).
 export const focusedFieldCardSize = CardSize.MEDIUM
+
+// NOTE: On larger viewports, a focused field card is scaled up by this
+// factor via CSS transform instead (see handleCardFocus).
+const focusedCardZoomScale = 1.25
 
 export interface FieldProps extends BoxProps {
   match: IMatch
@@ -155,9 +159,7 @@ export const Field = ({
         centerY - (boundingClientRect.top + boundingClientRect.height / 2)
 
       setSelectedCardTransform(
-        `translateX(${xDelta}px) translateY(${yDelta}px) scale(${getFieldZoomScale(
-          cardSize
-        )})`
+        `translateX(${xDelta}px) translateY(${yDelta}px) scale(${focusedCardZoomScale})`
       )
     }
 
