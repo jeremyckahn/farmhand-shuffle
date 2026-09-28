@@ -79,11 +79,21 @@ export const Hand = ({
   const selectedCardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // NOTE: Regains card focus when the player cancels placement
-    if (isHandInViewport && isHandCardSelected) {
+    // NOTE: Regains card focus when the player cancels placement. This also
+    // re-runs when the selection lock lifts because if the Hand was re-shown
+    // mid-placement, isHandInViewport doesn't change on cancel -- and any
+    // blur that happened while locked (e.g. clicking "Cancel placement")
+    // was ignored, so without refocusing, the card would stay selected with
+    // no focus for blur/Escape handling to deselect it.
+    if (isHandInViewport && isHandCardSelected && !isHandCardSelectionLocked) {
       selectedCardRef.current?.focus()
     }
-  }, [isHandInViewport, selectedCardRef, isHandCardSelected])
+  }, [
+    isHandInViewport,
+    selectedCardRef,
+    isHandCardSelected,
+    isHandCardSelectionLocked,
+  ])
 
   const resetSelectedCard = useCallback(() => {
     setSelectedHandCardIdx(deselectedCardIdx)

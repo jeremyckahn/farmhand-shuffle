@@ -26,10 +26,13 @@ vi.mock('../Card/Card', async () => {
   const { cardClassName } = await vi.importActual<
     typeof import('../Card/CardCore')
   >('../Card/CardCore')
+  const { forwardRef } = await vi.importActual<typeof import('react')>('react')
 
   return {
-    Card: vi.fn(
-      ({
+    // NOTE: forwardRef lets Hand's selectedCardRef reach the rendered card,
+    // which is necessary for testing Hand's focus management.
+    Card: forwardRef<HTMLDivElement, CardProps>(function Card(
+      {
         cardInstance,
         sx,
         // Destructure and ignore props that are not valid for a div
@@ -44,39 +47,41 @@ vi.mock('../Card/Card', async () => {
         isFocused,
         stackActionButtonsBelowCard,
         ...props
-      }: CardProps) => {
-        const style: React.CSSProperties = {}
+      },
+      ref
+    ) {
+      const style: React.CSSProperties = {}
 
-        if (sx) {
-          const sxObject = isSxArray(sx)
-            ? // @ts-expect-error This is enough for the mock
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-              sx.reduce((acc, curr) => ({ ...acc, ...curr }), {})
-            : sx
+      if (sx) {
+        const sxObject = isSxArray(sx)
+          ? // @ts-expect-error This is enough for the mock
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            sx.reduce((acc, curr) => ({ ...acc, ...curr }), {})
+          : sx
 
+        // @ts-expect-error This is enough for the mock
+        if (sxObject?.transform) {
           // @ts-expect-error This is enough for the mock
-          if (sxObject?.transform) {
-            // @ts-expect-error This is enough for the mock
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, functional/immutable-data
-            style.transform = sxObject.transform
-          }
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, functional/immutable-data
+          style.transform = sxObject.transform
         }
-
-        return (
-          // @ts-expect-error This is enough for the mock
-          <div
-            {...props}
-            className={cardClassName}
-            style={style}
-            data-stack-action-buttons-below-card={String(
-              stackActionButtonsBelowCard
-            )}
-          >
-            {cardInstance.name}
-          </div>
-        )
       }
-    ),
+
+      return (
+        // @ts-expect-error This is enough for the mock
+        <div
+          {...props}
+          ref={ref}
+          className={cardClassName}
+          style={style}
+          data-stack-action-buttons-below-card={String(
+            stackActionButtonsBelowCard
+          )}
+        >
+          {cardInstance.name}
+        </div>
+      )
+    }),
   }
 })
 
@@ -360,6 +365,30 @@ describe('Hand', () => {
       })
 
       expect(setSelectedHandCardIdx).not.toHaveBeenCalled()
+    })
+
+    test('the selected card regains focus when the lock is lifted', () => {
+      const { rerender } = render(
+        <StubHand shellContextOverrides={shellContextOverrides} />
+      )
+
+      focusSelectedCard()
+      ;(document.activeElement as HTMLElement).blur()
+
+      rerender(
+        <StubHand
+          shellContextOverrides={{
+            ...shellContextOverrides,
+            isHandCardSelectionLocked: false,
+          }}
+        />
+      )
+
+      const card1 = screen
+        .getByText(handCards[0]!.name)
+        .closest(`.${cardClassName}`)
+
+      expect(document.activeElement).toBe(card1)
     })
 
     test('pressing Escape does not reset the selection', async () => {
