@@ -291,6 +291,36 @@ describe('useMatch', () => {
     expect(result.current.isSelectingFieldPosition).toBe(false)
   })
 
+  it.each([
+    { matchState: MatchState.CHOOSING_CARD_POSITION, expected: true },
+    { matchState: MatchState.WAITING_FOR_PLAYER_TURN_ACTION, expected: false },
+    { matchState: MatchState.WAITING_FOR_PLAYER_SETUP_ACTION, expected: false },
+    { matchState: MatchState.PLAYER_WATERING_CROP, expected: false },
+  ])(
+    'should set isHandCardSelectionLocked to $expected in $matchState state',
+    ({ matchState, expected }) => {
+      vi.mocked(useMatchRules).mockReturnValue({
+        match: {
+          ...mockMatch,
+          selectedWaterCardInHandIdx: 0,
+        },
+        matchState,
+        botTurnActionState: null,
+      })
+
+      const { result } = renderHook(() =>
+        useMatch({
+          playerSeeds: mockPlayerSeeds,
+          userPlayerId: mockUserPlayerId,
+        })
+      )
+
+      expect(result.current.shellContextValue.isHandCardSelectionLocked).toBe(
+        expected
+      )
+    }
+  )
+
   it('should update isHandInViewport when setIsHandInViewport is called', () => {
     const { result } = renderHook(() =>
       useMatch({

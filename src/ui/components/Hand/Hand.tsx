@@ -62,6 +62,7 @@ export const Hand = ({
     selectedHandCardIdx,
     setSelectedHandCardIdx,
     isHandCardSelected,
+    isHandCardSelectionLocked,
     handContainerRef,
   } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
@@ -78,11 +79,21 @@ export const Hand = ({
   const selectedCardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // NOTE: Regains card focus when the player cancels placement
-    if (isHandInViewport && isHandCardSelected) {
+    // NOTE: Regains card focus when the player cancels placement. This also
+    // re-runs when the selection lock lifts because if the Hand was re-shown
+    // mid-placement, isHandInViewport doesn't change on cancel -- and any
+    // blur that happened while locked (e.g. clicking "Cancel placement")
+    // was ignored, so without refocusing, the card would stay selected with
+    // no focus for blur/Escape handling to deselect it.
+    if (isHandInViewport && isHandCardSelected && !isHandCardSelectionLocked) {
       selectedCardRef.current?.focus()
     }
-  }, [isHandInViewport, selectedCardRef, isHandCardSelected])
+  }, [
+    isHandInViewport,
+    selectedCardRef,
+    isHandCardSelected,
+    isHandCardSelectionLocked,
+  ])
 
   const resetSelectedCard = useCallback(() => {
     setSelectedHandCardIdx(deselectedCardIdx)
@@ -104,11 +115,25 @@ export const Hand = ({
     resetSelectedCard,
   ])
 
+  // NOTE: The user interaction handlers below leave the selection alone while
+  // it's locked. Otherwise, re-showing the Hand mid-placement and then
+  // clicking a Field plot blurs the selected card (clearing the selection)
+  // before EmptyPlot sends SELECT_CARD_POSITION, which then carries an
+  // invalid hand index that crashes the state machine and leaves the player
+  // unable to place the card or cancel placement.
   const handleCardFocus = (cardIdx: number) => {
+    if (isHandCardSelectionLocked) {
+      return
+    }
+
     setSelectedHandCardIdx(cardIdx)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isHandCardSelectionLocked) {
+      return
+    }
+
     switch (event.key) {
       case 'Escape':
         resetSelectedCard()
@@ -118,6 +143,7 @@ export const Hand = ({
 
   const handleBlur = (event: React.FocusEvent<HTMLDivElement, Element>) => {
     if (
+      !isHandCardSelectionLocked &&
       containerRef.current &&
       !containerRef.current.contains(event.relatedTarget)
     ) {

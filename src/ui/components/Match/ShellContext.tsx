@@ -26,6 +26,13 @@ export interface ShellContextProps {
   isHandCardSelected: boolean
   isFieldCardSelected: boolean
   /**
+   * Whether the hand card selection must be preserved as-is. While a card
+   * position is being chosen, the selected hand card is the card being
+   * placed, so the Hand must not clear or change it in response to user
+   * interaction until placement completes or is canceled.
+   */
+  isHandCardSelectionLocked: boolean
+  /**
    * The DOM node of the user's own Hand container. Lets Match navigate
    * between rendered cards (see handleCardNav in Match.tsx) via this
    * component-owned ref instead of a global document.querySelector.
@@ -60,6 +67,7 @@ export const ShellContext = createContext<ShellContextProps>({
   },
   isHandCardSelected: false,
   isFieldCardSelected: false,
+  isHandCardSelectionLocked: false,
   handContainerRef: { current: null },
   fieldContainerRef: { current: null },
 })

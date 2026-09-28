@@ -55,6 +55,7 @@ const createUseMatchReturn = (
     setSelectedFieldCardIdx: vi.fn(),
     isHandCardSelected: false,
     isFieldCardSelected: false,
+    isHandCardSelectionLocked: false,
     handContainerRef: { current: null },
     fieldContainerRef: { current: null },
   },
