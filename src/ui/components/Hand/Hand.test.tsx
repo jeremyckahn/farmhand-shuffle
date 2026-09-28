@@ -16,6 +16,7 @@ import { CardSize } from '../../types'
 import { cardClassName } from '../Card/CardCore'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
+import { ShellContextProps } from '../Match/ShellContext'
 import { assertIsNonNullable } from '../../../game/types/assertions'
 
 import { focusedCardSize, getGapPixelWidth, Hand, HandProps } from './Hand'
@@ -88,10 +89,17 @@ const match = updatePlayer(baseMatch, baseMatch.sessionOwnerPlayerId, {
 
 const StubHand = ({
   isNarrowViewport = false,
+  shellContextOverrides = {},
   ...overrides
-}: Partial<HandProps> & { isNarrowViewport?: boolean }) => {
+}: Partial<HandProps> & {
+  isNarrowViewport?: boolean
+  shellContextOverrides?: Partial<ShellContextProps>
+}) => {
   return (
-    <StubShellContext isNarrowViewport={isNarrowViewport}>
+    <StubShellContext
+      isNarrowViewport={isNarrowViewport}
+      {...shellContextOverrides}
+    >
       <ActorContext.Provider>
         <Hand
           match={match}
@@ -302,6 +310,68 @@ describe('Hand', () => {
       'data-stack-action-buttons-below-card',
       'false'
     )
+  })
+
+  describe('when the hand card selection is locked', () => {
+    const setSelectedHandCardIdx = vi.fn()
+    const shellContextOverrides: Partial<ShellContextProps> = {
+      isHandCardSelectionLocked: true,
+      selectedHandCardIdx: 0,
+      isHandCardSelected: true,
+      setSelectedHandCardIdx,
+    }
+
+    const renderLockedHand = () => {
+      render(<StubHand shellContextOverrides={shellContextOverrides} />)
+
+      // NOTE: Hand resets the selection when it first receives its cards,
+      // which is not what these tests are concerned with.
+      setSelectedHandCardIdx.mockClear()
+    }
+
+    // NOTE: Mirrors the Hand being re-shown mid-placement, which moves DOM
+    // focus back onto the card being placed.
+    const focusSelectedCard = () => {
+      const card1 = screen
+        .getByText(handCards[0]!.name)
+        .closest<HTMLElement>(`.${cardClassName}`)
+
+      card1!.focus()
+    }
+
+    test('focusing another card does not change the selection', async () => {
+      renderLockedHand()
+
+      const card2 = screen
+        .getByText(handCards[1]!.name)
+        .closest(`.${cardClassName}`)
+
+      await userEvent.click(card2!)
+
+      expect(setSelectedHandCardIdx).not.toHaveBeenCalled()
+    })
+
+    test('losing focus does not reset the selection', async () => {
+      renderLockedHand()
+      focusSelectedCard()
+
+      await waitFor(() => {
+        ;(document.activeElement as HTMLElement).blur()
+      })
+
+      expect(setSelectedHandCardIdx).not.toHaveBeenCalled()
+    })
+
+    test('pressing Escape does not reset the selection', async () => {
+      renderLockedHand()
+      focusSelectedCard()
+
+      await waitFor(async () => {
+        await userEvent.keyboard('{Escape}')
+      })
+
+      expect(setSelectedHandCardIdx).not.toHaveBeenCalled()
+    })
   })
 
   describe('getGapPixelWidth', () => {

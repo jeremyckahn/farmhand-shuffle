@@ -62,6 +62,7 @@ export const Hand = ({
     selectedHandCardIdx,
     setSelectedHandCardIdx,
     isHandCardSelected,
+    isHandCardSelectionLocked,
     handContainerRef,
   } = useContext(ShellContext)
   const { setRejectingTimeout } = useRejectingTimeout()
@@ -104,11 +105,25 @@ export const Hand = ({
     resetSelectedCard,
   ])
 
+  // NOTE: The user interaction handlers below leave the selection alone while
+  // it's locked. Otherwise, re-showing the Hand mid-placement and then
+  // clicking a Field plot blurs the selected card (clearing the selection)
+  // before EmptyPlot sends SELECT_CARD_POSITION, which then carries an
+  // invalid hand index that crashes the state machine and leaves the player
+  // unable to place the card or cancel placement.
   const handleCardFocus = (cardIdx: number) => {
+    if (isHandCardSelectionLocked) {
+      return
+    }
+
     setSelectedHandCardIdx(cardIdx)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isHandCardSelectionLocked) {
+      return
+    }
+
     switch (event.key) {
       case 'Escape':
         resetSelectedCard()
@@ -118,6 +133,7 @@ export const Hand = ({
 
   const handleBlur = (event: React.FocusEvent<HTMLDivElement, Element>) => {
     if (
+      !isHandCardSelectionLocked &&
       containerRef.current &&
       !containerRef.current.contains(event.relatedTarget)
     ) {
