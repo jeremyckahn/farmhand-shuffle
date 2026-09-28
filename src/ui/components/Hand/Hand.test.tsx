@@ -16,6 +16,7 @@ import { CardSize } from '../../types'
 import { cardClassName } from '../Card/CardCore'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
+import { ShellContextProps } from '../Match/ShellContext'
 import { assertIsNonNullable } from '../../../game/types/assertions'
 
 import { focusedCardSize, getGapPixelWidth, Hand, HandProps } from './Hand'
@@ -25,10 +26,13 @@ vi.mock('../Card/Card', async () => {
   const { cardClassName } = await vi.importActual<
     typeof import('../Card/CardCore')
   >('../Card/CardCore')
+  const { forwardRef } = await vi.importActual<typeof import('react')>('react')
 
   return {
-    Card: vi.fn(
-      ({
+    // NOTE: forwardRef lets Hand's selectedCardRef reach the rendered card,
+    // which is necessary for testing Hand's focus management.
+    Card: forwardRef<HTMLDivElement, CardProps>(function Card(
+      {
         cardInstance,
         sx,
         // Destructure and ignore props that are not valid for a div
@@ -43,39 +47,41 @@ vi.mock('../Card/Card', async () => {
         isFocused,
         stackActionButtonsBelowCard,
         ...props
-      }: CardProps) => {
-        const style: React.CSSProperties = {}
+      },
+      ref
+    ) {
+      const style: React.CSSProperties = {}
 
-        if (sx) {
-          const sxObject = isSxArray(sx)
-            ? // @ts-expect-error This is enough for the mock
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-              sx.reduce((acc, curr) => ({ ...acc, ...curr }), {})
-            : sx
+      if (sx) {
+        const sxObject = isSxArray(sx)
+          ? // @ts-expect-error This is enough for the mock
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            sx.reduce((acc, curr) => ({ ...acc, ...curr }), {})
+          : sx
 
+        // @ts-expect-error This is enough for the mock
+        if (sxObject?.transform) {
           // @ts-expect-error This is enough for the mock
-          if (sxObject?.transform) {
-            // @ts-expect-error This is enough for the mock
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, functional/immutable-data
-            style.transform = sxObject.transform
-          }
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, functional/immutable-data
+          style.transform = sxObject.transform
         }
-
-        return (
-          // @ts-expect-error This is enough for the mock
-          <div
-            {...props}
-            className={cardClassName}
-            style={style}
-            data-stack-action-buttons-below-card={String(
-              stackActionButtonsBelowCard
-            )}
-          >
-            {cardInstance.name}
-          </div>
-        )
       }
-    ),
+
+      return (
+        // @ts-expect-error This is enough for the mock
+        <div
+          {...props}
+          ref={ref}
+          className={cardClassName}
+          style={style}
+          data-stack-action-buttons-below-card={String(
+            stackActionButtonsBelowCard
+          )}
+        >
+          {cardInstance.name}
+        </div>
+      )
+    }),
   }
 })
 
@@ -88,10 +94,17 @@ const match = updatePlayer(baseMatch, baseMatch.sessionOwnerPlayerId, {
 
 const StubHand = ({
   isNarrowViewport = false,
+  shellContextOverrides = {},
   ...overrides
-}: Partial<HandProps> & { isNarrowViewport?: boolean }) => {
+}: Partial<HandProps> & {
+  isNarrowViewport?: boolean
+  shellContextOverrides?: Partial<ShellContextProps>
+}) => {
   return (
-    <StubShellContext isNarrowViewport={isNarrowViewport}>
+    <StubShellContext
+      isNarrowViewport={isNarrowViewport}
+      {...shellContextOverrides}
+    >
       <ActorContext.Provider>
         <Hand
           match={match}
@@ -302,6 +315,92 @@ describe('Hand', () => {
       'data-stack-action-buttons-below-card',
       'false'
     )
+  })
+
+  describe('when the hand card selection is locked', () => {
+    const setSelectedHandCardIdx = vi.fn()
+    const shellContextOverrides: Partial<ShellContextProps> = {
+      isHandCardSelectionLocked: true,
+      selectedHandCardIdx: 0,
+      isHandCardSelected: true,
+      setSelectedHandCardIdx,
+    }
+
+    const renderLockedHand = () => {
+      render(<StubHand shellContextOverrides={shellContextOverrides} />)
+
+      // NOTE: Hand resets the selection when it first receives its cards,
+      // which is not what these tests are concerned with.
+      setSelectedHandCardIdx.mockClear()
+    }
+
+    // NOTE: Mirrors the Hand being re-shown mid-placement, which moves DOM
+    // focus back onto the card being placed.
+    const focusSelectedCard = () => {
+      const card1 = screen
+        .getByText(handCards[0]!.name)
+        .closest<HTMLElement>(`.${cardClassName}`)
+
+      card1!.focus()
+    }
+
+    test('focusing another card does not change the selection', async () => {
+      renderLockedHand()
+
+      const card2 = screen
+        .getByText(handCards[1]!.name)
+        .closest(`.${cardClassName}`)
+
+      await userEvent.click(card2!)
+
+      expect(setSelectedHandCardIdx).not.toHaveBeenCalled()
+    })
+
+    test('losing focus does not reset the selection', async () => {
+      renderLockedHand()
+      focusSelectedCard()
+
+      await waitFor(() => {
+        ;(document.activeElement as HTMLElement).blur()
+      })
+
+      expect(setSelectedHandCardIdx).not.toHaveBeenCalled()
+    })
+
+    test('the selected card regains focus when the lock is lifted', () => {
+      const { rerender } = render(
+        <StubHand shellContextOverrides={shellContextOverrides} />
+      )
+
+      focusSelectedCard()
+      ;(document.activeElement as HTMLElement).blur()
+
+      rerender(
+        <StubHand
+          shellContextOverrides={{
+            ...shellContextOverrides,
+            isHandCardSelectionLocked: false,
+          }}
+        />
+      )
+
+      const card1 = screen
+        .getByText(handCards[0]!.name)
+        .closest(`.${cardClassName}`)
+
+      expect(document.activeElement).toBe(card1)
+    })
+
+    test('pressing Escape does not reset the selection', async () => {
+      renderLockedHand()
+      focusSelectedCard()
+
+      await waitFor(async () => {
+        await userEvent.keyboard('{Escape}')
+      })
+
+      expect(setSelectedHandCardIdx).not.toHaveBeenCalled()
+    })
   })
 
   describe('getGapPixelWidth', () => {
