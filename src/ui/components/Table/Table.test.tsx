@@ -1,18 +1,21 @@
-import { render, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 
-import { carrot, instantiate } from '../../../game/cards'
+import { addToDiscardPile } from '../../../game/reducers/add-to-discard-pile'
+import { updatePlayer } from '../../../game/reducers/update-player'
 import { lookup } from '../../../game/services/Lookup'
-import { IMatch, IPlayer } from '../../../game/types'
 import { stubMatch } from '../../../test-utils/stubs/match'
+import { stubCarrot } from '../../../test-utils/stubs/cards'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
 import { ActorContext } from '../Match/ActorContext'
+import { CardProps } from '../Card/types'
+import { FieldProps } from '../Field/Field'
 
-import { Table, TableProps } from './Table'
+import { getMobileIdleHandBottomOffset, Table, TableProps } from './Table'
 
-// NOTE: Mocking out the Card component improves test execution speed.
-// Typed as `any`: type errors are irrelevant for these tests, and the
-// real CardProps type fights the ad hoc rest-prop-spread shape here.
+// NOTE: Mocking out the Card component improves test execution speed
 vi.mock('../Card', () => ({
   Card: ({
     cardInstance,
@@ -23,25 +26,50 @@ vi.mock('../Card', () => ({
     playerId,
     isFlipped,
     size,
+    stackActionButtonsBelowCard,
     ...rest
-  }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  any) => (
-    // Not a plain `size={size}`: React's built-in attribute handling
-    // treats the native "size" attribute as numeric-only and silently
-    // drops a CardSize string value rather than rendering it, so tests
-    // that need to observe it (see "responsive hand card size" below)
-    // can't select on it. data-* attributes always pass through verbatim.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    <div data-card-size={size} {...rest} />
+  }: // NOTE: `size` is dropped by React when rendered on a plain <div> (it's
+  // only a valid HTML attribute on <input>/<select>), so it's surfaced
+  // explicitly here as a data attribute instead.
+  // @ts-expect-error Type errors are irrelevant for the tests
+  CardProps) => <div data-size={size} {...rest} />,
+}))
+
+vi.mock('../Field/Field', () => ({
+  Field: ({ playerId, cardSize, onSelectedCardIdxChange }: FieldProps) => (
+    <div
+      data-testid={`field_${playerId}`}
+      data-card-size={cardSize}
+      data-has-onselectedcardidxchange={String(
+        typeof onSelectedCardIdxChange === 'function'
+      )}
+    />
   ),
 }))
 
 const match = stubMatch()
 const opponentPlayerIds = lookup.getOpponentPlayerIds(match)
 
-const StubTable = (overrides: Partial<TableProps>) => {
+// NOTE: stubMatch's discard piles start empty, so DiscardPile renders no
+// cards by default -- seed one to test its cardSize propagation.
+const matchWithDiscardPileCard = addToDiscardPile(
+  match,
+  match.sessionOwnerPlayerId,
+  stubCarrot
+)
+
+// NOTE: stubMatch's hands start empty, so Hand renders no cards by
+// default -- seed one to test its cardSize propagation.
+const matchWithHandCard = updatePlayer(match, match.sessionOwnerPlayerId, {
+  hand: [stubCarrot],
+})
+
+const StubTable = ({
+  isNarrowViewport = false,
+  ...overrides
+}: Partial<TableProps> & { isNarrowViewport?: boolean }) => {
   return (
-    <StubShellContext>
+    <StubShellContext isNarrowViewport={isNarrowViewport}>
       <ActorContext.Provider>
         <Table match={match} {...overrides} />
       </ActorContext.Provider>
@@ -55,6 +83,16 @@ describe('Table', () => {
     const field = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
 
     expect(field).toBeInTheDocument()
+  })
+
+  test('wires onSelectedCardIdxChange to the session owner field only', () => {
+    render(<StubTable />)
+
+    const ownField = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
+    const opponentField = screen.getByTestId(`field_${opponentPlayerIds[0]}`)
+
+    expect(ownField.dataset.hasOnselectedcardidxchange).toEqual('true')
+    expect(opponentField.dataset.hasOnselectedcardidxchange).toEqual('false')
   })
 
   test.each([opponentPlayerIds])(
@@ -90,88 +128,156 @@ describe('Table', () => {
     expect(discardPile).toBeInTheDocument()
   })
 
-  describe('responsive hand card size', () => {
-    // stubMatch()'s default players have empty hands, so there's nothing
-    // to inspect the rendered size of - build one with a card in hand,
-    // spreading a real, fully-built match so every other required
-    // IMatch/ITable/IPlayer field stays populated.
-    const baseMatch = stubMatch()
-    const userPlayerId = baseMatch.sessionOwnerPlayerId
-    const userPlayerWithHand: IPlayer = {
-      // Non-null: sessionOwnerPlayerId is always a key of players.
-      ...baseMatch.table.players[userPlayerId]!,
-      hand: [instantiate(carrot)],
-    }
-    const matchWithHand: IMatch = {
-      ...baseMatch,
-      table: {
-        ...baseMatch.table,
-        players: {
-          ...baseMatch.table.players,
-          [userPlayerId]: userPlayerWithHand,
-        },
-      },
-    }
+  test('passes CardSize.SMALL to Field components on large viewports', () => {
+    render(<StubTable isNarrowViewport={false} />)
 
-    // Not window.innerWidth/matchMedia: card size is driven by this
-    // component's own rendered width (see useContainerWidth), not the
-    // viewport, so these tests drive it the same way - by invoking the
-    // mocked ResizeObserver's callback directly.
-    let resizeCallback: ResizeObserverCallback | undefined
+    const field = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
 
-    beforeEach(() => {
-      vi.stubGlobal(
-        'ResizeObserver',
-        class {
-          constructor(callback: ResizeObserverCallback) {
-            resizeCallback = callback
-          }
+    expect(field.getAttribute('data-card-size')).toBe(CardSize.SMALL)
+  })
 
-          observe = vi.fn()
-          unobserve = vi.fn()
-          disconnect = vi.fn()
-        }
-      )
+  test('passes CardSize.COMPACT to Field components on narrow viewports', () => {
+    render(<StubTable isNarrowViewport={true} />)
+
+    const selfField = screen.getByTestId(`field_${match.sessionOwnerPlayerId}`)
+    const opponentField = screen.getByTestId(`field_${opponentPlayerIds[0]}`)
+
+    expect(selfField.getAttribute('data-card-size')).toBe(CardSize.COMPACT)
+    expect(opponentField.getAttribute('data-card-size')).toBe(CardSize.COMPACT)
+  })
+
+  test('passes CardSize.SMALL to Deck and DiscardPile on large viewports', () => {
+    render(
+      <StubTable isNarrowViewport={false} match={matchWithDiscardPileCard} />
+    )
+
+    const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
+    const discardPile = screen.getByTestId(
+      `discard-pile_${match.sessionOwnerPlayerId}`
+    )
+
+    expect(deck.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.SMALL
+    )
+    expect(discardPile.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.SMALL
+    )
+  })
+
+  test('passes CardSize.COMPACT to Deck and DiscardPile on narrow viewports', () => {
+    render(
+      <StubTable isNarrowViewport={true} match={matchWithDiscardPileCard} />
+    )
+
+    const deck = screen.getByTestId(`deck_${match.sessionOwnerPlayerId}`)
+    const discardPile = screen.getByTestId(
+      `discard-pile_${match.sessionOwnerPlayerId}`
+    )
+
+    expect(deck.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.COMPACT
+    )
+    expect(discardPile.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.COMPACT
+    )
+  })
+
+  test('passes CardSize.MEDIUM to Hand on large viewports', () => {
+    render(<StubTable isNarrowViewport={false} match={matchWithHandCard} />)
+
+    const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
+
+    expect(hand.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.MEDIUM
+    )
+  })
+
+  test('passes CardSize.COMPACT to Hand on narrow viewports', () => {
+    render(<StubTable isNarrowViewport={true} match={matchWithHandCard} />)
+
+    const hand = screen.getByTestId(`hand_${match.sessionOwnerPlayerId}`)
+
+    expect(hand.querySelector('[data-size]')).toHaveAttribute(
+      'data-size',
+      CardSize.COMPACT
+    )
+  })
+
+  test('centers the idle hand between the player field and the bottom of the screen on narrow viewports', () => {
+    // NOTE: On narrow viewports, the hand's idle (unselected) position is a
+    // special case -- rather than mostly-hidden cards peeking up from the
+    // bottom edge (the large-screen behavior), the hand is fully visible
+    // and vertically centered in the gap between the player's own Field
+    // and the bottom of the screen.
+    const fieldBottomPx = 300
+
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: fieldBottomPx,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => undefined,
     })
 
-    afterEach(() => {
-      vi.unstubAllGlobals()
-      resizeCallback = undefined
+    render(<StubTable isNarrowViewport={true} match={matchWithHandCard} />)
+
+    const handContainer = screen.getByTestId(
+      `hand_${match.sessionOwnerPlayerId}`
+    ).parentElement as HTMLElement
+    const expectedBottom = getMobileIdleHandBottomOffset(
+      window.innerHeight - fieldBottomPx,
+      CARD_DIMENSIONS[CardSize.COMPACT].height
+    )
+    // NOTE: jsdom's CSS parser can't handle max() over mixed px/rem units
+    // (so getComputedStyle reports nothing), so this checks the rule Emotion
+    // emitted for the hand container's class instead.
+    const emittedStyles = [...document.querySelectorAll('style')]
+      .map(style => style.textContent)
+      .join('')
+    const handContainerRule = [...handContainer.classList]
+      .map(className => emittedStyles.split(`.${className}{`)[1]?.split('}')[0])
+      .find(Boolean)
+
+    expect(handContainerRule).toContain(`bottom:${expectedBottom};`)
+  })
+
+  test('does not affect the idle hand position on large viewports', () => {
+    const fieldBottomPx = 300
+
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      bottom: fieldBottomPx,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+      toJSON: () => undefined,
     })
 
-    const setContainerWidth = (width: number) => {
-      act(() => {
-        resizeCallback?.(
-          [{ contentRect: { width } }] as ResizeObserverEntry[],
-          {} as ResizeObserver
-        )
-      })
-    }
+    render(<StubTable isNarrowViewport={false} match={matchWithHandCard} />)
 
-    test('uses small cards when the container is narrower than the md breakpoint', () => {
-      render(<StubTable match={matchWithHand} />)
-      setContainerWidth(500)
+    const handContainer = screen.getByTestId(
+      `hand_${match.sessionOwnerPlayerId}`
+    ).parentElement as HTMLElement
+    const offsetPx = parseFloat(getComputedStyle(handContainer).bottom)
+    const mediumHeightPx =
+      parseFloat(CARD_DIMENSIONS[CardSize.MEDIUM].height) * 16
+    const referenceOffsetPx = -64
+    const visibleFraction = (mediumHeightPx + offsetPx) / mediumHeightPx
+    const referenceVisibleFraction =
+      (mediumHeightPx + referenceOffsetPx) / mediumHeightPx
 
-      const hand = screen.getByTestId(
-        `hand_${matchWithHand.sessionOwnerPlayerId}`
-      )
-
-      expect(
-        hand.querySelector(`[data-card-size="${CardSize.SMALL}"]`)
-      ).toBeInTheDocument()
-    })
-
-    test('uses medium cards when the container is at least as wide as the md breakpoint', () => {
-      render(<StubTable match={matchWithHand} />)
-      setContainerWidth(1000)
-
-      const hand = screen.getByTestId(
-        `hand_${matchWithHand.sessionOwnerPlayerId}`
-      )
-
-      expect(
-        hand.querySelector(`[data-card-size="${CardSize.MEDIUM}"]`)
-      ).toBeInTheDocument()
-    })
+    expect(visibleFraction).toBeCloseTo(referenceVisibleFraction, 5)
   })
 })

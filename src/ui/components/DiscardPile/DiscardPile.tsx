@@ -43,7 +43,7 @@ export const DiscardPile = ({
         outlineStyle: 'solid',
         outlineWidth: '2px',
         outlineColor: theme.palette.divider,
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: `${theme.shape.borderRadius}px`,
         ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
       }}
       {...rest}

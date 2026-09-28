@@ -12,12 +12,17 @@ import {
 import { stubMatch } from '../../../test-utils/stubs/match'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { isSxArray } from '../../type-guards'
+import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { CardSize } from '../../types'
 import { CardProps } from '../Card/types'
 import { ActorContext } from '../Match/ActorContext'
+
+import { assertIsNonNullable } from '../../../game/types/assertions'
 
 import {
   Field,
   FieldProps,
+  focusedFieldCardSize,
   rotationTransform,
   selectedCardLabel,
   unselectedCardLabel,
@@ -39,6 +44,8 @@ vi.mock('../Card', () => ({
     isFocused,
     paperProps,
     sx,
+    size,
+    stackActionButtonsBelowCard,
     ...rest
   }: CardProps) => {
     const style = sx && isSxArray(sx) ? sx?.[0] || {} : {}
@@ -50,8 +57,15 @@ vi.mock('../Card', () => ({
     }
 
     return (
-      // @ts-expect-error Type error is acceptable for tests
-      <div {...rest} style={style}>
+      <div
+        {...rest}
+        data-size={size}
+        data-stack-action-buttons-below-card={String(
+          stackActionButtonsBelowCard
+        )}
+        // @ts-expect-error Type error is acceptable for tests
+        style={style}
+      >
         <label>{cardInstance.name}</label>
       </div>
     )
@@ -61,9 +75,7 @@ vi.mock('../Card', () => ({
 let matchStub = stubMatch()
 const opponentPlayerId = Object.keys(matchStub.table.players)[1]
 
-if (!opponentPlayerId) {
-  throw new Error('Opponent player not found')
-}
+assertIsNonNullable(opponentPlayerId)
 
 const cropsStub = [
   undefined,
@@ -80,9 +92,12 @@ matchStub = updateField(matchStub, opponentPlayerId, {
   cards: cropsStub,
 })
 
-const StubField = (overrides: Partial<FieldProps>) => {
+const StubField = ({
+  isNarrowViewport = false,
+  ...overrides
+}: Partial<FieldProps> & { isNarrowViewport?: boolean }) => {
   return (
-    <StubShellContext>
+    <StubShellContext isNarrowViewport={isNarrowViewport}>
       <ActorContext.Provider>
         <Field
           match={matchStub}
@@ -138,16 +153,14 @@ describe('Field', () => {
     const [playedCrop1, ...restPlayedCrops] =
       screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
     const { transform: playedCrop1Transform } = getComputedStyle(playedCrop1)
 
     expect(playedCrop1Transform).toMatchInlineSnapshot(
-      `"translateX(512px) translateY(359px) scale(1.25)"`
+      `"translateX(512px) translateY(384px) scale(1.25)"`
     )
     expect(playedCrop1).toHaveAttribute('aria-label', selectedCardLabel)
 
@@ -159,21 +172,49 @@ describe('Field', () => {
     }
   })
 
+  test('the field row never clips its contents', async () => {
+    render(<StubField />)
+
+    const row = screen.getByTestId(
+      `field_${matchStub.sessionOwnerPlayerId}`
+    ).firstElementChild
+
+    assertIsNonNullable(row)
+
+    // NOTE: Plot outlines/box-shadows paint outside their own layout box,
+    // and a selected card is translated toward the center of the viewport
+    // (see Field.tsx's handleCardFocus) -- the row must never clip any of
+    // that, whether or not a card is selected.
+    expect(getComputedStyle(row).overflow).toEqual('visible')
+
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    assertIsNonNullable(playedCrop1)
+
+    await userEvent.click(playedCrop1)
+
+    expect(getComputedStyle(row).overflow).toEqual('visible')
+
+    await waitFor(() => {
+      ;(document.activeElement as HTMLElement).blur()
+    })
+
+    expect(getComputedStyle(row).overflow).toEqual('visible')
+  })
+
   test("clicking an opponent's card selects it", async () => {
     render(<StubField playerId={opponentPlayerId} />)
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
     const { transform } = getComputedStyle(playedCrop1)
 
     expect(transform).toMatchInlineSnapshot(
-      `"translateX(512px) translateY(409px) scale(1.25)"`
+      `"translateX(512px) translateY(384px) scale(1.25)"`
     )
     expect(transform).not.toContain(rotationTransform)
   })
@@ -183,9 +224,7 @@ describe('Field', () => {
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
@@ -205,9 +244,8 @@ describe('Field', () => {
     const [playedCrop1, playedCrop2] =
       screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1 || !playedCrop2) {
-      throw new Error('Crops not found')
-    }
+    assertIsNonNullable(playedCrop1)
+    assertIsNonNullable(playedCrop2)
 
     await userEvent.click(playedCrop1)
 
@@ -220,7 +258,7 @@ describe('Field', () => {
 
     expect(card1Transform).toMatchInlineSnapshot(`""`)
     expect(card2Transform).toMatchInlineSnapshot(
-      `"translateX(512px) translateY(359px) scale(1.25)"`
+      `"translateX(512px) translateY(384px) scale(1.25)"`
     )
     expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
     expect(playedCrop2).toHaveAttribute('aria-label', selectedCardLabel)
@@ -231,9 +269,7 @@ describe('Field', () => {
 
     const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
 
-    if (!playedCrop1) {
-      throw new Error('Crop not found')
-    }
+    assertIsNonNullable(playedCrop1)
 
     await userEvent.click(playedCrop1)
 
@@ -245,5 +281,149 @@ describe('Field', () => {
 
     expect(card1Transform).toMatchInlineSnapshot(`""`)
     expect(document.activeElement).toBe(document.body)
+  })
+
+  describe('on a compact (narrow-viewport) field', () => {
+    test('renders the focused card at focusedFieldCardSize instead of scaling it', async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      assertIsNonNullable(playedCrop1)
+
+      await userEvent.click(playedCrop1)
+
+      expect(playedCrop1.querySelector('[data-size]')).toHaveAttribute(
+        'data-size',
+        focusedFieldCardSize
+      )
+    })
+
+    test('centers the focused card with a translate, not a scale', async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      assertIsNonNullable(playedCrop1)
+
+      await userEvent.click(playedCrop1)
+
+      const style = getComputedStyle(playedCrop1)
+
+      // NOTE: position stays 'relative' (unchanged from the unselected
+      // state) throughout -- that's what lets the transform below
+      // transition smoothly from the card's actual position in the
+      // field, rather than jumping there. See the sx comment in
+      // Field.tsx for why.
+      expect(style.position).toEqual('relative')
+      expect(style.transform).toContain('translateX(')
+      expect(style.transform).toContain('translateY(')
+      expect(style.transform).not.toContain('scale(')
+    })
+
+    test("pins the focused card's own layout box to cardSize so the row does not reflow", async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const row = screen.getByTestId(
+        `field_${matchStub.sessionOwnerPlayerId}`
+      ).firstElementChild
+
+      assertIsNonNullable(row)
+
+      const childCountBeforeSelection = row.children.length
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      assertIsNonNullable(playedCrop1)
+
+      await userEvent.click(playedCrop1)
+
+      const style = getComputedStyle(playedCrop1)
+
+      expect(style.width).toEqual(CARD_DIMENSIONS[CardSize.COMPACT].width)
+      expect(style.height).toEqual(CARD_DIMENSIONS[CardSize.COMPACT].height)
+      expect(row.children.length).toEqual(childCountBeforeSelection)
+    })
+
+    test('does not reposition the focused card on blur', async () => {
+      render(<StubField cardSize={CardSize.COMPACT} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      assertIsNonNullable(playedCrop1)
+
+      await userEvent.click(playedCrop1)
+
+      await waitFor(() => {
+        ;(document.activeElement as HTMLElement).blur()
+      })
+
+      expect(getComputedStyle(playedCrop1).transform).toEqual('')
+      expect(playedCrop1).toHaveAttribute('aria-label', unselectedCardLabel)
+    })
+  })
+
+  test('stacks action buttons below the card on a narrow viewport', () => {
+    render(<StubField isNarrowViewport={true} />)
+
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    assertIsNonNullable(playedCrop1)
+
+    expect(playedCrop1.querySelector('[data-size]')).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'true'
+    )
+  })
+
+  test('does not stack action buttons below the card on a large viewport', () => {
+    render(<StubField isNarrowViewport={false} />)
+
+    const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+    assertIsNonNullable(playedCrop1)
+
+    expect(playedCrop1.querySelector('[data-size]')).toHaveAttribute(
+      'data-stack-action-buttons-below-card',
+      'false'
+    )
+  })
+
+  describe('onSelectedCardIdxChange', () => {
+    test('is called with the field index when a card is focused', async () => {
+      const onSelectedCardIdxChange = vi.fn()
+
+      render(<StubField onSelectedCardIdxChange={onSelectedCardIdxChange} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      assertIsNonNullable(playedCrop1)
+
+      onSelectedCardIdxChange.mockClear()
+
+      await userEvent.click(playedCrop1)
+
+      expect(onSelectedCardIdxChange).toHaveBeenCalledWith(1)
+    })
+
+    test('is called with the deselected index again when the card loses focus', async () => {
+      const onSelectedCardIdxChange = vi.fn()
+
+      render(<StubField onSelectedCardIdxChange={onSelectedCardIdxChange} />)
+
+      const [playedCrop1] = screen.getAllByLabelText(unselectedCardLabel)
+
+      assertIsNonNullable(playedCrop1)
+
+      await userEvent.click(playedCrop1)
+
+      onSelectedCardIdxChange.mockClear()
+
+      await waitFor(() => {
+        ;(document.activeElement as HTMLElement).blur()
+      })
+
+      expect(onSelectedCardIdxChange).toHaveBeenCalledWith(-1)
+    })
   })
 })

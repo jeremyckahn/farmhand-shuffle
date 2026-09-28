@@ -8,6 +8,7 @@ import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { cards as cardImages } from '../../img'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
+import { cropWaterIndicatorOutlineColor } from '../Card/CardCore'
 import { BaseCardProps } from '../Card/types'
 import { Image } from '../Image'
 
@@ -36,6 +37,20 @@ export const PlayedCard = ({
   const { canBeWatered, canBeHarvested, waterIconsToRender } =
     usePlayedCardLogic({ playedCard })
 
+  // NOTE: Shared by both the compact (notch) and full (icon) water
+  // indicator renderers below -- only the visual differs between them.
+  const waterIndicatorOpacities = isPlayedCrop(playedCard)
+    ? Array.from({ length: waterIconsToRender }, (_, idx) => {
+        if (isInBackground) {
+          return 0
+        }
+
+        const isFilled = idx < playedCard.waterCards
+
+        return isFilled ? 1 : unfilledWaterIndicatorOpacity
+      })
+    : []
+
   return (
     <Box
       className={playedCardClassName}
@@ -48,26 +63,53 @@ export const PlayedCard = ({
         canBeHarvested={canBeHarvested}
         {...cardProps}
       />
-      {isPlayedCrop(playedCard) && (
-        <Grid
-          container
-          spacing={1}
-          pt={2.5}
-          ml={theme.spacing(-0.5)}
-          justifyContent="flex-start"
-        >
-          {new Array(waterIconsToRender).fill(null).map((_, idx) => {
-            let opacity = 1
-
-            const isFilled = idx < playedCard.waterCards
-
-            if (isInBackground) {
-              opacity = 0
-            } else if (!isFilled) {
-              opacity = unfilledWaterIndicatorOpacity
-            }
-
-            return (
+      {isPlayedCrop(playedCard) &&
+        (size === CardSize.COMPACT ? (
+          <Box
+            display="flex"
+            gap={theme.spacing(0.25)}
+            pt={0.5}
+            aria-label="Water card indicator"
+            // NOTE: On narrow viewports, a focused card's action button(s)
+            // render below the card via absolute positioning and overflow
+            // past its own box (see CardCore.tsx). Without this, this
+            // indicator row -- an unpositioned sibling that comes after
+            // Card in the DOM -- paints on top of that overflowing
+            // content regardless, making the button look translucent.
+            // Negative z-index (on now-positioned relative) drops it
+            // behind Card's own stacking layer instead.
+            position="relative"
+            zIndex={-1}
+          >
+            {waterIndicatorOpacities.map((opacity, idx) => (
+              <Box
+                key={idx}
+                sx={{
+                  flex: 1,
+                  height: '4px',
+                  borderRadius: '2px',
+                  background: cropWaterIndicatorOutlineColor,
+                  opacity,
+                  transition: theme.transitions.create(['opacity']),
+                }}
+              />
+            ))}
+          </Box>
+        ) : (
+          <Grid
+            container
+            spacing={1}
+            pt={2.5}
+            width={CARD_DIMENSIONS[size].width}
+            ml={theme.spacing(-0.5)}
+            justifyContent="flex-start"
+            // NOTE: See the matching comment on the compact notch row above
+            // -- this keeps the indicator row from painting over a focused
+            // card's overflowing action button(s).
+            position="relative"
+            zIndex={-1}
+          >
+            {waterIndicatorOpacities.map((opacity, idx) => (
               <Grid
                 key={idx}
                 item
@@ -83,10 +125,9 @@ export const PlayedCard = ({
                   }}
                 />
               </Grid>
-            )
-          })}
-        </Grid>
-      )}
+            ))}
+          </Grid>
+        ))}
     </Box>
   )
 }

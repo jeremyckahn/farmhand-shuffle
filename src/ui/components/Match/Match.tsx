@@ -1,15 +1,21 @@
-import Box from '@mui/material/Box/index.js'
-import Button from '@mui/material/Button/index.js'
-import Container from '@mui/material/Container/index.js'
-import Dialog from '@mui/material/Dialog/index.js'
-import DialogActions from '@mui/material/DialogActions/index.js'
-import DialogContent from '@mui/material/DialogContent/index.js'
-import DialogTitle from '@mui/material/DialogTitle/index.js'
-import Fab from '@mui/material/Fab/index.js'
+import {
+  ChevronLeft,
+  ChevronRight,
+  KeyboardArrowDown,
+} from '@mui/icons-material'
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Fab from '@mui/material/Fab'
+import Fade from '@mui/material/Fade'
 import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import useTheme from '@mui/material/styles/useTheme'
 import Tooltip from '@mui/material/Tooltip/index.js'
 import { funAnimalName } from 'fun-animal-names'
+import { PointerEvent } from 'react'
 
 import { isSxArray } from '../../type-guards'
 import { NotificationProvider } from '../../context/NotificationContext'
@@ -19,7 +25,9 @@ import {
 } from '../constants'
 import { ui } from '../../img'
 import { lightTheme } from '../../theme'
-import { KeyboardArrowDown } from '../icons/index.js'
+import { cardClassName } from '../Card/CardCore'
+import { selectedCardLabel } from '../Field/Field'
+import { playedCardClassName } from '../PlayedCard'
 import { Table } from '../Table'
 import { TurnControl } from '../TurnControl'
 
@@ -27,6 +35,11 @@ import { ActorContext } from './ActorContext'
 import { ShellContext } from './ShellContext'
 import { MatchProps } from './types'
 import { useMatch } from './useMatch'
+
+enum Direction {
+  NEXT = 1,
+  PREVIOUS = -1,
+}
 
 const MatchCore = ({
   playerSeeds,
@@ -50,6 +63,7 @@ const MatchCore = ({
     handleClickPlayAgain,
     isHandDisabled,
     isInputBlocked,
+    isSelectingFieldPosition,
     shellContextValue,
     showGameOver,
     showHand,
@@ -63,16 +77,103 @@ const MatchCore = ({
   })
 
   const { winner } = match
+  const {
+    selectedHandCardIdx,
+    isNarrowViewport,
+    isHandCardSelected,
+    isFieldCardSelected,
+    handContainerRef,
+    fieldContainerRef,
+  } = shellContextValue
+  const isCardFocused = isHandCardSelected || isFieldCardSelected
+  // NOTE: The Fabs stay mounted (see isNarrowViewport below) so Fade can
+  // animate them out, rather than this condition unmounting them outright.
+  const showCardNavFabs = isCardFocused && !isSelectingFieldPosition
+
+  // NOTE: Shared by both branches of handleCardNav below -- wraps `currentIdx`
+  // by `direction` around `cards.length` and focuses the resulting card,
+  // exactly like Tab already does, so all of the existing focus-driven
+  // positioning/centering logic in Hand.tsx and Field.tsx applies unchanged.
+  const focusAdjacentCard = (
+    cards: HTMLElement[],
+    currentIdx: number,
+    direction: Direction
+  ) => {
+    if (cards.length === 0) {
+      return
+    }
+
+    const nextIdx = (currentIdx + direction + cards.length) % cards.length
+
+    cards[nextIdx]?.focus()
+  }
+
+  // NOTE: On mobile, the focused Hand/Field card can be hard to move away
+  // from by touch alone (its neighbors are mostly hidden behind it) -- these
+  // buttons step focus to the next/previous card in whichever collection
+  // (Hand or the player's own Field) currently has a card focused. This
+  // deliberately reads the current selection from React state
+  // (selectedHandCardIdx/selectedFieldCardIdx) rather than
+  // document.activeElement -- clicking the Fab itself can shift DOM focus
+  // to the Fab before this handler runs, which would make an
+  // activeElement-based lookup see the wrong (or no) card.
+  const handleCardNav = (direction: Direction) => {
+    if (isHandCardSelected) {
+      const cards = handContainerRef.current
+        ? [
+            ...handContainerRef.current.querySelectorAll<HTMLElement>(
+              `.${cardClassName}`
+            ),
+          ]
+        : []
+
+      focusAdjacentCard(cards, selectedHandCardIdx, direction)
+
+      return
+    }
+
+    if (isFieldCardSelected) {
+      const cards = fieldContainerRef.current
+        ? [
+            ...fieldContainerRef.current.querySelectorAll<HTMLElement>(
+              `.${playedCardClassName}`
+            ),
+          ]
+        : []
+
+      // NOTE: selectedFieldCardIdx is a field slot index, which can be
+      // sparse (played cards don't have to fill every slot), so its value
+      // doesn't map directly to a position in `cards` (which only
+      // contains played cards). Find the currently-selected card's actual
+      // position among them via its aria-label instead -- that reflects
+      // Field's own React state, so (unlike document.activeElement) it's
+      // unaffected by the Fab momentarily taking DOM focus.
+      const currentIdx = cards.findIndex(
+        card => card.getAttribute('aria-label') === selectedCardLabel
+      )
+
+      if (currentIdx === -1) {
+        return
+      }
+
+      focusAdjacentCard(cards, currentIdx, direction)
+    }
+  }
+
+  // NOTE: A real (non-keyboard) click on a button focuses it by default,
+  // which would blur the currently-focused card -- Hand.tsx and Field.tsx
+  // both reset their selection on blur, so without this the tap would
+  // clear the very selection handleCardNav above is trying to move.
+  // preventDefault on pointerdown (covers touch and mouse) stops that
+  // default focus shift, leaving the card focused throughout the click.
+  const handleCardNavFabPointerDown = (event: PointerEvent) => {
+    event.preventDefault()
+  }
 
   return (
     <ShellContext.Provider value={shellContextValue}>
       <Container
         maxWidth={false}
-        // MUI Container applies its own left/right padding by default,
-        // which would inset the inner scrollable Box's edges (and thus its
-        // scrollbar) away from this Container's true edges. That padding
-        // is applied to the inner Box's content instead, below, so the
-        // scrollbar itself renders flush with this Container's edge.
         disableGutters
         data-testid="match"
         sx={[
@@ -92,29 +193,18 @@ const MatchCore = ({
             color: theme.palette.common.white,
             display: 'flex',
             flexDirection: 'column',
-            // Table positions the Hand with `position: fixed`, intending
-            // it to stay pinned to the bottom of this container's visible
-            // area while Field/Table content scrolls past above it - but
-            // per spec, a `fixed` element's containing block is always the
-            // viewport, not any ancestor, regardless of that ancestor's
-            // own position/overflow. In a host app that renders Match
-            // alongside other UI (e.g. a sidebar), that centers the Hand
-            // against the whole browser window instead of this container,
-            // visibly off-center. Any transform on an ancestor establishes
-            // a new containing block for fixed descendants (a spec'd CSS
+            // The hide/show Hand button and the narrow-viewport card-nav
+            // Fabs below are `position: fixed`, intending to stay pinned
+            // within this container's visible area - but per spec, a
+            // `fixed` element's containing block is always the viewport,
+            // not any ancestor, regardless of that ancestor's own
+            // position/overflow. In a host app that renders Match alongside
+            // other UI (e.g. a sidebar), that centers them against the
+            // whole browser window instead of this container, visibly
+            // off-center. Any transform on an ancestor establishes a new
+            // containing block for fixed descendants (a spec'd CSS
             // mechanism, not a hack) - this restores the intended
             // "positioned relative to this container" behavior.
-            //
-            // That containing-block redirection has a second consequence
-            // though: a `fixed` descendant of a scrolling containing block
-            // scrolls along with that block's content instead of staying
-            // pinned (also per spec - a scrolling containing block moves
-            // its own fixed descendants same as it would absolute ones).
-            // So this element itself must NOT be the scrolling element -
-            // scrolling is delegated to the plain (non-containing-block)
-            // inner Box below, which the Hand and hide/show button skip
-            // past on their way up to this Container, leaving them
-            // unaffected by its scroll.
             overflow: 'hidden',
             transform: 'translateZ(0)',
             ...(isInputBlocked && {
@@ -128,67 +218,75 @@ const MatchCore = ({
         ]}
         {...rest}
       >
-        <Box
-          sx={{
-            flex: 1,
-            minHeight: 0,
-            overflowY: 'auto',
-            // Never horizontally scrollable: Table/Field content is sized
-            // to fit whatever width this container actually has (see
-            // useContainerWidth), so any horizontal overflow here would be
-            // a layout bug, not a legitimate need to scroll sideways.
-            overflowX: 'hidden',
-            pt: 1,
-            px: 2,
-            // NOTE: This prevents the hide/show Hand button from obscuring
-            // Field cards.
-            pb: 10,
-          }}
-        >
-          <TurnControl
-            match={match}
-            useGenericPlayerLabels={useGenericPlayerLabels}
-          />
-          {renderStatusBarContent?.()}
-          <Table sx={{ pt: 4 }} match={match} />
-        </Box>
-        <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
-          <Fab
-            color="secondary"
-            disabled={isInputBlocked || isHandDisabled}
-            onClick={handleHandVisibilityToggle}
-            sx={{
-              position: 'fixed',
-              // Matches the host Farmhand app's own bottom nav row
-              // pixel-for-pixel, so this button lines up with it at
-              // every screen size instead of just some. That row's own
-              // vertical offset isn't just its container's `bottom`
-              // (1rem normally / 0.5rem at <=400px) - each button in it
-              // also carries its own margin-bottom (0.4375rem normally,
-              // 0.21875rem at <=400px, from a breakpoint-specific rule
-              // on the host's side), which stacks with the container's
-              // own offset. Measured directly against the host's
-              // rendered layout rather than derived, since the second
-              // number isn't otherwise discoverable from this package
-              // alone. left matches bottom exactly rather than being
-              // independently chosen, so this button sits the same
-              // distance from each of its two nearest edges.
-              bottom: '1.4375rem',
-              left: '1.4375rem',
-              '@media (max-width: 400px)': {
-                bottom: '0.71875rem',
-                left: '0.71875rem',
-              },
-            }}
-          >
-            <KeyboardArrowDown
-              sx={{
-                transform: `rotate(${showHand ? 0 : 180}deg)`,
-                transition: theme.transitions.create(['transform']),
-              }}
-            />
-          </Fab>
-        </Tooltip>
+        <TurnControl
+          match={match}
+          useGenericPlayerLabels={useGenericPlayerLabels}
+        />
+        {renderStatusBarContent?.()}
+        <Table sx={{ pt: 4 }} match={match} />
+        {
+          // NOTE: On narrow viewports, the card-navigation Fabs replace the
+          // always-visible hide/show control below -- with those Fabs and
+          // Table.tsx's mobile-specific hand positioning already in play
+          // there, a separate hide/show control is one more affordance than
+          // the mobile layout needs.
+          isNarrowViewport ? (
+            <>
+              <Fade in={showCardNavFabs} unmountOnExit>
+                <Fab
+                  color="secondary"
+                  aria-label="Previous card"
+                  onPointerDown={handleCardNavFabPointerDown}
+                  onClick={() => handleCardNav(Direction.PREVIOUS)}
+                  sx={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: theme.spacing(2),
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  <ChevronLeft />
+                </Fab>
+              </Fade>
+              <Fade in={showCardNavFabs} unmountOnExit>
+                <Fab
+                  color="secondary"
+                  aria-label="Next card"
+                  onPointerDown={handleCardNavFabPointerDown}
+                  onClick={() => handleCardNav(Direction.NEXT)}
+                  sx={{
+                    position: 'fixed',
+                    top: '50%',
+                    right: theme.spacing(2),
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  <ChevronRight />
+                </Fab>
+              </Fade>
+            </>
+          ) : (
+            <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
+              <Fab
+                color="secondary"
+                disabled={isInputBlocked || isHandDisabled}
+                onClick={handleHandVisibilityToggle}
+                sx={{
+                  position: 'fixed',
+                  bottom: theme.spacing(2),
+                  left: theme.spacing(2),
+                }}
+              >
+                <KeyboardArrowDown
+                  sx={{
+                    transform: `rotate(${showHand ? 0 : 180}deg)`,
+                    transition: theme.transitions.create(['transform']),
+                  }}
+                />
+              </Fab>
+            </Tooltip>
+          )
+        }
         <Dialog open={showGameOver}>
           <DialogTitle>Game Over</DialogTitle>
           <DialogContent>

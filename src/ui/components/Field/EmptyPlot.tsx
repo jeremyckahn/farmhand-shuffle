@@ -1,8 +1,4 @@
-import Box from '@mui/material/Box/index.js'
-import Grid from '@mui/material/Grid/index.js'
-import Typography from '@mui/material/Typography/index.js'
-import { darken, lighten } from '@mui/material/styles/index.js'
-import useTheme from '@mui/material/styles/useTheme'
+import { Box, darken, lighten, Typography, useTheme } from '@mui/material'
 import { useContext } from 'react'
 
 import { MatchEvent, MatchState } from '../../../game/types'
@@ -18,10 +14,8 @@ export const EmptyPlot = ({
   cardSize = CardSize.SMALL,
   playerId,
   fieldIdx,
-  gridItemXs = 6,
 }: Pick<FieldProps, 'cardSize' | 'playerId'> & {
   fieldIdx: number
-  gridItemXs?: number
 }) => {
   const theme = useTheme()
 
@@ -52,56 +46,55 @@ export const EmptyPlot = ({
   }
 
   return (
-    <Grid item xs={gridItemXs}>
-      <Box
-        height={CARD_DIMENSIONS[cardSize].height}
-        width={CARD_DIMENSIONS[cardSize].width}
-        onClick={handleClick}
-        sx={{
-          mx: 'auto',
-          outlineStyle: 'solid',
-          outlineWidth: '2px',
-          outlineColor: canBeSelected
-            ? theme.palette.primary.light
-            : theme.palette.divider,
-          borderRadius: theme.shape.borderRadius,
-          transition: theme.transitions.create(['background', 'transform']),
-          boxShadow: canBeSelected
-            ? `0 0 12px 4px ${theme.palette.primary.light}`
-            : 'none',
-          alignContent: 'center',
-          ...(canBeSelected && {
-            cursor: 'pointer',
-            ':hover': {
-              transform: 'scale(1.2)',
-              background:
-                theme.palette.mode === 'light'
-                  ? darken(theme.palette.primary.light, 0.1)
-                  : lighten(theme.palette.primary.light, 0.5),
-              '> p': {
-                opacity: 1,
-              },
+    <Box
+      height={CARD_DIMENSIONS[cardSize].height}
+      width={CARD_DIMENSIONS[cardSize].width}
+      onClick={handleClick}
+      sx={{
+        flexShrink: 0,
+        mx: 'auto',
+        outlineStyle: 'solid',
+        outlineWidth: '2px',
+        outlineColor: canBeSelected
+          ? theme.palette.primary.light
+          : theme.palette.divider,
+        borderRadius: `${theme.shape.borderRadius}px`,
+        transition: theme.transitions.create(['background', 'transform']),
+        boxShadow: canBeSelected
+          ? `0 0 12px 4px ${theme.palette.primary.light}`
+          : 'none',
+        alignContent: 'center',
+        ...(canBeSelected && {
+          cursor: 'pointer',
+          ':hover': {
+            transform: 'scale(1.2)',
+            background:
+              theme.palette.mode === 'light'
+                ? darken(theme.palette.primary.light, 0.1)
+                : lighten(theme.palette.primary.light, 0.5),
+            '> p': {
+              opacity: 1,
             },
-          }),
-        }}
-      >
-        {canBeSelected && (
-          <Typography
-            variant="caption"
-            component="p"
-            sx={{
-              color: theme.palette.primary.contrastText,
-              fontWeight: theme.typography.fontWeightBold,
-              opacity: 0,
-              textAlign: 'center',
-              textTransform: 'uppercase',
-              transition: theme.transitions.create(['opacity']),
-            }}
-          >
-            Place card
-          </Typography>
-        )}
-      </Box>
-    </Grid>
+          },
+        }),
+      }}
+    >
+      {canBeSelected && (
+        <Typography
+          variant="caption"
+          component="p"
+          sx={{
+            color: theme.palette.primary.contrastText,
+            fontWeight: theme.typography.fontWeightBold,
+            opacity: 0,
+            textAlign: 'center',
+            textTransform: 'uppercase',
+            transition: theme.transitions.create(['opacity']),
+          }}
+        >
+          Place card
+        </Typography>
+      )}
+    </Box>
   )
 }

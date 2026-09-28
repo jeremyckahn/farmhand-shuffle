@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react'
+import { ReactNode, useMemo, useRef, useState } from 'react'
 
 import { Mock } from 'vitest'
 
@@ -6,7 +6,7 @@ import {
   ShellContext,
   ShellContextProps,
 } from '../components/Match/ShellContext'
-import { deselectedHandIdx } from '../components/constants'
+import { deselectedCardIdx } from '../components/constants'
 
 import { isStorybook } from './isStorybook'
 
@@ -29,21 +29,33 @@ export const StubShellContext = ({
   mockImplementation?: Mock
 } & Partial<ShellContextProps>) => {
   const [selectedHandCardIdx, setSelectedHandCardIdx] =
-    useState(deselectedHandIdx)
+    useState(deselectedCardIdx)
+  const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
+    useState(deselectedCardIdx)
 
   const setIsHandInViewport = useMemo(
     () => (useVitestMocks ? vi.fn() : () => {}),
     [useVitestMocks]
   )
 
+  const handContainerRef = useRef<HTMLDivElement | null>(null)
+  const fieldContainerRef = useRef<HTMLDivElement | null>(null)
+
   const contextValue: ShellContextProps = useMemo(
     () => ({
       blockingOperation: useVitestMocks ? vi.fn() : () => Promise.resolve(),
       isHandInViewport: true,
       setIsHandInViewport,
+      isNarrowViewport: false,
       showNotification: mockShowNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
+      isHandCardSelected: selectedHandCardIdx !== deselectedCardIdx,
+      isFieldCardSelected: selectedFieldCardIdx !== deselectedCardIdx,
+      handContainerRef,
+      fieldContainerRef,
       ...overrides,
     }),
     [
@@ -51,7 +63,11 @@ export const StubShellContext = ({
       useVitestMocks,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
       setIsHandInViewport,
+      handContainerRef,
+      fieldContainerRef,
     ]
   )
 

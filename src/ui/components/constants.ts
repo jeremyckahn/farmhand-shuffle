@@ -1,4 +1,4 @@
-export const deselectedHandIdx = -1
+export const deselectedCardIdx = -1
 
 // Shared with Match.tsx, TurnControl.tsx, and useSnackbar.ts - see
 // MatchProps.useGenericPlayerLabels.
