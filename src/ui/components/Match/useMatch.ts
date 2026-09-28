@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { MatchEvent, MatchState } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
+import { useIsNarrowViewport } from '../../hooks/useIsNarrowViewport'
 import { useMatchRules } from '../../hooks/useMatchRules'
-import { deselectedHandIdx } from '../constants'
+import { deselectedCardIdx } from '../constants'
 
 import { ActorContext } from './ActorContext'
 import { ShellContextProps } from './ShellContext'
@@ -17,6 +18,7 @@ export const useMatch = ({
   const actorRef = ActorContext.useActorRef()
   const { match, matchState } = useMatchRules()
   const [isHandInViewport, setIsHandInViewport] = useState(true)
+  const isNarrowViewport = useIsNarrowViewport()
 
   useEffect(() => {
     if (isDebugEnabled) {
@@ -54,7 +56,7 @@ export const useMatch = ({
   const { showNotification } = useSnackbar({ actorRef, match })
 
   const [selectedHandCardIdx, _setSelectedHandCardIdx] =
-    useState(deselectedHandIdx)
+    useState(deselectedCardIdx)
 
   const setSelectedHandCardIdx: typeof _setSelectedHandCardIdx = useCallback(
     (...args) => {
@@ -67,22 +69,45 @@ export const useMatch = ({
     [match]
   )
 
+  const [selectedFieldCardIdx, setSelectedFieldCardIdx] =
+    useState(deselectedCardIdx)
+
+  const isHandCardSelected = selectedHandCardIdx !== deselectedCardIdx
+  const isFieldCardSelected = selectedFieldCardIdx !== deselectedCardIdx
+
+  const handContainerRef = useRef<HTMLDivElement | null>(null)
+  const fieldContainerRef = useRef<HTMLDivElement | null>(null)
+
   const shellContextValue: ShellContextProps = useMemo(
     () => ({
       blockingOperation,
       isHandInViewport,
       setIsHandInViewport,
+      isNarrowViewport,
       showNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
+      isHandCardSelected,
+      isFieldCardSelected,
+      handContainerRef,
+      fieldContainerRef,
     }),
     [
       blockingOperation,
       isHandInViewport,
       setIsHandInViewport,
+      isNarrowViewport,
       showNotification,
       selectedHandCardIdx,
       setSelectedHandCardIdx,
+      selectedFieldCardIdx,
+      setSelectedFieldCardIdx,
+      isHandCardSelected,
+      isFieldCardSelected,
+      handContainerRef,
+      fieldContainerRef,
     ]
   )
 
@@ -101,6 +126,15 @@ export const useMatch = ({
   const isHandDisabled = [MatchState.PLAYER_WATERING_CROP].includes(matchState)
   const showHand = isHandInViewport || isHandDisabled
   const showGameOver = matchState === MatchState.GAME_OVER
+  // NOTE: In both of these states, the player is choosing a position/target
+  // in the Field (see TurnControl.tsx's "Select a position in the field"/
+  // "Select a crop to water" messaging for these same states) -- the
+  // Hand/Field card-navigation Fabs would just be in the way of that, so
+  // they're hidden for the duration.
+  const isSelectingFieldPosition = [
+    MatchState.CHOOSING_CARD_POSITION,
+    MatchState.PLAYER_WATERING_CROP,
+  ].includes(matchState)
 
   return {
     match,
@@ -108,6 +142,7 @@ export const useMatch = ({
     handleClickPlayAgain,
     isHandDisabled,
     isInputBlocked,
+    isSelectingFieldPosition,
     shellContextValue,
     showGameOver,
     showHand,

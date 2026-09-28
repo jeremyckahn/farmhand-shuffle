@@ -98,6 +98,18 @@ describe('DiscardPile', () => {
     expect(screen.queryByTestId('mock-card')).not.toBeInTheDocument()
   })
 
+  it('has a subtle border radius, not the MUI sx multiplier value', () => {
+    renderWithTheme(<DiscardPile match={mockMatch} playerId="player1" />)
+
+    const pile = screen.getByTestId('discard-pile_player1')
+
+    // NOTE: sx's `borderRadius` treats a bare number as a multiplier of
+    // theme.shape.borderRadius, not a pixel value -- passing
+    // theme.shape.borderRadius directly (without a unit) previously
+    // squared it (4 * 4 = 16px).
+    expect(getComputedStyle(pile).borderRadius).toEqual('4px')
+  })
+
   it('rotates opponent discard pile', () => {
     const opponentId = 'player2'
 
