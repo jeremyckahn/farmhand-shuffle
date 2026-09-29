@@ -7,6 +7,7 @@ import { IMatch, IPlayer } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
+import { getPlaceholderOutlineColor } from '../constants'
 
 export interface DiscardPileProps extends BoxProps {
   match: IMatch
@@ -42,7 +43,7 @@ export const DiscardPile = ({
         transformStyle: 'preserve-3d',
         outlineStyle: 'solid',
         outlineWidth: '2px',
-        outlineColor: theme.palette.divider,
+        outlineColor: getPlaceholderOutlineColor(theme.palette.divider),
         borderRadius: `${theme.shape.borderRadius}px`,
         ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
       }}

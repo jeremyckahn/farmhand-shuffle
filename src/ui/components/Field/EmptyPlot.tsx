@@ -5,6 +5,7 @@ import { MatchEvent, MatchState } from '../../../game/types'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { CardSize } from '../../types'
+import { getPlaceholderOutlineColor } from '../constants'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
 
@@ -57,7 +58,7 @@ export const EmptyPlot = ({
         outlineWidth: '2px',
         outlineColor: canBeSelected
           ? theme.palette.primary.light
-          : theme.palette.divider,
+          : getPlaceholderOutlineColor(theme.palette.divider),
         borderRadius: `${theme.shape.borderRadius}px`,
         transition: theme.transitions.create(['background', 'transform']),
         boxShadow: canBeSelected

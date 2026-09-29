@@ -151,6 +151,11 @@ export const Table = ({ match, ...rest }: TableProps) => {
             display="flex"
             justifyContent="space-between"
             alignContent="center"
+            // NOTE: DiscardPile draws its placeholder frame as an outline,
+            // which paints outside its box - flush against this row's right
+            // edge, Match's overflow: hidden would clip that side of it. The
+            // left side matches so Deck is inset symmetrically.
+            px={1}
           >
             <Deck
               match={match}
