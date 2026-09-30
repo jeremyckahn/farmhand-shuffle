@@ -123,4 +123,39 @@ describe('Match', () => {
       screen.queryByTestId('KeyboardArrowDownIcon')
     ).not.toBeInTheDocument()
   })
+  describe('hideScrollbar', () => {
+    const getScrollContainer = () =>
+      screen.getByTestId('match').firstElementChild as HTMLElement
+
+    beforeEach(() => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+    })
+
+    test('keeps the scrollbar visible by default', () => {
+      render(
+        <Match
+          playerSeeds={[stubPlayer1, stubPlayer2]}
+          userPlayerId={stubPlayer1.id}
+        />
+      )
+
+      expect(getScrollContainer()).toHaveStyle({ overflowY: 'auto' })
+      expect(getScrollContainer()).not.toHaveStyle({ scrollbarWidth: 'none' })
+    })
+
+    test('hides the scrollbar but stays scrollable when hideScrollbar is true', () => {
+      render(
+        <Match
+          playerSeeds={[stubPlayer1, stubPlayer2]}
+          userPlayerId={stubPlayer1.id}
+          hideScrollbar
+        />
+      )
+
+      expect(getScrollContainer()).toHaveStyle({
+        overflowY: 'auto',
+        scrollbarWidth: 'none',
+      })
+    })
+  })
 })

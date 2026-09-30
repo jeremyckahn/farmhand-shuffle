@@ -57,6 +57,7 @@ const MatchCore = ({
   hideDefaultGameOverActions = false,
   initialMatch,
   useGenericPlayerLabels = false,
+  hideScrollbar = false,
   ...rest
 }: MatchProps) => {
   const theme = useTheme()
@@ -258,6 +259,10 @@ const MatchCore = ({
             minHeight: 0,
             overflowX: 'hidden',
             overflowY: 'auto',
+            ...(hideScrollbar && {
+              scrollbarWidth: 'none',
+              '&::-webkit-scrollbar': { display: 'none' },
+            }),
           }}
         >
           <TurnControl

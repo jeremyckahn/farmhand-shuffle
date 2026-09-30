@@ -76,4 +76,11 @@ export interface MatchProps extends ContainerProps {
    * place. Standalone usage (MatchPage) leaves this unset.
    */
   useGenericPlayerLabels?: boolean
+  /**
+   * When true, hides the scrollbar of Match's scrollable content area while
+   * leaving it scrollable (wheel, touch, and keyboard). Intended for embedding
+   * hosts whose own layout makes a classic scrollbar look out of place or
+   * cover Match's UI. Standalone usage leaves this unset.
+   */
+  hideScrollbar?: boolean
 }
