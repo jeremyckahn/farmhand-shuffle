@@ -22,6 +22,9 @@ import { NotificationProvider } from '../../context/NotificationContext'
 import {
   genericOpponentPlayerLabel,
   genericSelfPlayerLabel,
+  getHandToggleOffset,
+  handToggleBottomVar,
+  handToggleLeftVar,
 } from '../constants'
 import { ui } from '../../img'
 import { lightTheme } from '../../theme'
@@ -289,8 +292,14 @@ const MatchCore = ({
                 onClick={handleHandVisibilityToggle}
                 sx={{
                   position: 'fixed',
-                  bottom: theme.spacing(2),
-                  left: theme.spacing(2),
+                  bottom: getHandToggleOffset(
+                    handToggleBottomVar,
+                    theme.spacing(2)
+                  ),
+                  left: getHandToggleOffset(
+                    handToggleLeftVar,
+                    theme.spacing(2)
+                  ),
                 }}
               >
                 <KeyboardArrowDown
