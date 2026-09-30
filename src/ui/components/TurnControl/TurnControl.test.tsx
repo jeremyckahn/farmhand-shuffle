@@ -81,7 +81,10 @@ vi.mock('@mui/material/styles/useTheme', () => ({
       common: { white: '#fff', black: '#000' },
       error: { dark: 'red', light: 'red' },
       success: { light: 'green', dark: 'green' },
+      background: { paper: '#fff' },
+      text: { primary: '#000' },
     },
+    shadows: ['none', 'shadow'],
     shape: {
       borderRadius: 4,
     },
