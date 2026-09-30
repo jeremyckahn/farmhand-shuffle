@@ -4,6 +4,7 @@ import {
   KeyboardArrowDown,
 } from '@mui/icons-material'
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -237,12 +238,35 @@ const MatchCore = ({
         ]}
         {...rest}
       >
-        <TurnControl
-          match={match}
-          useGenericPlayerLabels={useGenericPlayerLabels}
-        />
-        {renderStatusBarContent?.()}
-        <Table sx={{ pt: 4 }} match={match} />
+        {
+          // NOTE: This is the Match's scroll container -- when a host gives
+          // Match a bounded height (fullHeight, or e.g. height: 100% inside
+          // an embedding layout), the Table's content can be taller than it,
+          // and this is what lets the player scroll down to their Field. It
+          // is deliberately an inner element rather than the root
+          // Container: the root's `transform` makes it the containing block
+          // for the `position: fixed` controls below (and Table's Hand), so
+          // if the root itself scrolled, those would scroll away with the
+          // content instead of staying pinned to the visible area. Fixed
+          // descendants of this element still resolve against the root,
+          // which isn't a scroller, so they neither scroll nor get clipped
+          // here.
+        }
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            overflowX: 'hidden',
+            overflowY: 'auto',
+          }}
+        >
+          <TurnControl
+            match={match}
+            useGenericPlayerLabels={useGenericPlayerLabels}
+          />
+          {renderStatusBarContent?.()}
+          <Table sx={{ pt: 4 }} match={match} />
+        </Box>
         {
           // NOTE: On narrow viewports, the card-navigation Fabs replace the
           // always-visible hide/show control below -- with those Fabs and
