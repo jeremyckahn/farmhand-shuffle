@@ -259,6 +259,14 @@ const MatchCore = ({
             minHeight: 0,
             overflowX: 'hidden',
             overflowY: 'auto',
+            // NOTE: Room for the paint that extends outside the cards and
+            // plots (watering/harvest glows, the selectable plot's glow and
+            // hover scale-up, placeholder outlines) - this container clips
+            // at its own edge, so without it that paint is cut off in a hard
+            // line wherever the table touches one. Narrow viewports get
+            // less: the compact card row is tuned to fit real phone widths,
+            // with only ~50px to spare at 375px.
+            p: isNarrowViewport ? 1.5 : 3,
             ...(hideScrollbar && {
               scrollbarWidth: 'none',
               '&::-webkit-scrollbar': { display: 'none' },
