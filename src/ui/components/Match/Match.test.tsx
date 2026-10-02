@@ -7,6 +7,8 @@ import { MatchState } from '../../../game/types'
 import { mockUseMediaQuery } from '../../../test-utils/mocks/useMediaQuery'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
+import { contentPaddingVar } from '../constants'
+
 import { Match } from './Match'
 
 // NOTE: Mocking out the Card component improves test execution speed
@@ -123,6 +125,40 @@ describe('Match', () => {
       screen.queryByTestId('KeyboardArrowDownIcon')
     ).not.toBeInTheDocument()
   })
+  describe('content padding', () => {
+    const getScrollContainer = () =>
+      screen.getByTestId('match').firstElementChild as HTMLElement
+
+    beforeEach(() => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+    })
+
+    test('pads the scroll container more on wide viewports than narrow ones', () => {
+      mockUseMediaQuery.mockReturnValue(false)
+      const wide = render(
+        <Match
+          playerSeeds={[stubPlayer1, stubPlayer2]}
+          userPlayerId={stubPlayer1.id}
+        />
+      )
+      const widePadding = getComputedStyle(getScrollContainer()).padding
+
+      wide.unmount()
+      mockUseMediaQuery.mockReturnValue(true)
+      render(
+        <Match
+          playerSeeds={[stubPlayer1, stubPlayer2]}
+          userPlayerId={stubPlayer1.id}
+        />
+      )
+
+      expect(widePadding).toBe(`var(${contentPaddingVar}, 24px)`)
+      expect(getComputedStyle(getScrollContainer()).padding).toBe(
+        `var(${contentPaddingVar}, 16px)`
+      )
+    })
+  })
+
   describe('hideScrollbar', () => {
     const getScrollContainer = () =>
       screen.getByTestId('match').firstElementChild as HTMLElement

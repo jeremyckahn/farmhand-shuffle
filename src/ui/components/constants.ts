@@ -28,3 +28,14 @@ export const getHandToggleOffset = (
   offsetVar: string,
   fallbackOffset: string
 ) => `var(${offsetVar}, ${fallbackOffset})`
+
+// CSS custom property that overrides the padding of Match's scroll container,
+// which reserves room for paint that extends outside the cards (glows, hover
+// scale-ups, placeholder outlines) so it isn't clipped at the container's
+// edge. Falls back to a default sized for the glows (see CARD_GLOW_BLUR_PX).
+// An embedding host that wants more or less room sets it through Match's `sx`
+// prop - any CSS length works, e.g. '1rem'.
+export const contentPaddingVar = '--farmhand-shuffle-content-padding'
+
+export const getContentPadding = (fallbackPadding: string) =>
+  `var(${contentPaddingVar}, ${fallbackPadding})`

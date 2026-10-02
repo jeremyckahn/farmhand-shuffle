@@ -19,7 +19,7 @@ import {
 } from '../../../game/types'
 import { isCropCardInstance } from '../../../game/types/guards'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
-import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { CARD_DIMENSIONS, CARD_GLOW_BLUR_PX } from '../../config/dimensions'
 import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
@@ -60,17 +60,19 @@ const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
   theme,
   isBuffedCrop,
   prefersReducedMotion,
+  glowBlurPx,
 }: {
   theme: Theme
   isBuffedCrop: boolean
   prefersReducedMotion: boolean
+  glowBlurPx: number
 }): SystemStyleObject<Theme> => {
   if (isBuffedCrop) {
     return getRainbowBorderStyle({ theme, prefersReducedMotion, spread: 12 })
   }
 
   return {
-    filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorSessionOwnerOutlineColor})`,
+    filter: `drop-shadow(0px 0px ${glowBlurPx}px ${cropHarvestIndicatorSessionOwnerOutlineColor})`,
   }
 }
 
@@ -276,7 +278,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       position: 'absolute',
                       width: 1,
                       ...(showWaterableState && {
-                        filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
+                        filter: `drop-shadow(0px 0px ${CARD_GLOW_BLUR_PX[size]}px ${cropWaterIndicatorOutlineColor})`,
                       }),
                       ...(showHarvestableState && {
                         ...(isSessionOwnersCard &&
@@ -284,9 +286,10 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                             theme,
                             isBuffedCrop,
                             prefersReducedMotion,
+                            glowBlurPx: CARD_GLOW_BLUR_PX[size],
                           })),
                         ...(!isSessionOwnersCard && {
-                          filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
+                          filter: `drop-shadow(0px 0px ${CARD_GLOW_BLUR_PX[size]}px ${cropHarvestIndicatorOpponentOutlineColor})`,
                         }),
                       }),
                     },

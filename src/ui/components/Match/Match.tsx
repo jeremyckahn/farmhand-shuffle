@@ -23,6 +23,7 @@ import { NotificationProvider } from '../../context/NotificationContext'
 import {
   genericOpponentPlayerLabel,
   genericSelfPlayerLabel,
+  getContentPadding,
   getHandToggleOffset,
   handToggleBottomVar,
   handToggleLeftVar,
@@ -263,10 +264,12 @@ const MatchCore = ({
             // plots (watering/harvest glows, the selectable plot's glow and
             // hover scale-up, placeholder outlines) - this container clips
             // at its own edge, so without it that paint is cut off in a hard
-            // line wherever the table touches one. Narrow viewports get
-            // less: the compact card row is tuned to fit real phone widths,
-            // with only ~50px to spare at 375px.
-            p: isNarrowViewport ? 1.5 : 3,
+            // line wherever the table touches one. The glows are sized to
+            // fit this (see CARD_GLOW_BLUR_PX). Narrow viewports get less:
+            // the compact card row is tuned to fit real phone widths, with
+            // only ~50px to spare at 375px. A host can override it via
+            // contentPaddingVar.
+            p: getContentPadding(theme.spacing(isNarrowViewport ? 2 : 3)),
             ...(hideScrollbar && {
               scrollbarWidth: 'none',
               '&::-webkit-scrollbar': { display: 'none' },
