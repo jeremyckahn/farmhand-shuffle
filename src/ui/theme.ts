@@ -4,11 +4,13 @@ import createTheme from '@mui/material/styles/createTheme'
 import { Shadows } from '@mui/material/styles/shadows'
 
 import {
+  elevationShadowLength,
   pixelBevel,
   pixelBevelPressed,
   pixelFrameSx,
   pixelPressedSx,
   pixelShadowColor,
+  pixelSurfaceShadow,
   px,
   surfaceOutline,
 } from '../lib/styling/pixel'
@@ -51,7 +53,7 @@ const outlineFor = (theme: Theme, color: unknown) =>
 const shadows = [
   'none',
   ...Array.from({ length: 24 }, (_, index) => {
-    const offset = px(Math.min(4, Math.ceil((index + 1) / 4)))
+    const offset = px(elevationShadowLength(index + 1))
 
     return `${offset} ${offset} 0 0 ${pixelShadowColor}`
   }),
@@ -205,15 +207,20 @@ const createPixelTheme = (mode: PaletteMode) => {
           }: {
             ownerState: { elevation?: number; variant?: string }
             theme: Theme
-          }) => ({
-            ...pixelFrameSx({
-              outline: surfaceOutline(theme),
-              shadow:
-                ownerState.variant !== 'outlined' &&
-                (ownerState.elevation ?? 1) > 0,
-            }),
-            boxShadow: pixelBevel(),
-          }),
+          }) => {
+            const elevation = ownerState.elevation ?? 1
+            const hasShadow = ownerState.variant !== 'outlined' && elevation > 0
+
+            return {
+              ...pixelFrameSx({
+                outline: surfaceOutline(theme),
+                shadow: hasShadow,
+              }),
+              boxShadow: hasShadow
+                ? pixelSurfaceShadow(elevation)
+                : pixelBevel(),
+            }
+          },
         },
       },
       MuiAccordion: {

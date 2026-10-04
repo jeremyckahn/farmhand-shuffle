@@ -49,4 +49,19 @@ describe('rainbow-border', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     expect(afterElement.filter).toBe(`blur(${spread}px)`)
   })
+
+  it('draws the ring outside of the given border widths', () => {
+    const style = getRainbowBorderStyle({
+      theme,
+      prefersReducedMotion: false,
+      borderWidths: { top: '3px', right: '6px', bottom: '6px', left: '3px' },
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+    const ring = (style as any)['&:before, &:after']
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(ring.top).toBe('calc(-2px - 3px)')
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(ring.width).toBe('calc(100% + 2 * 2px + 3px + 6px)')
+  })
 })
