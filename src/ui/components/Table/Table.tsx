@@ -13,6 +13,7 @@ import { DiscardPile } from '../DiscardPile/DiscardPile'
 import { Field } from '../Field/Field'
 import { Hand } from '../Hand/Hand'
 import { ShellContext } from '../Match/ShellContext'
+import { bottomInset } from '../constants'
 
 export interface TableProps extends GridProps {
   match: IMatch
@@ -32,7 +33,11 @@ const handBottomOffsetSpacingUnitsAtMediumSize = -8
 export const getMobileIdleHandBottomOffset = (
   gapBelowFieldPx: number,
   handHeight: string
-) => `max(0px, calc((${gapBelowFieldPx}px - ${handHeight}) / 2))`
+) =>
+  // NOTE: bottomInset is space at the bottom that a host covers with its own
+  // UI (see bottomInsetVar): the Hand is centered in what's left of the gap
+  // and sits on top of that space, so the host's UI doesn't obscure it.
+  `calc(${bottomInset} + max(0px, calc((${gapBelowFieldPx}px - ${bottomInset} - ${handHeight}) / 2)))`
 
 export const Table = ({ match, ...rest }: TableProps) => {
   const theme = useTheme()
@@ -151,6 +156,11 @@ export const Table = ({ match, ...rest }: TableProps) => {
             display="flex"
             justifyContent="space-between"
             alignContent="center"
+            // NOTE: DiscardPile draws its placeholder frame as an outline,
+            // which paints outside its box - flush against this row's right
+            // edge, Match's overflow: hidden would clip that side of it. The
+            // left side matches so Deck is inset symmetrically.
+            px={1}
           >
             <Deck
               match={match}

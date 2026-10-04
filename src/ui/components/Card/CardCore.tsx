@@ -1,13 +1,13 @@
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Paper from '@mui/material/Paper'
-import { darken, lighten } from '@mui/material/styles'
+import Box from '@mui/material/Box/index.js'
+import Button from '@mui/material/Button/index.js'
+import Divider from '@mui/material/Divider/index.js'
+import Paper from '@mui/material/Paper/index.js'
+import { darken, lighten } from '@mui/material/styles/index.js'
 import { Theme } from '@mui/material/styles/createTheme'
 import useTheme from '@mui/material/styles/useTheme'
-import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
-import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
+import Tooltip from '@mui/material/Tooltip/index.js'
+import Typography from '@mui/material/Typography/index.js'
+import useMediaQuery from '@mui/material/useMediaQuery/index.js'
 import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { useRef } from 'react'
@@ -25,7 +25,7 @@ import {
   shadowedFrameWidths,
   surfaceOutline,
 } from '../../../lib/styling/pixel'
-import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { CARD_DIMENSIONS, CARD_GLOW_BLUR_PX } from '../../config/dimensions'
 import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
 import { CardSize } from '../../types'
@@ -73,10 +73,12 @@ const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
   theme,
   isBuffedCrop,
   prefersReducedMotion,
+  glowBlurPx,
 }: {
   theme: Theme
   isBuffedCrop: boolean
   prefersReducedMotion: boolean
+  glowBlurPx: number
 }): SystemStyleObject<Theme> => {
   if (isBuffedCrop) {
     return getRainbowBorderStyle({
@@ -90,7 +92,7 @@ const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
   }
 
   return {
-    filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorSessionOwnerOutlineColor})`,
+    filter: `drop-shadow(0px 0px ${glowBlurPx}px ${cropHarvestIndicatorSessionOwnerOutlineColor})`,
   }
 }
 
@@ -301,7 +303,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       position: 'absolute',
                       width: 1,
                       ...(showWaterableState && {
-                        filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
+                        filter: `drop-shadow(0px 0px ${CARD_GLOW_BLUR_PX[size]}px ${cropWaterIndicatorOutlineColor})`,
                       }),
                       ...(showHarvestableState && {
                         ...(isSessionOwnersCard &&
@@ -309,9 +311,10 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                             theme,
                             isBuffedCrop,
                             prefersReducedMotion,
+                            glowBlurPx: CARD_GLOW_BLUR_PX[size],
                           })),
                         ...(!isSessionOwnersCard && {
-                          filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
+                          filter: `drop-shadow(0px 0px ${CARD_GLOW_BLUR_PX[size]}px ${cropHarvestIndicatorOpponentOutlineColor})`,
                         }),
                       }),
                     },

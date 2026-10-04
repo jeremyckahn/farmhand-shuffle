@@ -1,6 +1,6 @@
-import Box, { BoxProps } from '@mui/material/Box'
+import Box, { BoxProps } from '@mui/material/Box/index.js'
 import useTheme from '@mui/material/styles/useTheme'
-import Tooltip from '@mui/material/Tooltip'
+import Tooltip from '@mui/material/Tooltip/index.js'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
@@ -8,6 +8,7 @@ import { px } from '../../../lib/styling/pixel'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
+import { getPlaceholderOutlineColor } from '../constants'
 
 export interface DiscardPileProps extends BoxProps {
   match: IMatch
@@ -43,7 +44,7 @@ export const DiscardPile = ({
         transformStyle: 'preserve-3d',
         outlineStyle: 'solid',
         outlineWidth: px(1),
-        outlineColor: theme.palette.divider,
+        outlineColor: getPlaceholderOutlineColor(theme.palette.divider),
         borderRadius: `${theme.shape.borderRadius}px`,
         ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
       }}

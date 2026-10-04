@@ -1,4 +1,5 @@
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -6,13 +7,27 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Fab from '@mui/material/Fab'
 import Fade from '@mui/material/Fade'
+import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import useTheme from '@mui/material/styles/useTheme'
-import Tooltip from '@mui/material/Tooltip'
+import Tooltip from '@mui/material/Tooltip/index.js'
 import { funAnimalName } from 'fun-animal-names'
 import { PointerEvent } from 'react'
 
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { isSxArray } from '../../type-guards'
+import { CardSize } from '../../types'
+import { NotificationProvider } from '../../context/NotificationContext'
+import {
+  genericOpponentPlayerLabel,
+  genericSelfPlayerLabel,
+  bottomInset,
+  getContentPadding,
+  getHandToggleOffset,
+  handToggleBottomVar,
+  handToggleLeftVar,
+} from '../constants'
 import { ui } from '../../img'
+import { lightTheme } from '../../theme'
 import { cardClassName } from '../Card/CardCore'
 import {
   ChevronLeftIcon as ChevronLeft,
@@ -39,6 +54,14 @@ const MatchCore = ({
   userPlayerId,
   fullHeight = false,
   sx = [],
+  onMatchEnd,
+  onCheckpoint,
+  renderStatusBarContent,
+  renderGameOverContent,
+  hideDefaultGameOverActions = false,
+  initialMatch,
+  useGenericPlayerLabels = false,
+  hideScrollbar = false,
   ...rest
 }: MatchProps) => {
   const theme = useTheme()
@@ -53,7 +76,14 @@ const MatchCore = ({
     shellContextValue,
     showGameOver,
     showHand,
-  } = useMatch({ playerSeeds, userPlayerId })
+  } = useMatch({
+    playerSeeds,
+    userPlayerId,
+    onMatchEnd,
+    onCheckpoint,
+    initialMatch,
+    useGenericPlayerLabels,
+  })
 
   const { winner } = match
   const {
@@ -149,10 +179,15 @@ const MatchCore = ({
     event.preventDefault()
   }
 
+  const contentPadding = getContentPadding(
+    theme.spacing(isNarrowViewport ? 2 : 3)
+  )
+
   return (
     <ShellContext.Provider value={shellContextValue}>
       <Container
         maxWidth={false}
+        disableGutters
         data-testid="match"
         sx={[
           {
@@ -160,11 +195,31 @@ const MatchCore = ({
             backgroundImage: `url(${ui.brownDotBackground})`,
             backgroundSize: theme.spacing(10),
             imageRendering: 'pixelated',
-            pt: 1,
-            // NOTE: This prevents the hide/show Hand button from obscuring
-            // Field cards.
-            pb: 10,
-            overflow: 'auto',
+            // Sets the base text color for everything inside (e.g.
+            // TurnControl's funds display), which otherwise has none of
+            // its own and just inherits this via normal CSS cascade. A
+            // host embedding Match with its own background (see the
+            // backgroundColor/backgroundImage overrides above) can
+            // override this the same way, through the same consumer-
+            // facing `sx` prop, without any component in between needing
+            // an embedding-specific prop of its own.
+            color: theme.palette.common.white,
+            display: 'flex',
+            flexDirection: 'column',
+            // The hide/show Hand button and the narrow-viewport card-nav
+            // Fabs below are `position: fixed`, intending to stay pinned
+            // within this container's visible area - but per spec, a
+            // `fixed` element's containing block is always the viewport,
+            // not any ancestor, regardless of that ancestor's own
+            // position/overflow. In a host app that renders Match alongside
+            // other UI (e.g. a sidebar), that centers them against the
+            // whole browser window instead of this container, visibly
+            // off-center. Any transform on an ancestor establishes a new
+            // containing block for fixed descendants (a spec'd CSS
+            // mechanism, not a hack) - this restores the intended
+            // "positioned relative to this container" behavior.
+            overflow: 'hidden',
+            transform: 'translateZ(0)',
             ...(isInputBlocked && {
               '*': {
                 pointerEvents: 'none',
@@ -176,8 +231,71 @@ const MatchCore = ({
         ]}
         {...rest}
       >
-        <TurnControl match={match} />
-        <Table sx={{ pt: 4 }} match={match} />
+        {
+          // NOTE: This is the Match's scroll container -- when a host gives
+          // Match a bounded height (fullHeight, or e.g. height: 100% inside
+          // an embedding layout), the Table's content can be taller than it,
+          // and this is what lets the player scroll down to their Field. It
+          // is deliberately an inner element rather than the root
+          // Container: the root's `transform` makes it the containing block
+          // for the `position: fixed` controls below (and Table's Hand), so
+          // if the root itself scrolled, those would scroll away with the
+          // content instead of staying pinned to the visible area. Fixed
+          // descendants of this element still resolve against the root,
+          // which isn't a scroller, so they neither scroll nor get clipped
+          // here.
+        }
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            // NOTE: Room for the paint that extends outside the cards and
+            // plots (watering/harvest glows, the selectable plot's glow and
+            // hover scale-up, placeholder outlines) - this container clips
+            // at its own edge, so without it that paint is cut off in a hard
+            // line wherever the table touches one. The glows are sized to
+            // fit this (see CARD_GLOW_BLUR_PX). Narrow viewports get less:
+            // the compact card row is tuned to fit real phone widths, with
+            // only ~50px to spare at 375px. A host can override it via
+            // contentPaddingVar.
+            p: contentPadding,
+            // NOTE: So the table can scroll up clear of whatever the host
+            // covers the bottom of Match with (see bottomInsetVar) and of
+            // the Hand, which on narrow viewports is fixed above that space
+            // and can sit over the player's Field until it's scrolled up.
+            pb: `calc(${contentPadding} + ${bottomInset} + ${
+              isNarrowViewport
+                ? CARD_DIMENSIONS[CardSize.COMPACT].height
+                : '0px'
+            })`,
+            // NOTE: Anything that paints past the cards into that padding
+            // (glows, hover scale-ups) can't go further than this
+            // container's edge, and would be cut there in a hard line while
+            // still bright. Fading the padding band out on the left, right
+            // and top edges turns that cut into a smooth fade. No cards sit
+            // in the band, so only those tails are affected. The bottom is
+            // left alone: the Hand peeks up into it.
+            maskImage: [
+              `linear-gradient(to right, transparent, #000 ${contentPadding}, #000 calc(100% - ${contentPadding}), transparent)`,
+              `linear-gradient(to bottom, transparent, #000 ${contentPadding}, #000)`,
+            ].join(', '),
+            maskComposite: 'intersect',
+            WebkitMaskComposite: 'source-in',
+            ...(hideScrollbar && {
+              scrollbarWidth: 'none',
+              '&::-webkit-scrollbar': { display: 'none' },
+            }),
+          }}
+        >
+          <TurnControl
+            match={match}
+            useGenericPlayerLabels={useGenericPlayerLabels}
+          />
+          {renderStatusBarContent?.()}
+          <Table sx={{ pt: 4 }} match={match} />
+        </Box>
         {
           // NOTE: On narrow viewports, the card-navigation Fabs replace the
           // always-visible hide/show control below -- with those Fabs and
@@ -227,8 +345,14 @@ const MatchCore = ({
                 onClick={handleHandVisibilityToggle}
                 sx={{
                   position: 'fixed',
-                  bottom: theme.spacing(2),
-                  left: theme.spacing(2),
+                  bottom: getHandToggleOffset(
+                    handToggleBottomVar,
+                    theme.spacing(2)
+                  ),
+                  left: getHandToggleOffset(
+                    handToggleLeftVar,
+                    theme.spacing(2)
+                  ),
                 }}
               >
                 <KeyboardArrowDown
@@ -244,10 +368,22 @@ const MatchCore = ({
         <Dialog open={showGameOver}>
           <DialogTitle>Game Over</DialogTitle>
           <DialogContent>
-            Winner: <strong>{winner ? funAnimalName(winner) : 'No one'}</strong>
+            Winner:{' '}
+            <strong>
+              {winner
+                ? useGenericPlayerLabels
+                  ? winner === match.sessionOwnerPlayerId
+                    ? genericSelfPlayerLabel
+                    : genericOpponentPlayerLabel
+                  : funAnimalName(winner)
+                : 'No one'}
+            </strong>
+            {renderGameOverContent?.(winner)}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClickPlayAgain}>Play again</Button>
+            {!hideDefaultGameOverActions && (
+              <Button onClick={handleClickPlayAgain}>Play again</Button>
+            )}
           </DialogActions>
         </Dialog>
       </Container>
@@ -257,8 +393,29 @@ const MatchCore = ({
 
 export const Match = ({ ...rest }: MatchProps) => {
   return (
+    // Match is meant to be embedded in host apps with their own theme
+    // (see the farmhand integration), which would otherwise leak into
+    // Match's own colors - MUI ThemeProvider nests (a child provider
+    // overrides its ancestor's theme only for its own subtree), so this
+    // keeps Match visually self-contained regardless of what theme, if
+    // any, a consumer has active above it. Nested inside ActorContext.Provider
+    // (not around it) so MatchCore's own useTheme() call picks this up.
+    //
+    // NotificationProvider is needed for the same reason, for a different
+    // symptom: useSnackbar (used internally by Table/TurnControl to show
+    // bot-turn notifications - a crop harvested, a card drawn, etc.) reads
+    // it via useNotification(), whose context default throws if no
+    // NotificationProvider ancestor exists at all. The standalone app's
+    // own App.tsx happens to provide one, which masked this - a host app
+    // embedding just Match, with no reason to know it needs to supply an
+    // unrelated context this component never mentions in its own props,
+    // hits that throw the moment any bot action tries to notify.
     <ActorContext.Provider>
-      <MatchCore {...rest} />
+      <ThemeProvider theme={lightTheme}>
+        <NotificationProvider>
+          <MatchCore {...rest} />
+        </NotificationProvider>
+      </ThemeProvider>
     </ActorContext.Provider>
   )
 }

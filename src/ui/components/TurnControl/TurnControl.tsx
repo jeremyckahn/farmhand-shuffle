@@ -20,7 +20,7 @@ import {
   MatchState,
 } from '../../../game/types'
 import { formatNumber } from '../../../lib/formatting/numbers'
-import { pixelFrameSx } from '../../../lib/styling/pixel'
+import { pixelFrameSx, surfaceOutline } from '../../../lib/styling/pixel'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
@@ -32,14 +32,19 @@ import {
 } from '../PixelIcon'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
+import { genericOpponentPlayerLabel } from '../constants'
 
 export interface TurnControlProps {
   match: IMatch
+  useGenericPlayerLabels?: boolean
 }
 
 const playerFundWarningThreshold = STANDARD_TAX_AMOUNT * 2
 
-export const TurnControl = ({ match }: TurnControlProps) => {
+export const TurnControl = ({
+  match,
+  useGenericPlayerLabels = false,
+}: TurnControlProps) => {
   const theme = useTheme()
   const actorRef = ActorContext.useActorRef()
   const { setIsHandInViewport } = useContext(ShellContext)
@@ -49,7 +54,12 @@ export const TurnControl = ({ match }: TurnControlProps) => {
     match: { currentPlayerId, sessionOwnerPlayerId },
   } = useMatchRules()
 
-  const currentPlayerName = funAnimalName(currentPlayerId ?? '')
+  // Only ever read below while it's the non-session-owner's turn (see
+  // PERFORMING_BOT_TURN_ACTION / PERFORMING_BOT_SETUP_ACTION), so it's safe
+  // to always resolve to the opponent label when generic labels are on.
+  const currentPlayerName = useGenericPlayerLabels
+    ? genericOpponentPlayerLabel
+    : funAnimalName(currentPlayerId ?? '')
 
   const handleCompleteSetup = () => {
     actorRef.send({ type: MatchEvent.PROMPT_BOT_FOR_SETUP_ACTION })
@@ -192,34 +202,67 @@ export const TurnControl = ({ match }: TurnControlProps) => {
   const opponentFunds = opponentPlayerId
     ? lookup.getPlayer(match, opponentPlayerId)?.funds
     : 0
-  const opponentName = funAnimalName(opponentPlayerId ?? '')
+  const opponentName = useGenericPlayerLabels
+    ? genericOpponentPlayerLabel
+    : funAnimalName(opponentPlayerId ?? '')
+
+  // NOTE: A Paper-colored "pill" (like the state Accordion below it) so the
+  // funds stay legible against whatever background Match is shown on, rather
+  // than relying on the ambient text color contrasting with it.
+  const getFundsPillSx = (funds?: number) => ({
+    ...pixelFrameSx({ outline: surfaceOutline(theme) }),
+    backgroundColor: theme.palette.background.paper,
+    color:
+      funds !== undefined && funds <= playerFundWarningThreshold
+        ? theme.palette.error.dark
+        : theme.palette.text.primary,
+    cursor: 'help',
+    // NOTE: MUI's Chip pads an icon asymmetrically (a small left margin, a
+    // negative right one) and its label by 12px on each side, which leaves
+    // the icon-plus-text group visibly right-of-center. Spelled out here so
+    // the group has equal space on both sides instead - kept small (with the
+    // pixel frame's own border already adding 3px a side) so all five pills
+    // still fit one row on a ~375px-wide phone.
+    justifyContent: 'center',
+    '& .MuiChip-icon': {
+      color: 'inherit',
+      fontSize: theme.typography.body1.fontSize,
+      ml: 0.5,
+      mr: 0.5,
+    },
+    '& .MuiChip-label': {
+      fontSize: theme.typography.body1.fontSize,
+      pl: 0,
+      pr: 0.5,
+      textAlign: 'center',
+    },
+  })
 
   return (
     <Stack spacing={1}>
       <Stack
         direction="row"
         justifyContent="space-between"
-        sx={{ color: theme.palette.common.white }}
+        // NOTE: A small minimum gap so the pills never touch (the community
+        // funds pill grows with the pot, and the buff/nerf pills only show
+        // sometimes), kept tight so all five still fit a ~360px-wide phone
+        // in one row. If they ever don't, they wrap onto a second row
+        // rather than running off the screen.
+        gap="0.25rem"
+        flexWrap="wrap"
+        // No color set here - CSS inheritance passes this through from
+        // whatever ancestor sets one (Match's own root Container, by
+        // default, sets it to white for the standalone/default look). A
+        // host embedding Match can override that from the outside via
+        // Match's own consumer-facing `sx` prop, without this component
+        // needing to know or care that it's embedded.
       >
         <Tooltip title="Your funds">
-          <Stack
-            direction="row"
-            alignItems="center"
-            color={{
-              cursor: 'help',
-              ...(sessionOwnerPlayerFunds <= playerFundWarningThreshold && {
-                color: theme.palette.error.dark,
-              }),
-            }}
-          >
-            <AttachMoney
-              sx={{
-                fontSize: theme.typography.body1.fontSize,
-                lineHeight: theme.typography.body1.lineHeight,
-              }}
-            />
-            <Typography>{formatNumber(sessionOwnerPlayerFunds)}</Typography>
-          </Stack>
+          <Chip
+            icon={<AttachMoney />}
+            label={formatNumber(sessionOwnerPlayerFunds)}
+            sx={getFundsPillSx(sessionOwnerPlayerFunds)}
+          />
         </Tooltip>
         {match.buffedCrop && (
           <Tooltip
@@ -247,20 +290,11 @@ export const TurnControl = ({ match }: TurnControlProps) => {
           </Tooltip>
         )}
         <Tooltip title="Community funds">
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={0.5}
-            sx={{ cursor: 'help' }}
-          >
-            <AccountBalance
-              sx={{
-                fontSize: theme.typography.body1.fontSize,
-                lineHeight: theme.typography.body1.lineHeight,
-              }}
-            />
-            <Typography>{formatNumber(match.table.communityFund)}</Typography>
-          </Stack>
+          <Chip
+            icon={<AccountBalance />}
+            label={formatNumber(match.table.communityFund)}
+            sx={getFundsPillSx()}
+          />
         </Tooltip>
         {match.nerfedCrop && (
           <Tooltip
@@ -296,27 +330,13 @@ export const TurnControl = ({ match }: TurnControlProps) => {
           </Tooltip>
         )}
         <Tooltip title={`${opponentName}'s funds`}>
-          <Stack
-            direction="row"
-            alignItems="center"
-            sx={{
-              cursor: 'help',
-              ...(opponentFunds !== undefined &&
-                opponentFunds <= playerFundWarningThreshold && {
-                  color: theme.palette.error.dark,
-                }),
-            }}
-          >
-            <AttachMoney
-              sx={{
-                fontSize: theme.typography.body1.fontSize,
-                lineHeight: theme.typography.body1.lineHeight,
-              }}
-            />
-            <Typography>
-              {opponentFunds !== undefined ? formatNumber(opponentFunds) : ''}
-            </Typography>
-          </Stack>
+          <Chip
+            icon={<AttachMoney />}
+            label={
+              opponentFunds !== undefined ? formatNumber(opponentFunds) : ''
+            }
+            sx={getFundsPillSx(opponentFunds)}
+          />
         </Tooltip>
       </Stack>
       <Accordion

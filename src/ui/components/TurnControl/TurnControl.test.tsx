@@ -81,7 +81,10 @@ vi.mock('@mui/material/styles/useTheme', () => ({
       common: { white: '#fff', black: '#000' },
       error: { dark: 'red', light: 'red' },
       success: { light: 'green', dark: 'green' },
+      background: { paper: '#fff' },
+      text: { primary: '#000' },
     },
+    shadows: ['none', 'shadow'],
     shape: {
       borderRadius: 4,
     },
@@ -272,6 +275,29 @@ describe('TurnControl Component', () => {
     render(<StubTurnControl match={match} />)
 
     expect(screen.getByText(`fun-animal-${botId}'s turn`)).toBeInTheDocument()
+  })
+
+  it('renders the generic opponent label for PERFORMING_BOT_TURN_ACTION when useGenericPlayerLabels is true', () => {
+    const matchState = MatchState.PERFORMING_BOT_TURN_ACTION
+    let match = stubMatch()
+
+    match = updateMatch(match, { currentPlayerId: botId })
+
+    vi.spyOn(useMatchRulesModule, 'useMatchRules').mockReturnValue({
+      matchState,
+      match: {
+        ...match,
+        selectedWaterCardInHandIdx: defaultSelectedWaterCardInHandIdx,
+      },
+      botTurnActionState: null,
+    })
+
+    render(<StubTurnControl match={match} useGenericPlayerLabels={true} />)
+
+    expect(screen.getByText("Opponent's turn")).toBeInTheDocument()
+    expect(
+      screen.queryByText(`fun-animal-${botId}'s turn`)
+    ).not.toBeInTheDocument()
   })
 
   it('renders correct text for PERFORMING_BOT_SETUP_ACTION', () => {

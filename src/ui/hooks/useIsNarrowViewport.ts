@@ -1,5 +1,5 @@
 import useTheme from '@mui/material/styles/useTheme'
-import useMediaQuery from '@mui/material/useMediaQuery/useMediaQuery'
+import useMediaQuery from '@mui/material/useMediaQuery/index.js'
 
 // NOTE: This is the single source of truth for the "mobile/narrow viewport"
 // breakpoint. Table.tsx, CardCore.tsx, and Match.tsx all need to agree on

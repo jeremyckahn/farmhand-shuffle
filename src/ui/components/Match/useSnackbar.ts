@@ -6,6 +6,7 @@ import reactNodeToString from 'react-node-to-string'
 import { MatchEvent, IMatch, ShellNotificationType } from '../../../game/types'
 import { isDebugEnabled } from '../../config/constants'
 import { useNotification } from '../../context/NotificationContext'
+import { genericOpponentPlayerLabel } from '../constants'
 
 import { ActorContext } from './ActorContext'
 
@@ -16,9 +17,11 @@ import { ActorContext } from './ActorContext'
 export const useSnackbar = ({
   actorRef,
   match,
+  useGenericPlayerLabels = false,
 }: {
   actorRef: ReturnType<typeof ActorContext.useActorRef>
   match: IMatch
+  useGenericPlayerLabels?: boolean
 }) => {
   const { showNotification: triggerGlobalNotification } = useNotification()
 
@@ -36,7 +39,9 @@ export const useSnackbar = ({
   const isSessionOwner = match.currentPlayerId === match.sessionOwnerPlayerId
 
   useEffect(() => {
-    const currentPlayerName = funAnimalName(match.currentPlayerId ?? '')
+    const currentPlayerName = useGenericPlayerLabels
+      ? genericOpponentPlayerLabel
+      : funAnimalName(match.currentPlayerId ?? '')
 
     actorRef.send({
       type: MatchEvent.SET_SHELL,
@@ -54,7 +59,9 @@ export const useSnackbar = ({
                   'success'
                 )
               } else {
-                const playerName = funAnimalName(playerId)
+                const playerName = useGenericPlayerLabels
+                  ? genericOpponentPlayerLabel
+                  : funAnimalName(playerId)
 
                 showNotification(
                   howMany === 1
@@ -162,7 +169,13 @@ export const useSnackbar = ({
         },
       },
     })
-  }, [actorRef, match.currentPlayerId, isSessionOwner, showNotification])
+  }, [
+    actorRef,
+    match.currentPlayerId,
+    isSessionOwner,
+    showNotification,
+    useGenericPlayerLabels,
+  ])
 
   return { showNotification }
 }

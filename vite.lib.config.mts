@@ -7,6 +7,9 @@ import { defineConfig, Plugin } from 'vite'
 import dts from 'vite-plugin-dts'
 
 const entry = fileURLToPath(new URL('./src/public/index.ts', import.meta.url))
+const testingEntry = fileURLToPath(
+  new URL('./src/public/testing.ts', import.meta.url)
+)
 
 // Library mode inlines every imported asset regardless of
 // assetsInlineLimit, which would put the font files in the JavaScript bundle
@@ -56,9 +59,9 @@ export default defineConfig({
     // exception (see emitFonts above).
     assetsInlineLimit: Number.MAX_SAFE_INTEGER,
     lib: {
-      entry,
+      entry: { index: entry, testing: testingEntry },
       formats: ['es'],
-      fileName: () => 'index.mjs',
+      fileName: (_format, entryName) => `${entryName}.mjs`,
     },
     rollupOptions: {
       external: [
@@ -70,6 +73,20 @@ export default defineConfig({
         /^@mui\/material\/.*/,
         '@emotion/react',
         '@emotion/styled',
+        // @xstate/react depends on this for its useSyncExternalStore
+        // shim. Left un-externalized, Rollup inlines a UMD-shaped copy
+        // whose runtime `require('react')` feature-detection branch
+        // survives bundling and throws when a consumer's dev server
+        // (e.g. Vite/Rolldown) prebundles this package a second time
+        // without a real `require` available. Every real-world React
+        // app already has this extremely common transitive dependency
+        // in its own tree, so externalizing it (like react/react-dom)
+        // is safe.
+        'use-sync-external-store',
+        /^use-sync-external-store\/.*/,
+        // Same runtime require('react') feature-detection pattern as
+        // use-sync-external-store above.
+        'react-node-to-string',
       ],
     },
   },
