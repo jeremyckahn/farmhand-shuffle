@@ -220,18 +220,20 @@ export const TurnControl = ({
     // NOTE: MUI's Chip pads an icon asymmetrically (a small left margin, a
     // negative right one) and its label by 12px on each side, which leaves
     // the icon-plus-text group visibly right-of-center. Spelled out here so
-    // the group has equal space on both sides instead.
+    // the group has equal space on both sides instead - kept small (with the
+    // pixel frame's own border already adding 3px a side) so all five pills
+    // still fit one row on a ~375px-wide phone.
     justifyContent: 'center',
     '& .MuiChip-icon': {
       color: 'inherit',
       fontSize: theme.typography.body1.fontSize,
-      ml: 1,
+      ml: 0.5,
       mr: 0.5,
     },
     '& .MuiChip-label': {
       fontSize: theme.typography.body1.fontSize,
       pl: 0,
-      pr: 1,
+      pr: 0.5,
       textAlign: 'center',
     },
   })
