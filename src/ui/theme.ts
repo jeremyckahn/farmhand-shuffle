@@ -6,6 +6,7 @@ import { createElement } from 'react'
 
 import {
   pixelBevel,
+  pixelBevelPressed,
   pixelFrameSx,
   pixelPressedSx,
   pixelShadowColor,
@@ -62,15 +63,21 @@ const shadows = [
   }),
 ] as Shadows
 
-// Shared by Button and Fab: a raised 9-slice frame that gets pushed into its
-// shadow when pressed.
-const raisedControlSx = (outline: string) =>
+// Shared by Button and Fab: a raised 9-slice frame. When pressed, it's pushed
+// into its shadow, unless `moveWhenPressed` is false, in which case it stays
+// in place and only its bevel inverts.
+const raisedControlSx = (
+  outline: string,
+  { moveWhenPressed = true }: { moveWhenPressed?: boolean } = {}
+) =>
   ({
     ...pixelFrameSx({ outline, shadow: true }),
     boxShadow: pixelBevel(),
     '&:hover': { boxShadow: pixelBevel() },
     '&.Mui-focusVisible': { boxShadow: pixelBevel() },
-    '&:active': pixelPressedSx(outline),
+    '&:active': moveWhenPressed
+      ? pixelPressedSx(outline)
+      : { boxShadow: pixelBevelPressed },
     '&.Mui-disabled': {
       ...pixelFrameSx({ outline: disabledOutline, shadow: 'pressed' }),
       boxShadow: 'none',
@@ -184,7 +191,12 @@ const createPixelTheme = (mode: PaletteMode) => {
             ownerState: { color?: unknown }
             theme: Theme
           }) => ({
-            ...raisedControlSx(outlineFor(theme, ownerState.color)),
+            // NOTE: Fabs float over the game (e.g. the card navigation and
+            // hand toggle controls), so they stay in place when pressed
+            // rather than shifting down into their shadow.
+            ...raisedControlSx(outlineFor(theme, ownerState.color), {
+              moveWhenPressed: false,
+            }),
             // Fabs are normally round. Keep them square (with notched
             // corners) to match the rest of the pixel art UI.
             borderRadius: 0,
