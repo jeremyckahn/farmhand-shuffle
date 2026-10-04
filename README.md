@@ -103,8 +103,8 @@ Install it:
 npm install @jeremyckahn/farmhand-shuffle
 ```
 
-`react`, `react-dom`, `@mui/material`, `@mui/icons-material`,
-`@emotion/react`, and `@emotion/styled` are `peerDependencies` — install
+`react`, `react-dom`, `@mui/material`, `@emotion/react`, and
+`@emotion/styled` are `peerDependencies` — install
 them alongside this package if your project doesn't already have them.
 
 ```tsx
