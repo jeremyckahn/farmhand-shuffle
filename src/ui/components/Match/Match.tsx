@@ -13,11 +13,14 @@ import Tooltip from '@mui/material/Tooltip/index.js'
 import { funAnimalName } from 'fun-animal-names'
 import { PointerEvent } from 'react'
 
+import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { isSxArray } from '../../type-guards'
+import { CardSize } from '../../types'
 import { NotificationProvider } from '../../context/NotificationContext'
 import {
   genericOpponentPlayerLabel,
   genericSelfPlayerLabel,
+  bottomInset,
   getContentPadding,
   getHandToggleOffset,
   handToggleBottomVar,
@@ -274,6 +277,15 @@ const MatchCore = ({
             // only ~50px to spare at 375px. A host can override it via
             // contentPaddingVar.
             p: contentPadding,
+            // NOTE: So the table can scroll up clear of whatever the host
+            // covers the bottom of Match with (see bottomInsetVar) and of
+            // the Hand, which on narrow viewports is fixed above that space
+            // and can sit over the player's Field until it's scrolled up.
+            pb: `calc(${contentPadding} + ${bottomInset} + ${
+              isNarrowViewport
+                ? CARD_DIMENSIONS[CardSize.COMPACT].height
+                : '0px'
+            })`,
             // NOTE: Anything that paints past the cards into that padding
             // (glows, hover scale-ups) can't go further than this
             // container's edge, and would be cut there in a hard line while

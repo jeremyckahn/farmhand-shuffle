@@ -39,3 +39,12 @@ export const contentPaddingVar = '--farmhand-shuffle-content-padding'
 
 export const getContentPadding = (fallbackPadding: string) =>
   `var(${contentPaddingVar}, ${fallbackPadding})`
+
+// CSS custom property for space at the bottom of Match that the embedding
+// host covers with its own fixed UI (e.g. Farmhand's nav buttons, which sit
+// on top of the Hand on small phones). Falls back to 0. Match keeps the Hand
+// above this space and lets its content scroll clear of it. A host sets it
+// through Match's `sx` prop; any CSS length works, e.g. '7.5em'.
+export const bottomInsetVar = '--farmhand-shuffle-bottom-inset'
+
+export const bottomInset = `var(${bottomInsetVar}, 0px)`

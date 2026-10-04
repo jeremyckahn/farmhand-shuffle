@@ -4,6 +4,7 @@ export type { MatchProps } from '../ui/components/Match'
 export type { PlayCardEventPayload, BotState, IMatch } from '../game/types'
 export { MatchState } from '../game/types'
 export {
+  bottomInsetVar,
   contentPaddingVar,
   handToggleBottomVar,
   handToggleLeftVar,

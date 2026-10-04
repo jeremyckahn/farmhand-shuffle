@@ -7,7 +7,10 @@ import { MatchState } from '../../../game/types'
 import { mockUseMediaQuery } from '../../../test-utils/mocks/useMediaQuery'
 import { stubPlayer1, stubPlayer2 } from '../../../test-utils/stubs/players'
 
-import { contentPaddingVar } from '../constants'
+import { bottomInsetVar, contentPaddingVar } from '../constants'
+
+import { CARD_DIMENSIONS } from '../../config/dimensions'
+import { CardSize } from '../../types'
 
 import { Match } from './Match'
 
@@ -126,8 +129,21 @@ describe('Match', () => {
     ).not.toBeInTheDocument()
   })
   describe('content padding', () => {
-    const getScrollContainer = () =>
-      screen.getByTestId('match').firstElementChild as HTMLElement
+    // NOTE: jsdom doesn't resolve var()/calc() in computed styles, so this
+    // reads the rule Emotion emitted for the scroll container's class.
+    const getScrollContainerRule = () => {
+      const scrollContainer = screen.getByTestId('match')
+        .firstElementChild as HTMLElement
+      const emittedStyles = [...document.querySelectorAll('style')]
+        .map(style => style.textContent)
+        .join('')
+
+      return [...scrollContainer.classList]
+        .map(
+          className => emittedStyles.split(`.${className}{`)[1]?.split('}')[0]
+        )
+        .find(Boolean) as string
+    }
 
     beforeEach(() => {
       vi.spyOn(console, 'debug').mockImplementation(() => {})
@@ -141,7 +157,7 @@ describe('Match', () => {
           userPlayerId={stubPlayer1.id}
         />
       )
-      const widePadding = getComputedStyle(getScrollContainer()).padding
+      const wideRule = getScrollContainerRule()
 
       wide.unmount()
       mockUseMediaQuery.mockReturnValue(true)
@@ -152,9 +168,39 @@ describe('Match', () => {
         />
       )
 
-      expect(widePadding).toBe(`var(${contentPaddingVar}, 24px)`)
-      expect(getComputedStyle(getScrollContainer()).padding).toBe(
-        `var(${contentPaddingVar}, 16px)`
+      expect(wideRule).toContain(`padding:var(${contentPaddingVar}, 24px);`)
+      expect(getScrollContainerRule()).toContain(
+        `padding:var(${contentPaddingVar}, 16px);`
+      )
+    })
+
+    test('adds the host-covered bottom inset to the bottom padding only', () => {
+      mockUseMediaQuery.mockReturnValue(false)
+      render(
+        <Match
+          playerSeeds={[stubPlayer1, stubPlayer2]}
+          userPlayerId={stubPlayer1.id}
+        />
+      )
+
+      expect(getScrollContainerRule()).toContain(
+        `padding-bottom:calc(var(${contentPaddingVar}, 24px) + var(${bottomInsetVar}, 0px) + 0px);`
+      )
+    })
+
+    test('also leaves room for the idle Hand on narrow viewports', () => {
+      mockUseMediaQuery.mockReturnValue(true)
+      render(
+        <Match
+          playerSeeds={[stubPlayer1, stubPlayer2]}
+          userPlayerId={stubPlayer1.id}
+        />
+      )
+
+      expect(getScrollContainerRule()).toContain(
+        `padding-bottom:calc(var(${contentPaddingVar}, 16px) + var(${bottomInsetVar}, 0px) + ${
+          CARD_DIMENSIONS[CardSize.COMPACT].height
+        });`
       )
     })
   })
