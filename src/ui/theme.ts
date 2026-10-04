@@ -2,7 +2,6 @@ import { PaletteMode } from '@mui/material'
 import { darken, Theme } from '@mui/material/styles'
 import createTheme from '@mui/material/styles/createTheme'
 import { Shadows } from '@mui/material/styles/shadows'
-import { createElement } from 'react'
 
 import {
   pixelBevel,
@@ -14,12 +13,7 @@ import {
   surfaceOutline,
 } from '../lib/styling/pixel'
 
-import {
-  ErrorIcon,
-  InfoIcon,
-  SuccessIcon,
-  WarningIcon,
-} from './components/PixelIcon'
+import { alertIconFontSize, alertIconMapping } from './components/PixelIcon'
 import { FontFamily, fontFaces } from './styles/fonts'
 
 // NOTE: Use https://zenoo.github.io/mui-theme-creator/ to help define theme
@@ -247,18 +241,9 @@ const createPixelTheme = (mode: PaletteMode) => {
         },
       },
       MuiAlert: {
-        defaultProps: {
-          iconMapping: {
-            success: createElement(SuccessIcon, { fontSize: 'inherit' }),
-            info: createElement(InfoIcon, { fontSize: 'inherit' }),
-            warning: createElement(WarningIcon, { fontSize: 'inherit' }),
-            error: createElement(ErrorIcon, { fontSize: 'inherit' }),
-          },
-        },
+        defaultProps: { iconMapping: alertIconMapping },
         styleOverrides: {
-          // 24px keeps each of the 12x12 pixel icon's art pixels at a whole
-          // number of CSS pixels (MUI's default is 22px).
-          icon: { fontSize: 24 },
+          icon: { fontSize: alertIconFontSize },
           root: ({
             ownerState,
             theme,

@@ -53,7 +53,7 @@ The UI has a retro pixel art look that matches the game's card art. It's built w
   - It forwards refs, which a Tooltip needs when an icon is its direct child.
   - It's colored with `currentColor`.
   - It has a `data-testid` of `${name}Icon`.
-- **Built-in icons:** MUI's Alert severity icons are replaced through the theme's `defaultProps`.
+- **Built-in icons:** MUI's Alert severity icons are replaced with `alertIconMapping`, both through the theme's `defaultProps` and directly on the notification `Snackbar`, so notifications keep their pixel icons under any host theme.
 
 ### Fonts
 
