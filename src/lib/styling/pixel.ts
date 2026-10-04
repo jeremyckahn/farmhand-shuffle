@@ -71,7 +71,24 @@ const FRAME_WIDTH = px(1)
 // shadow.
 const SHADOWED_FRAME = ['.O..', 'O.OD', '.ODD', '.DD.']
 const SHADOWED_FRAME_SLICE = '1 2 2 1'
-const SHADOWED_FRAME_WIDTH = `${px(1)} ${px(2)} ${px(2)} ${px(1)}`
+
+/**
+ * The border widths of a frame drawn with `shadow: true` (or `'pressed'`).
+ * Useful for positioning decorations, such as glows, outside the frame.
+ */
+export const shadowedFrameWidths = {
+  top: px(1),
+  right: px(2),
+  bottom: px(2),
+  left: px(1),
+} as const
+
+const SHADOWED_FRAME_WIDTH = [
+  shadowedFrameWidths.top,
+  shadowedFrameWidths.right,
+  shadowedFrameWidths.bottom,
+  shadowedFrameWidths.left,
+].join(' ')
 
 export const pixelShadowColor = 'rgba(0, 0, 0, 0.3)'
 
@@ -88,6 +105,32 @@ export const surfaceOutline = (theme: Theme) =>
  * `box-shadow` on rectangular elements.
  */
 export const pixelBoxShadow = `${px(1)} ${px(1)} 0 0 ${pixelShadowColor}`
+
+/**
+ * The length, in art pixels, of the hard drop shadow for an MUI elevation:
+ * one art pixel for every four levels of elevation, up to four.
+ */
+export const elevationShadowLength = (elevation: number) =>
+  Math.min(4, Math.ceil(elevation / 4))
+
+/**
+ * Returns the `box-shadow` for a surface framed with `shadow: true`: the
+ * bevel, plus a longer drop shadow for higher elevations.
+ *
+ * The frame's sprite already draws the first art pixel of the drop shadow
+ * inside its border, so only the rest is drawn here, as a hard box-shadow
+ * cast from the outside of the border. The two meet in a stepped, pixel art
+ * shadow.
+ */
+export const pixelSurfaceShadow = (elevation: number) => {
+  const extraLength = elevationShadowLength(elevation) - 1
+
+  return extraLength > 0
+    ? `${pixelBevel()}, ${px(extraLength)} ${px(
+        extraLength
+      )} 0 0 ${pixelShadowColor}`
+    : pixelBevel()
+}
 
 export interface PixelFrameOptions {
   /**

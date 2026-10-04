@@ -3,7 +3,9 @@ import { createTheme } from '@mui/material/styles'
 import {
   PIXEL_SIZE,
   pixelArtUrl,
+  pixelBevel,
   pixelFrameSx,
+  pixelSurfaceShadow,
   px,
   surfaceOutline,
 } from './pixel'
@@ -74,6 +76,19 @@ describe('pixel', () => {
       })
 
       expect(surfaceOutline(theme)).not.toBe(theme.palette.background.default)
+    })
+  })
+
+  describe('pixelSurfaceShadow', () => {
+    test('is just the bevel when the frame draws the whole shadow', () => {
+      expect(pixelSurfaceShadow(1)).toBe(pixelBevel())
+      expect(pixelSurfaceShadow(4)).toBe(pixelBevel())
+    })
+
+    test('lengthens the shadow for higher elevations', () => {
+      expect(pixelSurfaceShadow(10)).toBe(
+        `${pixelBevel()}, ${px(2)} ${px(2)} 0 0 rgba(0, 0, 0, 0.3)`
+      )
     })
   })
 })

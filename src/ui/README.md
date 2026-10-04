@@ -26,7 +26,8 @@ The UI has a retro pixel art look that matches the game's card art. It's built w
   - `shadow: 'pressed'` keeps that space but leaves it empty, so a pressed control doesn't change size.
 - **What the sprite holds:** only the outline, the notched corners and the shadow. The element's own background fills the interior because it's clipped to the padding box (`backgroundClip: 'padding-box'`), which keeps the corners and shadow transparent.
 - **Bevel:** the light/dark bevel is an inset `box-shadow` from `pixelBevel()`, so background colors can change freely without regenerating any images.
-- **Glows stay soft:** glow effects are intentionally not pixelated. These include card state glows (waterable, harvestable), the glow around card art, the selectable field plot glow and the buffed crop's animated rainbow border (`src/lib/styling/rainbow-border.ts`). They read as light rather than as UI chrome, so they keep their smooth, blurred look.
+- **Elevation:** the frame's sprite draws a one-art-pixel drop shadow. For higher elevations, `pixelSurfaceShadow(elevation)` adds the bevel plus a hard `box-shadow` outside the border, so the shadow steps out further (selected cards are raised this way). Anything that sets its own `boxShadow` on a framed `Paper` must use it, or the Paper's `elevation` stops having any effect.
+- **Glows stay soft:** glow effects are intentionally not pixelated. These include card state glows (waterable, harvestable), the glow around card art, the selectable field plot glow and the buffed crop's animated rainbow border (`src/lib/styling/rainbow-border.ts`). They read as light rather than as UI chrome, so they keep their smooth, blurred look. Pass the frame's border widths (`shadowedFrameWidths`) to `getRainbowBorderStyle` so the rainbow ring is drawn outside the frame instead of behind it.
 
 ### Theme
 
