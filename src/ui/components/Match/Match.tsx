@@ -176,6 +176,10 @@ const MatchCore = ({
     event.preventDefault()
   }
 
+  const contentPadding = getContentPadding(
+    theme.spacing(isNarrowViewport ? 2 : 3)
+  )
+
   return (
     <ShellContext.Provider value={shellContextValue}>
       <Container
@@ -269,7 +273,20 @@ const MatchCore = ({
             // the compact card row is tuned to fit real phone widths, with
             // only ~50px to spare at 375px. A host can override it via
             // contentPaddingVar.
-            p: getContentPadding(theme.spacing(isNarrowViewport ? 2 : 3)),
+            p: contentPadding,
+            // NOTE: Anything that paints past the cards into that padding
+            // (glows, hover scale-ups) can't go further than this
+            // container's edge, and would be cut there in a hard line while
+            // still bright. Fading the padding band out on the left, right
+            // and top edges turns that cut into a smooth fade. No cards sit
+            // in the band, so only those tails are affected. The bottom is
+            // left alone: the Hand peeks up into it.
+            maskImage: [
+              `linear-gradient(to right, transparent, #000 ${contentPadding}, #000 calc(100% - ${contentPadding}), transparent)`,
+              `linear-gradient(to bottom, transparent, #000 ${contentPadding}, #000)`,
+            ].join(', '),
+            maskComposite: 'intersect',
+            WebkitMaskComposite: 'source-in',
             ...(hideScrollbar && {
               scrollbarWidth: 'none',
               '&::-webkit-scrollbar': { display: 'none' },
