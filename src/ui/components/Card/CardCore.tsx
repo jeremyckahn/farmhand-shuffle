@@ -22,8 +22,6 @@ import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import {
   pixelBevel,
   pixelFrameSx,
-  pixelOutlineFilter,
-  px,
   surfaceOutline,
 } from '../../../lib/styling/pixel'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -45,10 +43,6 @@ const cardFaceFrameSx = (theme: Theme) => ({
   ...pixelFrameSx({ outline: surfaceOutline(theme), shadow: true }),
   boxShadow: pixelBevel(),
 })
-
-// How thick the colored outline is that shows a card's state (waterable,
-// harvestable).
-const cardStateOutlineThickness = px(2)
 
 // NOTE: Exported (along with getStackedActionButtonStackHeight/
 // getStackedActionButtonsMarginTop below) so tests can derive their
@@ -82,14 +76,11 @@ const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
   prefersReducedMotion: boolean
 }): SystemStyleObject<Theme> => {
   if (isBuffedCrop) {
-    return getRainbowBorderStyle({ theme, prefersReducedMotion })
+    return getRainbowBorderStyle({ theme, prefersReducedMotion, spread: 12 })
   }
 
   return {
-    filter: pixelOutlineFilter(
-      cropHarvestIndicatorSessionOwnerOutlineColor,
-      cardStateOutlineThickness
-    ),
+    filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorSessionOwnerOutlineColor})`,
   }
 }
 
@@ -300,10 +291,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       position: 'absolute',
                       width: 1,
                       ...(showWaterableState && {
-                        filter: pixelOutlineFilter(
-                          cropWaterIndicatorOutlineColor,
-                          cardStateOutlineThickness
-                        ),
+                        filter: `drop-shadow(0px 0px 24px ${cropWaterIndicatorOutlineColor})`,
                       }),
                       ...(showHarvestableState && {
                         ...(isSessionOwnersCard &&
@@ -313,10 +301,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                             prefersReducedMotion,
                           })),
                         ...(!isSessionOwnersCard && {
-                          filter: pixelOutlineFilter(
-                            cropHarvestIndicatorOpponentOutlineColor,
-                            cardStateOutlineThickness
-                          ),
+                          filter: `drop-shadow(0px 0px 24px ${cropHarvestIndicatorOpponentOutlineColor})`,
                         }),
                       }),
                     },
@@ -335,12 +320,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                         width: '100%',
                         objectFit: 'contain',
                         imageRendering: 'pixelated',
-                        // NOTE: Compact card art is tiny, so it gets a
-                        // one-CSS-pixel outline rather than a full art pixel.
-                        filter: pixelOutlineFilter(
-                          theme.palette.common.white,
-                          '1px'
-                        ),
+                        filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
                       }}
                     />
                   ) : (
@@ -376,9 +356,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                             p: 0,
                             m: 'auto',
                             imageRendering: 'pixelated',
-                            filter: pixelOutlineFilter(
-                              theme.palette.common.white
-                            ),
+                            filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
                           }}
                         />
                       </Box>

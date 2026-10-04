@@ -26,7 +26,7 @@ The UI has a retro pixel art look that matches the game's card art. It's built w
   - `shadow: 'pressed'` keeps that space but leaves it empty, so a pressed control doesn't change size.
 - **What the sprite holds:** only the outline, the notched corners and the shadow. The element's own background fills the interior because it's clipped to the padding box (`backgroundClip: 'padding-box'`), which keeps the corners and shadow transparent.
 - **Bevel:** the light/dark bevel is an inset `box-shadow` from `pixelBevel()`, so background colors can change freely without regenerating any images.
-- **Glows:** soft glows (`drop-shadow(0 0 Npx color)`) are replaced by `pixelOutlineFilter(color)`, a crisp outline that follows an element's shape. Card states (waterable, harvestable) use it, and so does card art. The buffed crop's rainbow border (`src/lib/styling/rainbow-border.ts`) uses hard-edged color bands with no blur.
+- **Glows stay soft:** glow effects are intentionally not pixelated. These include card state glows (waterable, harvestable), the glow around card art, the selectable field plot glow and the buffed crop's animated rainbow border (`src/lib/styling/rainbow-border.ts`). They read as light rather than as UI chrome, so they keep their smooth, blurred look.
 
 ### Theme
 
@@ -66,11 +66,11 @@ The UI has a retro pixel art look that matches the game's card art. It's built w
 ### Rules to follow
 
 - **Use `backgroundColor`, not `background`,** to recolor anything with a pixel frame, including cards and other `Paper`. The `background` shorthand resets `background-clip`, which paints the color under the transparent corners and drop shadow.
-- **Don't add rounded corners or blurred shadows, glows or filters** to UI chrome. Use `pixelFrameSx`, `pixelBevel`, `pixelOutlineFilter`, `pixelDropShadowFilter`, or the theme's `shadows`.
+- **Don't add rounded corners or blurred drop shadows** to UI chrome (panels, buttons, tooltips). Use `pixelFrameSx`, `pixelBevel` or the theme's `shadows`. Glow effects are the exception (see above).
 - **Don't enable `arrow` on Tooltips.** MUI's arrow is a rotated square that doesn't fit the pixel frame.
 - **Import icons from `src/ui/components/PixelIcon`,** not `@mui/icons-material`. To add one, draw a 12×12 map in `icons.ts` and wrap it with `createPixelIcon`.
 - **When changing typefaces,** measure the new font's cap height and set its `size-adjust` so it matches the existing faces. Faces of one family must use exactly the same `font-weight` values.
 
 ### Library consumers
 
-The library (`src/public`) exports `Match`, which relies on the host app's MUI theme. Styles set directly on components (card frames, state outlines, icons) come along. Theme-level styling (fonts, button and Paper frames, tooltips) only applies if the host uses this theme.
+The library (`src/public`) exports `Match`, which relies on the host app's MUI theme. Styles set directly on components (card frames, glows, icons) come along. Theme-level styling (fonts, button and Paper frames, tooltips) only applies if the host uses this theme.

@@ -159,28 +159,6 @@ export const pixelBevelPressed = pixelBevel({
 })
 
 /**
- * A crisp (unblurred) drop shadow for sprites and other arbitrarily shaped
- * elements.
- */
-export const pixelDropShadowFilter = `drop-shadow(${px(1)} ${px(
-  1
-)} 0 rgba(0, 0, 0, 0.2))`
-
-/**
- * Returns a CSS `filter` that draws a crisp, unblurred outline around an
- * element's opaque pixels, following its shape. This is the pixel art
- * replacement for a soft `drop-shadow(0 0 Npx color)` glow. `thickness` is a
- * CSS length, one art pixel by default.
- */
-export const pixelOutlineFilter = (color: string, thickness = px(1)) =>
-  [
-    `drop-shadow(${thickness} 0 0 ${color})`,
-    `drop-shadow(-${thickness} 0 0 ${color})`,
-    `drop-shadow(0 ${thickness} 0 ${color})`,
-    `drop-shadow(0 -${thickness} 0 ${color})`,
-  ].join(' ')
-
-/**
  * Styles for the pressed state of a control framed with `shadow: true`. The
  * control shifts into the space its shadow occupied, so it appears to be
  * pushed down.

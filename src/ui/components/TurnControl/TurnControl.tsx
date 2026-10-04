@@ -20,7 +20,7 @@ import {
   MatchState,
 } from '../../../game/types'
 import { formatNumber } from '../../../lib/formatting/numbers'
-import { pixelFrameSx, pixelOutlineFilter } from '../../../lib/styling/pixel'
+import { pixelFrameSx } from '../../../lib/styling/pixel'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
@@ -32,10 +32,6 @@ import {
 } from '../PixelIcon'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
-
-// The crop art in the buffed/nerfed crop chips is small, so it gets a
-// one-CSS-pixel outline rather than a full art pixel.
-const chipArtOutlineThickness = '1px'
 
 export interface TurnControlProps {
   match: IMatch
@@ -238,10 +234,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
                     src={getCardImageSrc(match.buffedCrop.crop)}
                     sx={{
                       imageRendering: 'pixelated',
-                      filter: pixelOutlineFilter(
-                        theme.palette.common.white,
-                        chipArtOutlineThickness
-                      ),
+                      filter: `drop-shadow(0 0 5px ${theme.palette.common.white})`,
                     }}
                   />
                 }
@@ -294,10 +287,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
                     src={getCardImageSrc(match.nerfedCrop.crop)}
                     sx={{
                       imageRendering: 'pixelated',
-                      filter: pixelOutlineFilter(
-                        theme.palette.common.black,
-                        chipArtOutlineThickness
-                      ),
+                      filter: `drop-shadow(0 0 5px ${theme.palette.common.black})`,
                     }}
                   />
                 }

@@ -76,7 +76,7 @@ Avoid variable name abbreviations (e.g., use `quantity` instead of `qty`) to imp
   - Use object destructuring to access props.
 - **State:** Prefer lifting state up. Components should be as stateless as possible. When local state is necessary, use `useState` or `useReducer`.
 - **Styling:** Styling is handled via a global MUI theme and inline `sx` prop styles as necessary.
-  - The UI has a pixel art style built on nonstandard techniques (9-slice frames, pixel icons and pixel fonts). Read the "Pixel art styling" section of `src/ui/README.md` before changing UI styling, icons or fonts. Notably: recolor framed elements with `backgroundColor` rather than `background`, avoid rounded corners and blurred shadows, don't enable Tooltip `arrow`s, and import icons from `src/ui/components/PixelIcon` rather than `@mui/icons-material`.
+  - The UI has a pixel art style built on nonstandard techniques (9-slice frames, pixel icons and pixel fonts). Read the "Pixel art styling" section of `src/ui/README.md` before changing UI styling, icons or fonts. Notably: recolor framed elements with `backgroundColor` rather than `background`, avoid rounded corners and blurred drop shadows on UI chrome (glow effects are fine), don't enable Tooltip `arrow`s, and import icons from `src/ui/components/PixelIcon` rather than `@mui/icons-material`.
 - **Theme Access:** Use the `useTheme` hook to access theme properties (e.g., `theme.palette.primary.main`) rather than using theme string literals (e.g., `'primary.main'`).
 
 ## State Management (Reducers)

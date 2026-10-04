@@ -61,7 +61,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     >
                       <img
                         alt="Pumpkin"
-                        class="css-wgceay"
+                        class="css-1cs2h9x"
                         src="/src/ui/img/cards/pumpkin.png"
                       />
                     </div>
@@ -175,7 +175,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     >
                       <img
                         alt="Carrot"
-                        class="css-wgceay"
+                        class="css-1cs2h9x"
                         src="/src/ui/img/cards/carrot.png"
                       />
                     </div>
@@ -305,7 +305,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     >
                       <img
                         alt="Water"
-                        class="css-wgceay"
+                        class="css-1cs2h9x"
                         src="/src/ui/img/cards/watering-can.png"
                       />
                     </div>
@@ -435,7 +435,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     >
                       <img
                         alt="Shovel"
-                        class="css-wgceay"
+                        class="css-1cs2h9x"
                         src="/src/ui/img/cards/shovel.png"
                       />
                     </div>
@@ -565,7 +565,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     >
                       <img
                         alt="Rain"
-                        class="css-wgceay"
+                        class="css-1cs2h9x"
                         src="/src/ui/img/cards/raincloud.png"
                       />
                     </div>

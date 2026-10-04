@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 
 import { createTheme } from '@mui/material/styles'
 
-import { PIXEL_SIZE } from './pixel'
 import { getRainbowBorderStyle, rotatingShadow } from './rainbow-border'
 
 const theme = createTheme()
@@ -38,7 +37,7 @@ describe('rainbow-border', () => {
   })
 
   it('allows custom spread', () => {
-    const spread = 5
+    const spread = 50
     const style = getRainbowBorderStyle({
       theme,
       prefersReducedMotion: false,
@@ -47,11 +46,7 @@ describe('rainbow-border', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
     const afterElement = (style as any)['&:after']
 
-    // NOTE: The halo is drawn without any blur so it stays crisp pixel art,
-    // and `spread` sets its width in art pixels beyond the inner ring.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(afterElement.filter).toBeUndefined()
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(afterElement.top).toBe(`-${PIXEL_SIZE * (1 + spread)}px`)
+    expect(afterElement.filter).toBe(`blur(${spread}px)`)
   })
 })

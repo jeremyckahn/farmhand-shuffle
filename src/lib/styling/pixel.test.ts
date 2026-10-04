@@ -4,7 +4,6 @@ import {
   PIXEL_SIZE,
   pixelArtUrl,
   pixelFrameSx,
-  pixelOutlineFilter,
   px,
   surfaceOutline,
 } from './pixel'
@@ -58,22 +57,6 @@ describe('pixel', () => {
       expect(pressed.borderWidth).toBe(shadowed.borderWidth)
       expect(decodeSvg(pressed.borderImageSource)).toContain(
         'fill="transparent"'
-      )
-    })
-  })
-
-  describe('pixelOutlineFilter', () => {
-    test('outlines all four sides without any blur', () => {
-      const filter = pixelOutlineFilter('red')
-
-      expect(filter.match(/drop-shadow/g)).toHaveLength(4)
-      expect(filter).toContain(`drop-shadow(${px(1)} 0 0 red)`)
-      expect(filter).toContain(`drop-shadow(0 -${px(1)} 0 red)`)
-    })
-
-    test('accepts a custom thickness', () => {
-      expect(pixelOutlineFilter('red', '1px')).toContain(
-        'drop-shadow(-1px 0 0 red)'
       )
     })
   })
