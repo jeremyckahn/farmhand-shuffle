@@ -11,8 +11,6 @@ export {
   placeholderOutlineColorVar,
 } from '../ui/components/constants'
 export { starterDeck } from '../game/config/starterDeck'
-export { buildLowFundsMatch, idleBotState } from '../game/config/matchFixtures'
-export type { LowFundsMatchFixtureOptions } from '../game/config/matchFixtures'
 export {
   serializeMatch,
   deserializeMatch,

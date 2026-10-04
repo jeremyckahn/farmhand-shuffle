@@ -219,22 +219,6 @@ const MatchCore = ({
             // mechanism, not a hack) - this restores the intended
             // "positioned relative to this container" behavior.
             overflow: 'hidden',
-            // NOTE: Card glows (crop watering/harvest indicators) and
-            // placeholder outlines paint outside their own boxes -- a
-            // drop-shadow with a 24px blur reaches well past a card that sits
-            // near this container's edge, and overflow: hidden would cut it
-            // off in a hard vertical line (most visible on narrow screens,
-            // where the Field's outermost cards are only a few px from the
-            // edge). overflow: clip with a clip margin still contains
-            // anything that strays far outside, but lets that paint spill
-            // past the edge and fade out naturally; the host's own bounds
-            // (the window, or Farmhand's Stage) become the real clip.
-            // Browsers without overflow-clip-margin keep the hidden
-            // behavior above.
-            '@supports (overflow-clip-margin: 1px)': {
-              overflow: 'clip',
-              overflowClipMargin: theme.spacing(6),
-            },
             transform: 'translateZ(0)',
             ...(isInputBlocked && {
               '*': {
