@@ -73,4 +73,9 @@ The UI has a retro pixel art look that matches the game's card art. It's built w
 
 ### Library consumers
 
-The library (`src/public`) exports `Match`, which relies on the host app's MUI theme. Styles set directly on components (card frames, glows, icons) come along. Theme-level styling (fonts, button and Paper frames, tooltips) only applies if the host uses this theme.
+The library (`src/public`) exports `Match` along with `lightTheme` and `darkTheme`. `Match` relies on the host app's MUI theme:
+
+- **Always applied:** styles set directly on components, such as card frames, glows and icons.
+- **Only with an exported theme:** theme-level styling (fonts, button and Paper frames, tooltips) applies when the host wraps `Match` in `lightTheme` or `darkTheme`.
+- **Fonts:** the font faces are injected by `CssBaseline`, so the host needs to render it too.
+- **Bundle size:** the library build inlines all assets, so exporting the themes puts the Jersey font files in the library bundle as base64 data URIs.

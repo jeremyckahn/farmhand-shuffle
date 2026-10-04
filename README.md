@@ -115,6 +115,26 @@ function App() {
 }
 ```
 
+`Match` picks up the host app's MUI theme. To get Farmhand Shuffle's full
+pixel art look (fonts, framed buttons, panels and tooltips), wrap it in one of
+the exported themes, `lightTheme` or `darkTheme`, with `CssBaseline`. The
+fonts are only loaded through `CssBaseline`.
+
+```tsx
+import CssBaseline from '@mui/material/CssBaseline'
+import { ThemeProvider } from '@mui/material/styles'
+import { lightTheme, Match } from '@jeremyckahn/farmhand-shuffle'
+
+function App() {
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <CssBaseline />
+      <Match playerSeeds={playerSeeds} userPlayerId={userPlayerId} />
+    </ThemeProvider>
+  )
+}
+```
+
 The library build is ESM-only (`dist-lib/index.mjs`) and ships its own
 TypeScript declarations (`dist-lib/index.d.ts`), so no separate `@types`
 package is needed.
