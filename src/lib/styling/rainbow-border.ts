@@ -16,14 +16,47 @@ export const rotatingShadow = keyframes`
   }
 `
 
+export interface BorderWidths {
+  top: string
+  right: string
+  bottom: string
+  left: string
+}
+
+const noBorder: BorderWidths = {
+  top: '0px',
+  right: '0px',
+  bottom: '0px',
+  left: '0px',
+}
+
+// Positions an absolutely positioned layer `distance` outside the element's
+// border box. Absolute offsets are measured from the padding box, so the
+// border widths are added in.
+const outsetFromBorderBox = (
+  { top, right, bottom, left }: BorderWidths,
+  distance: string
+) => ({
+  top: `calc(-${distance} - ${top})`,
+  left: `calc(-${distance} - ${left})`,
+  width: `calc(100% + 2 * ${distance} + ${left} + ${right})`,
+  height: `calc(100% + 2 * ${distance} + ${top} + ${bottom})`,
+})
+
 export const getRainbowBorderStyle = ({
   theme,
   prefersReducedMotion,
   spread = 24,
+  borderWidths = noBorder,
 }: {
   theme: Theme
   prefersReducedMotion: boolean
   spread?: number
+  /**
+   * The element's border widths, so the rainbow is drawn outside of its
+   * border (such as a pixel art frame) rather than hidden behind it.
+   */
+  borderWidths?: BorderWidths
 }): SystemStyleObject<Theme> => {
   return {
     position: 'relative',
@@ -31,13 +64,10 @@ export const getRainbowBorderStyle = ({
     '&:before, &:after': {
       content: "''",
       position: 'absolute',
-      top: '-2px',
+      ...outsetFromBorderBox(borderWidths, '2px'),
       // NOTE: borderRadius is increased a bit to ensure the outline flows
       // smoothly with elements that have MUI rounded corners
       borderRadius: `${Math.floor(theme.shape.borderRadius * 1.5)}px`,
-      left: '-2px',
-      width: 'calc(100% + 4px)',
-      height: 'calc(100% + 4px)',
       background:
         'linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000)',
       backgroundSize: '400%',
@@ -47,10 +77,7 @@ export const getRainbowBorderStyle = ({
         : `${rotatingShadow} 20s linear infinite`,
     },
     '&:after': {
-      top: '-8px',
-      left: '-8px',
-      width: 'calc(100% + 16px)',
-      height: 'calc(100% + 16px)',
+      ...outsetFromBorderBox(borderWidths, '8px'),
       filter: `blur(${spread}px)`,
       opacity: '0.9',
     },

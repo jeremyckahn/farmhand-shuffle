@@ -20,8 +20,9 @@ import {
 import { isCropCardInstance } from '../../../game/types/guards'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
 import {
-  pixelBevel,
   pixelFrameSx,
+  pixelSurfaceShadow,
+  shadowedFrameWidths,
   surfaceOutline,
 } from '../../../lib/styling/pixel'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
@@ -39,9 +40,11 @@ export const cropWaterIndicatorOutlineColor = '#0072ff'
 const cropHarvestIndicatorSessionOwnerOutlineColor = '#0fc400'
 const cropHarvestIndicatorOpponentOutlineColor = '#ff7510'
 
-const cardFaceFrameSx = (theme: Theme) => ({
+// NOTE: The box-shadow is set here as well, so it has to account for the
+// Paper's elevation itself (selected cards are raised higher).
+const cardFaceFrameSx = (theme: Theme, elevation = 1) => ({
   ...pixelFrameSx({ outline: surfaceOutline(theme), shadow: true }),
-  boxShadow: pixelBevel(),
+  boxShadow: pixelSurfaceShadow(elevation),
 })
 
 // NOTE: Exported (along with getStackedActionButtonStackHeight/
@@ -76,7 +79,14 @@ const getCropHarvestIndicatorSessionOwnerOutlineStyle = ({
   prefersReducedMotion: boolean
 }): SystemStyleObject<Theme> => {
   if (isBuffedCrop) {
-    return getRainbowBorderStyle({ theme, prefersReducedMotion, spread: 12 })
+    return getRainbowBorderStyle({
+      theme,
+      prefersReducedMotion,
+      spread: 12,
+      // NOTE: Keeps the rainbow ring outside the card's pixel art frame,
+      // which would otherwise cover it.
+      borderWidths: shadowedFrameWidths,
+    })
   }
 
   return {
@@ -276,7 +286,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                       // the theme's Paper styles) so cards keep their pixel
                       // art frame when this component is used as a library
                       // under a host app's own theme.
-                      ...cardFaceFrameSx(theme),
+                      ...cardFaceFrameSx(theme, paperProps?.elevation),
                       // NOTE: backgroundColor rather than the `background`
                       // shorthand, which would paint under the pixel art
                       // frame (see src/lib/styling/pixel.ts).
@@ -440,7 +450,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                 <Paper
                   {...paperProps}
                   sx={{
-                    ...cardFaceFrameSx(theme),
+                    ...cardFaceFrameSx(theme, paperProps?.elevation),
                     alignItems: 'center',
                     backgroundColor: theme.palette.background.default,
                     backfaceVisibility: 'hidden',
