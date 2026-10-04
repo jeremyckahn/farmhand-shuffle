@@ -63,7 +63,7 @@ describe('MatchPage', () => {
             ]),
           }),
           expect.objectContaining({
-            // Bot uses stub deck which has >0 cards
+            // Bot uses starter deck which has >0 cards
             deck: expect.any(Array),
           }),
         ]),
@@ -72,7 +72,7 @@ describe('MatchPage', () => {
     )
   })
 
-  it('falls back to stubDeck if storage returns null', async () => {
+  it('falls back to starterDeck if storage returns null', async () => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(storage.loadDeck).mockResolvedValue(null)
 
@@ -86,7 +86,7 @@ describe('MatchPage', () => {
       expect.objectContaining({
         playerSeeds: expect.arrayContaining([
           expect.objectContaining({
-            // Should be stub deck (size 60)
+            // Should be starter deck (size 60)
             deck: expect.arrayContaining([expect.any(Object)]),
           }),
         ]),

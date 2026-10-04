@@ -1,4 +1,4 @@
-import Typography from '@mui/material/Typography'
+import Typography from '@mui/material/Typography/index.js'
 
 import { ICrop, IPlayedCrop } from '../../../game/types'
 

@@ -174,6 +174,48 @@ describe('useSnackbar Hook', () => {
       }
     )
 
+    it.each([
+      { howMany: 1, expectedNotification: 'Opponent drew 1 card' },
+      { howMany: 2, expectedNotification: 'Opponent drew 2 cards' },
+    ])(
+      'shows the generic opponent label for CARDS_DRAWN when useGenericPlayerLabels is true',
+      ({ howMany, expectedNotification }) => {
+        match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
+        renderHook(() =>
+          useSnackbar({
+            actorRef,
+            match,
+            useGenericPlayerLabels: true,
+          })
+        )
+
+        const payload: ShellNotificationPayload[ShellNotificationType.CARDS_DRAWN] =
+          {
+            howMany,
+            playerId: stubPlayer2.id,
+          }
+
+        const send = actorRef.send as unknown as MockInstance<
+          (event: MatchEvents) => void
+        >
+        const matchEventPayload = send.mock.calls[0]![0]
+
+        assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+        act(() => {
+          matchEventPayload.shell.triggerNotification({
+            type: ShellNotificationType.CARDS_DRAWN,
+            payload,
+          })
+        })
+
+        expect(showNotificationMock).toHaveBeenLastCalledWith(
+          expectedNotification,
+          'warning'
+        )
+      }
+    )
+
     it('should show the correct CROP_HARVESTED notification message when session owner', () => {
       renderHook(() =>
         useSnackbar({
@@ -237,6 +279,41 @@ describe('useSnackbar Hook', () => {
 
       expect(showNotificationMock).toHaveBeenLastCalledWith(
         `Fun Animal harvested and sold a ${carrot.name}`,
+        'warning'
+      )
+    })
+
+    it('shows the generic opponent label for CROP_HARVESTED when useGenericPlayerLabels is true', () => {
+      match = updateMatch(match, { sessionOwnerPlayerId: stubPlayer2.id })
+      renderHook(() =>
+        useSnackbar({
+          actorRef,
+          match,
+          useGenericPlayerLabels: true,
+        })
+      )
+
+      const payload: ShellNotificationPayload[ShellNotificationType.CROP_HARVESTED] =
+        {
+          cropHarvested: carrot,
+        }
+
+      const send = actorRef.send as unknown as MockInstance<
+        (event: MatchEvents) => void
+      >
+      const matchEventPayload = send.mock.calls[0]![0]
+
+      assertEvent(matchEventPayload, MatchEvent.SET_SHELL)
+
+      act(() => {
+        matchEventPayload.shell.triggerNotification({
+          type: ShellNotificationType.CROP_HARVESTED,
+          payload,
+        })
+      })
+
+      expect(showNotificationMock).toHaveBeenLastCalledWith(
+        `Opponent harvested and sold a ${carrot.name}`,
         'warning'
       )
     })
