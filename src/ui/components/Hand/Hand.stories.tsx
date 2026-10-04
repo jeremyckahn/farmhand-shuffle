@@ -1,5 +1,3 @@
-import AddIcon from '@mui/icons-material/Add'
-import RemoveIcon from '@mui/icons-material/Remove'
 import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
 import Tooltip from '@mui/material/Tooltip'
@@ -14,6 +12,7 @@ import { stubMatch } from '../../../test-utils/stubs/match'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { StubShellContext } from '../../test-utils/StubShellContext'
 import { CardSize } from '../../types'
+import { AddIcon, RemoveIcon } from '../PixelIcon'
 
 import {
   stubCarrot,

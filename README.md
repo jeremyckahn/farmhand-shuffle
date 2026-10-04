@@ -103,8 +103,8 @@ Install it:
 npm install @jeremyckahn/farmhand-shuffle
 ```
 
-`react`, `react-dom`, `@mui/material`, `@mui/icons-material`,
-`@emotion/react`, and `@emotion/styled` are `peerDependencies` — install
+`react`, `react-dom`, `@mui/material`, `@emotion/react`, and
+`@emotion/styled` are `peerDependencies` — install
 them alongside this package if your project doesn't already have them.
 
 ```tsx
@@ -112,6 +112,28 @@ import { Match } from '@jeremyckahn/farmhand-shuffle'
 
 function App() {
   return <Match playerSeeds={playerSeeds} userPlayerId={userPlayerId} />
+}
+```
+
+`Match` picks up the host app's MUI theme. To get Farmhand Shuffle's full
+pixel art look (fonts, framed buttons, panels and tooltips), wrap it in one of
+the exported themes, `lightTheme` or `darkTheme`, with `CssBaseline`. The
+fonts are only loaded through `CssBaseline`. They ship as separate files in
+`dist-lib/assets` and are referenced with `new URL(..., import.meta.url)`, which
+bundlers such as Vite and webpack 5 pick up automatically.
+
+```tsx
+import CssBaseline from '@mui/material/CssBaseline'
+import { ThemeProvider } from '@mui/material/styles'
+import { lightTheme, Match } from '@jeremyckahn/farmhand-shuffle'
+
+function App() {
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <CssBaseline />
+      <Match playerSeeds={playerSeeds} userPlayerId={userPlayerId} />
+    </ThemeProvider>
+  )
 }
 ```
 

@@ -4,6 +4,7 @@ import Tooltip from '@mui/material/Tooltip'
 
 import { lookup } from '../../../game/services/Lookup'
 import { IMatch, IPlayer } from '../../../game/types'
+import { px } from '../../../lib/styling/pixel'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { CardSize } from '../../types'
 import { Card } from '../Card'
@@ -41,7 +42,7 @@ export const DiscardPile = ({
         // discard piles from appearing upside down
         transformStyle: 'preserve-3d',
         outlineStyle: 'solid',
-        outlineWidth: '2px',
+        outlineWidth: px(1),
         outlineColor: theme.palette.divider,
         borderRadius: `${theme.shape.borderRadius}px`,
         ...(!isSessionOwnerPlayer && { transform: 'rotate(180deg)' }),
@@ -57,7 +58,6 @@ export const DiscardPile = ({
             key={cardInstance.instanceId}
             title={cardInstance.name}
             placement="top"
-            arrow
           >
             <Card
               cardInstance={cardInstance}

@@ -1,7 +1,3 @@
-import AccountBalance from '@mui/icons-material/AccountBalance'
-import AttachMoney from '@mui/icons-material/AttachMoney'
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp'
 import Accordion from '@mui/material/Accordion'
 import AccordionActions from '@mui/material/AccordionActions'
 import AccordionSummary from '@mui/material/AccordionSummary'
@@ -24,9 +20,16 @@ import {
   MatchState,
 } from '../../../game/types'
 import { formatNumber } from '../../../lib/formatting/numbers'
+import { pixelFrameSx } from '../../../lib/styling/pixel'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
+import {
+  AccountBalanceIcon as AccountBalance,
+  AttachMoneyIcon as AttachMoney,
+  KeyboardArrowDownIcon as KeyboardArrowDown,
+  KeyboardArrowUpIcon as KeyboardArrowUp,
+} from '../PixelIcon'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
 
@@ -198,7 +201,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
         justifyContent="space-between"
         sx={{ color: theme.palette.common.white }}
       >
-        <Tooltip title="Your funds" arrow>
+        <Tooltip title="Your funds">
           <Stack
             direction="row"
             alignItems="center"
@@ -221,7 +224,6 @@ export const TurnControl = ({ match }: TurnControlProps) => {
         {match.buffedCrop && (
           <Tooltip
             title={`Sell ${match.buffedCrop.crop.name} cards now for ${match.buffedCrop.multiplier}x value`}
-            arrow
           >
             <Stack direction="row" alignItems="center">
               <Chip
@@ -237,16 +239,14 @@ export const TurnControl = ({ match }: TurnControlProps) => {
                   />
                 }
                 sx={{
+                  ...pixelFrameSx({ outline: theme.palette.success.dark }),
                   backgroundColor: theme.palette.success.light,
-                  outlineColor: theme.palette.success.dark,
-                  outlineWidth: 1,
-                  outlineStyle: 'solid',
                 }}
               />
             </Stack>
           </Tooltip>
         )}
-        <Tooltip title="Community funds" arrow>
+        <Tooltip title="Community funds">
           <Stack
             direction="row"
             alignItems="center"
@@ -265,7 +265,6 @@ export const TurnControl = ({ match }: TurnControlProps) => {
         {match.nerfedCrop && (
           <Tooltip
             title={`${match.nerfedCrop.crop.name} cards now sell for ${match.nerfedCrop.multiplier}x value`}
-            arrow
           >
             <Stack direction="row" alignItems="center">
               <Chip
@@ -278,10 +277,8 @@ export const TurnControl = ({ match }: TurnControlProps) => {
                   '& .MuiChip-label': {
                     pr: 1,
                   },
+                  ...pixelFrameSx({ outline: theme.palette.error.dark }),
                   backgroundColor: theme.palette.error.light,
-                  outlineColor: theme.palette.error.dark,
-                  outlineWidth: 1,
-                  outlineStyle: 'solid',
                 }}
                 color="error"
                 icon={<KeyboardArrowDown />}
@@ -298,7 +295,7 @@ export const TurnControl = ({ match }: TurnControlProps) => {
             </Stack>
           </Tooltip>
         )}
-        <Tooltip title={`${opponentName}'s funds`} arrow>
+        <Tooltip title={`${opponentName}'s funds`}>
           <Stack
             direction="row"
             alignItems="center"

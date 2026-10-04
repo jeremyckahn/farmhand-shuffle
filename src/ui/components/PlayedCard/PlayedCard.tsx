@@ -87,7 +87,6 @@ export const PlayedCard = ({
                 sx={{
                   flex: 1,
                   height: '4px',
-                  borderRadius: '2px',
                   background: cropWaterIndicatorOutlineColor,
                   opacity,
                   transition: theme.transitions.create(['opacity']),

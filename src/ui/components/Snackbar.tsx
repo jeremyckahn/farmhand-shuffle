@@ -5,6 +5,8 @@ import useTheme from '@mui/material/styles/useTheme'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 
+import { alertIconFontSize, alertIconMapping } from './PixelIcon'
+
 export interface SnackbarProps extends Pick<AlertProps, 'severity'> {
   message: ReactNode
   onClose: () => void
@@ -49,7 +51,17 @@ export const Snackbar = ({ message, severity, onClose }: SnackbarProps) => {
       open={isOpen}
       sx={{ bottom: { xs: theme.spacing(11), sm: theme.spacing(2) } }}
     >
-      <Alert severity={severity} elevation={12} variant="filled">
+      {/*
+        NOTE: The pixel icons are set here as well as in the theme so that
+        library consumers get them without using the exported themes.
+        */}
+      <Alert
+        severity={severity}
+        elevation={12}
+        variant="filled"
+        iconMapping={alertIconMapping}
+        sx={{ '& .MuiAlert-icon': { fontSize: alertIconFontSize } }}
+      >
         {/*
           NOTE: previousMessage is shown as fallback content to prevent the
           Alert from visibly rerendering with empty content when it transitions

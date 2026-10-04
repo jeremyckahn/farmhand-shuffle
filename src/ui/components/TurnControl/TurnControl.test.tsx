@@ -94,22 +94,6 @@ vi.mock('@mui/material/styles/useTheme', () => ({
   }),
 }))
 
-vi.mock('@mui/icons-material/AccountBalance', () => ({
-  default: () => <div data-testid="mock-icon-account-balance" />,
-}))
-
-vi.mock('@mui/icons-material/AttachMoney', () => ({
-  default: () => <div data-testid="mock-icon-attach-money" />,
-}))
-
-vi.mock('@mui/icons-material/KeyboardArrowUp', () => ({
-  default: () => <div data-testid="mock-icon-keyboard-arrow-up" />,
-}))
-
-vi.mock('@mui/icons-material/KeyboardArrowDown', () => ({
-  default: () => <div data-testid="mock-icon-keyboard-arrow-down" />,
-}))
-
 vi.mock('fun-animal-names', () => ({
   funAnimalName: (id: string) => `fun-animal-${id}`,
 }))

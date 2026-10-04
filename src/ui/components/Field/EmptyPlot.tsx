@@ -2,6 +2,7 @@ import { Box, darken, lighten, Typography, useTheme } from '@mui/material'
 import { useContext } from 'react'
 
 import { MatchEvent, MatchState } from '../../../game/types'
+import { px } from '../../../lib/styling/pixel'
 import { CARD_DIMENSIONS } from '../../config/dimensions'
 import { useMatchRules } from '../../hooks/useMatchRules'
 import { CardSize } from '../../types'
@@ -54,7 +55,7 @@ export const EmptyPlot = ({
         flexShrink: 0,
         mx: 'auto',
         outlineStyle: 'solid',
-        outlineWidth: '2px',
+        outlineWidth: px(1),
         outlineColor: canBeSelected
           ? theme.palette.primary.light
           : theme.palette.divider,
