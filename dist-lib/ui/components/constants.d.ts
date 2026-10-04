@@ -1,0 +1,10 @@
+export declare const deselectedCardIdx = -1;
+export declare const genericSelfPlayerLabel = "You";
+export declare const genericOpponentPlayerLabel = "Opponent";
+export declare const placeholderOutlineColorVar = "--farmhand-shuffle-placeholder-outline-color";
+export declare const getPlaceholderOutlineColor: (fallbackColor: string) => string;
+export declare const handToggleBottomVar = "--farmhand-shuffle-hand-toggle-bottom";
+export declare const handToggleLeftVar = "--farmhand-shuffle-hand-toggle-left";
+export declare const getHandToggleOffset: (offsetVar: string, fallbackOffset: string) => string;
+export declare const contentPaddingVar = "--farmhand-shuffle-content-padding";
+export declare const getContentPadding: (fallbackPadding: string) => string;
