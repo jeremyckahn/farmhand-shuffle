@@ -19,6 +19,11 @@ import {
 } from '../../../game/types'
 import { isCropCardInstance } from '../../../game/types/guards'
 import { getRainbowBorderStyle } from '../../../lib/styling/rainbow-border'
+import {
+  pixelBevel,
+  pixelFrameSx,
+  surfaceOutline,
+} from '../../../lib/styling/pixel'
 import { CARD_DIMENSIONS, CARD_GLOW_BLUR_PX } from '../../config/dimensions'
 import { ui } from '../../img'
 import { isSxArray } from '../../type-guards'
@@ -33,6 +38,11 @@ export const cardFlipWrapperClassName = 'CardFlipWrapper'
 export const cropWaterIndicatorOutlineColor = '#0072ff'
 const cropHarvestIndicatorSessionOwnerOutlineColor = '#0fc400'
 const cropHarvestIndicatorOpponentOutlineColor = '#ff7510'
+
+const cardFaceFrameSx = (theme: Theme) => ({
+  ...pixelFrameSx({ outline: surfaceOutline(theme), shadow: true }),
+  boxShadow: pixelBevel(),
+})
 
 // NOTE: Exported (along with getStackedActionButtonStackHeight/
 // getStackedActionButtonsMarginTop below) so tests can derive their
@@ -238,7 +248,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
             animate={{ scale: 1 }}
             style={{ originX: 0.5, originY: 0.5 }}
           >
-            <Tooltip title={displayedTooltipTitle} placement="top" arrow>
+            <Tooltip title={displayedTooltipTitle} placement="top">
               <Box
                 className={cardFlipWrapperClassName}
                 sx={[
@@ -264,16 +274,21 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                   sx={[
                     {
                       backfaceVisibility: 'hidden',
-                      background:
+                      // NOTE: The frame is set here (rather than relying on
+                      // the theme's Paper styles) so cards keep their pixel
+                      // art frame when this component is used as a library
+                      // under a host app's own theme.
+                      ...cardFaceFrameSx(theme),
+                      // NOTE: backgroundColor rather than the `background`
+                      // shorthand, which would paint under the pixel art
+                      // frame (see src/lib/styling/pixel.ts).
+                      backgroundColor:
                         theme.palette.mode === 'light'
                           ? darken(theme.palette.background.paper, 0.05)
                           : lighten(theme.palette.background.paper, 0.15),
                       display: 'flex',
                       flexDirection: 'column',
                       height: 1,
-                      outlineColor: theme.palette.background.default,
-                      outlineStyle: 'solid',
-                      outlineWidth: 2,
                       p: theme.spacing(1),
                       position: 'absolute',
                       width: 1,
@@ -328,14 +343,11 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                         sx={{
                           height: '50%',
                           display: 'flex',
-                          background: theme.palette.common.white,
+                          ...pixelFrameSx({ outline: theme.palette.divider }),
+                          backgroundColor: theme.palette.common.white,
                           backgroundImage: `url(${ui.dirt})`,
                           backgroundSize: '100%',
                           backgroundRepeat: 'repeat',
-                          borderColor: theme.palette.divider,
-                          borderRadius: `${theme.shape.borderRadius}px`,
-                          borderWidth: 1,
-                          borderStyle: 'solid',
                           imageRendering: 'pixelated',
                         }}
                       >
@@ -431,6 +443,7 @@ export const CardCore = React.forwardRef<HTMLDivElement, CardViewProps>(
                 <Paper
                   {...paperProps}
                   sx={{
+                    ...cardFaceFrameSx(theme),
                     alignItems: 'center',
                     backgroundColor: theme.palette.background.default,
                     backfaceVisibility: 'hidden',

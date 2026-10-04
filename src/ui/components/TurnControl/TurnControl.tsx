@@ -1,12 +1,12 @@
-import Accordion from '@mui/material/Accordion/index.js'
-import AccordionActions from '@mui/material/AccordionActions/index.js'
-import AccordionSummary from '@mui/material/AccordionSummary/index.js'
-import Button from '@mui/material/Button/index.js'
-import Chip from '@mui/material/Chip/index.js'
-import Stack from '@mui/material/Stack/index.js'
+import Accordion from '@mui/material/Accordion'
+import AccordionActions from '@mui/material/AccordionActions'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
 import useTheme from '@mui/material/styles/useTheme'
-import Tooltip from '@mui/material/Tooltip/index.js'
-import Typography from '@mui/material/Typography/index.js'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { funAnimalName } from 'fun-animal-names'
 import { ReactNode, useContext } from 'react'
 
@@ -20,15 +20,16 @@ import {
   MatchState,
 } from '../../../game/types'
 import { formatNumber } from '../../../lib/formatting/numbers'
+import { pixelFrameSx, surfaceOutline } from '../../../lib/styling/pixel'
 import { useMatchRules } from '../../hooks/useMatchRules'
-import {
-  AccountBalance,
-  AttachMoney,
-  KeyboardArrowDown,
-  KeyboardArrowUp,
-} from '../icons/index.js'
 import { Image } from '../Image'
 import { getCardImageSrc } from '../Image/Image'
+import {
+  AccountBalanceIcon as AccountBalance,
+  AttachMoneyIcon as AttachMoney,
+  KeyboardArrowDownIcon as KeyboardArrowDown,
+  KeyboardArrowUpIcon as KeyboardArrowUp,
+} from '../PixelIcon'
 import { ActorContext } from '../Match/ActorContext'
 import { ShellContext } from '../Match/ShellContext'
 import { genericOpponentPlayerLabel } from '../constants'
@@ -209,8 +210,8 @@ export const TurnControl = ({
   // funds stay legible against whatever background Match is shown on, rather
   // than relying on the ambient text color contrasting with it.
   const getFundsPillSx = (funds?: number) => ({
+    ...pixelFrameSx({ outline: surfaceOutline(theme) }),
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[1],
     color:
       funds !== undefined && funds <= playerFundWarningThreshold
         ? theme.palette.error.dark
@@ -254,7 +255,7 @@ export const TurnControl = ({
         // Match's own consumer-facing `sx` prop, without this component
         // needing to know or care that it's embedded.
       >
-        <Tooltip title="Your funds" arrow>
+        <Tooltip title="Your funds">
           <Chip
             icon={<AttachMoney />}
             label={formatNumber(sessionOwnerPlayerFunds)}
@@ -264,7 +265,6 @@ export const TurnControl = ({
         {match.buffedCrop && (
           <Tooltip
             title={`Sell ${match.buffedCrop.crop.name} cards now for ${match.buffedCrop.multiplier}x value`}
-            arrow
           >
             <Stack direction="row" alignItems="center">
               <Chip
@@ -280,17 +280,14 @@ export const TurnControl = ({
                   />
                 }
                 sx={{
+                  ...pixelFrameSx({ outline: theme.palette.success.dark }),
                   backgroundColor: theme.palette.success.light,
-                  // NOTE: A border, not an outline - an outline paints
-                  // outside the pill's box, and at the very top of Match's
-                  // scroll container that top pixel got clipped.
-                  border: `1px solid ${theme.palette.success.dark}`,
                 }}
               />
             </Stack>
           </Tooltip>
         )}
-        <Tooltip title="Community funds" arrow>
+        <Tooltip title="Community funds">
           <Chip
             icon={<AccountBalance />}
             label={formatNumber(match.table.communityFund)}
@@ -300,7 +297,6 @@ export const TurnControl = ({
         {match.nerfedCrop && (
           <Tooltip
             title={`${match.nerfedCrop.crop.name} cards now sell for ${match.nerfedCrop.multiplier}x value`}
-            arrow
           >
             <Stack direction="row" alignItems="center">
               <Chip
@@ -313,8 +309,8 @@ export const TurnControl = ({
                   '& .MuiChip-label': {
                     pr: 1,
                   },
+                  ...pixelFrameSx({ outline: theme.palette.error.dark }),
                   backgroundColor: theme.palette.error.light,
-                  border: `1px solid ${theme.palette.error.dark}`,
                 }}
                 color="error"
                 icon={<KeyboardArrowDown />}
@@ -331,7 +327,7 @@ export const TurnControl = ({
             </Stack>
           </Tooltip>
         )}
-        <Tooltip title={`${opponentName}'s funds`} arrow>
+        <Tooltip title={`${opponentName}'s funds`}>
           <Chip
             icon={<AttachMoney />}
             label={

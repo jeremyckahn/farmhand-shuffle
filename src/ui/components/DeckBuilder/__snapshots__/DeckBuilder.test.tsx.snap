@@ -49,7 +49,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                   data-mui-internal-clone-element="true"
                 >
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-dwhy6j-MuiPaper-root"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -57,7 +57,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                       Pumpkin
                     </span>
                     <div
-                      class="MuiBox-root css-a4w1rr"
+                      class="MuiBox-root css-kqdm04"
                     >
                       <img
                         alt="Pumpkin"
@@ -73,7 +73,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     />
                   </div>
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-rckc7k-MuiPaper-root"
                   >
                     <h2
                       class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
@@ -104,10 +104,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="RemoveIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M1 5h10v1h-10zM1 6h10v1h-10z"
                     />
                   </svg>
                 </button>
@@ -133,10 +134,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="AddIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M5 1h2v1h-2zM5 2h2v1h-2zM5 3h2v1h-2zM5 4h2v1h-2zM1 5h10v1h-10zM1 6h10v1h-10zM5 7h2v1h-2zM5 8h2v1h-2zM5 9h2v1h-2zM5 10h2v1h-2z"
                     />
                   </svg>
                   <span
@@ -161,7 +163,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                   data-mui-internal-clone-element="true"
                 >
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-dwhy6j-MuiPaper-root"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -169,7 +171,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                       Carrot
                     </span>
                     <div
-                      class="MuiBox-root css-a4w1rr"
+                      class="MuiBox-root css-kqdm04"
                     >
                       <img
                         alt="Carrot"
@@ -185,7 +187,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     />
                   </div>
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-rckc7k-MuiPaper-root"
                   >
                     <h2
                       class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
@@ -216,10 +218,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="RemoveIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M1 5h10v1h-10zM1 6h10v1h-10z"
                     />
                   </svg>
                 </button>
@@ -245,10 +248,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="AddIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M5 1h2v1h-2zM5 2h2v1h-2zM5 3h2v1h-2zM5 4h2v1h-2zM1 5h10v1h-10zM1 6h10v1h-10zM5 7h2v1h-2zM5 8h2v1h-2zM5 9h2v1h-2zM5 10h2v1h-2z"
                     />
                   </svg>
                   <span
@@ -289,7 +293,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                   data-mui-internal-clone-element="true"
                 >
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-dwhy6j-MuiPaper-root"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -297,7 +301,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                       Water
                     </span>
                     <div
-                      class="MuiBox-root css-a4w1rr"
+                      class="MuiBox-root css-kqdm04"
                     >
                       <img
                         alt="Water"
@@ -313,7 +317,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     />
                   </div>
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-rckc7k-MuiPaper-root"
                   >
                     <h2
                       class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
@@ -344,10 +348,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="RemoveIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M1 5h10v1h-10zM1 6h10v1h-10z"
                     />
                   </svg>
                 </button>
@@ -373,10 +378,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="AddIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M5 1h2v1h-2zM5 2h2v1h-2zM5 3h2v1h-2zM5 4h2v1h-2zM1 5h10v1h-10zM1 6h10v1h-10zM5 7h2v1h-2zM5 8h2v1h-2zM5 9h2v1h-2zM5 10h2v1h-2z"
                     />
                   </svg>
                   <span
@@ -417,7 +423,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                   data-mui-internal-clone-element="true"
                 >
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-dwhy6j-MuiPaper-root"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -425,7 +431,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                       Shovel
                     </span>
                     <div
-                      class="MuiBox-root css-a4w1rr"
+                      class="MuiBox-root css-kqdm04"
                     >
                       <img
                         alt="Shovel"
@@ -441,7 +447,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     />
                   </div>
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-rckc7k-MuiPaper-root"
                   >
                     <h2
                       class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
@@ -472,10 +478,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="RemoveIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M1 5h10v1h-10zM1 6h10v1h-10z"
                     />
                   </svg>
                 </button>
@@ -501,10 +508,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="AddIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M5 1h2v1h-2zM5 2h2v1h-2zM5 3h2v1h-2zM5 4h2v1h-2zM1 5h10v1h-10zM1 6h10v1h-10zM5 7h2v1h-2zM5 8h2v1h-2zM5 9h2v1h-2zM5 10h2v1h-2z"
                     />
                   </svg>
                   <span
@@ -545,7 +553,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                   data-mui-internal-clone-element="true"
                 >
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-tj1f4j-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-dwhy6j-MuiPaper-root"
                   >
                     <span
                       class="MuiTypography-root MuiTypography-caption css-1ivtvsc-MuiTypography-root"
@@ -553,7 +561,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                       Rain
                     </span>
                     <div
-                      class="MuiBox-root css-a4w1rr"
+                      class="MuiBox-root css-kqdm04"
                     >
                       <img
                         alt="Rain"
@@ -569,7 +577,7 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     />
                   </div>
                   <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-jzsa0k-MuiPaper-root"
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-rckc7k-MuiPaper-root"
                   >
                     <h2
                       class="MuiTypography-root MuiTypography-h2 css-p6gw6g-MuiTypography-root"
@@ -600,10 +608,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="RemoveIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13H5v-2h14v2z"
+                      d="M1 5h10v1h-10zM1 6h10v1h-10z"
                     />
                   </svg>
                 </button>
@@ -629,10 +638,11 @@ exports[`DeckBuilder > renders cards in sections 1`] = `
                     class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                     data-testid="AddIcon"
                     focusable="false"
-                    viewBox="0 0 24 24"
+                    shape-rendering="crispEdges"
+                    viewBox="0 0 12 12"
                   >
                     <path
-                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      d="M5 1h2v1h-2zM5 2h2v1h-2zM5 3h2v1h-2zM5 4h2v1h-2zM1 5h10v1h-10zM1 6h10v1h-10zM5 7h2v1h-2zM5 8h2v1h-2zM5 9h2v1h-2zM5 10h2v1h-2z"
                     />
                   </svg>
                   <span

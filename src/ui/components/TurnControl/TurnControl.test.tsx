@@ -23,7 +23,7 @@ vi.mock('../Card', () => ({
 }))
 
 // NOTE: Mocking out MUI components improves test execution speed
-vi.mock('@mui/material/Accordion/index.js', () => ({
+vi.mock('@mui/material/Accordion', () => ({
   default: ({
     children,
     expanded,
@@ -37,19 +37,19 @@ vi.mock('@mui/material/Accordion/index.js', () => ({
   ),
 }))
 
-vi.mock('@mui/material/AccordionActions/index.js', () => ({
+vi.mock('@mui/material/AccordionActions', () => ({
   default: ({ children }: { children: ReactNode }) => (
     <div data-testid="mock-accordion-actions">{children}</div>
   ),
 }))
 
-vi.mock('@mui/material/AccordionSummary/index.js', () => ({
+vi.mock('@mui/material/AccordionSummary', () => ({
   default: ({ children }: { children: ReactNode }) => (
     <div data-testid="mock-accordion-summary">{children}</div>
   ),
 }))
 
-vi.mock('@mui/material/Button/index.js', () => ({
+vi.mock('@mui/material/Button', () => ({
   default: ({ children, onClick, color }: ButtonProps) => (
     <button onClick={onClick} data-color={color}>
       {children}
@@ -57,21 +57,21 @@ vi.mock('@mui/material/Button/index.js', () => ({
   ),
 }))
 
-vi.mock('@mui/material/Chip/index.js', () => ({
+vi.mock('@mui/material/Chip', () => ({
   default: ({ label }: { label: string }) => (
     <div data-testid="mock-chip">{label}</div>
   ),
 }))
 
-vi.mock('@mui/material/Stack/index.js', () => ({
+vi.mock('@mui/material/Stack', () => ({
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }))
 
-vi.mock('@mui/material/Tooltip/index.js', () => ({
+vi.mock('@mui/material/Tooltip', () => ({
   default: ({ children }: { children: ReactNode }) => <>{children}</>,
 }))
 
-vi.mock('@mui/material/Typography/index.js', () => ({
+vi.mock('@mui/material/Typography', () => ({
   default: ({ children }: { children: ReactNode }) => <span>{children}</span>,
 }))
 
@@ -95,13 +95,6 @@ vi.mock('@mui/material/styles/useTheme', () => ({
       },
     },
   }),
-}))
-
-vi.mock('../icons/index.js', () => ({
-  AccountBalance: () => <div data-testid="mock-icon-account-balance" />,
-  AttachMoney: () => <div data-testid="mock-icon-attach-money" />,
-  KeyboardArrowUp: () => <div data-testid="mock-icon-keyboard-arrow-up" />,
-  KeyboardArrowDown: () => <div data-testid="mock-icon-keyboard-arrow-down" />,
 }))
 
 vi.mock('fun-animal-names', () => ({

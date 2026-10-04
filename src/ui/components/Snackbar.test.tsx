@@ -150,4 +150,23 @@ describe('Snackbar', () => {
     // We can check if the text is still present.
     expect(screen.getByText('Initial Message')).toBeInTheDocument()
   })
+  it.each([
+    ['success', 'SuccessIcon'],
+    ['info', 'InfoIcon'],
+    ['warning', 'WarningIcon'],
+    ['error', 'ErrorIcon'],
+  ] as const)(
+    'shows the pixel %s icon without the pixel art theme',
+    (severity, testId) => {
+      renderWithTheme(
+        <Snackbar
+          message="Test Message"
+          severity={severity}
+          onClose={vi.fn()}
+        />
+      )
+
+      expect(screen.getByTestId(testId)).toBeInTheDocument()
+    }
+  )
 })

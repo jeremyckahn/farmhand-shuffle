@@ -1,8 +1,3 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  KeyboardArrowDown,
-} from '@mui/icons-material'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
@@ -31,6 +26,11 @@ import {
 import { ui } from '../../img'
 import { lightTheme } from '../../theme'
 import { cardClassName } from '../Card/CardCore'
+import {
+  ChevronLeftIcon as ChevronLeft,
+  ChevronRightIcon as ChevronRight,
+  KeyboardArrowDownIcon as KeyboardArrowDown,
+} from '../PixelIcon'
 import { selectedCardLabel } from '../Field/Field'
 import { playedCardClassName } from '../PlayedCard'
 import { Table } from '../Table'
@@ -325,7 +325,7 @@ const MatchCore = ({
               </Fade>
             </>
           ) : (
-            <Tooltip arrow title={showHand ? 'Hide Hand' : 'Show Hand'}>
+            <Tooltip title={showHand ? 'Hide Hand' : 'Show Hand'}>
               <Fab
                 color="secondary"
                 disabled={isInputBlocked || isHandDisabled}
