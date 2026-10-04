@@ -43,8 +43,6 @@ export default defineConfig({
         /^react-dom\/.*/,
         '@mui/material',
         /^@mui\/material\/.*/,
-        '@mui/icons-material',
-        /^@mui\/icons-material\/.*/,
         '@emotion/react',
         '@emotion/styled',
       ],

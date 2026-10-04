@@ -1,5 +1,4 @@
 import { createRoot } from 'react-dom/client'
-import 'typeface-roboto'
 
 import { App } from './App'
 
