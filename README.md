@@ -118,7 +118,9 @@ function App() {
 `Match` picks up the host app's MUI theme. To get Farmhand Shuffle's full
 pixel art look (fonts, framed buttons, panels and tooltips), wrap it in one of
 the exported themes, `lightTheme` or `darkTheme`, with `CssBaseline`. The
-fonts are only loaded through `CssBaseline`.
+fonts are only loaded through `CssBaseline`. They ship as separate files in
+`dist-lib/assets` and are referenced with `new URL(..., import.meta.url)`, which
+bundlers such as Vite and webpack 5 pick up automatically.
 
 ```tsx
 import CssBaseline from '@mui/material/CssBaseline'

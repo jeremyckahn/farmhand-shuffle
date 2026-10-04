@@ -1,8 +1,8 @@
 // Pixel art replacements for the @mui/icons-material icons the UI used. See
 // types.ts for the pixel map format.
 //
-// Every map is 12x12, so at MUI's default icon size (24px) each art pixel
-// is exactly 2 CSS pixels.
+// Most maps are 12x12, so at MUI's default icon size (24px) each art pixel
+// is exactly 2 CSS pixels. The Alert severity icons are 8x8 (see below).
 
 import { createPixelIcon, flipX, flipY, rotate } from './createPixelIcon'
 import { PixelMap } from './types'
@@ -110,72 +110,63 @@ export const AccountBalanceIcon = createPixelIcon(
   'AccountBalance'
 )
 
-const circle = (holes: Record<number, string>): PixelMap =>
+// The Alert severity icons are drawn on a coarser 8x8 grid. Alerts render
+// their icon at 24px, so each art pixel is exactly 3 CSS pixels, matching
+// PIXEL_SIZE (see src/lib/styling/pixel.ts) and the frame around the alert.
+const alertCircle = (holes: Record<number, string>): PixelMap =>
   [
-    '...######...',
-    '.##########.',
-    '.##########.',
-    '############',
-    '############',
-    '############',
-    '############',
-    '############',
-    '############',
-    '.##########.',
-    '.##########.',
-    '...######...',
+    '..####..',
+    '.######.',
+    '########',
+    '########',
+    '########',
+    '########',
+    '.######.',
+    '..####..',
   ].map((row, y) => holes[y] ?? row)
 
 export const SuccessIcon = createPixelIcon(
-  circle({
-    3: '########..##',
-    4: '#######..###',
-    5: '##..##..####',
-    6: '###....#####',
-    7: '####..######',
+  alertCircle({
+    2: '######.#',
+    3: '#####.##',
+    4: '#.##.###',
+    5: '##..####',
   }),
   'Success'
 )
 
 export const InfoIcon = createPixelIcon(
-  circle({
-    2: '.####..####.',
-    5: '#####..#####',
-    6: '#####..#####',
-    7: '#####..#####',
-    8: '#####..#####',
-    9: '.####..####.',
+  alertCircle({
+    1: '.##..##.',
+    3: '###..###',
+    4: '###..###',
+    5: '###..###',
+    6: '.##..##.',
   }),
   'Info'
 )
 
 export const ErrorIcon = createPixelIcon(
-  circle({
-    2: '.####..####.',
-    3: '#####..#####',
-    4: '#####..#####',
-    5: '#####..#####',
-    6: '#####..#####',
-    8: '#####..#####',
-    9: '.####..####.',
+  alertCircle({
+    1: '.##..##.',
+    2: '###..###',
+    3: '###..###',
+    4: '###..###',
+    6: '.##..##.',
   }),
   'Error'
 )
 
 export const WarningIcon = createPixelIcon(
   [
-    '.....##.....',
-    '.....##.....',
-    '....####....',
-    '....#..#....',
-    '...##..##...',
-    '...##..##...',
-    '..###..###..',
-    '..########..',
-    '.####..####.',
-    '.##########.',
-    '############',
-    '............',
+    '...##...',
+    '..####..',
+    '..#..#..',
+    '.##..##.',
+    '.##..##.',
+    '########',
+    '###..###',
+    '########',
   ],
   'Warning'
 )

@@ -47,7 +47,7 @@ The UI has a retro pixel art look that matches the game's card art. It's built w
 
 `src/ui/components/PixelIcon` replaces `@mui/icons-material`, which is no longer a dependency.
 
-- **Drawing format:** icons are 12×12 text pixel maps. `#` is a solid pixel, `+` is a half-tone pixel (same color, reduced opacity) and anything else is transparent.
+- **Drawing format:** icons are text pixel maps, usually 12×12 so each art pixel is 2 CSS pixels at MUI's default 24px icon size. The Alert severity icons use a coarser 8×8 grid, so their art pixels are 3 CSS pixels and match the frame around the alert. `#` is a solid pixel, `+` is a half-tone pixel (same color, reduced opacity) and anything else is transparent.
 - **Rendering:** `createPixelIcon(rows, name)` renders the map as an MUI `SvgIcon`. The result is a drop-in replacement for an `@mui/icons-material` icon:
   - It takes the same props.
   - It forwards refs, which a Tooltip needs when an icon is its direct child.
@@ -68,7 +68,7 @@ The UI has a retro pixel art look that matches the game's card art. It's built w
 - **Use `backgroundColor`, not `background`,** to recolor anything with a pixel frame, including cards and other `Paper`. The `background` shorthand resets `background-clip`, which paints the color under the transparent corners and drop shadow.
 - **Don't add rounded corners or blurred drop shadows** to UI chrome (panels, buttons, tooltips). Use `pixelFrameSx`, `pixelBevel` or the theme's `shadows`. Glow effects are the exception (see above).
 - **Don't enable `arrow` on Tooltips.** MUI's arrow is a rotated square that doesn't fit the pixel frame.
-- **Import icons from `src/ui/components/PixelIcon`,** not `@mui/icons-material`. To add one, draw a 12×12 map in `icons.ts` and wrap it with `createPixelIcon`.
+- **Import icons from `src/ui/components/PixelIcon`,** not `@mui/icons-material`. To add one, draw a map in `icons.ts` and wrap it with `createPixelIcon`.
 - **When changing typefaces,** measure the new font's cap height and set its `size-adjust` so it matches the existing faces. Faces of one family must use exactly the same `font-weight` values.
 
 ### Library consumers
@@ -78,4 +78,4 @@ The library (`src/public`) exports `Match` along with `lightTheme` and `darkThem
 - **Always applied:** styles set directly on components, such as card frames, glows and icons.
 - **Only with an exported theme:** theme-level styling (fonts, button and Paper frames, tooltips) applies when the host wraps `Match` in `lightTheme` or `darkTheme`.
 - **Fonts:** the font faces are injected by `CssBaseline`, so the host needs to render it too.
-- **Bundle size:** the library build inlines all assets, so exporting the themes puts the Jersey font files in the library bundle as base64 data URIs.
+- **Font files:** the library build inlines image assets, but not fonts. A plugin in `vite.lib.config.mts` emits each font to `dist-lib/assets` and references it with `new URL(..., import.meta.url)`, which keeps about 95 kB of base64 out of the JavaScript bundle. The host's bundler copies the font files along with everything else.
